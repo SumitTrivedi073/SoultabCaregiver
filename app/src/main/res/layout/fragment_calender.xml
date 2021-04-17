@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/_40sdp"
+    android:background="@color/light_white"
+    tools:context=".activity.Calender.fragment.CalenderFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/user_name_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:gravity="center"
+                android:text="@string/calender"
+                android:textColor="@color/blackish"
+                android:textSize="@dimen/_16sdp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:fontFamily="@font/muli_bold"
+                android:gravity="center"
+                android:text="@string/select_date"
+                android:textColor="@color/blackish"
+                android:textSize="@dimen/_12sdp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@drawable/popup_relative">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:fontFamily="@font/muli_bold"
+                    android:gravity="center"
+                    android:text="@string/date"
+                    android:textColor="@color/blackish"
+                    android:textSize="@dimen/_12sdp" />
+
+
+                <TextView
+                    android:id="@+id/curret_date_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:fontFamily="@font/muli_bold"
+                    android:gravity="center"
+                    android:textColor="@color/themecolor"
+                    android:textSize="@dimen/_12sdp" />
+
+
+            </RelativeLayout>
+
+
+            <!--
+                                <CalendarView
+                                    android:id="@+id/customCalendarView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+            -->
+
+
+            <RelativeLayout
+                android:id="@+id/rl_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_weight="1">
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/Reminders_sent_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_10sdp"
+                    android:background="@drawable/white_bg"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:background="@drawable/left_right_corner_rounded"
+                            android:weightSum="3">
+
+                            <TextView
+                                android:id="@+id/daily"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@color/muzli_color"
+                                android:fontFamily="@font/muli_bold"
+                                android:gravity="center"
+                                android:text="@string/daily"
+                                android:textColor="@color/white" />
+
+                            <View
+                                android:layout_width="0.5dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/light_grey" />
+
+                            <TextView
+                                android:id="@+id/weekly"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_bold"
+                                android:gravity="center"
+                                android:text="@string/weekly"
+                                android:textColor="@color/blackish" />
+
+
+                            <View
+                                android:layout_width="0.5dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/light_grey" />
+
+                            <TextView
+                                android:id="@+id/Monthly"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_bold"
+                                android:gravity="center"
+                                android:text="@string/monthly"
+                                android:textColor="@color/blackish" />
+
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@color/light_grey" />
+
+                        <TextView
+                            android:id="@+id/tv_no_data"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_40sdp"
+                            android:fontFamily="@font/muli_black"
+                            android:gravity="center"
+                            android:padding="@dimen/_5sdp"
+                            android:text="@string/no_data_found"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_11ssp"
+                            android:visibility="gone" />
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_event"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:divider="@null"
+                            android:dividerHeight="0dp"
+                            android:fastScrollEnabled="true"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginBottom="@dimen/_10sdp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
+                <!-- <TextView
+                     android:id="@+id/reminder_btn"
+                     android:layout_width="match_parent"
+                     android:layout_height="@dimen/_40sdp"
+                     android:layout_alignParentBottom="true"
+                     android:layout_gravity="center"
+                     android:background="@color/themecolor"
+                     android:elevation="@dimen/_2sdp"
+                     android:fontFamily="@font/muli_black"
+                     android:gravity="center"
+                     android:text="@string/set_reminder"
+                     android:textColor="@color/white"
+                     android:textSize="@dimen/_12sdp"
+                     android:translationZ="@dimen/_2sdp" />-->
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/reminder_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_16sdp"
+        android:src="@drawable/plus"
+        app:backgroundTint="@color/orange_color"
+        app:elevation="@dimen/_5sdp"
+        app:fabSize="auto"
+        app:pressedTranslationZ="@dimen/_5sdp"
+        app:tint="@android:color/white" />
+
+</RelativeLayout>

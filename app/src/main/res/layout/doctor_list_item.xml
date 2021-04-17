@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_35sdp"
+    android:layout_marginLeft="@dimen/_5sdp"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:layout_marginRight="@dimen/_5sdp">
+
+    <LinearLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:src="@drawable/doctor_place_holder" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="@dimen/_5sdp"
+            android:singleLine="true"
+            android:text="Northan"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_11sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:paddingLeft="@dimen/_5sdp"
+           />
+
+
+        <TextView
+            android:id="@+id/update_txt"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:background="@drawable/blue_btn"
+            android:elevation="@dimen/_2sdp"
+            android:fontFamily="@font/muli_semibold"
+            android:gravity="center"
+            android:text="@string/schedule"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="normal"
+            android:translationZ="@dimen/_2sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true" />
+
+
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

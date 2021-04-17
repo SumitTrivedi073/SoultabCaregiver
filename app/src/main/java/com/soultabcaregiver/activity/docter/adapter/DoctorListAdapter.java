@@ -1,0 +1,151 @@
+package com.soultabcaregiver.activity.docter.adapter;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.docter.DocorDetailsActivity;
+import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.ViewHolder> implements Filterable {
+    Context context;
+    String docCatNm;
+    TextView tvNodata;
+    private List<DoctorListModel.Response.DoctorDatum> arDoclist, arSearch;
+    private AppointedDocSelectionListener docSelectionListener;
+
+
+    public DoctorListAdapter(Activity mainActivity, List<DoctorListModel.Response.DoctorDatum> listdata, TextView tvNodata) {
+        arDoclist = listdata;
+        context = mainActivity;
+        this.arSearch = new ArrayList<>();
+        this.arSearch.addAll(listdata);
+        this.tvNodata = tvNodata;
+
+    }
+
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View listItem = layoutInflater.inflate(R.layout.doctor_list_item, parent, false);
+        return new ViewHolder(listItem);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final DoctorListModel.Response.DoctorDatum DocListBean = arDoclist.get(position);
+        holder.textView.setText(DocListBean.getName());
+
+
+
+        if (arDoclist.get(position).getImage() != null) {
+            Glide.with(context).load(DocListBean.getDoctorImage()).placeholder(R.drawable.doctor_place_holder).into(holder.imageView);
+        }
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent mINTENT = new Intent(view.getContext(), DocorDetailsActivity.class);
+                mINTENT.putExtra(APIS.DocListItem, DocListBean);
+                view.getContext().startActivity(mINTENT);
+
+            }
+        });
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return arDoclist.size();
+    }
+
+
+    public void DocSelection(AppointedDocSelectionListener actDocList) {
+        try {
+            docSelectionListener = actDocList;
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView imageView;
+        public TextView textView;
+        public LinearLayout relativeLayout;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            this.imageView = itemView.findViewById(R.id.imageView);
+            this.textView = itemView.findViewById(R.id.textView);
+            relativeLayout = itemView.findViewById(R.id.relativeLayout);
+        }
+    }
+
+    public interface AppointedDocSelectionListener {
+        void DocSelectionListener(List<DoctorListModel.Response.DoctorDatum> DocBeanList, boolean isSearch);
+
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    arDoclist = arSearch;
+                } else {
+                    List<DoctorListModel.Response.DoctorDatum> filteredList = new ArrayList<>();
+                    for (DoctorListModel.Response.DoctorDatum row : arSearch) {
+
+                        // name match condition. this might differ depending on your requirement
+                        // here we are looking for name or phone number match
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) ) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    arDoclist = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = arDoclist;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                arDoclist = (ArrayList<DoctorListModel.Response.DoctorDatum>) filterResults.values;
+                if (arDoclist.size()>0){
+                    tvNodata.setVisibility(View.GONE);
+                    if (docSelectionListener != null) {
+                        docSelectionListener.DocSelectionListener(arDoclist, true);
+                    }
+                }else {
+                    tvNodata.setVisibility(View.VISIBLE);
+                }
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+
+}

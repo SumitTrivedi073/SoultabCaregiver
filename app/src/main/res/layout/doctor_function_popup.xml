@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:background="@drawable/popup_relative">
+
+        <RelativeLayout
+            android:id="@+id/close_popup"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+
+            <ImageView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/close"
+                android:tint="@color/black" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/facebook_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/app_name"
+            android:fontFamily="@font/muli_bold"
+            android:textSize="@dimen/_14sdp"
+            android:layout_centerHorizontal="true"
+            android:textColor="#212121"
+            android:gravity="center"/>
+
+
+
+        <TextView
+            android:id="@+id/allow_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_below="@+id/facebook_txt"
+            android:text="@string/doctor_option"
+            android:fontFamily="@font/muli_black"
+            android:textSize="@dimen/_12sdp"
+            android:layout_centerHorizontal="true"
+            android:textColor="#212121"
+            android:gravity="center"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_below="@+id/allow_txt"
+            android:layout_margin="@dimen/_5sdp">
+
+            <RelativeLayout
+                android:id="@+id/Call_btn"
+                android:layout_width="@dimen/_85sdp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@drawable/blue_btn2">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/call"
+                    android:fontFamily="@font/muli_black"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
+
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/sendFax_btn"
+                android:layout_width="@dimen/_85sdp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:background="@drawable/blue_btn2"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Fax"
+                    android:fontFamily="@font/muli_black"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/Portal"
+                android:layout_width="@dimen/_85sdp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@drawable/blue_btn2">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Portal"
+                    android:fontFamily="@font/muli_black"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

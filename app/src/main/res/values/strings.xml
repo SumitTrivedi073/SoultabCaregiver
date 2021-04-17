@@ -1,0 +1,207 @@
+<resources>
+    <string name="app_name">Soultab Caregiver</string>
+    <string name="google_maps_key">AIzaSyAOlMGm-WyTmatPRhh7CkqVSzGIziU4evU</string>
+    <string name="net_connection">Please check your internet connection</string>
+    <string name="sinch_applicationKey">bbc9fe1c-0017-4f8e-8228-3d14cd29e83d</string>
+    <string name="sinch_application_secreat">6Q3oGPpRb0eCk5j3aX+60Q==</string>
+    <string name="sinch_enviorement_host">clientapi.sinch.com</string>
+    <string name="sinch_user_id">160636</string>
+
+    <!--Login Activity-->
+    <string name="login_hint_email">Enter your user id or email</string>
+    <string name="hint_pass">Enter your password</string>
+    <string name="login">Login</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="forgot_pass">Forgot Password ?</string>
+    <string name="valid_email">Please enter your email</string>
+    <string name="valid_pass">Please enter your password</string>
+    <string name="password_not_valid">Login id/password is wrong…</string>
+    <string name="password_notvalid">Must contain minimum 8 character</string>
+    <string name="Loading">Loading…</string>
+
+    <!--Daily Routine-->
+    <string name="daily_routine">Daily Routine</string>
+    <string name="Meal">Meal</string>
+    <string name="Snack">Snack</string>
+    <string name="Medicine">Medicine</string>
+    <string name="Walk">Walk</string>
+    <string name="Yoga">Yoga</string>
+    <string name="Meditation">Meditation</string>
+    <string name="Nap">Nap</string>
+    <string name="submit">Submit</string>
+    <string name="morning">Morning</string>
+    <string name="afternoon">Noon</string>
+    <string name="evening">Evening</string>
+    <string name="dinner">Dinner</string>
+    <string name="bedtime">Bedtime</string>
+
+
+    <!--Doctor Appointment-->
+    <string name="doctor_appointment">Doctor Appointments</string>
+    <string name="select_doctor_appoint">Please select appointment</string>
+    <string name="delete_Appointment">Delete Appointment</string>
+    <string name="are_you_sure_you_want_to_delete_appointment">Are you sure you want to delete appointment?</string>
+    <string name="no_text">No</string>
+    <string name="yes_text">Yes</string>
+    <string name="search">Search</string>
+    <string name="no_data_found">No Data Found</string>
+    <string name="Update">Update</string>
+    <string name="doctor_list">Doctor List</string>
+    <string name="doctor_appointment_time">Please select doctor appointment time</string>
+    <string name="doctor_appointment_date">Please select doctor appointment date</string>
+    <string name="connecting">connecting…</string>
+    <string name="ringing">Ringing</string>
+    <string name="connected">Connected</string>
+    <string name="are_you_sure_cancel_appointment">Are you sure want to cancel appointment?</string>
+    <string name="cancel_appointment_successfully">Appointmnet cancel successfully</string>
+    <string name="select_country_code">Please select country code</string>
+    <string name="mobile_unavailable">Mobile number not available</string>
+    <string name="Fax_unavailable">Fax number not available</string>
+    <string name="Portal_unavailable">Portal link not available</string>
+    <string name="doctor_specility">Select Doctor Specility</string>
+    <string name="cancel_appointment">Cancel appointment</string>
+    <string name="doctor_name">Doctor Name</string>
+    <string name="enter_doctor_name">Please enter doctor name</string>
+    <string name="doctor_address">Doctor Address</string>
+    <string name="select_date">Select Date </string>
+    <string name="select_time">Select Time </string>
+    <string name="address">Enter Doctor Address</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="enter_mobile_number">Enter Mobile number</string>
+    <string name="enter_valid_mobile_number">Enter Valid Mobile number</string>
+    <string name="hint_email">Enter your email</string>
+    <string name="email">Email</string>
+    <string name="call">Call</string>
+    <string name="Fax">Fax</string>
+    <string name="enter_Fax">Enter your fax number</string>
+    <string name="Portal">Portal</string>
+    <string name="enter_Portal">Enter your Portal</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="appointment_time">Appointment Time</string>
+    <string name="Call_caregiver">Would you like  \n to call </string>
+    <string name="add_doctor">Add Doctor</string>
+    <string name="schedule">Schedule</string>
+    <string name="make_appoi">Make Appointment</string>
+    <string name="update_appoi">Update Appointment</string>
+    <string name="enter_valid_Portal">Enter your valid Portal</string>
+    <string name="doctor_option">Do you want to perform any options?</string>
+    <string name="Call_genie">Would you like  \n to call assistant?</string>
+    <string name="appointment">Appointment</string>
+    <string name="no_activity_scheduled">No activities scheduled at</string>
+
+
+    <!--Location Permission-->
+    <string name="Location_permission">Location access required</string>
+    <string name="Location_permission_txt">Please give Soultab Caregiver access to this  device\'s location to get your current location</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="setting">Setting</string>
+
+    <!--Main Activity-->
+    <string name="logout">Logout</string>
+    <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="today">Today</string>
+    <string name="lastweek">Last week</string>
+    <string name="lastmonth">Last Month</string>
+
+    <string name="name">Name</string>
+    <string name="missed_event">Missed Event</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="alert">Alert</string>
+    <string name="calender">Calender</string>
+     <string name="good_morning">Good Morning</string>
+    <string name="good_afternoon">Good Afternoon</string>
+    <string name="good_evening">Good Evening</string>
+    <string name="good_night">Good Night</string>
+    <string name="progress">Progress</string>
+    <string name="compliance">Compliance</string>
+    <string name="user_activity">User Activity</string>
+
+    <!--Act Calender-->
+    <string name="all_activities">All Activities</string>
+
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="delete_Reminder">Delete Reminder</string>
+    <string name="are_you_sure_you_want_to_delete_reminder">Are you sure you want to delete reminder?</string>
+    <string name="OK">Ok</string>
+    <string name="Alert_Send">Alert has been \nsent successfully</string>
+    <string name="reminder_delete_successfully">Reminder deleted successfully</string>
+    <string name="clock">clock</string>
+    <string name="proceed_with_reminder">Proceed with reminder</string>
+    <string name="_3_hours_prior_to_actual_time">3 hours prior to actual time</string>
+    <string name="reschedule_appoi">Reschedule Appointment</string>
+    <string name="Every_Day">Every Day</string>
+    <string name="Once">Once</string>
+    <string name="Every_Week">Every Week</string>
+    <string name="Every_Year">Every Year</string>
+    <string name="delete">Delete</string>
+
+    <!--add reminder-->
+    <string name="update_personal_reminder">Update Personal Reminder</string>
+    <string name="add_personal_reminder">Add Personal Reminder</string>
+    <string name="update_reminder_successfully">Reminder updated successfully</string>
+    <string name="hint_reminder_title">Enter your reminder title</string>
+    <string name="reminder_title">Reminder Title</string>
+    <string name="txt_when">When Date</string>
+    <string name="txt_when_time">When Time</string>
+    <string name="txt_reminder">Reminder Before</string>
+    <string name="txt_reminder1">Please select reminder before value</string>
+    <string name="select_reminder">Please select reminder</string>
+    <string name="txt_repeat">Repeat</string>
+    <string name="txt_snooze">Snooze</string>
+    <string name="add_remind">Add Reminder</string>
+    <string name="update_remind">Update Reminder</string>
+    <string name="reminders">Reminders</string>
+    <string name="please_select_one_option">Please select one option</string>
+    <string name="brforetheevent">brforetheevent</string>
+    <string name="repeat_reminders">Repeat Reminders</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="Interval">Interval</string>
+    <string name="five_minute">5 minute</string>
+    <string name="ten_minute">10 minute</string>
+    <string name="fifteen_minute">15 minute</string>
+    <string name="thirty_minute">30 minute</string>
+    <string name="minute">minute</string>
+    <string name="three_times">3 times</string>
+    <string name="five_times">5 times</string>
+    <string name="ten_times">10 times</string>
+    <string name="times">times</string>
+    <string name="On">On</string>
+    <string name="Off">Off</string>
+    <string name="Snooze">Snooze</string>
+    <string name="Done">Done</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="no_reminder">No Reminder</string>
+
+    <integer-array name="beforTime_value_reminder">
+        <item>0</item>
+        <item>5</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>240</item>
+    </integer-array>
+
+    <string-array name="beforTime_reminder">
+        <item>No reminder</item>
+        <item>5 min before</item>
+        <item>15 min before</item>
+        <item>30 min before</item>
+        <item>1 hour before</item>
+        <item>4 hours before</item>
+    </string-array>
+
+    <string-array name="repeat_reminder">
+        <item>Once</item>
+        <item>Every Day</item>
+        <item>Every Week</item>
+        <item>Every Year</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

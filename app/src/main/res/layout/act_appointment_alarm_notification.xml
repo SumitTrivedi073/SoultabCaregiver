@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/alarm_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_5sdp"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="@dimen/_14sdp"
+            android:layout_height="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:src="@drawable/alarm_clock"
+            android:layout_marginRight="@dimen/_5sdp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/muli_bold"
+            android:text="@string/clock"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_11ssp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/muli_regular"
+            android:gravity="center"
+            android:text="Alarm"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_25ssp" />
+
+        <TextView
+            android:id="@+id/alarm_title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/muli_regular"
+            android:gravity="center"
+            android:text="Dr. Khushboo jain"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_25ssp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/alarm_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli_regular"
+                android:text="10:30 AM"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_35ssp" />
+
+            <TextView
+                android:id="@+id/alarm_date_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:fontFamily="@font/muli_bold"
+                android:text="wed, jan 12"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                android:layout_marginLeft="@dimen/_5sdp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/_14sdp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:src="@drawable/ic_location_on_black_24dp"
+                android:layout_marginRight="@dimen/_5sdp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/alarm_description_text"
+                android:layout_gravity="center"
+                android:fontFamily="@font/muli_bold"
+                android:gravity="center"
+                android:text="Lorem ipsum is placeholder text commonly used in the graphic"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11ssp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:padding="@dimen/_10sdp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/_5ssp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@drawable/alarm_green_circle"
+                android:fontFamily="@font/muli_regular"
+                android:gravity="center"
+                android:onClick="onDismissClick"
+                android:padding="@dimen/_10sdp"
+                android:text="@string/proceed_with_reminder"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:layout_marginRight="@dimen/_5sdp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@drawable/alarm_yellow_circle"
+                android:fontFamily="@font/muli_regular"
+                android:gravity="center"
+                android:onClick="onRepeatReminderClick"
+                android:padding="@dimen/_10sdp"
+                android:text="@string/_3_hours_prior_to_actual_time"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:layout_marginLeft="@dimen/_5sdp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@drawable/alarm_blue_circle"
+                android:fontFamily="@font/muli_regular"
+                android:gravity="center"
+                android:onClick="onReScheduleClick"
+                android:padding="@dimen/_10sdp"
+                android:text="@string/reschedule_appoi"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:layout_marginRight="@dimen/_5sdp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@drawable/alarm_red_circle"
+                android:fontFamily="@font/muli_regular"
+                android:gravity="center"
+                android:onClick="onDismissClick"
+                android:padding="@dimen/_10sdp"
+                android:text="@string/cancel_appointment"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:layout_marginLeft="@dimen/_5sdp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+
+

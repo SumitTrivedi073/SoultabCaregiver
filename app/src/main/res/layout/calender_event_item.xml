@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_main"
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:layout_height="@dimen/_50sdp"
+    android:background="@drawable/popup_relative">
+
+    <RelativeLayout
+        android:id="@+id/day_txt_realtive"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="match_parent"
+        android:background="@drawable/left_bottom_corner_orange">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/day_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/white"
+                android:text="30\n March"
+                android:fontFamily="@font/muli_bold"
+                android:gravity="center"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/event_linear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:layout_toEndOf="@+id/day_txt_realtive"
+        android:layout_toRightOf="@+id/day_txt_realtive"
+        android:layout_toStartOf="@+id/delete_Reminder"
+        android:layout_toLeftOf="@+id/delete_Reminder">
+
+        <TextView
+            android:id="@+id/Event_Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_14sdp"
+            android:textColor="@color/blackish"
+            android:text="My First Task"
+            android:fontFamily="@font/muli_bold"
+            android:gravity="center|start"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="@dimen/_5sdp"/>
+
+        <TextView
+            android:id="@+id/Event_Date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/blackish"
+            android:text="Tue,30 march 2021"
+            android:fontFamily="@font/muli_semibolditalic"
+            android:gravity="center|start"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="@dimen/_5sdp"/>
+
+    </LinearLayout>
+
+       <RelativeLayout
+           android:id="@+id/delete_Reminder"
+           android:layout_width="@dimen/_50sdp"
+           android:layout_height="match_parent"
+           android:layout_alignParentEnd="true"
+           android:layout_alignParentRight="true">
+
+           <ImageView
+               android:layout_width="@dimen/_20sdp"
+               android:layout_height="@dimen/_20sdp"
+               android:layout_centerInParent="true"
+               android:src="@drawable/delete_reminder_icon"
+               android:tint="#FC5A41"/>
+
+       </RelativeLayout>
+
+
+
+
+
+</RelativeLayout>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#010204"
+    android:orientation="vertical"
+    android:weightSum="5"
+    tools:context=".sinch_calling.IncomingCallScreenActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/remoteUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:fontFamily="@font/muli_black"
+            android:text="Sample user"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp"
+            android:layout_marginLeft="@dimen/_10sdp" />
+
+        <TextView
+            android:id="@+id/callState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/remoteUser"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:fontFamily="@font/muli_black"
+            android:text="Incoming call"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_15sdp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/_20sdp" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:contentDescription="Call background"
+        android:padding="0dip">
+
+    </ImageView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/answerButton"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/pick_call" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/declineButton"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_toEndOf="@+id/answerButton"
+            android:src="@drawable/call_hangup"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_toRightOf="@+id/answerButton" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

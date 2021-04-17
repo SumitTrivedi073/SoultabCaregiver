@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.soultabcaregiver">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application
+        android:name=".utils.AppController"
+        android:allowBackup="false"
+        android:icon="@drawable/main_logo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/main_logo"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.MainScreen.MainActivity" />
+        <activity android:name=".activity.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.docter.AddDoctorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.docter.DoctorCategoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.docter.DoctorListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.docter.DocorDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.docter.ActAllDoctorAppointment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.docter.UpdateDoctorAppointmentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.reminder.AddReminderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.reminder.AddSnoozeTime"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".reminder_ring_class.ActAlarmNotification"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".reminder_ring_class.ActAppoinmentAlarmNotification"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".sinch_calling.IncomingCallScreenActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sinch_calling.CallScreenActivity"
+            android:keepScreenOn="true"
+            android:screenOrientation="fullSensor" />
+
+        <service android:name=".sinch_calling.SinchService" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+
+        <receiver
+            android:name=".reminder_ring_class.ReminderBroadcastReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="alarm" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

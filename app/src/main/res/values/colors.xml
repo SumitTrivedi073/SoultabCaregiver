@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#147AD6</color>
+    <color name="colorPrimaryDark">#147AD6</color>
+    <color name="colorAccent">#147AD6</color>
+    <color name="themecolor">#147AD6</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_white">#F3F3F3</color>
+    <color name="black">#000000</color>
+    <color name="blackish">#0A2B3C</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_black">#99000000</color>
+    <color name="gray_color">#959595</color>
+    <color name="light_grey">#EFEFEF</color>
+    <color name="grayish">#656E86</color>
+    <color name="red">#FF4747</color>
+    <color name="green">#81c639</color>
+    <color name="muzli_color">#00A5F2</color>
+    <color name="color_dcdcdc">#dcdcdc</color>
+    <color name="slider_inactive">#50006599</color>
+    <color name="orange_color">#FF7F2D</color>
+    <color name="tiber_color">#0A2B3C</color>
+
+
+</resources>

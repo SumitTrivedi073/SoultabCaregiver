@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#F0F0F0"
+    tools:context=".activity.docter.DoctorListActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_80sdp"
+            android:background="@color/themecolor">
+
+            <TextView
+                android:id="@+id/doctorListTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/doctor_list"
+                android:layout_centerHorizontal="true"
+                android:textColor="#fff"
+                android:textSize="@dimen/_16sdp"
+                android:fontFamily="@font/muli_bold"
+                android:layout_marginTop="@dimen/_10sdp"
+
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:background="@drawable/theme_border"
+                android:layout_below="@+id/doctorListTxt">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/search_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:inputType="text"
+                    app:queryHint="@string/search"
+                    app:defaultQueryHint="@string/search"
+                    android:backgroundTint="@color/themecolor"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusableInTouchMode="true">
+
+            <TextView
+                android:id="@+id/tv_no_data_doc_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/muli_black"
+                android:textStyle="normal"
+                android:text="No results found"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
+
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nested_scrollview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_doc"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:fastScrollEnabled="true"
+                    android:nestedScrollingEnabled="true" />
+            </androidx.core.widget.NestedScrollView>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/lyBack_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:src="@drawable/close"
+        app:backgroundTint="@color/orange_color"
+app:tint="@android:color/white"
+        app:elevation="@dimen/_5sdp"
+        app:fabSize="normal"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/_10sdp" />
+</RelativeLayout>

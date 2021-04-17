@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/_40sdp"
+    android:background="@color/light_white"
+    tools:context=".activity.daily_routine.fragment.DailyRoutineFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/user_name_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:fontFamily="@font/muli_extrabold"
+            android:gravity="center"
+            android:text="@string/daily_routine"
+            android:textColor="@color/blackish"
+            android:textSize="@dimen/_16sdp" />
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/compliance_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_bg"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:background="@drawable/left_right_corner_blakish"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:fontFamily="@font/muli_extrabold"
+                                android:text="@string/morning"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_14sdp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Morning_meal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meal"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Morning_Meditation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Morning_snak"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Snack"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Morning_Yoga"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Yoga"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Morning_Medicine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Morning_Nap"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Nap"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Morning_Walk"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Walk"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_bg"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:background="@drawable/left_right_corner_blakish"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:fontFamily="@font/muli_extrabold"
+                                android:text="@string/afternoon"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_14sdp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Noon_meal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meal"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Noon_Meditation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Noon_snak"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Snack"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Noon_Yoga"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Yoga"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Noon_Medicine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Noon_Nap"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Nap"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Noon_Walk"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Walk"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_bg"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:background="@drawable/left_right_corner_blakish"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:fontFamily="@font/muli_extrabold"
+                                android:text="@string/evening"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_14sdp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Evening_meal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meal"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Evening_Meditation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Evening_snak"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Snack"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Evening_Yoga"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Yoga"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Evening_Medicine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Evening_Nap"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Nap"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Evening_Walk"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Walk"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_bg"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:background="@drawable/left_right_corner_blakish"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:fontFamily="@font/muli_extrabold"
+                                android:text="@string/dinner"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_14sdp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Dinner_meal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meal"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Dinner_Meditation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Dinner_snak"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Snack"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Dinner_Yoga"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Yoga"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Dinner_Medicine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/Dinner_Nap"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Nap"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/Dinner_Walk"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Walk"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_bg"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_30sdp"
+                            android:background="@drawable/left_right_corner_blakish"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:fontFamily="@font/muli_extrabold"
+                                android:text="@string/bedtime"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_14sdp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/BedTime_meal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meal"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/BedTime_Meditation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/BedTime_snak"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Snack"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/BedTime_Yoga"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Yoga"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/BedTime_Medicine"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Meditation"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                            <CheckBox
+                                android:id="@+id/BedTime_Nap"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Nap"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:weightSum="2">
+
+                            <CheckBox
+                                android:id="@+id/BedTime_Walk"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/muli_regular"
+                                android:text="@string/Walk"
+                                android:textSize="@dimen/_12sdp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/Submit_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_16sdp"
+        android:src="@drawable/ic_done_black_24dp"
+        app:backgroundTint="@color/orange_color"
+        app:elevation="@dimen/_5sdp"
+        app:fabSize="auto"
+        app:pressedTranslationZ="@dimen/_5sdp"
+        app:tint="@android:color/white" />
+
+</RelativeLayout>

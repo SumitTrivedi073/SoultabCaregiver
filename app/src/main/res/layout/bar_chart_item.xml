@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/tiber_color">
+
+     <TextView
+         android:id="@+id/bar_title"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textColor="@color/white"
+         android:textSize="@dimen/_14sdp"
+         android:fontFamily="@font/muli_bold"
+         android:text="test"
+         android:layout_marginTop="@dimen/_5sdp"
+         android:layout_marginStart="@dimen/_5sdp"
+         android:layout_marginLeft="@dimen/_5sdp"/>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/Continues_Slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:valueFrom="0.0"
+        android:valueTo="100.0"
+        android:value="20.0"
+        app:labelBehavior="gone"
+        app:haloRadius="@dimen/_5sdp"
+        app:trackHeight="@dimen/_8sdp"
+        android:enabled="false"
+        app:haloColor="@color/themecolor"
+        app:thumbColor="@color/themecolor"
+        app:trackColorActive="@color/themecolor"
+        app:trackColorInactive="@color/slider_inactive"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/gray_color"/>
+
+</LinearLayout>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_40sdp"
+        android:background="@drawable/popup_relative"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/close_window"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+
+            <ImageView
+                android:layout_width="@dimen/_12sdp"
+                android:layout_height="@dimen/_12sdp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/close"
+                android:tint="@color/black"/>
+
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli_bold"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="@string/Call_genie"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_img"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:src="@drawable/main_logo" />
+
+
+            <TextView
+                android:id="@+id/callState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli_regular"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_10sdp" />
+
+
+            <LinearLayout
+                android:id="@+id/main_call_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:id="@+id/btn_call"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/_2sdp"
+                        android:background="@drawable/green_round_bg">
+
+                        <ImageView
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/accept_call"
+                            app:tint="@android:color/white" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/decline_call"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/_2sdp"
+                        android:background="@drawable/red_round_bg">
+
+                        <ImageView
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/decline_call"
+                            app:tint="@android:color/white" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/call_end_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/_2sdp"
+                        android:background="@drawable/red_round_bg">
+
+                        <ImageView
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/decline_call"
+                            app:tint="@android:color/white" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

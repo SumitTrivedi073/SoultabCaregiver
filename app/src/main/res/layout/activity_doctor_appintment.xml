@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    tools:context=".activity.docter.ActAllDoctorAppointment">
+
+    <LinearLayout
+        android:id="@+id/rl_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_85sdp"
+        android:orientation="vertical"
+        android:background="@color/themecolor">
+
+        <TextView
+            android:id="@+id/tv_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/muli_black"
+            android:gravity="center"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/doctor_appointment"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_15ssp" />
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            android:background="@drawable/theme_border"
+            android:layout_below="@+id/doctorListTxt">
+
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_35sdp"
+                android:inputType="text"
+                app:queryHint="@string/search"
+                app:defaultQueryHint="@string/search"
+                android:backgroundTint="@color/themecolor"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_top"
+        android:background="@color/white">
+        <RelativeLayout
+            android:id="@+id/rl_select_remove"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp">
+
+            <ImageView
+                android:id="@+id/iv_select"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:paddingStart="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_10sdp"
+                android:src="@drawable/uncheck"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_10sdp" />
+
+
+            <ImageView
+                android:id="@+id/iv_remove"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/_7sdp"
+                android:src="@drawable/delete_reminder_icon"
+                android:layout_alignParentRight="true" />
+
+            <View
+                android:id="@+id/vw_line"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/gray_color" />
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ly_bottom"
+            android:layout_below="@+id/rl_select_remove"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_reminder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                />
+
+
+            <TextView
+                android:id="@+id/tv_no_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/black"
+                android:text="@string/no_data_found"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:padding="@dimen/_5sdp"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="normal"
+                android:visibility="gone" />
+
+
+        </RelativeLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/lyBack_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/close"
+            android:layout_marginBottom="@dimen/_50sdp"
+            app:backgroundTint="@color/orange_color"
+app:tint="@android:color/white"
+            app:elevation="@dimen/_5sdp"
+            app:fabSize="normal"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+</RelativeLayout>

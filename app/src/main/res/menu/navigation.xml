@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/dashboard"
+        android:title="@string/dashboard"
+        android:enabled="true"/>
+
+
+    <item
+        android:id="@+id/navigation_appointment"
+        android:icon="@drawable/appointment"
+        android:title="@string/appointment"
+
+        android:enabled="true"/>
+
+
+    <item
+        android:id="@+id/navigation_dailyroutine"
+        android:icon="@drawable/daily_routine"
+        android:title="@string/daily_routine"
+
+        android:enabled="true"/>
+
+
+    <item
+        android:id="@+id/navigation_alert"
+        android:icon="@drawable/alert"
+        android:title="@string/alert"
+
+        android:enabled="true"/>
+
+
+    <item
+        android:id="@+id/navigation_calender"
+        android:icon="@drawable/calendar_bottom"
+        android:title="@string/calender"
+
+        android:enabled="true"/>
+
+
+
+
+</menu>

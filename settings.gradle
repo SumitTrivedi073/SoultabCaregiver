@@ -1,0 +1,2 @@
+rootProject.name='Soultab Caregiver'
+include ':app',':countrypicker'

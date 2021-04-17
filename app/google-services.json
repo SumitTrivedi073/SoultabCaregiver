@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "90774745825",
+    "project_id": "radiant-striker-310009",
+    "storage_bucket": "radiant-striker-310009.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90774745825:android:6388d746ea10ce62cafda0",
+        "android_client_info": {
+          "package_name": "com.soultabcaregiver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90774745825-sl0legr66tbv6jfg4qrhit4kv0ss600g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.soultabcaregiver",
+            "certificate_hash": "c853dda74189819e329db80fcf47ffce4320667f"
+          }
+        },
+        {
+          "client_id": "90774745825-mj0sej098kfg1b55bs9q9g4e27f2iua8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRAHPSOmHUYsQdZGCJJGYInzK-tSa3mYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90774745825-mj0sej098kfg1b55bs9q9g4e27f2iua8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

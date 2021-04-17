@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+
+
+        <LinearLayout
+            android:id="@+id/ly_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/themecolor"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/muli_regular"
+                    android:padding="@dimen/_5sdp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_16ssp"
+                    android:text="@string/Snooze"
+                    android:orientation="vertical"/>
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:orientation="horizontal"
+                android:background="@drawable/white_bg">
+
+
+                <TextView
+                    android:id="@+id/Snooze_on_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:fontFamily="@font/muli_regular"
+                    android:layout_centerVertical="true"
+                    android:text="@string/On"
+                    android:textSize="@dimen/_14ssp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:textColor="@color/black"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_10sdp" />
+
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/Snooze_on"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:layout_alignParentRight="true" />
+
+
+
+            </RelativeLayout>
+
+
+
+
+        </LinearLayout>
+
+
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ly_title"
+            android:background="#474747"
+            android:layout_above="@+id/btn_submit_snooze">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:fontFamily="@font/muli_regular"
+                            android:text="@string/Interval"
+                            android:textSize="@dimen/_16ssp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:textColor="@color/black"
+                            android:layout_marginRight="@dimen/_5sdp"
+                            android:layout_marginLeft="@dimen/_10sdp" />
+
+
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardUseCompatPadding="true"
+
+                            android:elevation="@dimen/_7sdp"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:background="@color/white">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+
+                                <RelativeLayout
+                                    android:id="@+id/five_minute"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp">
+
+                                    <RadioButton
+                                        android:id="@+id/five_minute_rb"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="start"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:clickable="false"
+                                        android:layoutDirection="ltr"
+                                        android:text="@string/five_minute"
+                                        android:textAlignment="textStart"
+                                        android:textColor="@color/black"
+                                        android:theme="@style/RadioButtonStyle"
+
+                                        android:layout_marginLeft="@dimen/_10sdp" />
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/user_detail_relative"
+                                        android:layout_alignParentBottom="true"
+                                        android:background="@color/gray_color"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginRight="@dimen/_10sdp"/>
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:id="@+id/ten_minute"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp">
+
+                                    <RadioButton
+                                        android:id="@+id/ten_minute_rb"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:layoutDirection="ltr"
+                                        android:textAlignment="textStart"
+                                        android:layout_gravity="start"
+                                        android:text="@string/ten_minute"
+                                        android:clickable="false"
+                                        android:theme="@style/RadioButtonStyle"
+                                        android:textColor="@color/black"
+
+                                        />
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/user_detail_relative"
+                                        android:layout_alignParentBottom="true"
+                                        android:background="@color/gray_color"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginRight="@dimen/_10sdp"/>
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:id="@+id/fifteen_minute"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp">
+
+                                    <RadioButton
+                                        android:id="@+id/fifteen_minute_rb"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:layoutDirection="ltr"
+                                        android:textAlignment="textStart"
+                                        android:layout_gravity="start"
+                                        android:text="@string/fifteen_minute"
+                                        android:clickable="false"
+                                        android:theme="@style/RadioButtonStyle"
+                                        android:textColor="@color/black"
+                                        />
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/user_detail_relative"
+                                        android:layout_alignParentBottom="true"
+                                        android:background="@color/gray_color"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginRight="@dimen/_10sdp"/>
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:id="@+id/therty_minute"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp">
+
+                                    <RadioButton
+                                        android:id="@+id/therty_minute_rb"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:layoutDirection="ltr"
+                                        android:textAlignment="textStart"
+                                        android:layout_gravity="start"
+                                        android:text="@string/thirty_minute"
+                                        android:clickable="false"
+                                        android:theme="@style/RadioButtonStyle"
+                                        android:textColor="@color/black"
+                                        android:layout_marginLeft="@dimen/_10sdp" />
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+
+
+                        </androidx.cardview.widget.CardView>
+
+
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:fontFamily="@font/muli_regular"
+                            android:text="@string/txt_repeat"
+                            android:textSize="@dimen/_16ssp"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:textColor="@color/black"
+                            android:layout_marginRight="@dimen/_5sdp"
+                            android:layout_marginLeft="@dimen/_10sdp" />
+
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardUseCompatPadding="true"
+                            android:elevation="@dimen/_7sdp"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:background="@color/white">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+
+                                <RelativeLayout
+                                    android:id="@+id/three_times"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp">
+
+                                    <RadioButton
+                                        android:id="@+id/three_times_rb"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:layoutDirection="ltr"
+                                        android:textAlignment="textStart"
+                                        android:layout_gravity="start"
+                                        android:text="@string/three_times"
+                                        android:clickable="false"
+                                        android:theme="@style/RadioButtonStyle"
+                                        android:textColor="@color/black"
+                                        android:layout_marginLeft="@dimen/_10sdp" />
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/user_detail_relative"
+                                        android:layout_alignParentBottom="true"
+                                        android:background="@color/gray_color"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginRight="@dimen/_10sdp"/>
+                                </RelativeLayout>
+
+
+                                <RelativeLayout
+                                    android:id="@+id/five_times"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp">
+
+                                    <RadioButton
+                                        android:id="@+id/five_times_rb"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:layoutDirection="ltr"
+                                        android:textAlignment="textStart"
+                                        android:layout_gravity="start"
+                                        android:text="@string/five_times"
+                                        android:clickable="false"
+                                        android:theme="@style/RadioButtonStyle"
+                                        android:textColor="@color/black"
+                                        android:layout_marginLeft="@dimen/_10sdp" />
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_1sdp"
+                                        android:layout_below="@+id/user_detail_relative"
+                                        android:layout_alignParentBottom="true"
+                                        android:background="@color/gray_color"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginRight="@dimen/_10sdp"/>
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:id="@+id/Continues_relative"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_30sdp">
+
+                                    <RadioButton
+                                        android:id="@+id/Continuese_rb"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginStart="@dimen/_10sdp"
+                                        android:layoutDirection="ltr"
+                                        android:textAlignment="textStart"
+                                        android:layout_gravity="start"
+                                        android:text="@string/ten_times"
+                                        android:clickable="false"
+                                        android:theme="@style/RadioButtonStyle"
+                                        android:textColor="@color/black"
+                                        android:layout_marginLeft="@dimen/_10sdp" />
+
+                                </RelativeLayout>
+
+
+
+
+
+
+
+
+                            </LinearLayout>
+
+
+
+                        </androidx.cardview.widget.CardView>
+
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </ScrollView>
+        </RelativeLayout>
+
+
+
+
+
+        <RelativeLayout
+            android:id="@+id/btn_submit_snooze"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:background="@color/themecolor"
+            android:gravity="center"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_40sdp"
+                android:fontFamily="@font/muli_bold"
+                android:gravity="center"
+                android:text="@string/Done"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/lyBack_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:src="@drawable/close"
+        app:backgroundTint="@color/orange_color"
+app:tint="@android:color/white"
+        app:elevation="@dimen/_5sdp"
+        app:fabSize="normal"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/_10sdp" />
+
+
+</RelativeLayout>
