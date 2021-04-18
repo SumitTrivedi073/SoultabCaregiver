@@ -90,6 +90,71 @@
             android:textSize="@dimen/_12sdp"
             android:fontFamily="@font/muli_bolditalic" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:weightSum="2">
+
+            <CheckBox
+                android:id="@+id/weekly_Chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/muli_regular"
+                android:text="@string/week"
+                android:checked="true"
+                android:textSize="@dimen/_12sdp" />
+
+
+            <CheckBox
+                android:id="@+id/three_month_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/muli_regular"
+                android:text="@string/three_month"
+                android:textSize="@dimen/_12sdp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:weightSum="2">
+
+
+            <CheckBox
+                android:id="@+id/six_month_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/muli_regular"
+                android:text="@string/six_month"
+                android:layout_weight="1"
+                android:textSize="@dimen/_12sdp" />
+
+
+            <CheckBox
+                android:id="@+id/twelve_month_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/muli_regular"
+                android:text="@string/twelve_month"
+                android:textSize="@dimen/_12sdp" />
+
+
+        </LinearLayout>
+
+
         <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

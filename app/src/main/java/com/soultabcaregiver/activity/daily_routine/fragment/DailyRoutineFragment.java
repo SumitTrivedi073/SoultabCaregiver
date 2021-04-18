@@ -83,7 +83,6 @@ public class DailyRoutineFragment extends BaseFragment {
 
         calendar = Calendar.getInstance();
 
-
         init();
         StringValue();
         Listner();

@@ -108,13 +108,18 @@
     <string name="dashboard">Dashboard</string>
     <string name="alert">Alert</string>
     <string name="calender">Calender</string>
-     <string name="good_morning">Good Morning</string>
+    <string name="good_morning">Good Morning</string>
     <string name="good_afternoon">Good Afternoon</string>
     <string name="good_evening">Good Evening</string>
     <string name="good_night">Good Night</string>
     <string name="progress">Progress</string>
     <string name="compliance">Compliance</string>
     <string name="user_activity">User Activity</string>
+    <string name="week">Week</string>
+    <string name="three_month">3 Month</string>
+    <string name="six_month">6 Month</string>
+    <string name="twelve_month">12 Month</string>
+
 
     <!--Act Calender-->
     <string name="all_activities">All Activities</string>
