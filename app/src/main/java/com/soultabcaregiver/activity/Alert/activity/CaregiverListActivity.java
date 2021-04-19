@@ -67,7 +67,7 @@ public class CaregiverListActivity extends BaseActivity {
     private void GetCaregiverList() {
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
 
             Log.e(TAG, "CaregiverList API========>" + mainObject.toString());
         } catch (JSONException e) {

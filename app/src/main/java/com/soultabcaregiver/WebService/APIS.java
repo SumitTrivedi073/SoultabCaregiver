@@ -41,7 +41,7 @@ public class APIS {
     public static final String UPDATEREMINDERAPI = "Users/updatereminder";
     public static final String ADDREMINDERAPI = "Users/reminder_add";
     public static final String CaregiverListAPI = "Users/getCaregiverDetails";
-
+    public static final String QuickAlery = "Users/quik_alert";
 
 
 
