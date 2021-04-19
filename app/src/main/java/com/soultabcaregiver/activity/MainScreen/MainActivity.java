@@ -38,6 +38,7 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.Alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.Calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.LoginActivity;
 import com.soultabcaregiver.activity.MainScreen.fragment.DashBoardFragment;
@@ -115,6 +116,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                         break;
                     case R.id.navigation_alert:
+                        video_call.setVisibility(View.GONE);
+                        Utility.loadFragment(MainActivity.this, new AlertFragment(), false, null);
 
                         return true;
                     case R.id.navigation_calender:
@@ -128,7 +131,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         });
 
-        navigationView.setSelectedItemId(R.id.navigation_dashboard);
+        navigationView.setSelectedItemId(R.id.navigation_alert);
 
         video_call.setOnClickListener(new View.OnClickListener() {
             @Override

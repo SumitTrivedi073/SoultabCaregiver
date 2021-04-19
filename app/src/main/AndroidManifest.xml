@@ -19,6 +19,7 @@
         android:roundIcon="@drawable/main_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.Alert.activity.CaregiverListActivity"></activity>
         <activity android:name=".activity.MainScreen.MainActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
@@ -62,7 +63,6 @@
             android:name=".reminder_ring_class.ActAppoinmentAlarmNotification"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".sinch_calling.IncomingCallScreenActivity"
             android:noHistory="true"
@@ -81,7 +81,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-
         <receiver
             android:name=".reminder_ring_class.ReminderBroadcastReceiver"
             android:enabled="true">
@@ -93,7 +92,6 @@
                 <action android:name="alarm" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

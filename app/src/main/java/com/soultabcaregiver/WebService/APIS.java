@@ -31,12 +31,18 @@ public class APIS {
     public static final String DoctorSendFaxAPI = "Users_milan/sendFax";
     public static final String EVENTLIST = "Users/activity_details";
     public static final String LineChartAPI = "caregiver/lineChart";
+    public static final String AlertListAPI = "caregiver/get_alert_list";
+    public static final String DELETEREMINDERAPI = "Users/reminderdelete";
+
+
 
 
     ///////Need to develop for caregiver
-    public static final String DELETEREMINDERAPI = "Users/reminderdelete";
     public static final String UPDATEREMINDERAPI = "Users/updatereminder";
     public static final String ADDREMINDERAPI = "Users/reminder_add";
+    public static final String CaregiverListAPI = "Users/getCaregiverDetails";
+
+
 
 
     //User Detail
@@ -50,6 +56,7 @@ public class APIS {
 
     public static final String Caregiver_mobile = "mobile";
     public static final String profile_image = "profile_image";
+    public static final String CaregiverImageURL = "https://www.dev.mysoultab.com/uploads/profile_images/";
 
 
     //Key's

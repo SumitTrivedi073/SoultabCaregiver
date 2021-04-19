@@ -14,17 +14,13 @@
         android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_10sdp">
 
-        <TextView
-            android:id="@+id/tv_title_repeat"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:fontFamily="@font/muli_regular"
-            android:gravity="center_vertical"
-            android:text="@string/brforetheevent"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_12ssp" />
+        <ImageView
+            android:id="@+id/img_before_event"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_reminder_unselect" />
+
 
         <Switch
             android:id="@+id/tb_remind_noreminder"
@@ -33,12 +29,19 @@
             android:layout_gravity="center"
             android:clickable="false"/>
 
-        <ImageView
-            android:id="@+id/img_before_event"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:padding="@dimen/_5sdp"
-            android:src="@drawable/ic_reminder_unselect" />
+
+        <TextView
+            android:id="@+id/tv_title_repeat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:fontFamily="@font/muli_semibold"
+            android:gravity="center_vertical"
+            android:text="@string/brforetheevent"
+            android:textColor="@color/blackish"
+            android:textSize="@dimen/_14ssp" />
+
 
     </LinearLayout>
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/transparent">
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,18 +15,19 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/muli_semibold"
+            android:fontFamily="@font/muli_bold"
             android:gravity="center"
             android:padding="@dimen/_10sdp"
             android:text="@string/reminders"
             android:textColor="@color/black"
-            android:textSize="@dimen/_15ssp" />
+            android:textSize="@dimen/_14sdp" />
+
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:visibility="gone"
-            android:background="@color/color_dcdcdc" />
+            android:layout_height="0.5dp"
+            android:background="@color/gray_color" />
+
 
         <RelativeLayout
             android:visibility="gone"
@@ -39,68 +40,81 @@
                 android:id="@+id/tb_remind"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true" />
+                />
 
             <TextView
                 android:id="@+id/tv_rem_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@+id/tb_remind"
-                android:fontFamily="@font/muli_regular"
+                android:layout_toEndOf="@+id/tb_remind"
+                android:fontFamily="@font/muli_semibold"
                 android:gravity="center_vertical"
-                android:paddingLeft="@dimen/_5sdp"
-                android:paddingRight="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
                 android:text="@string/no_reminder"
-                android:textColor="@color/gray_color"
-                android:textSize="@dimen/_13ssp"
-                android:layout_toLeftOf="@+id/tb_remind" />
+                android:textColor="@color/blackish"
+                android:textSize="@dimen/_12sdp"
+                android:layout_toRightOf="@+id/tb_remind" />
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_1sdp"
-            android:background="@color/color_dcdcdc" />
+            android:layout_height="0.5dp"
+            android:background="@color/gray_color" />
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_repeat_reminder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:fastScrollEnabled="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
 
-        <TextView
-            android:id="@+id/tv_ok"
+            />
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:background="@color/themecolor"
-            android:fontFamily="@font/muli_black"
-            android:gravity="center"
-            android:text="@string/OK"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_16ssp"
-            android:textStyle="bold" />
+            android:layout_height="@dimen/_40sdp"
+            android:weightSum="2">
+
+
+
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:background="#EFEFEF"
+                android:text="@string/cancel_text"
+                android:textColor="@color/blackish"
+                android:textSize="@dimen/_14sdp" />
+
+            <TextView
+                android:id="@+id/ok"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/orange_color"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:text="@string/OK"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp" />
+
+
+        </LinearLayout>
+
     </LinearLayout>
 
 
-    <RelativeLayout
-        android:id="@+id/rl_cross"
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true">
-
-        <ImageView
-            android:layout_width="@dimen/_18sdp"
-            android:layout_height="@dimen/_18sdp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/close"
-            android:tint="@color/black"/>
-
-    </RelativeLayout>
 
 
 

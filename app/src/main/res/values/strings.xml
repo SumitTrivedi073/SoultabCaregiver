@@ -205,8 +205,10 @@
         <item>Every Year</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="hello_blank_fragment">hello_blank_fragment</string>
+    <!--Alert Fragment-->
+    <string name="myalert">My Alert</string>
+    <string name="select_caregiver_send_alert">Select your caregiver to send alert</string>
+    <string name="caregiver_list">Caregiver_list</string>
 
 </resources>

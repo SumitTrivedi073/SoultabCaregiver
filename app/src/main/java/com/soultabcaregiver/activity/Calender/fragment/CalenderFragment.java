@@ -234,7 +234,6 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void Listener() {
-        // customCalendarView.setOnDateChangeListener(this);
         daily.setOnClickListener(this);
         weekly.setOnClickListener(this);
         Monthly.setOnClickListener(this);

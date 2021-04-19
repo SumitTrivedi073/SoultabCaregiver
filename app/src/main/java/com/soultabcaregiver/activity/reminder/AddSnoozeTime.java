@@ -91,7 +91,6 @@ public class AddSnoozeTime extends AppCompatActivity {
 
         if (getIntent().getStringExtra("Snooze_times")!=null){
             String test = getIntent().getStringExtra("Snooze_times");
-            Log.e("test2",test);
             switch (test) {
                 case "3":
                     three_times_rb.setChecked(true);

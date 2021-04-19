@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_50sdp">
+
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         android:layout_marginStart="@dimen/_10sdp"
+         android:layout_marginLeft="@dimen/_10sdp">
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="vertical"
+             android:layout_marginTop="@dimen/_5sdp">
+
+             <de.hdodenhof.circleimageview.CircleImageView
+                 android:layout_width="@dimen/_10sdp"
+                 android:layout_height="@dimen/_10sdp"
+                 android:src="@color/muzli_color"/>
+             
+                <View
+                    android:id="@+id/view_line"
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/muzli_color"
+                    android:layout_gravity="center"/>
+
+         </LinearLayout>
+
+
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="vertical"
+             android:layout_marginStart="@dimen/_10sdp"
+             android:layout_marginLeft="@dimen/_10sdp">
+
+             <TextView
+                 android:id="@+id/message_title"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:textSize="@dimen/_12sdp"
+                 android:textColor="@color/blackish"
+                 android:singleLine="true"
+                 android:ellipsize="end"
+                 android:fontFamily="@font/montserrat_bold"/>
+
+             <TextView
+                 android:id="@+id/message_date"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:textSize="@dimen/_10sdp"
+                 android:textColor="@color/blackish"
+                 android:layout_marginTop="@dimen/_5sdp"
+                 android:fontFamily="@font/montserrat_mediumitalic"/>
+
+         </LinearLayout>
+
+         </LinearLayout>
+
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.soultabcaregiver.activity.reminder;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -31,7 +32,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sinch.gson.Gson;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
@@ -62,12 +62,11 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
 
     public static final int REQUEST_Snooze = 102;
     public static int Alarm_Count;
-    FloatingActionButton lyBack_card;
-    String TAG = "ActAddReminder";
+    String TAG = getClass().getSimpleName();
     EditText et_title;
     TextView tvWhenDate, tvWhenTime, tv_text, tv_snooze_txt;
-    TextView tvRepeat, tvBeforRemindTxt, tv_send_ack;
-    RelativeLayout btn_submit_reminder, tv_snooze_layout;
+    TextView tvRepeat, tvBeforRemindTxt, btn_submit_reminder;
+    RelativeLayout tv_snooze_layout,back_btn;
     int alarmHours = 0, alarmMin = 0;
     Calendar myCalendar;
     String sTitle = "", sWhenDate = "", sWhenTime = "", sReminder = "", sRepeat = "", value;
@@ -100,6 +99,49 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
 
     }
 
+    private void InitCompo() {
+        tvBeforRemindTxt = findViewById(R.id.tv_reminder_txt);
+        tvRepeat = findViewById(R.id.tv_repeat_txt);
+        et_title = findViewById(R.id.et_title);
+        tvWhenDate = findViewById(R.id.tv_when_date);
+        tvWhenTime = findViewById(R.id.tv_when_time);
+        tv_text = findViewById(R.id.tv_text);
+        tv_snooze_layout = findViewById(R.id.tv_snooze_layout);
+        snooze_on = findViewById(R.id.Snooze_on);
+        tv_snooze_txt = findViewById(R.id.tv_snooze_txt);
+        btn_submit_reminder = findViewById(R.id.btn_submit_reminder);
+        back_btn = findViewById(R.id.back_btn);
+
+        snooze_on.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = shp.edit();
+                if (isChecked) {
+                    editor.putString("Snooze_on", "true");
+
+
+                    editor.commit();
+
+                } else {
+                    editor.putString("Snooze_on", "false");
+
+                    editor.commit();
+                }
+
+            }
+        });
+    }
+
+    private void Listener() {
+        tvRepeat.setOnClickListener(this);
+        tvBeforRemindTxt.setOnClickListener(this);
+        btn_submit_reminder.setOnClickListener(this);
+        tvWhenDate.setOnClickListener(this);
+        tvWhenTime.setOnClickListener(this);
+        tv_snooze_layout.setOnClickListener(this);
+        back_btn.setOnClickListener(this);
+    }
+
     public void SetPreValue() {
         update_reminder = getIntent().getBooleanExtra(APIS.Update_reminder, false);
         reminderModel = (ReminderBean) getIntent().getSerializableExtra(APIS.ReminderModel);
@@ -107,7 +149,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
 
         if (!update_reminder) {
             tv_text.setText(getResources().getString(R.string.add_personal_reminder));
-            tv_send_ack.setText(getResources().getString(R.string.add_remind));
+//            btn_submit_reminder.setText(getResources().getString(R.string.add_remind));
 
 
             SharedPreferences.Editor editor = shp.edit();
@@ -126,7 +168,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         } else {
             SharedPreferences.Editor editor = shp.edit();
             tv_text.setText(getResources().getString(R.string.update_personal_reminder));
-            tv_send_ack.setText(getResources().getString(R.string.update_remind));
+            //          btn_submit_reminder.setText(getResources().getString(R.string.update_remind));
             String finalTime = reminderModel.getDate() + " " + reminderModel.getTime();
             try {
                 myCalendar.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(finalTime));
@@ -190,6 +232,237 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
 
     }
 
+    @Override
+    protected void onResume() {
+        shp = getSharedPreferences("TEXT", 0);
+        if (shp.getString("Snooze_on", "") != null) {
+
+
+            if (shp.getString("Snooze_on", "").equals("true")) {
+                snooze_on.setChecked(true);
+                tv_snooze_txt.setText(shp.getString("Snooze_minute", "") + " minute " + " , " + shp.getString("Snooze_times", "") + " times");
+            } else if (shp.getString("Snooze_on", "").equals("false")) {
+                snooze_on.setChecked(false);
+                tv_snooze_txt.setText(shp.getString("Snooze_minute", "") + " minute " + " , " + shp.getString("Snooze_times", "") + " times");
+
+            }
+        }
+
+        super.onResume();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.back_btn:
+                onBackPressed();
+                break;
+
+            case R.id.tv_when_date:
+                ChooseDate();
+                break;
+            case R.id.tv_when_time:
+                chooseTimePicker();
+                break;
+            case R.id.tv_reminder_txt:
+                DlgBeforRemind();
+                break;
+            case R.id.tv_repeat_txt:
+                DlgRepeatRemind();
+                break;
+            case R.id.tv_snooze_layout:
+                Intent i = new Intent(getApplicationContext(), AddSnoozeTime.class);
+                i.putExtra("Snooze_minute", shp.getString("Snooze_minute", ""));
+                i.putExtra("Snooze_times", shp.getString("Snooze_times", ""));
+                i.putExtra("Snooze_on", shp.getString("Snooze_on", ""));
+                startActivity(i);
+                break;
+            case R.id.btn_submit_reminder:
+                if (validFields()) {
+                    if (Utility.isNetworkConnected(AddReminderActivity.this)) {
+                        SetAlarmVal();
+                    } else {
+
+                        Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+
+                    }
+                }
+                break;
+        }
+    }
+
+
+    public boolean validFields() {
+        boolean check = true;
+        sTitle = et_title.getText().toString().trim();
+
+        sWhenTime = Utility.hh_mm_aa.format(myCalendar.getTime());
+
+        if (TextUtils.isEmpty(sTitle)) {
+            et_title.setError(getResources().getString(R.string.hint_reminder_title));
+            check = false;
+        } else if (TextUtils.isEmpty(sReminder)) {
+
+            Utility.ShowToast(mContext, getResources().getString(R.string.txt_reminder1));
+
+
+            check = false;
+        }
+        return check;
+    }
+
+    public void AddReminder() {
+        final String TAG = "addReminder";
+        JSONObject mainObject = new JSONObject();
+        String apiAccording = null;
+
+
+        try {
+            mainObject.put("device_id", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+            mainObject.put("device_type", "android");
+            mainObject.put("title", sTitle);
+
+            mainObject.put("date", sWhenDate);//2019-02-08
+            mainObject.put("time", sWhenTime.toUpperCase());//"1.20 AM"
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("reminder_before", String.valueOf(valBefore));
+
+
+            if (sRepeat.equals(getResources().getString(R.string.Once))) {
+                mainObject.put("repeat", "Once");
+
+            } else if (sRepeat.equals(getResources().getString(R.string.Every_Day))) {
+                mainObject.put("repeat", "Every Day");
+            } else if (sRepeat.equals(getResources().getString(R.string.Every_Week))) {
+                mainObject.put("repeat", "Every Week");
+            } else if (sRepeat.equals(getResources().getString(R.string.Every_Year))) {
+                mainObject.put("repeat", "Every Year");
+            }
+
+
+            if (shp.getString("Snooze_minute", "") != null) {
+                mainObject.put("after_time", shp.getString("Snooze_minute", ""));
+
+            }
+            if (shp.getString("Snooze_times", "") != null) {
+                mainObject.put("for_time", shp.getString("Snooze_times", ""));
+                Alarm_Count = Integer.parseInt(shp.getString("Snooze_times", ""));
+
+            }
+
+            if (shp.getString("Snooze_on", "") != null) {
+
+                if (shp.getString("Snooze_on", "").equals("true")) {
+                    mainObject.put("snooze", "true");
+                } else {
+                    mainObject.put("snooze", "false");
+                }
+            }
+
+            if (update_reminder) {
+                mainObject.put("reminder_id", reminderModel.getId());
+                apiAccording = APIS.UPDATEREMINDERAPI;
+            } else {
+                apiAccording = APIS.ADDREMINDERAPI;
+            }
+            Log.e("addReminder Enter data=", "=======> " + mainObject.toString() + "==========>" + apiAccording);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        showProgressDialog(getResources().getString(R.string.Loading));
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                APIS.BASEURL + apiAccording, mainObject,
+                response -> {
+                    try {
+                        Log.d(TAG, "addReminder response=" + response.toString());
+                        hideProgressDialog();
+                        CommonResponseModel commonResponseModel = new Gson().fromJson(response.toString(), CommonResponseModel.class);
+                        if (commonResponseModel.getStatus().equalsIgnoreCase("true")) {
+
+                            onBackPressed();
+                        }
+
+                        if (update_reminder) {
+
+                            Utility.ShowToast(mContext, getResources().getString(R.string.update_reminder_successfully));
+
+                        } else {
+                            Utility.ShowToast(mContext, commonResponseModel.getMessage());
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                hideProgressDialog();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                return params;
+            }
+
+        };
+// Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 8, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+    }
+
+
+    public void SetAlarmVal() {
+
+        AddReminder();
+
+    }
+
+
+    private void chooseTimePicker() {
+        try {
+            // Get Current Time
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this,  R.style.DialogTheme,
+                    new TimePickerDialog.OnTimeSetListener() {
+
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay,
+                                              int minute) {
+                            myCalendar.set(myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                                    myCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                            tvWhenTime.setText(Utility.hh_mm_aa.format(myCalendar.getTime()));
+                        }
+                    }, myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), false);
+            timePickerDialog.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void ChooseDate() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
+            myCalendar.set(year, month, dayOfMonth, myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE));
+            tvWhenDate.setText(Utility.EEE_dd_MMM_yyyy.format(myCalendar.getTime()));
+            sWhenDate = Utility.yyyy_MM_dd.format(myCalendar.getTime());
+        },
+                myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        datePickerDialog.show();
+
+
+    }
 
     public String parseDateToddMMyyyy(String time) {
         String inputPattern = "MM-dd-yyyy";
@@ -208,7 +481,6 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         }
         return str;
     }
-
 
     public String parseDateToddMMyyyy3(String time) {
         String inputPattern = "yyyy-MM-dd";
@@ -346,22 +618,15 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         dialog.setCancelable(true);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        TextView tvBeforRemindOk;
         Switch tbbeforeRemindTog;
-        RelativeLayout rlCloseBeforDilog;
+        TextView cancel,ok;
         RecyclerView rvbeforeReminder;
 
-        tvBeforRemindOk = dialog.findViewById(R.id.tv_ok);
-//        lyRemToggle = dialog.findViewById(R.id.ly_list_view);
+        ok = dialog.findViewById(R.id.ok);
+        cancel = dialog.findViewById(R.id.cancel);
         tbbeforeRemindTog = dialog.findViewById(R.id.tb_remind);
         tbbeforeRemindTog.setChecked(istbbeforeRemindTog);
-        rlCloseBeforDilog = dialog.findViewById(R.id.rl_cross);
-
         rvbeforeReminder = dialog.findViewById(R.id.rv_repeat_reminder);
-        rvbeforeReminder.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        rvbeforeReminder.addItemDecoration(itemDecoration);
         CustomPopupAdapter adapter = new CustomPopupAdapter(this, beforeTimeModelList, false);
         adapter.setBeforeTimeListener(beforeTimeModel -> {
             for (int i = 0; i < beforeTimeModelList.size(); i++) {
@@ -376,14 +641,14 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         rvbeforeReminder.setAdapter(adapter);
 
 
-        rlCloseBeforDilog.setOnClickListener(new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
 
-        tvBeforRemindOk.setOnClickListener(new View.OnClickListener() {
+        ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean isSelectOne = false;
@@ -415,16 +680,11 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         RecyclerView rvRepeatReminder;
-        RelativeLayout rlCloseRepeatDilog;
-        TextView tvRepeatRemindOk;
-        tvRepeatRemindOk = dialog.findViewById(R.id.tv_ok);
-        rlCloseRepeatDilog = dialog.findViewById(R.id.rl_cross);
+        TextView ok,cancel;
+        ok = dialog.findViewById(R.id.ok);
+        cancel = dialog.findViewById(R.id.cancel);
 
         rvRepeatReminder = dialog.findViewById(R.id.rv_repeat_repeat);
-        rvRepeatReminder.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        rvRepeatReminder.addItemDecoration(itemDecoration);
         CustomPopupAdapter adapter = new CustomPopupAdapter(this, repeatTimeModelList, true);
         adapter.setBeforeTimeListener(beforeTimeModel -> {
             for (int i = 0; i < repeatTimeModelList.size(); i++) {
@@ -438,9 +698,9 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         });
         rvRepeatReminder.setAdapter(adapter);
 
-        rlCloseRepeatDilog.setOnClickListener(v -> dialog.dismiss());
+        cancel.setOnClickListener(v -> dialog.dismiss());
 
-        tvRepeatRemindOk.setOnClickListener(v -> {
+        ok.setOnClickListener(v -> {
             for (int i = 0; i < repeatTimeModelList.size(); i++) {
                 if (repeatTimeModelList.get(i).isSelection()) {
                     sRepeat = repeatTimeModelList.get(i).getTimeName();
@@ -454,285 +714,8 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onResume() {
-        shp = getSharedPreferences("TEXT", 0);
-        if (shp.getString("Snooze_on", "") != null) {
-
-
-            if (shp.getString("Snooze_on", "").equals("true")) {
-                snooze_on.setChecked(true);
-                tv_snooze_txt.setText(shp.getString("Snooze_minute", "") + " minute " + " , " + shp.getString("Snooze_times", "") + " times");
-            } else if (shp.getString("Snooze_on", "").equals("false")) {
-                snooze_on.setChecked(false);
-                tv_snooze_txt.setText(shp.getString("Snooze_minute", "") + " minute " + " , " + shp.getString("Snooze_times", "") + " times");
-
-            }
-        }
-
-        super.onResume();
+    public void onBackPressed() {
+        finish();
+        super.onBackPressed();
     }
-
-    private void Listener() {
-        lyBack_card.setOnClickListener(this);
-//        rlAddRemaind.setOnClickListener(this);
-        tvRepeat.setOnClickListener(this);
-        tvBeforRemindTxt.setOnClickListener(this);
-        btn_submit_reminder.setOnClickListener(this);
-        tvWhenDate.setOnClickListener(this);
-        tvWhenTime.setOnClickListener(this);
-        tv_snooze_layout.setOnClickListener(this);
-    }
-
-    private void InitCompo() {
-        lyBack_card = findViewById(R.id.lyBack_card);
-//        rlAddRemaind=findViewById(R.id.rl_save_data);
-        tvBeforRemindTxt = findViewById(R.id.tv_reminder_txt);
-        tvRepeat = findViewById(R.id.tv_repeat_txt);
-        et_title = findViewById(R.id.et_title);
-        tvWhenDate = findViewById(R.id.tv_when_date);
-        tvWhenTime = findViewById(R.id.tv_when_time);
-        tv_text = findViewById(R.id.tv_text);
-        tv_send_ack = findViewById(R.id.tv_send_ack);
-        tv_snooze_layout = findViewById(R.id.tv_snooze_layout);
-        snooze_on = findViewById(R.id.Snooze_on);
-        tv_snooze_txt = findViewById(R.id.tv_snooze_txt);
-        btn_submit_reminder = findViewById(R.id.btn_submit_reminder);
-
-        snooze_on.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences.Editor editor = shp.edit();
-                if (isChecked) {
-                    editor.putString("Snooze_on", "true");
-
-
-                    editor.commit();
-
-                } else {
-                    editor.putString("Snooze_on", "false");
-
-                    editor.commit();
-                }
-            }
-        });
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.lyBack_card:
-                finish();
-                break;
-            case R.id.tv_when_date:
-                ChooseDate();
-                break;
-            case R.id.tv_when_time:
-                chooseTimePicker();
-                break;
-            case R.id.tv_reminder_txt:
-                DlgBeforRemind();
-                break;
-            case R.id.tv_repeat_txt:
-                DlgRepeatRemind();
-                break;
-            case R.id.tv_snooze_layout:
-                Intent i = new Intent(getApplicationContext(), AddSnoozeTime.class);
-                i.putExtra("Snooze_minute", shp.getString("Snooze_minute", ""));
-                i.putExtra("Snooze_times", shp.getString("Snooze_times", ""));
-                i.putExtra("Snooze_on", shp.getString("Snooze_on", ""));
-                startActivity(i);
-                break;
-            case R.id.btn_submit_reminder:
-                if (validFields()) {
-                    if (Utility.isNetworkConnected(AddReminderActivity.this)) {
-                        SetAlarmVal();
-                    } else {
-
-                        Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-
-                    }
-                }
-                break;
-        }
-    }
-
-
-    public boolean validFields() {
-        boolean check = true;
-        sTitle = et_title.getText().toString().trim();
-
-        sWhenTime = Utility.hh_mm_aa.format(myCalendar.getTime());
-
-
-//        sReminder= IntentKey.HH_mm.format(myCalendar.getTime());
-
-        if (TextUtils.isEmpty(sTitle)) {
-            et_title.setError(getResources().getString(R.string.hint_reminder_title));
-            check = false;
-        } else if (TextUtils.isEmpty(sReminder)) {
-
-            Utility.ShowToast(mContext, getResources().getString(R.string.txt_reminder1));
-
-
-            check = false;
-        }
-        return check;
-    }
-
-    public void AddReminder() {
-        final String TAG = "addReminder";
-        JSONObject mainObject = new JSONObject();
-        String apiAccording = null;
-
-
-        try {
-            mainObject.put("device_id", Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
-            mainObject.put("device_type", "android");
-            mainObject.put("title", sTitle);
-
-            mainObject.put("date", sWhenDate);//2019-02-08
-            mainObject.put("time", sWhenTime.toUpperCase());//"1.20 AM"
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
-            mainObject.put("reminder_before", String.valueOf(valBefore));
-
-
-            if (sRepeat.equals(getResources().getString(R.string.Once))) {
-                mainObject.put("repeat", "Once");
-
-            } else if (sRepeat.equals(getResources().getString(R.string.Every_Day))) {
-                mainObject.put("repeat", "Every Day");
-            } else if (sRepeat.equals(getResources().getString(R.string.Every_Week))) {
-                mainObject.put("repeat", "Every Week");
-            } else if (sRepeat.equals(getResources().getString(R.string.Every_Year))) {
-                mainObject.put("repeat", "Every Year");
-            }
-
-
-            if (shp.getString("Snooze_minute", "") != null) {
-                mainObject.put("after_time", shp.getString("Snooze_minute", ""));
-
-            }
-            if (shp.getString("Snooze_times", "") != null) {
-                mainObject.put("for_time", shp.getString("Snooze_times", ""));
-                Alarm_Count = Integer.parseInt(shp.getString("Snooze_times", ""));
-
-            }
-
-            if (shp.getString("Snooze_on", "") != null) {
-
-                if (shp.getString("Snooze_on", "").equals("true")) {
-                    mainObject.put("snooze", "true");
-                } else {
-                    mainObject.put("snooze", "false");
-                }
-            }
-
-            if (update_reminder) {
-                mainObject.put("reminder_id", reminderModel.getId());
-                apiAccording = APIS.UPDATEREMINDERAPI;
-            } else {
-                apiAccording = APIS.ADDREMINDERAPI;
-            }
-            Log.e("addReminder Enter data=", "=======> " + mainObject.toString() + "==========>" + apiAccording);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        showProgressDialog(getResources().getString(R.string.Loading));
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                APIS.BASEURL + apiAccording, mainObject,
-                response -> {
-                    try {
-                        Log.d(TAG, "addReminder response=" + response.toString());
-                        hideProgressDialog();
-                        CommonResponseModel commonResponseModel = new Gson().fromJson(response.toString(), CommonResponseModel.class);
-                        if (commonResponseModel.getStatus().equalsIgnoreCase("true")) {
-
-                            finish();
-                        }
-
-                        if (update_reminder) {
-
-                            Utility.ShowToast(mContext, getResources().getString(R.string.update_reminder_successfully));
-
-                        } else {
-                            Utility.ShowToast(mContext, commonResponseModel.getMessage());
-                        }
-
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                hideProgressDialog();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
-            }
-
-        };
-// Adding request to request queue
-        AppController.getInstance().addToRequestQueue(jsonObjReq);
-        jsonObjReq.setShouldCache(false);
-        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
-                10000, 8, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
-
-
-    public void SetAlarmVal() {
-
-        AddReminder();
-
-    }
-
-
-    private void chooseTimePicker() {
-        try {
-            // Get Current Time
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, R.style.DialogTheme,
-                    new TimePickerDialog.OnTimeSetListener() {
-
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay,
-                                              int minute) {
-                            myCalendar.set(myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                                    myCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                            tvWhenTime.setText(Utility.hh_mm_aa.format(myCalendar.getTime()));
-                        }
-                    }, myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), false);
-            timePickerDialog.show();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void ChooseDate() {
-
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, R.style.DialogTheme, (view, year, month, dayOfMonth) -> {
-            myCalendar.set(year, month, dayOfMonth, myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE));
-            tvWhenDate.setText(Utility.EEE_dd_MMM_yyyy.format(myCalendar.getTime()));
-            sWhenDate = Utility.yyyy_MM_dd.format(myCalendar.getTime());
-        }, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH));
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
-        datePickerDialog.show();
-//        dateEditText.setText(dateFormatter.format(dateSelected.getTime()));
-
-
-    }
-
-
 }
