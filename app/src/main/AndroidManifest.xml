@@ -38,9 +38,6 @@
             android:name=".activity.docter.DoctorCategoryActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.docter.DoctorListActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.docter.DocorDetailsActivity"
             android:screenOrientation="portrait" />
         <activity

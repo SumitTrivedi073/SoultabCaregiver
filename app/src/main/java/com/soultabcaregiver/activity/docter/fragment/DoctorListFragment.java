@@ -1,35 +1,35 @@
-package com.soultabcaregiver.activity.docter;
+package com.soultabcaregiver.activity.docter.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorCategoryModel;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
 import com.soultabcaregiver.activity.docter.adapter.DoctorListAdapter;
+import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONException;
@@ -40,87 +40,63 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DoctorListActivity extends BaseActivity implements View.OnClickListener, DoctorListAdapter.AppointedDocSelectionListener {
+public class DoctorListFragment extends BaseFragment implements DoctorListAdapter.AppointedDocSelectionListener{
 
+    View view;
     Context mContext;
-    ArrayList<DoctorCategoryModel.Response.CategoryDatum> arDoc = new ArrayList<>();
-    SearchView search_edittext;
+    SearchView doctor_search;
     DoctorListAdapter adapter;
-    RecyclerView rvDoc;
+    RecyclerView doctor_list;
     NestedScrollView nested_scrollview;
-    FloatingActionButton lyBack_card;
     List<DoctorListModel.Response.DoctorDatum> doctorlist = new ArrayList<>();
     TextView tvNodata;
     DoctorCategoryModel.Response.CategoryDatum docCatBean;
-    ImageView close_img, search_img, iv_search;
+
     private int lastPage = 1;
     private String mMaxoffset = "";
 
-
-
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = getActivity();
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_doctor_list);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+         view = inflater.inflate(R.layout.fragment_doctor_list, container, false);
 
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        mContext = this;
-        GetIntentData();
-        InitCompo();
-        Listener();
-        if (Utility.isNetworkConnected(this)) {
+         init();
+        if (Utility.isNetworkConnected(mContext)) {
             GetDocList();
         } else {
 
             Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
         }
 
-
+         return view;
     }
 
-    private void GetIntentData() {
-        docCatBean = (DoctorCategoryModel.Response.CategoryDatum) getIntent().getSerializableExtra(APIS.DocItemListItem);
+    private void init() {
+        doctor_list = view.findViewById(R.id.doctor_list);
+        tvNodata = view.findViewById(R.id.tv_no_data_doc_list);
+        doctor_search = view.findViewById(R.id.doctor_search);
 
-    }
-
-
-    private void InitCompo() {
-        lyBack_card = findViewById(R.id.lyBack_card);
-        rvDoc = findViewById(R.id.rv_doc);
-        search_edittext = findViewById(R.id.search_edittext);
-        tvNodata = findViewById(R.id.tv_no_data_doc_list);
-
-        rvDoc.setHasFixedSize(true);
-        rvDoc.setLayoutManager(new LinearLayoutManager(this));
-
-        search_edittext.setFocusableInTouchMode(true);
-        search_edittext.requestFocus();
-
-
-    }
-
-    private void Listener() {
-
-        lyBack_card.setOnClickListener(this);
-
-
-        ImageView searchIcon = search_edittext.findViewById(R.id.search_button);
+        ImageView searchIcon = doctor_search.findViewById(R.id.search_button);
         searchIcon.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_search));
         searchIcon.setColorFilter(getResources().getColor(R.color.themecolor));
 
-        ImageView searchClose = search_edittext.findViewById(R.id.search_close_btn);
+        ImageView searchClose = doctor_search.findViewById(R.id.search_close_btn);
         searchClose.setColorFilter(getResources().getColor(R.color.themecolor));
 
 
-        EditText searchEditText = search_edittext.findViewById(R.id.search_src_text);
+        EditText searchEditText = doctor_search.findViewById(R.id.search_src_text);
         searchEditText.setTextColor(getResources().getColor(R.color.themecolor));
         searchEditText.setHintTextColor(getResources().getColor(R.color.themecolor));
         searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen._14sdp));
 
-        search_edittext.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        doctor_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (adapter != null) {
@@ -140,6 +116,7 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
         });
 
 
+
         if (nested_scrollview != null) {
             nested_scrollview.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
                 @Override
@@ -148,9 +125,12 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
                         if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) && scrollY > oldScrollY) {
                             lastPage = lastPage + 1;
                             if (Integer.parseInt(mMaxoffset) >= lastPage) {
-                                Log.e("mMaxoffset2", String.valueOf(mMaxoffset));
-                                Log.e("lastPage", String.valueOf(lastPage));
-                                GetDocList2();
+                                if (Utility.isNetworkConnected(mContext)) {
+                                    GetDocList();
+                                } else {
+
+                                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                                }
                             } else {
                                 Utility.ShowToast(mContext, "Sorry, no more data available!");
                             }
@@ -161,7 +141,6 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
 
         }
     }
-
 
     public void GetDocList() {
         final String TAG = "doctor list";
@@ -175,7 +154,7 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
             e.printStackTrace();
         }
 
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(mContext,getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.GETDOCLISTAPI, mainObject,
                 response -> {
@@ -190,21 +169,21 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
 
                         mMaxoffset = String.valueOf(doctorListModel.getPages());
                         if (doctorlist.size() > 0) {
-                            adapter = new DoctorListAdapter(this, doctorlist, tvNodata);
-                            adapter.DocSelection(DoctorListActivity.this);
+                            adapter = new DoctorListAdapter(getActivity(), doctorlist, tvNodata);
+                            adapter.DocSelection(DoctorListFragment.this);
 
-                            rvDoc.setAdapter(adapter);
+                            doctor_list.setAdapter(adapter);
                             tvNodata.setVisibility(View.GONE);
-                            rvDoc.setVisibility(View.VISIBLE);
+                            doctor_list.setVisibility(View.VISIBLE);
                         } else {
-                            rvDoc.setVisibility(View.GONE);
+                            doctor_list.setVisibility(View.GONE);
                             tvNodata.setVisibility(View.VISIBLE);
 
                         }
                     } else {
                         tvNodata.setText(doctorListModel.getMessage());
                         tvNodata.setVisibility(View.VISIBLE);
-                        rvDoc.setVisibility(View.GONE);
+                        doctor_list.setVisibility(View.GONE);
                     }
                 }, error -> {
             VolleyLog.d(TAG, "Error: " + error.getMessage());
@@ -237,7 +216,7 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
             e.printStackTrace();
         }
 
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(mContext,getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.GETDOCLISTAPI, mainObject,
                 response -> {
@@ -256,21 +235,21 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
                             doctorlistdata2.addAll(doctorListModel.getResponse().getDoctorData());
                             doctorlist.addAll(doctorlistdata2);
 
-                            adapter = new DoctorListAdapter(this, doctorlist, tvNodata);
-                            adapter.DocSelection(DoctorListActivity.this);
+                            adapter = new DoctorListAdapter(getActivity(), doctorlist, tvNodata);
+                            adapter.DocSelection(DoctorListFragment.this);
 
-                            rvDoc.setAdapter(adapter);
+                            doctor_list.setAdapter(adapter);
                             tvNodata.setVisibility(View.GONE);
-                            rvDoc.setVisibility(View.VISIBLE);
+                            doctor_list.setVisibility(View.VISIBLE);
                         } else {
-                            rvDoc.setVisibility(View.GONE);
+                            doctor_list.setVisibility(View.GONE);
                             tvNodata.setVisibility(View.VISIBLE);
 
                         }
                     } else {
                         tvNodata.setText(doctorListModel.getMessage());
                         tvNodata.setVisibility(View.VISIBLE);
-                        rvDoc.setVisibility(View.GONE);
+                        doctor_list.setVisibility(View.GONE);
                     }
                 }, error -> {
             VolleyLog.d(TAG, "Error: " + error.getMessage());
@@ -290,17 +269,6 @@ public class DoctorListActivity extends BaseActivity implements View.OnClickList
         jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
-
-
-
-
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.lyBack_card) {
-            finish();
-        }
-    }
-
 
     @Override
     public void DocSelectionListener(List<DoctorListModel.Response.DoctorDatum> DocBeanList, boolean isSearch) {

@@ -18,8 +18,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import androidx.cardview.widget.CardView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -27,9 +25,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.Glide;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.PushPair;
@@ -45,8 +40,8 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.AppointmentRequestModel;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
-import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -65,22 +60,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DocorDetailsActivity extends BaseActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
-    Context mContext;
-    public static final int RequestPermissionCode = 3;
     private final String TAG = getClass().getSimpleName();
+    Context mContext;
     String id;
     DoctorListModel.Response.DoctorDatum docListBean;
-    TextView tvDocNm, tvAdd, tvContact, tvDate, txt_fax, txt_Portal, tvEmail;
-    FloatingActionButton lyBack;
-    CardView portal_card;
+    TextView tvDocNm, txt_doctor_address, txt_mobile_number, tvDate, txt_fax, txt_Portal, txt_doctor_email;
     Switch tbDocAppTog;
-    LinearLayout rlDate, rl_time;
+    RelativeLayout rlDate, rl_time, back_btn;
     String myFormat = "MM/dd/yyyy";
     SimpleDateFormat sdf;
     String myFormat1 = "yyyy-MM-dd"; //for webservice
     SimpleDateFormat sdf1;
     TextView tvMakeAppoint, tv_time;
-    CircleImageView ivDocPic;
     SinchClient sinchClient;
     LinearLayout main_call_layout, call_end_layout;
     TextView call_state;
@@ -89,7 +80,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
     String sSelTimeId = "", sSelTimeNm = "", sSelDateId = "";
     private Call calling;
     private Calendar calendar;
-
 
 
     @Override
@@ -105,21 +95,19 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void InitCompo() {
-        lyBack = findViewById(R.id.lyBack_card);
+        back_btn = findViewById(R.id.back_btn);
         tvDocNm = findViewById(R.id.txt_doctor_name);
-        tvAdd = findViewById(R.id.txt_second);
-        tvContact = findViewById(R.id.txt_third);
-        tvEmail = findViewById(R.id.txt_five);
+        txt_doctor_address = findViewById(R.id.txt_doctor_address);
+        txt_mobile_number = findViewById(R.id.txt_mobile_number);
+        txt_doctor_email = findViewById(R.id.txt_doctor_email);
         tbDocAppTog = findViewById(R.id.tb_doc_appoint);
         rlDate = findViewById(R.id.rl_date);
         tvDate = findViewById(R.id.tv_date);
         txt_fax = findViewById(R.id.txt_fax);
         txt_Portal = findViewById(R.id.txt_Portal);
-        ivDocPic = findViewById(R.id.iv_doc_pic);
         rl_time = findViewById(R.id.rl_time);
         tvMakeAppoint = findViewById(R.id.tv_make_appoi);
         tv_time = findViewById(R.id.tv_time);
-        portal_card = findViewById(R.id.portal_card);
 
         calendar = Calendar.getInstance();
         sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -189,23 +177,17 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         assert docListBean != null;
         id = String.valueOf(docListBean.getId());
         tvDocNm.setText(docListBean.getName());
-        tvAdd.setText(docListBean.getAddress());
-        tvContact.setText(docListBean.getContact());
+        txt_doctor_address.setText(docListBean.getAddress());
+        txt_mobile_number.setText(docListBean.getContact());
         txt_fax.setText(docListBean.getFaxNum());
         txt_Portal.setText(docListBean.getPortal());
 
 
         if (docListBean.getDoctorEmail() != null) {
-            tvEmail.setText(docListBean.getDoctorEmail());
+            txt_doctor_email.setText(docListBean.getDoctorEmail());
         }
         tvDate.setText(sdf.format(calendar.getTime()));
         sSelDateId = sdf1.format(calendar.getTime());
-
-        if (!TextUtils.isEmpty(docListBean.getDoctorImage())) {
-            Glide.with(mContext).load(docListBean.getDoctorImage()).placeholder(R.drawable.doctor_place_holder).into(ivDocPic);
-        } else {
-            ivDocPic.setImageResource(R.drawable.doctor_place_holder);
-        }
 
 
         tv_time.setText(Utility.hh_mm_aa.format(calendar.getTime()));
@@ -216,11 +198,10 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
     private void Listener() {
 
-        lyBack.setOnClickListener(this);
+        back_btn.setOnClickListener(this);
         rlDate.setOnClickListener(this);
         rl_time.setOnClickListener(this);
         tvMakeAppoint.setOnClickListener(this);
-
 
 
     }
@@ -234,7 +215,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.lyBack_card:
+            case R.id.back_btn:
                 onBackPressed();
                 break;
             case R.id.rl_date:
@@ -248,29 +229,32 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
             case R.id.tv_make_appoi:
 
-                if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
-                    Log.e("equal true", "equal true");
+                if (Utility.isNetworkConnected(mContext)) {
+                    if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
+                        Log.e("equal true", "equal true");
 
 
-                    if (TextUtils.isEmpty(sSelTimeId)) {
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                        if (TextUtils.isEmpty(sSelTimeId)) {
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
 
-                    } else if (TextUtils.isEmpty(sSelDateId)) {
+                        } else if (TextUtils.isEmpty(sSelDateId)) {
 
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                        } else {
+                            GetDocAvailableTime(2);
+                        }
                     } else {
-                        GetDocAvailableTime(2);
+
+                        if (TextUtils.isEmpty(sSelTimeId)) {
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                        } else if (TextUtils.isEmpty(sSelDateId)) {
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                        } else {
+                            GetDocAvailableTime(2);
+                        }
                     }
                 } else {
-
-                    if (TextUtils.isEmpty(sSelTimeId)) {
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
-                    } else if (TextUtils.isEmpty(sSelDateId)) {
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
-                    } else {
-                        GetDocAvailableTime(2);
-                    }
-
+                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
 
 
@@ -309,14 +293,14 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         close_window.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if (calling != null) {
-                        calling.hangup();
-                        calling = null;
-                        alertDialog.dismiss();
-                    } else {
-                        alertDialog.dismiss();
-                    }
-                    finish();
+                if (calling != null) {
+                    calling.hangup();
+                    calling = null;
+                    alertDialog.dismiss();
+                } else {
+                    alertDialog.dismiss();
+                }
+                finish();
 
             }
         });
@@ -324,15 +308,15 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         call_end_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    if (calling != null) {
-                        calling.hangup();
-                        calling = null;
-                        alertDialog.dismiss();
-                    } else {
-                        alertDialog.dismiss();
-                    }
-                    finish();
+                if (calling != null) {
+                    calling.hangup();
+                    calling = null;
+                    alertDialog.dismiss();
+                } else {
+                    alertDialog.dismiss();
                 }
+                finish();
+            }
 
         });
 
@@ -430,7 +414,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         if (Utility.isNetworkConnected(this)) {
             switch (diff) {
                 case 2:
-                   MakeDocAppointment();
+                    MakeDocAppointment();
 
                     break;
             }
@@ -468,7 +452,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             e.printStackTrace();
         }
         Log.e(TAG, "MAKE_APPOIN_API=  " + mainObject.toString());
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DOC_APPOIN_API, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -522,7 +506,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    private void DoctorConectingPopup(){
+    private void DoctorConectingPopup() {
         LayoutInflater inflater = (LayoutInflater) getApplicationContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.doctor_function_popup,
@@ -543,10 +527,10 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         RelativeLayout Portal = layout.findViewById(R.id.Portal);
         RelativeLayout close_popup = layout.findViewById(R.id.close_popup);
 
-        if (TextUtils.isEmpty(tvContact.getText().toString())) {
+        if (TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
             Call_btn.setVisibility(View.GONE);
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)sendFax_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             sendFax_btn.setLayoutParams(params);
         }
@@ -555,7 +539,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         if (TextUtils.isEmpty(txt_Portal.getText().toString())) {
             Portal.setVisibility(View.GONE);
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)sendFax_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             sendFax_btn.setLayoutParams(params);
         }
@@ -564,16 +548,16 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             sendFax_btn.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.isEmpty(txt_Portal.getText().toString())&&!TextUtils.isEmpty(txt_fax.getText().toString())) {
+        if (!TextUtils.isEmpty(txt_Portal.getText().toString()) && !TextUtils.isEmpty(txt_fax.getText().toString())) {
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)Call_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             Call_btn.setLayoutParams(params);
         }
 
-        if (!TextUtils.isEmpty(txt_fax.getText().toString())&&!TextUtils.isEmpty(tvContact.getText().toString())) {
+        if (!TextUtils.isEmpty(txt_fax.getText().toString()) && !TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)Portal.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             Portal.setLayoutParams(params);
         }
@@ -582,7 +566,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                if (!TextUtils.isEmpty(tvContact.getText().toString())) {
+                if (!TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
                     AccessCall(docListBean.getContact(), docListBean.getName());
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.mobile_unavailable));
@@ -649,13 +633,13 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("doctor_id", id);
-           mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.user_id));
-           mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         Log.e(TAG, "SendFax:input data=  " + mainObject.toString());
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(getResources().getString(R.string.Loading));
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DoctorSendFaxAPI, mainObject,
@@ -709,7 +693,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
     }
-
 
 
     private class SinchCallListener implements CallListener {

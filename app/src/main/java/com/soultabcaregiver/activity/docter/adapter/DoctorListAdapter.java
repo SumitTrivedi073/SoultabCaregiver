@@ -10,8 +10,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -51,14 +53,9 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final DoctorListModel.Response.DoctorDatum DocListBean = arDoclist.get(position);
-        holder.textView.setText(DocListBean.getName());
-
-
-
-        if (arDoclist.get(position).getImage() != null) {
-            Glide.with(context).load(DocListBean.getDoctorImage()).placeholder(R.drawable.doctor_place_holder).into(holder.imageView);
-        }
-        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+        holder.doctor_name.setText(DocListBean.getName());
+        
+        holder.doctor_list_relative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -87,15 +84,13 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imageView;
-        public TextView textView;
-        public LinearLayout relativeLayout;
+        public TextView doctor_name;
+        public RelativeLayout doctor_list_relative;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.imageView = itemView.findViewById(R.id.imageView);
-            this.textView = itemView.findViewById(R.id.textView);
-            relativeLayout = itemView.findViewById(R.id.relativeLayout);
+            this.doctor_name = itemView.findViewById(R.id.doctor_name);
+            doctor_list_relative = itemView.findViewById(R.id.doctor_list_relative);
         }
     }
 

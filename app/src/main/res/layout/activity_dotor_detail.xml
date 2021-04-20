@@ -1,448 +1,424 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="#F0F0F0"
+    android:background="@color/light_white"
     tools:context=".activity.docter.DocorDetailsActivity">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tv_make_appoi"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp">
+
+            <TextView
+                android:id="@+id/tv_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:gravity="center"
+                android:text="@string/make_appoi"
+                android:textColor="@color/blackish"
+                android:textSize="@dimen/_16sdp" />
+
+            <RelativeLayout
+                android:id="@+id/back_btn"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/back_arrow" />
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/iv_doc_pic"
-                        android:layout_width="@dimen/_80sdp"
-                        android:layout_height="@dimen/_80sdp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/doctor_place_holder"
-                        android:visibility="gone" />
 
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:cardBackgroundColor="#F7F7F7"
-                        app:cardCornerRadius="@dimen/_5sdp"
-                        app:cardElevation="@dimen/_2sdp"
-                        app:cardUseCompatPadding="true">
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/doctor_name"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_10sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:fontFamily="@font/muli_bold"
-                                android:text="@string/doctor_name"
-                                android:textColor="@color/themecolor"
-                                android:textSize="@dimen/_14sdp" />
-
-
-                            <TextView
-                                android:id="@+id/txt_doctor_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_10sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:layout_marginBottom="@dimen/_5sdp"
-                                android:background="@color/transparent"
-                                android:fontFamily="@font/muli_regular"
-                                android:gravity="center|start"
-                                android:hint="@string/enter_doctor_name"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_14sdp" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardBackgroundColor="#F7F7F7"
-                        app:cardCornerRadius="@dimen/_5sdp"
-                        app:cardElevation="@dimen/_2sdp"
-                        app:cardUseCompatPadding="true">
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/popup_relative">
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/txt_doctor_name"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:background="@color/transparent"
+                            android:fontFamily="@font/muli_bold"
+                            android:gravity="center|start"
+                            android:hint="@string/enter_doctor_name"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/themecolor"
+                            android:textSize="@dimen/_12sdp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_10sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:fontFamily="@font/muli_bold"
-                                android:text="@string/doctor_address"
-                                android:textColor="@color/themecolor"
-                                android:textSize="@dimen/_14sdp" />
 
-                            <TextView
-                                android:id="@+id/txt_second"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_10sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:layout_marginBottom="@dimen/_5sdp"
-                                android:background="@color/transparent"
-                                android:fontFamily="@font/muli_regular"
-                                android:gravity="center|start"
-                                android:hint="@string/address"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_14sdp" />
+                    </RelativeLayout>
 
-                        </LinearLayout>
 
-                    </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/doctor_address"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
 
-                    <androidx.cardview.widget.CardView
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardBackgroundColor="#F7F7F7"
-                        app:cardCornerRadius="@dimen/_5sdp"
-                        app:cardElevation="@dimen/_2sdp"
-                        app:cardUseCompatPadding="true">
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/popup_relative">
 
-                        <RelativeLayout
+                        <TextView
+                            android:id="@+id/txt_doctor_address"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_10sdp"
-                                    android:layout_marginLeft="@dimen/_10sdp"
-                                    android:fontFamily="@font/muli_bold"
-                                    android:text="@string/mobile_number"
-                                    android:textColor="@color/themecolor"
-                                    android:textSize="@dimen/_14sdp" />
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:background="@color/transparent"
+                            android:fontFamily="@font/muli_bold"
+                            android:gravity="center|start"
+                            android:hint="@string/address"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/themecolor"
+                            android:textSize="@dimen/_12sdp" />
 
 
-                                <TextView
-                                    android:id="@+id/txt_third"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_10sdp"
-                                    android:layout_marginLeft="@dimen/_10sdp"
-                                    android:layout_marginBottom="@dimen/_5sdp"
-                                    android:background="@color/transparent"
-                                    android:fontFamily="@font/muli_regular"
-                                    android:gravity="center|start"
-                                    android:hint="@string/enter_mobile_number"
-                                    android:textColor="@color/black"
-                                    android:textSize="@dimen/_14sdp" />
+                    </RelativeLayout>
 
 
-                            </LinearLayout>
-
-                        </RelativeLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:cardBackgroundColor="#F7F7F7"
-                        app:cardCornerRadius="@dimen/_5sdp"
-                        app:cardElevation="@dimen/_2sdp"
-                        app:cardUseCompatPadding="true">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_10sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:fontFamily="@font/muli_bold"
-                                android:text="@string/email"
-                                android:textColor="@color/themecolor"
-                                android:textSize="@dimen/_14sdp" />
-
-
-                            <TextView
-                                android:id="@+id/txt_five"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_10sdp"
-                                android:layout_marginLeft="@dimen/_10sdp"
-                                android:layout_marginBottom="@dimen/_5sdp"
-                                android:background="@color/transparent"
-                                android:fontFamily="@font/muli_regular"
-                                android:gravity="center|start"
-                                android:hint="@string/hint_email"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_14sdp" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardBackgroundColor="#F7F7F7"
-                        app:cardCornerRadius="@dimen/_5sdp"
-                        app:cardElevation="@dimen/_2sdp"
-                        app:cardUseCompatPadding="true">
-
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_10sdp"
-                                    android:layout_marginLeft="@dimen/_10sdp"
-                                    android:fontFamily="@font/muli_bold"
-                                    android:text="@string/Fax"
-                                    android:textColor="@color/themecolor"
-                                    android:textSize="@dimen/_14sdp" />
-
-                                <TextView
-                                    android:id="@+id/txt_fax"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_10sdp"
-                                    android:layout_marginLeft="@dimen/_10sdp"
-                                    android:layout_marginBottom="@dimen/_5sdp"
-                                    android:background="@color/transparent"
-                                    android:fontFamily="@font/muli_regular"
-                                    android:gravity="center|start"
-                                    android:hint="@string/enter_Fax"
-                                    android:textColor="@color/black"
-                                    android:textSize="@dimen/_14sdp" />
-
-                            </LinearLayout>
-
-                        </RelativeLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/portal_card"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardBackgroundColor="#F7F7F7"
-                        app:cardCornerRadius="@dimen/_5sdp"
-                        app:cardElevation="@dimen/_2sdp"
-                        app:cardUseCompatPadding="true">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_10sdp"
-                                    android:layout_marginLeft="@dimen/_10sdp"
-                                    android:fontFamily="@font/muli_bold"
-                                    android:text="@string/Portal"
-                                    android:textColor="@color/themecolor"
-                                    android:textSize="@dimen/_14sdp" />
-
-
-                                <TextView
-                                    android:id="@+id/txt_Portal"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/_10sdp"
-                                    android:layout_marginLeft="@dimen/_10sdp"
-                                    android:layout_marginBottom="@dimen/_5sdp"
-                                    android:background="@color/transparent"
-                                    android:fontFamily="@font/muli_regular"
-                                    android:gravity="center|start"
-                                    android:hint="@string/enter_Portal"
-                                    android:textColor="@android:color/holo_blue_light"
-                                    android:textSize="@dimen/_14sdp" />
-
-
-                            </LinearLayout>
-
-
-                        </RelativeLayout>
-
-                    </androidx.cardview.widget.CardView>
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/mobile_number"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
 
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                        <TextView
+                        <RelativeLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginStart="@dimen/_5sdp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:fontFamily="@font/muli_bold"
-                            android:gravity="center_vertical"
-                            android:text="@string/select_date"
-                            android:textColor="@color/themecolor"
-                            android:textSize="@dimen/_13sdp" />
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_10sdp"
-                            android:layout_marginLeft="@dimen/_10sdp"
-                            app:cardBackgroundColor="#F7F7F7"
-                            app:cardCornerRadius="@dimen/_5sdp"
-                            app:cardElevation="@dimen/_2sdp"
-                            app:cardUseCompatPadding="true">
+                            android:layout_height="@dimen/_40sdp"
+                            android:layout_marginTop="@dimen/_5sdp">
 
 
-                            <LinearLayout
-                                android:id="@+id/rl_date"
+
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="@dimen/_30sdp"
-                                android:layout_marginStart="@dimen/_20sdp"
-                                android:layout_weight="1"
-                                android:orientation="horizontal"
-                                android:layout_marginLeft="@dimen/_20sdp">
-
-                                <ImageView
-                                    android:layout_width="@dimen/_18sdp"
-                                    android:layout_height="@dimen/_18sdp"
-                                    android:layout_gravity="center_vertical"
-                                    android:src="@drawable/calender_icon"
-                                    android:tint="@color/themecolor" />
-
-                                <TextView
-                                    android:id="@+id/tv_date"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="@dimen/_5sdp"
-                                    android:layout_marginLeft="@dimen/_5sdp"
-                                    android:fontFamily="@font/muli_regular"
-                                    android:gravity="center_vertical"
-                                    android:text=""
-                                    android:textColor="@color/black"
-                                    android:textSize="@dimen/_10sdp" />
-                            </LinearLayout>
-
-                        </androidx.cardview.widget.CardView>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginStart="@dimen/_5sdp"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:fontFamily="@font/muli_bold"
-                            android:gravity="center_vertical"
-                            android:text="@string/appointment_time"
-                            android:textColor="@color/themecolor"
-                            android:textSize="@dimen/_13sdp" />
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_10sdp"
-                            android:layout_marginLeft="@dimen/_10sdp"
-                            app:cardBackgroundColor="#F7F7F7"
-                            app:cardCornerRadius="@dimen/_5sdp"
-                            app:cardElevation="@dimen/_2sdp"
-                            app:cardUseCompatPadding="true">
-
-
-                            <LinearLayout
-                                android:id="@+id/rl_time"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_30sdp"
+                                android:layout_height="match_parent"
                                 android:layout_marginStart="@dimen/_5sdp"
                                 android:layout_marginLeft="@dimen/_5sdp"
-                                android:layout_weight="1"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:layout_width="@dimen/_18sdp"
-                                    android:layout_height="@dimen/_18sdp"
-                                    android:layout_gravity="center_vertical"
-                                    android:src="@drawable/appointment_time"
-                                    android:tint="@color/themecolor" />
+                                android:background="@drawable/popup_relative">
 
                                 <TextView
-                                    android:id="@+id/tv_time"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="@dimen/_5sdp"
-                                    android:fontFamily="@font/muli_regular"
-                                    android:gravity="center_vertical"
-                                    android:text=""
-                                    android:textColor="@color/black"
-                                    android:textSize="@dimen/_10sdp"
-                                    android:layout_marginLeft="@dimen/_5sdp" />
-                            </LinearLayout>
+                                    android:id="@+id/txt_mobile_number"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="@dimen/_10sdp"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:background="@color/transparent"
+                                    android:fontFamily="@font/muli_bold"
+                                    android:gravity="center|start"
+                                    android:hint="@string/enter_mobile_number"
+                                    android:maxLength="10"
+                                    android:maxLines="1"
+                                    android:singleLine="true"
+                                    android:textColor="@color/themecolor"
+                                    android:textSize="@dimen/_12sdp" />
 
-                        </androidx.cardview.widget.CardView>
+
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
 
                     </LinearLayout>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/email"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/popup_relative">
+
+                        <TextView
+                            android:id="@+id/txt_doctor_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:background="@color/transparent"
+                            android:fontFamily="@font/muli_bold"
+                            android:gravity="center|start"
+                            android:hint="@string/hint_email"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/themecolor"
+                            android:textSize="@dimen/_12sdp" />
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/Fax"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/popup_relative">
+
+                        <TextView
+                            android:id="@+id/txt_fax"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:background="@color/transparent"
+                            android:fontFamily="@font/muli_bold"
+                            android:gravity="center|start"
+                            android:hint="@string/enter_Fax"
+                            android:maxLength="10"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/themecolor"
+                            android:textSize="@dimen/_12sdp" />
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/Portal"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/popup_relative">
+
+                        <TextView
+                            android:id="@+id/txt_Portal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:background="@color/transparent"
+                            android:fontFamily="@font/muli_bold"
+                            android:gravity="center|start"
+                            android:hint="@string/enter_Portal"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/themecolor"
+                            android:textSize="@dimen/_12sdp" />
+
+
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/select_date"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/popup_relative">
+
+                        <RelativeLayout
+                            android:id="@+id/rl_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+
+                            <TextView
+                                android:id="@+id/tv_date"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/muli_bold"
+                                android:gravity="center|start"
+                                android:textColor="@color/themecolor"
+                                android:textSize="@dimen/_12sdp"
+                                android:layout_toStartOf="@+id/tv_date_img"
+                                android:layout_toLeftOf="@+id/tv_date_img"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                />
+
+
+                            <ImageView
+                                android:id="@+id/tv_date_img"
+                                android:layout_width="@dimen/_18sdp"
+                                android:layout_height="@dimen/_18sdp"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/calender_grey_icon"
+                                android:tint="@color/grayish"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginEnd="@dimen/_10sdp"
+                                android:layout_marginRight="@dimen/_10sdp" />
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/select_time"
+                        android:textColor="@color/blackish"
+                        android:textSize="@dimen/_12sdp" />
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/popup_relative">
+
+                        <RelativeLayout
+                            android:id="@+id/rl_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+
+                            <TextView
+                                android:id="@+id/tv_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:fontFamily="@font/muli_bold"
+                                android:gravity="center|start"
+                                android:textColor="@color/themecolor"
+                                android:textSize="@dimen/_12sdp"
+                                android:layout_toStartOf="@+id/tv_time_img"
+                                android:layout_toLeftOf="@+id/tv_time_img"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                />
+
+
+                            <ImageView
+                                android:id="@+id/tv_time_img"
+                                android:layout_width="@dimen/_18sdp"
+                                android:layout_height="@dimen/_18sdp"
+                                android:layout_centerVertical="true"
+                                android:src="@drawable/ic_access_time_black_24dp"
+                                android:tint="@color/grayish"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginEnd="@dimen/_10sdp"
+                                android:layout_marginRight="@dimen/_10sdp" />
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
 
 
                     <TableRow
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:layout_marginLeft="@dimen/_5sdp"
-                        android:layout_marginBottom="@dimen/_10sdp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/_10sdp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -450,16 +426,16 @@
                             android:fontFamily="@font/muli_bold"
                             android:gravity="center_vertical"
                             android:text="@string/set_reminder"
-                            android:textColor="@color/themecolor"
-                            android:textSize="@dimen/_13sdp" />
+                            android:textColor="@color/blackish"
+                            android:textSize="@dimen/_12sdp" />
 
 
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_20sdp"
-                            android:layout_marginLeft="@dimen/_20sdp"
-                            android:layout_weight="1">
+                            android:layout_marginStart="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:layout_marginLeft="@dimen/_10sdp">
 
                             <Switch
                                 android:id="@+id/tb_doc_appoint"
@@ -472,45 +448,28 @@
                     </TableRow>
 
 
+
+                    <TextView
+                        android:id="@+id/tv_make_appoi"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="bottom"
+                        android:layout_margin="@dimen/_20sdp"
+                        android:background="@drawable/orange_round_bg"
+                        android:fontFamily="@font/muli_bold"
+                        android:gravity="center"
+                        android:text="@string/submit"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_16sdp" />
+
                 </LinearLayout>
 
 
-            </RelativeLayout>
-
-
+            </LinearLayout>
         </ScrollView>
 
-    </RelativeLayout>
 
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_make_appoi"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_30sdp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/themecolor"
-        android:fontFamily="@font/muli_black"
-        android:gravity="center"
-        android:text="@string/make_appoi"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_13ssp"
-        android:textStyle="bold" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/lyBack_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_50sdp"
-        android:src="@drawable/close"
-        app:backgroundTint="@color/orange_color"
-app:tint="@android:color/white"
-        app:elevation="@dimen/_5sdp"
-        app:fabSize="normal"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/_10sdp" />
 
 </RelativeLayout>

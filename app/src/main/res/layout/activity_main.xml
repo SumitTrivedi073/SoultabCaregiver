@@ -34,7 +34,8 @@
             app:itemBackground="@android:color/transparent"
             android:layout_gravity="start"
             android:theme="@style/Widget.BottomNavigationView"
-            app:menu="@menu/navigation" />
+            app:menu="@menu/navigation"
+            app:labelVisibilityMode="labeled"/>
 
     </RelativeLayout>
 

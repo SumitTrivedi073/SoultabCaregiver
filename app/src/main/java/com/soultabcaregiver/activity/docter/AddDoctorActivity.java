@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -33,10 +34,9 @@ import java.util.Map;
 
 public class AddDoctorActivity extends BaseActivity implements View.OnClickListener, OnCountryPickerListener {
 
-    public static final int RequestPermissionCode = 3, REQUEST_IMAGE_CAPTURE = 101, PICK_FROM_FILE = 6;
     private final String TAG = getClass().getSimpleName();
     Context mContext;
-    FloatingActionButton lyBack_card;
+    RelativeLayout back_btn;
     EditText txt_doctor_name, txt_Address, txt_mobile_number, txt_email, txt_fax, txt_portal;
     TextView tv_add_doctor;
     TextView countryCodeTv;
@@ -59,19 +59,19 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
 
     private void init() {
         txt_doctor_name = findViewById(R.id.txt_doctor_name);
-        txt_Address = findViewById(R.id.txt_second);
-        txt_mobile_number = findViewById(R.id.txt_third);
-        txt_email = findViewById(R.id.txt_five);
+        txt_Address = findViewById(R.id.txt_doctor_address);
+        txt_mobile_number = findViewById(R.id.txt_mobile_number);
+        txt_email = findViewById(R.id.txt_doctor_email);
         txt_fax = findViewById(R.id.txt_fax);
         txt_portal = findViewById(R.id.txt_Portal);
-        lyBack_card = findViewById(R.id.lyBack_card);
-        tv_add_doctor = findViewById(R.id.tv_add_doctor);
+        back_btn = findViewById(R.id.back_btn);
+        tv_add_doctor = findViewById(R.id.btn_add_doctor);
         countryCodeTv = findViewById(R.id.countryCodeTv);
         countryLL = findViewById(R.id.countryLL);
 
         tv_add_doctor.setOnClickListener(this);
         //  Doctor_img.setOnClickListener(this);
-        lyBack_card.setOnClickListener(this);
+        back_btn.setOnClickListener(this);
 
         countryLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,12 +98,16 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
 
-            case R.id.lyBack_card:
+            case R.id.back_btn:
                 onBackPressed();
                 break;
 
-            case R.id.tv_add_doctor:
+            case R.id.btn_add_doctor:
+                if (Utility.isNetworkConnected(mContext)){
                 AddDoctor();
+                }else {
+                   Utility.ShowToast(mContext,getResources().getString(R.string.net_connection));
+                }
                 break;
         }
     }

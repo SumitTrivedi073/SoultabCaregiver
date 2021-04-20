@@ -35,6 +35,8 @@ import com.soultabcaregiver.utils.Utility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -264,9 +266,16 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
         final String TAG = getClass().getSimpleName();
         JSONObject mainObject = new JSONObject();
 
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String created_at = format.format(today);
+
+
+
         try {
             mainObject.put("created_to", selected_caregiver_id);
             mainObject.put("created_by", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("created_at",created_at);
             mainObject.put("message", Message);
             mainObject.put("alert_category", "1");
 

@@ -3,138 +3,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/light_white"
     android:layout_marginBottom="@dimen/_40sdp"
     tools:context=".activity.docter.fragment.DoctorFragment">
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp">
 
-
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/ly_doctor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-
-                >
-
-                <ImageView
-                    android:layout_width="@dimen/_80sdp"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/dr_list"
-                    android:tint="@color/black"/>
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/muli_black"
-                    android:gravity="center"
-                    android:padding="@dimen/_5sdp"
-                    android:text="@string/doctor_list"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_15ssp" />
-            </LinearLayout>
+            android:fontFamily="@font/muli_extrabold"
+            android:gravity="center"
+            android:text="@string/appointment"
+            android:textColor="@color/blackish"
+            android:textSize="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_20sdp"/>
 
 
-            <LinearLayout
-                android:id="@+id/ly_doc_appoin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="@dimen/_80sdp"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/all_dr_appoint"
-                    android:tint="@color/black"/>
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:fontFamily="@font/muli_black"
-                    android:gravity="center"
-                    android:padding="@dimen/_5sdp"
-                    android:text="@string/doctor_appointment"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_15ssp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tab_txt"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/_20sdp"
+            android:fontFamily="@font/muli_bold"
+            android:gravity="center"
+            android:text="@string/doctor_list"
+            android:textColor="@color/blackish"
+            android:textSize="@dimen/_12sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="@dimen/_5sdp"
+        app:cardBackgroundColor="@color/white">
 
-            <LinearLayout
-                android:id="@+id/add_Doctor"
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:background="@drawable/white_bg"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-                <ImageView
-                    android:layout_width="@dimen/_80sdp"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/add_doctor_img"
-                    android:tint="@color/black"/>
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/muli_black"
-                    android:gravity="center"
-                    android:padding="@dimen/_5sdp"
-                    android:text="@string/add_doctor"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_15ssp" />
-            </LinearLayout>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabBackground="@drawable/tab_background"
+                    app:tabIndicator="@color/muzli_color"
+                    app:tabGravity="fill"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/white"
+                    app:tabTextColor="@color/blackish"
+                    app:tabTextAppearance="@style/tab_txt_style"/>
+            </com.google.android.material.appbar.AppBarLayout>
 
-
-            <LinearLayout
+            <com.soultabcaregiver.utils.NonSwipeableViewPager
+                android:id="@+id/viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        </RelativeLayout>
 
-                <ImageView
-                    android:layout_width="@dimen/_80sdp"
-                    android:layout_height="@dimen/_80sdp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp" />
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:fontFamily="@font/muli_black"
-                    android:gravity="center"
-                    android:padding="@dimen/_5sdp"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_15ssp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 
     </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/Add_doctor_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_16sdp"
+        android:src="@drawable/plus"
+        app:backgroundTint="@color/orange_color"
+        app:elevation="@dimen/_5sdp"
+        app:fabSize="auto"
+        app:pressedTranslationZ="@dimen/_5sdp"
+        app:tint="@android:color/white" />
+
+
 </RelativeLayout>

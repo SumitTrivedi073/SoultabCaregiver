@@ -221,12 +221,12 @@ public class DoctorCategoryActivity extends BaseActivity implements View.OnClick
                 Glide.with(context).load(docCatBean.getIcon()).placeholder(R.drawable.place_holder_photo).into(holder.ivDocCat);
             }
             holder.tvTitle.setText(docCatBean.getName());
-            holder.lyMain.setOnClickListener(new View.OnClickListener() {
+           /* holder.lyMain.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     context.startActivity(new Intent(context, DoctorListActivity.class).putExtra(APIS.DocItemListItem, docCatBean));
                 }
-            });
+            });*/
 
             return rowView;
         }

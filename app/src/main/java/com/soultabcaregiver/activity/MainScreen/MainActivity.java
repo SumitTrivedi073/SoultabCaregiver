@@ -131,7 +131,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         });
 
-        navigationView.setSelectedItemId(R.id.navigation_alert);
+        navigationView.setSelectedItemId(R.id.navigation_appointment);
 
         video_call.setOnClickListener(new View.OnClickListener() {
             @Override

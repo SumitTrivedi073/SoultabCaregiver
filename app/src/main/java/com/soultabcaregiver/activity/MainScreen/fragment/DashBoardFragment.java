@@ -44,10 +44,14 @@ import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
@@ -68,6 +72,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     MainActivity mainActivity;
     Calendar calendar;
     ChartModel chartModel;
+    String chart_value_data = "3month";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,8 +132,9 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
         user_name_txt.setText(Utility.getSharedPreferences(mContext, APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext, APIS.Caregiver_lastname));
 
+
         if (Utility.isNetworkConnected(mContext)) {
-            ChartAPI("week");
+            ChartAPI(chart_value_data);
 
         } else {
             Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -149,14 +156,13 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
-                    if (isChecked) {
                         weekly_chart.setChecked(true);
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(false);
                         twelve_month_chart.setChecked(false);
-                        ChartAPI2("week");
+                        chart_value_data = "week";
+                        ChartAPI2(chart_value_data);
 
-                    }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
@@ -167,14 +173,14 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
-                    if (isChecked) {
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(true);
                         six_month_chart.setChecked(false);
                         twelve_month_chart.setChecked(false);
-                        ChartAPI2("3month");
+                        chart_value_data = "3month";
 
-                    }
+                        ChartAPI2(chart_value_data);
+
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
@@ -184,14 +190,13 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
-                    if (isChecked) {
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(true);
                         twelve_month_chart.setChecked(false);
-                        ChartAPI2("6month");
+                        chart_value_data = "6month";
+                        ChartAPI2(chart_value_data);
 
-                    }
 
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -203,14 +208,13 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
 
-                    if (isChecked) {
                         twelve_month_chart.setChecked(true);
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(false);
+                        chart_value_data = "12month";
                         ChartAPI2("12month");
 
-                    }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
@@ -218,28 +222,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         });
 
 
-   /*if (weekly_chart.isChecked()){
-            three_month_chart.setChecked(false);
-            six_month_chart.setChecked(false);
-            twelve_month_chart.setChecked(false);
-
-        } if (three_month_chart.isChecked()){
-            weekly_chart.setChecked(false);
-            six_month_chart.setChecked(false);
-            twelve_month_chart.setChecked(false);
-
-        } if (six_month_chart.isChecked()){
-            weekly_chart.setChecked(false);
-            three_month_chart.setChecked(false);
-            twelve_month_chart.setChecked(false);
-
-        } if (twelve_month_chart.isChecked()){
-            weekly_chart.setChecked(false);
-            three_month_chart.setChecked(false);
-            six_month_chart.setChecked(false);
-
-        }
-*/
     }
 
     private void ChartAPI(String chart_value_data) {
@@ -302,6 +284,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
 
     private void ChartAPI2(String chart_value_data) {
+        showProgressDialog(mContext, getResources().getString(R.string.Loading));
         StringRequest stringRequest = new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.LineChartAPI,
                 new Response.Listener<String>() {
                     @Override
@@ -313,6 +296,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         if (String.valueOf(chartModel.getOk()).equals("1")) {
 
                             getChartData(chartModel);
+
                         } else {
 
                             lineChart.setVisibility(View.GONE);
@@ -361,8 +345,14 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
     private void getChartData(ChartModel chartModel) {
         final HashMap<Integer, String> numMap = new HashMap<>();
-
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+
+        lineDataSet = null;
+        lineDataSet2 = null;
+        lineDataSet3 = null;
+        lineDataSet4 = null;
+        lineDataSet5 = null;
+
 
         if (chartModel.getData().getLineChart().size() > 0 && chartModel.getData().getxLabel().size() > 0) {
 
@@ -398,10 +388,12 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             }
 
             if (chartModel.getData().getxLabel().size() > 0) {
+
                 for (int k = 0; k < chartModel.getData().getxLabel().size(); k++) {
                     numMap.put(k, chartModel.getData().getxLabel().get(k));
                 }
             }
+
             if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
                 lineDataSet.setLineWidth(3f);
                 lineDataSet2.setLineWidth(3f);
@@ -435,12 +427,18 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
             }
 
+
             XAxis xAxis = lineChart.getXAxis();
             xAxis.setValueFormatter(new IAxisValueFormatter() {
 
                 @Override
                 public String getFormattedValue(float value, AxisBase axis) {
-                    return numMap.get((int) value);
+                 //   return numMap.get((int) value);
+
+                    /*Date d = new Date(Float.valueOf(value).longValue());
+                    String date = new SimpleDateFormat("dd-MM", Locale.getDefault()).format(d);
+                    */
+                    return  numMap.get((int) value);
                 }
 
             });
@@ -450,8 +448,11 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineChart.invalidate();
 
             }
-        } else {
+
+
+        }else {
             lineChart.setVisibility(View.GONE);
+
         }
 
         if (chartModel.getData().getBarChart().size() > 0) {
@@ -663,6 +664,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 break;
         }
     }
+
 
 
 }

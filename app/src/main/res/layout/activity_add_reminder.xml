@@ -170,6 +170,8 @@
                             android:background="@color/transparent"
                             android:fontFamily="@font/muli_bold"
                             android:gravity="center|start"
+                            android:singleLine="true"
+                            android:maxLines="1"
                             android:hint="@string/hint_reminder_title"
                             android:textColor="@color/themecolor"
                             android:textSize="@dimen/_12sdp" />
@@ -196,7 +198,7 @@
 
                         <TextView
                             android:id="@+id/tv_reminder_txt"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/_10sdp"
                             android:layout_marginLeft="@dimen/_10sdp"
@@ -228,7 +230,7 @@
 
                         <TextView
                             android:id="@+id/tv_repeat_txt"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/_10sdp"
                             android:layout_marginLeft="@dimen/_10sdp"

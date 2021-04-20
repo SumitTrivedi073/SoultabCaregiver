@@ -107,7 +107,7 @@ public class ChartModel {
             private String name;
             @SerializedName("value")
             @Expose
-            private Integer value;
+            private String  value;
             @SerializedName("color_set")
             @Expose
             private String colorSet;
@@ -120,11 +120,11 @@ public class ChartModel {
                 this.name = name;
             }
 
-            public Integer getValue() {
+            public String getValue() {
                 return value;
             }
 
-            public void setValue(Integer value) {
+            public void setValue(String value) {
                 this.value = value;
             }
 

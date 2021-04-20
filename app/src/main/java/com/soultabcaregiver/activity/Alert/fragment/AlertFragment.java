@@ -59,11 +59,7 @@ public class AlertFragment extends BaseFragment {
         no_data_txt = view.findViewById(R.id.no_data_txt);
         create_alert_btn = view.findViewById(R.id.create_alert_btn);
 
-        if (Utility.isNetworkConnected(mContext)) {
-            GetAlertList();//for list data
-        } else {
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
+
 
         create_alert_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +72,16 @@ public class AlertFragment extends BaseFragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Utility.isNetworkConnected(mContext)) {
+            GetAlertList();//for list data
+        } else {
+            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+        }
     }
 
     private void GetAlertList() {

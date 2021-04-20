@@ -25,7 +25,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.sinch.android.rtc.ClientRegistration;
@@ -43,8 +42,8 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.AppointmentRequestModel;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorAppointmentList;
-import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -67,11 +66,11 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     public static final int RequestPermissionCode = 3;
     private final String TAG = getClass().getSimpleName();
     Context mContext;
-    TextView tvDocNm, tvAdd, tvContact, tvDate, tv_time, tvDocEmail, txt_fax,txt_Portal, cancel_appointment_btn;
-    FloatingActionButton lyBack_card;
+    TextView tvDocNm, txt_doctor_address, txt_mobile_number, tvDate, tv_time, txt_doctor_email, txt_fax, txt_Portal, cancel_appointment_btn;
+    RelativeLayout back_btn;
     Switch tbDocAppTog;
 
-    LinearLayout rlDate, rl_time;
+    RelativeLayout rlDate, rl_time;
     String myFormat = "MM/dd/yyyy";
     SimpleDateFormat sdf;
     String myFormat1 = "yyyy-MM-dd";//for webservice
@@ -82,7 +81,6 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     Calendar myCalendar;
     String AppointmentId;
     String curDate = "";
-    CircleImageView ivDocPic;
     SinchClient sinchClient;
     LinearLayout main_call_layout, call_end_layout;
     TextView call_state;
@@ -108,16 +106,20 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     }
 
     private void InitCompo() {
-        lyBack_card = findViewById(R.id.lyBack_card);
+        back_btn = findViewById(R.id.back_btn);
         tvDocNm = findViewById(R.id.txt_doctor_name);
-        tvAdd = findViewById(R.id.txt_second);
-        tvContact = findViewById(R.id.txt_third);
+        txt_doctor_address = findViewById(R.id.txt_doctor_address);
+        txt_mobile_number = findViewById(R.id.txt_mobile_number);
+
+        tvDocNm = findViewById(R.id.txt_doctor_name);
+        txt_doctor_address = findViewById(R.id.txt_doctor_address);
+        txt_mobile_number = findViewById(R.id.txt_mobile_number);
+        txt_doctor_email = findViewById(R.id.txt_doctor_email);
+
         tbDocAppTog = findViewById(R.id.tb_doc_appoint);
-        ivDocPic = findViewById(R.id.iv_doc_pic_update_appoint);
         rlDate = findViewById(R.id.rl_date);
         tvDate = findViewById(R.id.tv_date);
-        tvDocEmail = findViewById(R.id.txt_five);
-        tv_time = findViewById(R.id.tv_time);
+         tv_time = findViewById(R.id.tv_time);
         rl_time = findViewById(R.id.rl_time);
         tvMakeAppoint = findViewById(R.id.tv_make_appoi);
         txt_fax = findViewById(R.id.txt_fax);
@@ -195,16 +197,16 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         assert appointmentDatum != null;
         AppointmentId = String.valueOf(appointmentDatum.getAppointmentId());
         tvDocNm.setText(appointmentDatum.getDoctorName());
-        tvAdd.setText(appointmentDatum.getDoctorAddress());
-        tvContact.setText(appointmentDatum.getDoctorMobile());
+        txt_doctor_address.setText(appointmentDatum.getDoctorAddress());
+        txt_mobile_number.setText(appointmentDatum.getDoctorMobile());
         txt_fax.setText(appointmentDatum.getFax());
         txt_Portal.setText(appointmentDatum.getWebsite());
         if (appointmentDatum.getEmail() != null) {
-            tvDocEmail.setText(appointmentDatum.getEmail());
+            txt_doctor_email.setText(appointmentDatum.getEmail());
         }
 
         tvDate.setText(appointmentDatum.getDate());
-        sSelDateId = String.valueOf(Utility.ChangeDateFormat("MM-dd-yyyy","yyyy-MM-dd",appointmentDatum.getDate()));
+        sSelDateId = String.valueOf(Utility.ChangeDateFormat("MM-dd-yyyy", "yyyy-MM-dd", appointmentDatum.getDate()));
         Log.e("sSelDateId", sSelDateId);
 
 
@@ -225,9 +227,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         rlDate.setOnClickListener(this);
         rl_time.setOnClickListener(this);
         tvMakeAppoint.setOnClickListener(this);
-        lyBack_card.setOnClickListener(this);
+        back_btn.setOnClickListener(this);
         cancel_appointment_btn.setOnClickListener(this);
-
 
 
     }
@@ -235,7 +236,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.lyBack_card:
+            case R.id.back_btn:
                 finish();
                 break;
             case R.id.rl_date:
@@ -247,32 +248,35 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                 break;
 
             case R.id.tv_make_appoi:
+                if (Utility.isNetworkConnected(mContext)) {
 
-                if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
-                    Log.e("equal true", "equal true");
+                    if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
+                        Log.e("equal true", "equal true");
 
 
-                    if (TextUtils.isEmpty(sSelTimeId)) {
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                        if (TextUtils.isEmpty(sSelTimeId)) {
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
 
-                    } else if (TextUtils.isEmpty(sSelDateId)) {
+                        } else if (TextUtils.isEmpty(sSelDateId)) {
 
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                        } else {
+                            GetDocAvailableTime(1);
+                        }
                     } else {
-                        GetDocAvailableTime(1);
+
+                        if (TextUtils.isEmpty(sSelTimeId)) {
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                        } else if (TextUtils.isEmpty(sSelDateId)) {
+                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                        } else {
+                            GetDocAvailableTime(1);
+                        }
+
                     }
                 } else {
-
-                    if (TextUtils.isEmpty(sSelTimeId)) {
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
-                    } else if (TextUtils.isEmpty(sSelDateId)) {
-                        Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
-                    } else {
-                        GetDocAvailableTime(1);
-                    }
-
+                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
-
 
                 break;
             case R.id.cancel_appointment_btn:
@@ -312,28 +316,28 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         close_window.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    if (calling != null) {
-                        calling.hangup();
-                        calling = null;
-                        alertDialog.dismiss();
-                    } else {
-                        alertDialog.dismiss();
-                    }
-                    finish();
+                if (calling != null) {
+                    calling.hangup();
+                    calling = null;
+                    alertDialog.dismiss();
+                } else {
+                    alertDialog.dismiss();
                 }
+                finish();
+            }
         });
 
         call_end_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    if (calling != null) {
-                        calling.hangup();
-                        calling = null;
-                        alertDialog.dismiss();
-                    } else {
-                        alertDialog.dismiss();
-                    }
-                    finish();
+                if (calling != null) {
+                    calling.hangup();
+                    calling = null;
+                    alertDialog.dismiss();
+                } else {
+                    alertDialog.dismiss();
+                }
+                finish();
             }
         });
 
@@ -462,14 +466,14 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("appointment_id", appointmentDatum.getAppointmentId());
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.user_id));
-            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
 
             Log.e(TAG, "appointmentCancel======>" + mainObject.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DELETE_DOC_APPOIN_API, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -481,7 +485,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                             String code = response.getString("status_code");
                             if (code.equals("200")) {
 
-                                Utility.ShowToast(mContext,getResources().getString(R.string.cancel_appointment_successfully));
+                                Utility.ShowToast(mContext, getResources().getString(R.string.cancel_appointment_successfully));
 
                                 onBackPressed();
                             }
@@ -523,8 +527,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         try {
 
             mainObject.put("appointment_id", AppointmentId);
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.user_id));
-mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
             mainObject.put("date_id", sSelDateId);
             mainObject.put("time_id", sSelTimeId);
 
@@ -542,7 +546,7 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
             e.printStackTrace();
         }
         Log.e(TAG, "UpdateDocAppointment:input data=  " + mainObject.toString());
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DOC_UPDATE_APPOIN_API, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -600,7 +604,7 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
     }
 
 
-    private void DoctorConectingPopup(){
+    private void DoctorConectingPopup() {
         LayoutInflater inflater = (LayoutInflater) getApplicationContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.doctor_function_popup,
@@ -621,10 +625,10 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
         RelativeLayout Portal = layout.findViewById(R.id.Portal);
         RelativeLayout close_popup = layout.findViewById(R.id.close_popup);
 
-        if (TextUtils.isEmpty(tvContact.getText().toString())) {
+        if (TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
             Call_btn.setVisibility(View.GONE);
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)sendFax_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             sendFax_btn.setLayoutParams(params);
         }
@@ -633,7 +637,7 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
         if (TextUtils.isEmpty(txt_Portal.getText().toString())) {
             Portal.setVisibility(View.GONE);
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)sendFax_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             sendFax_btn.setLayoutParams(params);
         }
@@ -642,16 +646,16 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
             sendFax_btn.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.isEmpty(txt_Portal.getText().toString())&&!TextUtils.isEmpty(txt_fax.getText().toString())) {
+        if (!TextUtils.isEmpty(txt_Portal.getText().toString()) && !TextUtils.isEmpty(txt_fax.getText().toString())) {
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)Call_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             Call_btn.setLayoutParams(params);
         }
 
-        if (!TextUtils.isEmpty(txt_fax.getText().toString())&&!TextUtils.isEmpty(tvContact.getText().toString())) {
+        if (!TextUtils.isEmpty(txt_fax.getText().toString()) && !TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)Portal.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             Portal.setLayoutParams(params);
         }
@@ -660,7 +664,7 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                if (!TextUtils.isEmpty(tvContact.getText().toString())) {
+                if (!TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
                     AccessCall(appointmentDatum.getDoctorMobile(), appointmentDatum.getDoctorName());
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.mobile_unavailable));
@@ -728,12 +732,13 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
         try {
             mainObject.put("doctor_id", appointmentDatum.getDoctor_id());
             mainObject.put("dr_appointment_id", appointmentDatum.getAppointmentId());
-           mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.user_id));
-mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));} catch (JSONException e) {
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         Log.e(TAG, "SendFax:input data=  " + mainObject.toString());
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(getResources().getString(R.string.Loading));
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DoctorSendFaxAPI, mainObject,
@@ -788,6 +793,11 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
 
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+        super.onBackPressed();
+    }
 
     private class SinchCallListener implements CallListener {
 
@@ -824,11 +834,5 @@ mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregi
         public void onShouldSendPushNotification(Call call, List<PushPair> pushPairs) {
             //intentionally left empty
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        finish();
-        super.onBackPressed();
     }
 }
