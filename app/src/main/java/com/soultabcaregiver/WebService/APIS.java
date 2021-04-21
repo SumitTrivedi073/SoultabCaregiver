@@ -28,11 +28,14 @@ public class APIS {
     public static final String DOC_Cancel_APPOIN_API = "Caregiver/cancel_appointment";
     public static final String DELETE_DOC_APPOIN_API = "Caregiver/appointmentdelete";
     public static final String Add_Doctor_API = "Caregiver/add_doctor";
-    public static final String DoctorSendFaxAPI = "Users_milan/sendFax";
     public static final String EVENTLIST = "Users/activity_details";
     public static final String LineChartAPI = "caregiver/lineChart";
     public static final String AlertListAPI = "caregiver/get_alert_list";
     public static final String DELETEREMINDERAPI = "Users/reminderdelete";
+    public static final String CaregiverListAPI = "Caregiver/getCaregiverDetailsforCaregiver";
+    public static final String QuickAlery = "Users/quik_alert";
+    public static final String AlertCount = "Users/get_unread_alert_count";
+    public static final String AlertCountUpdate = "Users/update_unread_alert";
 
 
 
@@ -40,8 +43,7 @@ public class APIS {
     ///////Need to develop for caregiver
     public static final String UPDATEREMINDERAPI = "Users/updatereminder";
     public static final String ADDREMINDERAPI = "Users/reminder_add";
-    public static final String CaregiverListAPI = "Users/getCaregiverDetails";
-    public static final String QuickAlery = "Users/quik_alert";
+    public static final String DoctorSendFaxAPI = "Users_milan/sendFax";
 
 
 

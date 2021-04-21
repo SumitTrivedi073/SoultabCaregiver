@@ -732,7 +732,7 @@ public class Utility {
         no_text_popup.setText(negetiveText);
         yes_text_popup.setText(positiveText);
 
-        yes_text_popup.setOnClickListener(new View.OnClickListener() {
+        no_text_popup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -838,7 +838,7 @@ public class Utility {
         // load fragment0.....
 
         FragmentTransaction transaction = activty.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fl_container, fragment);
+        transaction.replace(R.id.fragment_container, fragment);
 
         if(backstack)
         {

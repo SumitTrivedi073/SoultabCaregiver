@@ -48,10 +48,10 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_below="@+id/facebook_txt"
             android:text="@string/doctor_option"
-            android:fontFamily="@font/muli_black"
+            android:fontFamily="@font/muli_semibold"
             android:textSize="@dimen/_12sdp"
             android:layout_centerHorizontal="true"
-            android:textColor="#212121"
+            android:textColor="@color/blackish"
             android:gravity="center"/>
 
         <RelativeLayout
@@ -89,7 +89,7 @@
                 android:layout_marginStart="@dimen/_5sdp"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:background="@drawable/blue_btn2"
-                >
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -108,7 +108,8 @@
                 android:layout_width="@dimen/_85sdp"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:background="@drawable/blue_btn2">
+                android:background="@drawable/blue_btn2"
+                android:visibility="visible">
 
 
                 <TextView

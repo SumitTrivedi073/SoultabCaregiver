@@ -22,7 +22,10 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.Alert.activity.CaregiverListActivity;
 import com.soultabcaregiver.activity.Alert.adapter.AlertAdapter;
+import com.soultabcaregiver.activity.Alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.Alert.model.AlertModel;
+import com.soultabcaregiver.activity.Calender.CalenderModel.CommonResponseModel;
+import com.soultabcaregiver.activity.MainScreen.MainActivity;
 import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -41,6 +44,8 @@ public class AlertFragment extends BaseFragment {
     RecyclerView alert_list;
     TextView no_data_txt;
     FloatingActionButton create_alert_btn;
+    MainActivity mainActivity;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +64,8 @@ public class AlertFragment extends BaseFragment {
         no_data_txt = view.findViewById(R.id.no_data_txt);
         create_alert_btn = view.findViewById(R.id.create_alert_btn);
 
-
+        mainActivity = MainActivity.instance;
+        AlertCountUpdate();
 
         create_alert_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,18 +77,19 @@ public class AlertFragment extends BaseFragment {
             }
         });
 
+        if (Utility.isNetworkConnected(mContext)) {
+            GetAlertList();//for list data
+        } else {
+            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+        }
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (Utility.isNetworkConnected(mContext)) {
-            GetAlertList();//for list data
-        } else {
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
-    }
+      }
 
     private void GetAlertList() {
 
@@ -149,4 +156,58 @@ public class AlertFragment extends BaseFragment {
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
     }
+
+    private void AlertCountUpdate() {
+
+        JSONObject mainObject = new JSONObject();
+        try {
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+
+            Log.e(TAG, "CaregiverList API========>" + mainObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                APIS.BASEURL + APIS.AlertCountUpdate, mainObject,
+                response -> {
+                    Log.e(TAG, "Caregiverlist response=" + response.toString());
+                    hideProgressDialog();
+
+                    CommonResponseModel alertCountModel = new Gson().fromJson(response.toString(),
+                            CommonResponseModel.class);
+
+                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")){
+
+                        if (mainActivity!=null){
+                            mainActivity.Alert_countAPI();
+                        }
+
+                    } else{
+                        Utility.ShowToast(mContext,alertCountModel.getMessage());
+                    }
+
+                }, error -> {
+            VolleyLog.d(TAG, "Error: " + error.getMessage());
+            hideProgressDialog();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                return params;
+            }
+
+        };
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+    }
+
 }

@@ -51,7 +51,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     List<DoctorListModel.Response.DoctorDatum> doctorlist = new ArrayList<>();
     TextView tvNodata;
     DoctorCategoryModel.Response.CategoryDatum docCatBean;
-
+    public static DoctorListFragment instance;
     private int lastPage = 1;
     private String mMaxoffset = "";
 
@@ -59,6 +59,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
+
     }
 
     @Override
@@ -67,16 +68,12 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
         // Inflate the layout for this fragment
          view = inflater.inflate(R.layout.fragment_doctor_list, container, false);
 
+        instance = DoctorListFragment.this;
          init();
-        if (Utility.isNetworkConnected(mContext)) {
-            GetDocList();
-        } else {
-
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
 
          return view;
     }
+
 
     private void init() {
         doctor_list = view.findViewById(R.id.doctor_list);
@@ -142,6 +139,18 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Utility.isNetworkConnected(mContext)) {
+            GetDocList();
+        } else {
+
+            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+        }
+
+    }
+
     public void GetDocList() {
         final String TAG = "doctor list";
         JSONObject mainObject = new JSONObject();
@@ -204,71 +213,6 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    public void GetDocList2() {
-        final String TAG = "doctor list";
-        JSONObject mainObject = new JSONObject();
-        try {
-            mainObject.put("page_no", lastPage);
-
-            Log.e(TAG, "Doctor list_mainObject====>" + mainObject.toString());
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        showProgressDialog(mContext,getResources().getString(R.string.Loading));
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                APIS.BASEURL + APIS.GETDOCLISTAPI, mainObject,
-                response -> {
-                    Log.d(TAG, "doctor list response=" + response.toString());
-                    hideProgressDialog();
-                    DoctorListModel doctorListModel = new Gson().fromJson(response.toString(),
-                            DoctorListModel.class);
-
-                    if (String.valueOf(doctorListModel.getStatusCode()).equals("200")) {
-
-
-                        if (doctorListModel.getResponse().getDoctorData().size() > 0) {
-
-                            List<DoctorListModel.Response.DoctorDatum> doctorlistdata2 = new ArrayList<>();
-
-                            doctorlistdata2.addAll(doctorListModel.getResponse().getDoctorData());
-                            doctorlist.addAll(doctorlistdata2);
-
-                            adapter = new DoctorListAdapter(getActivity(), doctorlist, tvNodata);
-                            adapter.DocSelection(DoctorListFragment.this);
-
-                            doctor_list.setAdapter(adapter);
-                            tvNodata.setVisibility(View.GONE);
-                            doctor_list.setVisibility(View.VISIBLE);
-                        } else {
-                            doctor_list.setVisibility(View.GONE);
-                            tvNodata.setVisibility(View.VISIBLE);
-
-                        }
-                    } else {
-                        tvNodata.setText(doctorListModel.getMessage());
-                        tvNodata.setVisibility(View.VISIBLE);
-                        doctor_list.setVisibility(View.GONE);
-                    }
-                }, error -> {
-            VolleyLog.d(TAG, "Error: " + error.getMessage());
-            hideProgressDialog();
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
-            }
-        };
-// Adding request to request queue
-        AppController.getInstance().addToRequestQueue(jsonObjReq);
-        jsonObjReq.setShouldCache(false);
-        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
-                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
 
     @Override
     public void DocSelectionListener(List<DoctorListModel.Response.DoctorDatum> DocBeanList, boolean isSearch) {

@@ -19,9 +19,12 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.activity.MainScreen.MainActivity;
+import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.AddDoctorActivity;
 import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.NonSwipeableViewPager;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,9 @@ public class DoctorFragment extends BaseFragment {
     private NonSwipeableViewPager viewPager;
     private TextView tab_txt;
     private FloatingActionButton Add_doctor_btn;
+    DoctorListFragment doctorListFragment;
+    DoctorAppointmentFragment doctorAppointmentFragment;
+    ViewPagerAdapter adapter;
 
 
     @Override
@@ -50,7 +56,17 @@ public class DoctorFragment extends BaseFragment {
         view = inflater.inflate(R.layout.fragment_doctor, container, false);
 
         InitCompo();
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter!=null){
+        adapter.notifyDataSetChanged();
+    }
+
     }
 
     private void InitCompo() {
@@ -82,8 +98,10 @@ public class DoctorFragment extends BaseFragment {
 
                 if (tab.getPosition()==1){
                     tab_txt.setText(mContext.getResources().getString(R.string.doctor_appointment));
+
                 }else {
                     tab_txt.setText(mContext.getResources().getString(R.string.doctor_list));
+
                 }
             }
 
@@ -97,17 +115,20 @@ public class DoctorFragment extends BaseFragment {
 
             }
         });
+
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+        //if tablayout use inside fragment so instead of getFragmentManager() Use getChildFragmentManager()
+         adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new DoctorListFragment(), "Doctor List");
         adapter.addFragment(new DoctorAppointmentFragment(), "Doctor Appointment");
 
         viewPager.setAdapter(adapter);
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    public class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 

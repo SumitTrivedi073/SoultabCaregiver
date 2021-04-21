@@ -156,13 +156,15 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
+                    if(isChecked) {
+
                         weekly_chart.setChecked(true);
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(false);
                         twelve_month_chart.setChecked(false);
                         chart_value_data = "week";
                         ChartAPI2(chart_value_data);
-
+                    }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
@@ -173,6 +175,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
+                    if(isChecked) {
+
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(true);
                         six_month_chart.setChecked(false);
@@ -180,7 +184,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         chart_value_data = "3month";
 
                         ChartAPI2(chart_value_data);
-
+                    }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
@@ -190,13 +194,15 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
+                    if(isChecked) {
+
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(true);
                         twelve_month_chart.setChecked(false);
                         chart_value_data = "6month";
                         ChartAPI2(chart_value_data);
-
+                    }
 
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -208,13 +214,14 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
 
+                    if(isChecked) {
                         twelve_month_chart.setChecked(true);
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(false);
                         chart_value_data = "12month";
                         ChartAPI2("12month");
-
+                    }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
@@ -435,9 +442,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 public String getFormattedValue(float value, AxisBase axis) {
                  //   return numMap.get((int) value);
 
-                    /*Date d = new Date(Float.valueOf(value).longValue());
-                    String date = new SimpleDateFormat("dd-MM", Locale.getDefault()).format(d);
-                    */
                     return  numMap.get((int) value);
                 }
 

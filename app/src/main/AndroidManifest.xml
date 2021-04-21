@@ -41,9 +41,6 @@
             android:name=".activity.docter.DocorDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.docter.ActAllDoctorAppointment"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.docter.UpdateDoctorAppointmentActivity"
             android:screenOrientation="portrait" />
         <activity

@@ -2,9 +2,11 @@ package com.soultabcaregiver.activity.docter.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -12,13 +14,30 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.UpdateDoctorAppointmentActivity;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorAppointmentList;
+import com.soultabcaregiver.activity.docter.fragment.DoctorAppointmentFragment;
+import com.soultabcaregiver.utils.AppController;
+import com.soultabcaregiver.utils.CustomProgressDialog;
+import com.soultabcaregiver.utils.Utility;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by poonam on 1/16/2019.
@@ -28,19 +47,18 @@ public class DoctorAppointedListAdptr extends
         RecyclerView.Adapter<DoctorAppointedListAdptr.ViewHolder> implements Filterable {
     Context context;
     int diff;
-    RelativeLayout rl_select_remove;
     TextView tvNodata;
     private List<DoctorAppointmentList.Response.AppointmentDatum> arAppointedDoc, arSearch;
-    private AppointedDocSelectionListener appointedDocSelectionListener;
+    private CustomProgressDialog progressDialog;
+    DoctorAppointmentFragment doctorAppointmentFragment;
 
-    public DoctorAppointedListAdptr(Context mContext, List<DoctorAppointmentList.Response.AppointmentDatum> arRemind_, int diff_, RelativeLayout rl_select_remove, TextView tvNodata) {
+
+    public DoctorAppointedListAdptr(Context mContext, List<DoctorAppointmentList.Response.AppointmentDatum> arRemind_, int diff_, TextView tvNodata) {
         arAppointedDoc = arRemind_;
         context = mContext;
         this.diff = diff_;
-        this.arSearch = new ArrayList<>();
-        this.arSearch.addAll(arAppointedDoc);
-        this.rl_select_remove = rl_select_remove;
         this.tvNodata = tvNodata;
+        doctorAppointmentFragment = DoctorAppointmentFragment.instance;
     }
 
     @Override
@@ -59,34 +77,23 @@ public class DoctorAppointedListAdptr extends
 
         final DoctorAppointmentList.Response.AppointmentDatum AppointedDocBean = arAppointedDoc.get(position);
 
-        viewHolder.tvTitle.setText(AppointedDocBean.getDoctorName());
+        viewHolder.doctor_name.setText(AppointedDocBean.getDoctorName());
 
 
-        if (AppointedDocBean.isCheck()) {
-            viewHolder.ivSelect.setImageResource(R.drawable.checked);
-        } else {
-            viewHolder.ivSelect.setImageResource(R.drawable.uncheck);
-        }
 
-        viewHolder.ivSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (AppointedDocBean.isCheck()) {
-                    AppointedDocBean.setCheck(false);
-                } else {
-                    AppointedDocBean.setCheck(true);
-                }
-                if (appointedDocSelectionListener != null) {
-                    appointedDocSelectionListener.AppointedDocSelection(arAppointedDoc, false);
-                }
-            }
-        });
-        viewHolder.rlMain.setOnClickListener(new View.OnClickListener() {
+        viewHolder.update_appointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent mINTENT = new Intent(context, UpdateDoctorAppointmentActivity.class);//for update appointed doc
                 mINTENT.putExtra(APIS.DocListItem, AppointedDocBean);
                 context.startActivity(mINTENT);
+            }
+        });
+
+        viewHolder.delete_appointment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertmessage(AppointedDocBean.getAppointmentId());
             }
         });
 
@@ -129,14 +136,9 @@ public class DoctorAppointedListAdptr extends
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 arAppointedDoc = (ArrayList<DoctorAppointmentList.Response.AppointmentDatum>) filterResults.values;
                 if (arAppointedDoc.size()>0) {
-                    rl_select_remove.setVisibility(View.VISIBLE);
                     tvNodata.setVisibility(View.GONE);
 
-                    if (appointedDocSelectionListener != null) {
-                        appointedDocSelectionListener.AppointedDocSelection(arAppointedDoc, true);
-                    }
                 }else {
-                    rl_select_remove.setVisibility(View.GONE);
                     tvNodata.setVisibility(View.VISIBLE);
 
                 }
@@ -148,29 +150,109 @@ public class DoctorAppointedListAdptr extends
 
 
 
-    public void setAppointedDocSelection(AppointedDocSelectionListener listener) {
-        try {
-            appointedDocSelectionListener = listener;
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public interface AppointedDocSelectionListener {
-        void AppointedDocSelection(List<DoctorAppointmentList.Response.AppointmentDatum> appointedDocBeanList, boolean isSearch);
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView ivSelect;
-        TextView tvTitle;
-        RelativeLayout rlMain;
+        TextView doctor_name;
+        RelativeLayout update_appointment,delete_appointment;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_title);
-            rlMain = itemView.findViewById(R.id.rl_main);
-            ivSelect = itemView.findViewById(R.id.iv_select);
+            doctor_name = itemView.findViewById(R.id.doctor_name);
+            delete_appointment = itemView.findViewById(R.id.delete_appointment);
+            update_appointment = itemView.findViewById(R.id.update_appointment);
         }
     }
+
+    private void alertmessage(String appointmentId) {
+
+        final DiloagBoxCommon diloagBoxCommon = Utility.Alertmessage(context, context.getResources().getString(R.string.delete_Appointment)
+                , context.getResources().getString(R.string.are_you_sure_you_want_to_delete_appointment)
+                , context.getResources().getString(R.string.no_text)
+                , context.getResources().getString(R.string.yes_text));
+        diloagBoxCommon.getTextView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                diloagBoxCommon.getDialog().dismiss();
+                if (Utility.isNetworkConnected(context)) {
+                    DeletAppointment(appointmentId);
+                } else {
+
+                    Utility.ShowToast(context, context.getResources().getString(R.string.net_connection));
+                }
+            }
+        });
+    }
+
+    public void DeletAppointment(String appointmentId) {
+
+        final String TAG = "Delete AppointedDoc";
+        JSONObject mainObject = new JSONObject();
+        try {
+            mainObject.put("appointment_id", appointmentId);
+            mainObject.put("user_id", Utility.getSharedPreferences(context,APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(context,APIS.caregiver_id));
+
+            Log.e(TAG, "appointmentdelete======>" + mainObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        showProgressDialog(context,context.getResources().getString(R.string.Loading));
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                APIS.BASEURL + APIS.DELETE_DOC_APPOIN_API, mainObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "Delete AppointedDoc response=" + response.toString());
+                        hideProgressDialog();
+                        try {
+                            String code = response.getString("status_code");
+                            if (code.equals("200")) {
+
+                                Utility.ShowToast(context, response.getJSONObject("response")
+                                        .getString("appointment_data"));
+
+                                    doctorAppointmentFragment.GetAppointedDocRecond();
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                hideProgressDialog();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                return params;
+            }
+
+        };
+// Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+    }
+
+    public void showProgressDialog(Context context,String message){
+        if(progressDialog == null) progressDialog = new CustomProgressDialog(context, message);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    public void hideProgressDialog(){
+        if(progressDialog != null) progressDialog.dismiss();
+    }
+
+
+
 }

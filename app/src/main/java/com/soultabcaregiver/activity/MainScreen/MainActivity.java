@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,42 +17,73 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.Alert.adapter.CareGiverListAdapter;
 import com.soultabcaregiver.activity.Alert.fragment.AlertFragment;
+import com.soultabcaregiver.activity.Alert.model.AlertCountModel;
+import com.soultabcaregiver.activity.Alert.model.CareGiverListModel;
 import com.soultabcaregiver.activity.Calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.LoginActivity;
 import com.soultabcaregiver.activity.MainScreen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
+import com.soultabcaregiver.activity.docter.fragment.DoctorListFragment;
 import com.soultabcaregiver.reminder_ring_class.ReminderCreateClass;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.sinch_calling.CallScreenActivity;
 import com.soultabcaregiver.sinch_calling.SinchService;
+import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, SinchService.StartFailedListener {
@@ -69,6 +101,10 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     private String CityZipCode;
     private GoogleApiClient googleApiClient;
     private String TAG = getClass().getSimpleName();
+    private Timer tmrStartEng;
+    BottomNavigationItemView itemView;
+    View badge;
+    TextView tv_badge;
 
 
     @Override
@@ -83,6 +119,17 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         navigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         video_call = findViewById(R.id.video_call);
         BottomNavigationViewHelper.removeShiftMode(navigationView);
+
+        BottomNavigationMenuView bottomNavigationMenuView =
+                (BottomNavigationMenuView) navigationView.getChildAt(0);
+        View v = bottomNavigationMenuView.getChildAt(3);
+         itemView = (BottomNavigationItemView) v;
+
+         badge = LayoutInflater.from(this)
+                .inflate(R.layout.homescreen_count, bottomNavigationMenuView, false);
+         tv_badge = badge.findViewById(R.id.notification_badge);
+
+         Alert_countAPI();
 
         listner();
     }
@@ -105,9 +152,13 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                     case R.id.navigation_appointment:
 
                         video_call.setVisibility(View.GONE);
-                        Utility.loadFragment(MainActivity.this, new DoctorFragment(), false, null);
-
-                        return true;
+                       Utility.loadFragment(MainActivity.this, new DoctorFragment(), false, null);
+                     /*   Fragment fragment= new DoctorFragment();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, fragment); // fragmen container id in first parameter is the  container(Main layout id) of Activity
+                        transaction.addToBackStack(null);  // this will manage backstack
+                        transaction.commit();
+                     */   return true;
 
                     case R.id.navigation_dailyroutine:
 
@@ -131,7 +182,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         });
 
-        navigationView.setSelectedItemId(R.id.navigation_appointment);
+        navigationView.setSelectedItemId(R.id.navigation_dashboard);
 
         video_call.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,12 +267,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(receiver);
-
-    }
 
     private void buildGoogleApiClient() {
 
@@ -337,13 +382,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         getSinchServiceInterface().setStartListener(this);
     }
 
-    @Override
-    public void onDestroy() {
-        if (getSinchServiceInterface() != null) {
-            getSinchServiceInterface().stopClient();
-        }
-        super.onDestroy();
-    }
 
     //to kill the current session of SinchService
     public void stopButtonClicked() {
@@ -377,6 +415,201 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
             }
         }
+    }
+
+    private void TimerStart() {
+
+        if (null == tmrStartEng) {
+            tmrStartEng = new Timer();
+            tmrStartEng.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.e("Timer", "Working fine");
+
+                    try {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert_countAPI2();
+                            }
+                        });
+                    } catch (Exception e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert_countAPI2();
+
+                            }
+                        });
+                    }
+                }
+
+            }, 30000, 30000);
+        }
+    }
+
+    private void Alert_countAPI2() {
+
+        JSONObject mainObject = new JSONObject();
+        try {
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+
+            Log.e(TAG, "AlertCount API========>" + mainObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                APIS.BASEURL + APIS.AlertCount, mainObject,
+                response -> {
+                    Log.e(TAG, "AlertCount response=" + response.toString());
+                    hideProgressDialog();
+
+                    AlertCountModel alertCountModel = new Gson().fromJson(response.toString(),
+                            AlertCountModel.class);
+
+                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")){
+                        itemView.removeView(badge);
+                        if(alertCountModel.getResponse().getUnreadCount()>9){
+                            tv_badge.setText("9+");
+                            itemView.addView(badge);
+
+                        }else {
+
+                            tv_badge.setText(String.valueOf(alertCountModel.getResponse().getUnreadCount()));
+                            itemView.addView(badge);
+                        }
+                    } else{
+                        Utility.ShowToast(mContext,alertCountModel.getMessage());
+                    }
+
+                }, error -> {
+            VolleyLog.d(TAG, "Error: " + error.getMessage());
+            hideProgressDialog();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                return params;
+            }
+
+        };
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+    }
+
+    public void Alert_countAPI() {
+
+        JSONObject mainObject = new JSONObject();
+        try {
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+
+            Log.e(TAG, "AlertCount API========>" + mainObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                APIS.BASEURL + APIS.AlertCount, mainObject,
+                response -> {
+                    Log.e(TAG, "AlertCount response=" + response.toString());
+                    hideProgressDialog();
+
+                    AlertCountModel alertCountModel = new Gson().fromJson(response.toString(),
+                            AlertCountModel.class);
+
+                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")){
+                        itemView.removeView(badge);
+                        if(alertCountModel.getResponse().getUnreadCount()>9){
+                            tv_badge.setText("9+");
+                            itemView.addView(badge);
+
+                        }else {
+
+                            tv_badge.setText(String.valueOf(alertCountModel.getResponse().getUnreadCount()));
+                            itemView.addView(badge);
+                        }
+                    } else{
+                        Utility.ShowToast(mContext,alertCountModel.getMessage());
+                    }
+                    if (null != tmrStartEng) {
+                        tmrStartEng.cancel();
+                        tmrStartEng = null;
+                        Log.e("Timer", "Stop");
+                        TimerStart();
+
+                    }
+
+                }, error -> {
+            VolleyLog.d(TAG, "Error: " + error.getMessage());
+            hideProgressDialog();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                return params;
+            }
+
+        };
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(receiver);
+        if (null != tmrStartEng) {
+            tmrStartEng.cancel();
+            tmrStartEng = null;
+            Log.e("Timer", "Stop");
+
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (getSinchServiceInterface() != null) {
+            getSinchServiceInterface().stopClient();
+        }
+        if (null != tmrStartEng) {
+            tmrStartEng.cancel();
+            tmrStartEng = null;
+
+            Log.e("Timer", "Destroy");
+
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (null != tmrStartEng) {
+            tmrStartEng.cancel();
+            tmrStartEng = null;
+            Log.e("Timer", "Pause");
+
+        }
+
     }
 
 
