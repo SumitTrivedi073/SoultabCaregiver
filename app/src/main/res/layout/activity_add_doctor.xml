@@ -184,7 +184,6 @@
                                 android:textSize="@dimen/_12sdp" />
 
                             <ImageView
-                                android:id="@+id/countryRl"
                                 android:layout_width="@dimen/_20sdp"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/down_arrow"
@@ -335,7 +334,7 @@
                         android:fontFamily="@font/muli_bold"
                         android:gravity="center|start"
                         android:hint="@string/enter_Portal"
-                        android:imeOptions="actionNext"
+                        android:imeOptions="actionDone"
                         android:singleLine="true"
                         android:maxLines="1"
                         android:inputType="textWebEditText"

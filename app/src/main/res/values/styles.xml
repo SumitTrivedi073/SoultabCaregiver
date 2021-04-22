@@ -12,21 +12,6 @@
 
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-
-
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="colorPrimary">@color/themecolor</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="windowActionBarOverlay">true</item>
-        <item name="android:windowDisablePreview">true</item>
-
-
-    </style>
-
     <style name="CustomAlertDialogStyle" parent="android:Theme.Holo.Light.Dialog">
         <item name="android:background">@color/transparent</item>
         <item name="android:windowBackground">@color/transparent</item>
@@ -70,12 +55,21 @@
 
     </style>
 
-    <style name="TextStyleBNV">
-        <item name="android:textSize">@dimen/_2sdp</item>
-    </style>
-
     <style name="tab_txt_style" parent="@android:style/TextAppearance.Small">
         <item name="android:fontFamily">@font/muli_bold</item>
+    </style>
+
+    <style name="SCBSwitch" parent="Theme.AppCompat.Light">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/blackish</item>
+
+        <!-- inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/blackish
+        </item>
+
+        <!-- inactive track color (30% transparency) -->
+        <item name="android:colorForeground">@color/blackish
+        </item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />

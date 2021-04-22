@@ -162,7 +162,8 @@ public class CustomEventAdapter  extends
         if (value.equals("1")){
             try {
                 mainObject.put("appointment_id", sRemindId);
-                mainObject.put("user_id",Utility.getSharedPreferences(context,APIS.user_id));
+                mainObject.put("user_id", Utility.getSharedPreferences(context, APIS.user_id));
+                mainObject.put("caregiver_id", Utility.getSharedPreferences(context, APIS.caregiver_id));
 
                 URL = APIS.DELETE_DOC_APPOIN_API;
                 Log.e(TAG, "appointmentCancel======>" + mainObject.toString());

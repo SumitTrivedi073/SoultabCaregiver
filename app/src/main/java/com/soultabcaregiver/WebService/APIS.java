@@ -5,10 +5,10 @@ public class APIS {
     public static final String BASEURL1 = "https://mysoultab.com/api/";
 
     //  Development Server Base URL
-    public static final String BASEURL2 = "https://dev.mysoultab.com/api/";
+    public static final String BASEURL = "https://dev.mysoultab.com/api/";
 
     //Streaging ke liye Base URL
-    public static final String BASEURL = "https://stage.mysoultab.com/api/";
+    public static final String BASEURL2 = "https://stage.mysoultab.com/api/";
 
 
     public static final String HEADERKEY = "soultab";
@@ -27,7 +27,7 @@ public class APIS {
     public static final String DOC_UPDATE_APPOIN_API = "Caregiver/update_appointment";
     public static final String DOC_Cancel_APPOIN_API = "Caregiver/cancel_appointment";
     public static final String DELETE_DOC_APPOIN_API = "Caregiver/appointmentdelete";
-    public static final String Add_Doctor_API = "Caregiver/add_doctor";
+    public static final String Add_Doctor_API = "Users/add_doctor";
     public static final String EVENTLIST = "Users/activity_details";
     public static final String LineChartAPI = "caregiver/lineChart";
     public static final String AlertListAPI = "caregiver/get_alert_list";

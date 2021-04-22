@@ -6,6 +6,7 @@
     <string name="sinch_application_secreat">6Q3oGPpRb0eCk5j3aX+60Q==</string>
     <string name="sinch_enviorement_host">clientapi.sinch.com</string>
     <string name="sinch_user_id">160636</string>
+    <string name="powered_by_soultab">Powered by SoulTab</string>
 
     <!--Login Activity-->
     <string name="login_hint_email">Enter your user id or email</string>
@@ -38,14 +39,12 @@
 
     <!--Doctor Appointment-->
     <string name="doctor_appointment">Doctor Appointments</string>
-    <string name="select_doctor_appoint">Please select appointment</string>
     <string name="delete_Appointment">Delete Appointment</string>
     <string name="are_you_sure_you_want_to_delete_appointment">Are you sure you want to delete appointment?</string>
     <string name="no_text">No</string>
     <string name="yes_text">Yes</string>
     <string name="search">Search</string>
     <string name="no_data_found">No Data Found</string>
-    <string name="Update">Update</string>
     <string name="doctor_list">Doctor List</string>
     <string name="doctor_appointment_time">Please select doctor appointment time</string>
     <string name="doctor_appointment_date">Please select doctor appointment date</string>
@@ -57,8 +56,6 @@
     <string name="select_country_code">Please select country code</string>
     <string name="mobile_unavailable">Mobile number not available</string>
     <string name="Fax_unavailable">Fax number not available</string>
-    <string name="Portal_unavailable">Portal link not available</string>
-    <string name="doctor_specility">Select Doctor Specility</string>
     <string name="cancel_appointment">Cancel appointment</string>
     <string name="doctor_name">Doctor\'s Name</string>
     <string name="enter_doctor_name">Enter doctor\'s name</string>
@@ -77,7 +74,6 @@
     <string name="Portal">Portal</string>
     <string name="enter_Portal">Enter your Portal</string>
     <string name="set_reminder">Set Reminder</string>
-    <string name="appointment_time">Appointment Time</string>
     <string name="Call_caregiver">Would you like  \n to call </string>
     <string name="add_doctor">Add Doctor</string>
     <string name="schedule">Schedule</string>
@@ -122,7 +118,6 @@
 
 
     <!--Act Calender-->
-    <string name="all_activities">All Activities</string>
 
     <string name="daily">Daily</string>
     <string name="weekly">Weekly</string>
@@ -148,15 +143,10 @@
     <string name="update_reminder_successfully">Reminder updated successfully</string>
     <string name="hint_reminder_title">Enter your reminder title</string>
     <string name="reminder_title">Reminder Title</string>
-    <string name="txt_when">When Date</string>
-    <string name="txt_when_time">When Time</string>
     <string name="txt_reminder">Reminder Before</string>
     <string name="txt_reminder1">Please select reminder before value</string>
-    <string name="select_reminder">Please select reminder</string>
     <string name="txt_repeat">Repeat</string>
-    <string name="txt_snooze">Snooze</string>
     <string name="add_remind">Add Reminder</string>
-    <string name="update_remind">Update Reminder</string>
     <string name="reminders">Reminders</string>
     <string name="please_select_one_option">Please select one option</string>
     <string name="brforetheevent">brforetheevent</string>

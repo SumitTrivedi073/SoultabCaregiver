@@ -46,7 +46,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:layout_above="@+id/bootom_nav_relative"
         app:backgroundTint="@color/orange_color"
         app:elevation="@dimen/_5sdp"
@@ -54,4 +56,14 @@
         android:src="@drawable/video_on"
         app:tint="@android:color/white"
         app:fabSize="auto"/>
+        <!--android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/_20sdp"
+        android:layout_above="@+id/bootom_nav_relative"
+        app:backgroundTint="@color/orange_color"
+        app:elevation="@dimen/_5sdp"
+        app:pressedTranslationZ="@dimen/_5sdp"
+        android:src="@drawable/video_on"
+        app:tint="@android:color/white"
+        app:fabSize="auto"/>-->
 </RelativeLayout>

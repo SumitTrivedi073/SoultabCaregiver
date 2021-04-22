@@ -72,7 +72,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     MainActivity mainActivity;
     Calendar calendar;
     ChartModel chartModel;
-    String chart_value_data = "3month";
+    String chart_value_data = "week";
 
 
     @Override
@@ -144,6 +144,19 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        today_txt.setBackgroundColor(getResources().getColor(R.color.muzli_color));
+        lastweek_txt.setBackgroundColor(getResources().getColor(R.color.white));
+        lastmonth_txt.setBackgroundColor(getResources().getColor(R.color.white));
+
+        today_txt.setTextColor(getResources().getColor(R.color.white));
+        lastweek_txt.setTextColor(getResources().getColor(R.color.blackish));
+        lastmonth_txt.setTextColor(getResources().getColor(R.color.blackish));
+
     }
 
     private void listner() {
@@ -351,7 +364,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
 
     private void getChartData(ChartModel chartModel) {
-        final HashMap<Integer, String> numMap = new HashMap<>();
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
         lineDataSet = null;
@@ -395,11 +407,15 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             }
 
             if (chartModel.getData().getxLabel().size() > 0) {
-
+                final ArrayList<String> xAxisLabel = new ArrayList<>();
                 for (int k = 0; k < chartModel.getData().getxLabel().size(); k++) {
-                    numMap.put(k, chartModel.getData().getxLabel().get(k));
+                    xAxisLabel.add(String.valueOf(chartModel.getData().getxLabel().get(k)));
                 }
+                lineChart.getXAxis().setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(xAxisLabel));
+
             }
+
+
 
             if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
                 lineDataSet.setLineWidth(3f);
@@ -414,11 +430,11 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 dataSets.add(lineDataSet4);
                 dataSets.add(lineDataSet5);
 
-                lineDataSet.setColor(Color.GREEN);
-                lineDataSet2.setColor(Color.RED);
+                lineDataSet.setColor(Color.parseColor("#800080"));
+                lineDataSet2.setColor(Color.GREEN);
                 lineDataSet3.setColor(Color.BLUE);
-                lineDataSet4.setColor(Color.MAGENTA);
-                lineDataSet5.setColor(Color.YELLOW);
+                lineDataSet4.setColor(Color.YELLOW);
+                lineDataSet5.setColor(Color.RED);
 
                 data = new LineData(dataSets);
 
@@ -435,18 +451,16 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             }
 
 
-            XAxis xAxis = lineChart.getXAxis();
+  /*          XAxis xAxis = lineChart.getXAxis();
             xAxis.setValueFormatter(new IAxisValueFormatter() {
-
                 @Override
                 public String getFormattedValue(float value, AxisBase axis) {
-                 //   return numMap.get((int) value);
-
-                    return  numMap.get((int) value);
+                    //Log.e(value);
+                    return xLabels.get((int) value);
                 }
 
             });
-            if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+  */          if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
 
                 lineChart.setData(data);
                 lineChart.invalidate();
@@ -500,6 +514,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
     private void colorchange(LineDataSet lineDataSet, LineDataSet lineDataSet2, LineDataSet
             lineDataSet3, LineDataSet lineDataSet4, LineDataSet lineDataSet5) {
+
         lineDataSet.setHighLightColor(Color.parseColor("#BEBEBE"));
         lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         lineDataSet.setValueTextColor(getResources().getColor(R.color.white));

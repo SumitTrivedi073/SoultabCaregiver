@@ -36,7 +36,6 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/event_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"

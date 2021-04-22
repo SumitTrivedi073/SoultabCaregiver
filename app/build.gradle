@@ -27,7 +27,7 @@ android {
     }
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            def appName = "Soultab Caregiver04-21-2021"
+            def appName = "Soultab Caregiver04-22-2021"
             outputFileName = appName + ".apk"
         }
     }

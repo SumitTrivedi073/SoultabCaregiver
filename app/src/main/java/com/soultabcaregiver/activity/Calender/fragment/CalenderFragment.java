@@ -117,6 +117,15 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         } else {
             Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
         }
+
+        daily.setBackgroundColor(getResources().getColor(R.color.muzli_color));
+        weekly.setBackgroundColor(getResources().getColor(R.color.white));
+        Monthly.setBackgroundColor(getResources().getColor(R.color.white));
+
+        daily.setTextColor(getResources().getColor(R.color.white));
+        weekly.setTextColor(getResources().getColor(R.color.blackish));
+        Monthly.setTextColor(getResources().getColor(R.color.blackish));
+
     }
 
     @Override

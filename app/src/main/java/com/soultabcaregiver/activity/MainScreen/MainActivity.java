@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -27,23 +26,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.internal.Constants;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
@@ -55,16 +45,13 @@ import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.Alert.adapter.CareGiverListAdapter;
 import com.soultabcaregiver.activity.Alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.Alert.model.AlertCountModel;
-import com.soultabcaregiver.activity.Alert.model.CareGiverListModel;
 import com.soultabcaregiver.activity.Calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.LoginActivity;
 import com.soultabcaregiver.activity.MainScreen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
-import com.soultabcaregiver.activity.docter.fragment.DoctorListFragment;
 import com.soultabcaregiver.reminder_ring_class.ReminderCreateClass;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.sinch_calling.CallScreenActivity;
@@ -76,12 +63,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -97,15 +81,14 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     double lat, lon;
     LatLng loc;
     BottomNavigationView navigationView;
+    BottomNavigationItemView itemView;
+    View badge;
+    TextView tv_badge;
     private BroadcastReceiver receiver;
     private String CityZipCode;
     private GoogleApiClient googleApiClient;
     private String TAG = getClass().getSimpleName();
     private Timer tmrStartEng;
-    BottomNavigationItemView itemView;
-    View badge;
-    TextView tv_badge;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,13 +106,13 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         BottomNavigationMenuView bottomNavigationMenuView =
                 (BottomNavigationMenuView) navigationView.getChildAt(0);
         View v = bottomNavigationMenuView.getChildAt(3);
-         itemView = (BottomNavigationItemView) v;
+        itemView = (BottomNavigationItemView) v;
 
-         badge = LayoutInflater.from(this)
+        badge = LayoutInflater.from(this)
                 .inflate(R.layout.homescreen_count, bottomNavigationMenuView, false);
-         tv_badge = badge.findViewById(R.id.notification_badge);
+        tv_badge = badge.findViewById(R.id.notification_badge);
 
-         Alert_countAPI();
+        Alert_countAPI();
 
         listner();
     }
@@ -145,20 +128,15 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                     case R.id.navigation_dashboard:
                         video_call.setVisibility(View.VISIBLE);
-                        Utility.loadFragment(MainActivity.this, new DashBoardFragment(), false, null);
+                       Utility.loadFragment(MainActivity.this, new DashBoardFragment(), false, null);
 
                         return true;
 
                     case R.id.navigation_appointment:
 
                         video_call.setVisibility(View.GONE);
-                       Utility.loadFragment(MainActivity.this, new DoctorFragment(), false, null);
-                     /*   Fragment fragment= new DoctorFragment();
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container, fragment); // fragmen container id in first parameter is the  container(Main layout id) of Activity
-                        transaction.addToBackStack(null);  // this will manage backstack
-                        transaction.commit();
-                     */   return true;
+                        Utility.loadFragment(MainActivity.this, new DoctorFragment(), false, null);
+                        return true;
 
                     case R.id.navigation_dailyroutine:
 
@@ -393,30 +371,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         finish();
     }
 
-    private static class BottomNavigationViewHelper {
-
-        @SuppressLint("RestrictedApi")
-        static void removeShiftMode(BottomNavigationView view) {
-            BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
-            try {
-                Field shiftingMode = menuView.getClass().getDeclaredField("mShiftingMode");
-                shiftingMode.setAccessible(true);
-                shiftingMode.setBoolean(menuView, false);
-                shiftingMode.setAccessible(false);
-                for (int i = 0; i < menuView.getChildCount(); i++) {
-                    BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
-                    item.setShifting(false);
-                    // set once again checked value, so view will be updated
-                    item.setChecked(item.getItemData().isChecked());
-                }
-            } catch (NoSuchFieldException e) {
-                Log.e("ERROR NO SUCH FIELD", "Unable to get shift mode field");
-            } catch (IllegalAccessException e) {
-                Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
-            }
-        }
-    }
-
     private void TimerStart() {
 
         if (null == tmrStartEng) {
@@ -452,7 +406,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
 
             Log.e(TAG, "AlertCount API========>" + mainObject.toString());
         } catch (JSONException e) {
@@ -470,19 +424,19 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                     AlertCountModel alertCountModel = new Gson().fromJson(response.toString(),
                             AlertCountModel.class);
 
-                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")){
+                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
                         itemView.removeView(badge);
-                        if(alertCountModel.getResponse().getUnreadCount()>9){
+                        if (alertCountModel.getResponse().getUnreadCount() > 9) {
                             tv_badge.setText("9+");
                             itemView.addView(badge);
 
-                        }else {
+                        } else {
 
                             tv_badge.setText(String.valueOf(alertCountModel.getResponse().getUnreadCount()));
                             itemView.addView(badge);
                         }
-                    } else{
-                        Utility.ShowToast(mContext,alertCountModel.getMessage());
+                    } else {
+                        Utility.ShowToast(mContext, alertCountModel.getMessage());
                     }
 
                 }, error -> {
@@ -510,7 +464,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
 
             Log.e(TAG, "AlertCount API========>" + mainObject.toString());
         } catch (JSONException e) {
@@ -527,19 +481,19 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                     AlertCountModel alertCountModel = new Gson().fromJson(response.toString(),
                             AlertCountModel.class);
 
-                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")){
+                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
                         itemView.removeView(badge);
-                        if(alertCountModel.getResponse().getUnreadCount()>9){
+                        if (alertCountModel.getResponse().getUnreadCount() > 9) {
                             tv_badge.setText("9+");
                             itemView.addView(badge);
 
-                        }else {
+                        } else {
 
                             tv_badge.setText(String.valueOf(alertCountModel.getResponse().getUnreadCount()));
                             itemView.addView(badge);
                         }
-                    } else{
-                        Utility.ShowToast(mContext,alertCountModel.getMessage());
+                    } else {
+                        Utility.ShowToast(mContext, alertCountModel.getMessage());
                     }
                     if (null != tmrStartEng) {
                         tmrStartEng.cancel();
@@ -569,7 +523,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
 
     }
-
 
     @Override
     public void onStop() {
@@ -610,6 +563,30 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         }
 
+    }
+
+    private static class BottomNavigationViewHelper {
+
+        @SuppressLint("RestrictedApi")
+        static void removeShiftMode(BottomNavigationView view) {
+            BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
+            try {
+                Field shiftingMode = menuView.getClass().getDeclaredField("mShiftingMode");
+                shiftingMode.setAccessible(true);
+                shiftingMode.setBoolean(menuView, false);
+                shiftingMode.setAccessible(false);
+                for (int i = 0; i < menuView.getChildCount(); i++) {
+                    BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
+                    item.setShifting(false);
+                    // set once again checked value, so view will be updated
+                    item.setChecked(item.getItemData().isChecked());
+                }
+            } catch (NoSuchFieldException e) {
+                Log.e("ERROR NO SUCH FIELD", "Unable to get shift mode field");
+            } catch (IllegalAccessException e) {
+                Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
+            }
+        }
     }
 
 
