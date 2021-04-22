@@ -450,17 +450,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
             }
 
-
-  /*          XAxis xAxis = lineChart.getXAxis();
-            xAxis.setValueFormatter(new IAxisValueFormatter() {
-                @Override
-                public String getFormattedValue(float value, AxisBase axis) {
-                    //Log.e(value);
-                    return xLabels.get((int) value);
-                }
-
-            });
-  */          if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+        if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
 
                 lineChart.setData(data);
                 lineChart.invalidate();
@@ -483,13 +473,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         }
 
 
-        if (String.valueOf(chartModel.getData().getDeviceData().getStatus()).equals("1")) {
-            last_seen_txt.setText(chartModel.getData().getDeviceData().getPrimaryUsername() + " Last Seen " +
-                    Utility.EEEhh_mm_aa.format(calendar.getTime()));
-
-            Utility.setSharedPreference(mContext, chartModel.getData().getDeviceData().getPrimaryUsername(), APIS.user_name);
-
-        } else {
             try {
 
                 last_seen_txt.setText(chartModel.getData().getDeviceData().getPrimaryUsername() + " Last Seen "
@@ -497,7 +480,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
 
         if (chartModel.getData().getCompliance().getDaily().getType() != null) {
 
