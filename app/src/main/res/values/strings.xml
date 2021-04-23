@@ -68,6 +68,7 @@
     <string name="enter_valid_mobile_number">Enter Valid Mobile number</string>
     <string name="hint_email">Enter your email</string>
     <string name="email">Email</string>
+    <string name="valid_email_address">Enter your valid email address</string>
     <string name="call">Call</string>
     <string name="Fax">Fax</string>
     <string name="enter_Fax">Enter your fax number</string>
@@ -207,6 +208,23 @@
     <string name="book_taxi">Book a Taxi for me</string>
     <string name="book_doctor_appointment">Book my doctor appointment</string>
     <string name="send">Send</string>
+
+    <!--Forgot Password-->
+    <string name="Forgot_password">Forgot your Password?</string>
+    <string name="enter_email_forgot">Enter your Email below to send you the instruction on how to reset your Password.</string>
+    <string name="enter_registerd_email">Enter your Registered Email</string>
+    <string name="proceed">Proceed</string>
+
+    <!--OTP Verification-->
+    <string name="verify_your_account">Verify your Account</string>
+    <string name="account_verification_txt">A Verification Code has been sent to\n your registered Phone Number,\n Please Enter it below.</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="otp_expire">Your OTP expires in :</string>
+    <string name="need_help">Need Help?</string>
+    <string name="verify">Verify</string>
+    <string name="otp_send_successfully">OTP send successfully \nto your registered\n mobile number.</string>
+    <string name="otp_verified_successfully">OTP Verified Successfully.</string>
+
 
 
 </resources>

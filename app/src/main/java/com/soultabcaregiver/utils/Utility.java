@@ -76,7 +76,6 @@ import java.util.regex.Pattern;
 
 public class Utility {
 
-    public static Dialog dialog;
     public static Context mContext;
     static int mMaxWidth, mMaxHeight;
     static AlertDialog alertDialog;
@@ -112,6 +111,14 @@ public class Utility {
         editor.commit();
     }
 
+    public static void setSharedPreference2(Context context, String name, String value) {
+        mContext = context;
+        SharedPreferences settings = context.getSharedPreferences("Additional", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(name, value);
+        editor.commit();
+    }
+
     public static void clearSharedPreference(Context context) {
         mContext = context;
         SharedPreferences settings = context.getSharedPreferences(PREFERENCE, 0);
@@ -140,6 +147,11 @@ public class Utility {
 
     public static String getSharedPreferences(Context context, String name) {
         SharedPreferences settings = context.getSharedPreferences(PREFERENCE, 0);
+        return settings.getString(name, null);
+    }
+
+    public static String getSharedPreferences2(Context context, String name) {
+        SharedPreferences settings = context.getSharedPreferences("Additional", 0);
         return settings.getString(name, null);
     }
 
@@ -698,55 +710,6 @@ public class Utility {
     }
 
 
-    public static DiloagBoxCommon Alertmessage(final Context context, String titleString, String descriptionString,
-                                               String negetiveText, String positiveText) {
-        DiloagBoxCommon diloagBoxCommon = new DiloagBoxCommon();
-       /* final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(true);
-        if (dialog.getWindow() != null)
-            dialog.getWindow().setBac(context.getResources().getColor(R.color.transparent_black));
-        dialog.setContentView(R.layout.common_popup_layout);
-*/
-        LayoutInflater inflater = (LayoutInflater) mContext
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.common_popup_layout,
-                null);
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
-
-        builder.setView(layout);
-        alertDialog = builder.create();
-        alertDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        alertDialog.setCancelable(false);
-        alertDialog.getWindow().setGravity(Gravity.CENTER);
-        alertDialog.show();
-        alertDialog.getWindow().setBackgroundDrawableResource(R.color.transparent_black);
-
-        TextView title_popup = alertDialog.findViewById(R.id.title_popup);
-        TextView message_popup = alertDialog.findViewById(R.id.message_popup);
-        TextView no_text_popup = alertDialog.findViewById(R.id.no_text_popup);
-        TextView yes_text_popup = alertDialog.findViewById(R.id.yes_text_popup);
-        title_popup.setText(titleString);
-        message_popup.setText(descriptionString);
-        no_text_popup.setText(negetiveText);
-        yes_text_popup.setText(positiveText);
-
-        no_text_popup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                alertDialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
-        diloagBoxCommon.setDialog(alertDialog);
-        diloagBoxCommon.setTextViewNew(no_text_popup);
-        diloagBoxCommon.setTextView(yes_text_popup);
-
-        return diloagBoxCommon;
-    }
     public static boolean isLocationEnabled(Context context) {
         int locationMode = 0;
         String locationProviders;

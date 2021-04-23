@@ -1,11 +1,15 @@
 package com.soultabcaregiver.activity.docter.adapter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -39,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.soultabcaregiver.utils.Utility.mContext;
+
 /**
  * Created by poonam on 1/16/2019.
  */
@@ -51,6 +57,7 @@ public class DoctorAppointedListAdptr extends
     private List<DoctorAppointmentList.Response.AppointmentDatum> arAppointedDoc, arSearch;
     private CustomProgressDialog progressDialog;
     DoctorAppointmentFragment doctorAppointmentFragment;
+    AlertDialog alertDialog;
 
 
     public DoctorAppointedListAdptr(Context mContext, List<DoctorAppointmentList.Response.AppointmentDatum> arRemind_, int diff_, TextView tvNodata) {
@@ -59,6 +66,8 @@ public class DoctorAppointedListAdptr extends
         this.diff = diff_;
         this.tvNodata = tvNodata;
         doctorAppointmentFragment = DoctorAppointmentFragment.instance;
+
+
     }
 
     @Override
@@ -164,14 +173,32 @@ public class DoctorAppointedListAdptr extends
 
     private void alertmessage(String appointmentId) {
 
-        final DiloagBoxCommon diloagBoxCommon = Utility.Alertmessage(context, context.getResources().getString(R.string.delete_Appointment)
-                , context.getResources().getString(R.string.are_you_sure_you_want_to_delete_appointment)
-                , context.getResources().getString(R.string.no_text)
-                , context.getResources().getString(R.string.yes_text));
-        diloagBoxCommon.getTextView().setOnClickListener(new View.OnClickListener() {
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.common_popup_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
+
+        TextView title_popup = layout.findViewById(R.id.title_popup);
+        TextView message_popup = layout.findViewById(R.id.message_popup);
+        TextView no_text_popup = layout.findViewById(R.id.no_text_popup);
+        TextView yes_text_popup = layout.findViewById(R.id.yes_text_popup);
+        title_popup.setText(context.getResources().getString(R.string.delete_Appointment));
+        message_popup.setText(context.getResources().getString(R.string.are_you_sure_you_want_to_delete_appointment));
+        no_text_popup.setText(context.getResources().getString(R.string.no_text));
+        yes_text_popup.setText(context.getResources().getString(R.string.yes_text));
+
+        yes_text_popup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                diloagBoxCommon.getDialog().dismiss();
+                alertDialog.dismiss();
                 if (Utility.isNetworkConnected(context)) {
                     DeletAppointment(appointmentId);
                 } else {
@@ -180,7 +207,15 @@ public class DoctorAppointedListAdptr extends
                 }
             }
         });
-    }
+
+        no_text_popup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+     }
 
     public void DeletAppointment(String appointmentId) {
 

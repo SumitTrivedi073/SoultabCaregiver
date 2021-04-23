@@ -647,7 +647,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 break;
 
             case R.id.logout:
-                final DiloagBoxCommon diloagBoxCommon = Utility.Alertmessage(mContext, getResources().getString(R.string.logout)
+                final DiloagBoxCommon diloagBoxCommon = Alertmessage(mContext, getResources().getString(R.string.logout)
                         , getResources().getString(R.string.are_you_sure_you_want_to_logout)
                         , getResources().getString(R.string.no_text)
                         , getResources().getString(R.string.yes_text));

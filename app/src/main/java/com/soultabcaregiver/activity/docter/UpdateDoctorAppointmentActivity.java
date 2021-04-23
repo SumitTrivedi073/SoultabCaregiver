@@ -439,7 +439,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                     break;
 
                 case 2:
-                    final DiloagBoxCommon diloagBoxCommon = Utility.Alertmessage(mContext, mContext.getResources().getString(R.string.cancel_appointment)
+                    final DiloagBoxCommon diloagBoxCommon = Alertmessage(mContext, mContext.getResources().getString(R.string.cancel_appointment)
                             , mContext.getResources().getString(R.string.are_you_sure_cancel_appointment)
                             , mContext.getResources().getString(R.string.no_text)
                             , mContext.getResources().getString(R.string.yes_text));

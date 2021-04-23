@@ -17,6 +17,7 @@ public class APIS {
     public static final String HEADERVALUE1 = "application/json";
 
     public static final String LOGINAPI = "Caregiver/login";
+    public static final String FORGOTAPI = "Users/forgot_password";
     public static final String DailyRoutine = "Caregiver/daily_routine";
     public static final String GetDailyRoutineAPI = "Caregiver/fetch_dailyRoutine";
 
@@ -58,6 +59,8 @@ public class APIS {
 
     public static final String Caregiver_mobile = "mobile";
     public static final String profile_image = "profile_image";
+    public static final String save_email = "save_email";
+
     public static final String CaregiverImageURL = "https://www.dev.mysoultab.com/uploads/profile_images/";
 
 

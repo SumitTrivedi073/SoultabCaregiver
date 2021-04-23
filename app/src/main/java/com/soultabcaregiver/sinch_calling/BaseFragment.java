@@ -1,5 +1,6 @@
 package com.soultabcaregiver.sinch_calling;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +11,14 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.os.IBinder;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
@@ -28,6 +32,7 @@ public class BaseFragment extends Fragment implements ServiceConnection {
 
     private SinchService.SinchServiceInterface mSinchServiceInterface;
     public  CustomProgressDialog progressDialog;
+    public  AlertDialog alertDialog;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -71,6 +76,50 @@ public class BaseFragment extends Fragment implements ServiceConnection {
 
     protected SinchService.SinchServiceInterface getSinchServiceInterface() {
         return mSinchServiceInterface;
+    }
+
+    public  DiloagBoxCommon Alertmessage(final Context context, String titleString, String descriptionString,
+                                               String negetiveText, String positiveText) {
+        DiloagBoxCommon diloagBoxCommon = new DiloagBoxCommon();
+
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.common_popup_layout,
+                null);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        alertDialog = builder.create();
+        alertDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        alertDialog.setCancelable(false);
+        alertDialog.getWindow().setGravity(Gravity.CENTER);
+        alertDialog.show();
+        alertDialog.getWindow().setBackgroundDrawableResource(R.color.transparent_black);
+
+        TextView title_popup = layout.findViewById(R.id.title_popup);
+        TextView message_popup = layout.findViewById(R.id.message_popup);
+        TextView no_text_popup = layout.findViewById(R.id.no_text_popup);
+        TextView yes_text_popup = layout.findViewById(R.id.yes_text_popup);
+        title_popup.setText(titleString);
+        message_popup.setText(descriptionString);
+        no_text_popup.setText(negetiveText);
+        yes_text_popup.setText(positiveText);
+
+        no_text_popup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+        diloagBoxCommon.setDialog(alertDialog);
+        diloagBoxCommon.setTextViewNew(no_text_popup);
+        diloagBoxCommon.setTextView(yes_text_popup);
+
+        return diloagBoxCommon;
     }
 
     public  void showProgressDialog(Context context, String message){

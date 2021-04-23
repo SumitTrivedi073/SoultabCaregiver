@@ -133,23 +133,48 @@ public class CustomEventAdapter  extends
 
 
     private void alertmessage(String id, int position, String value) {
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.common_popup_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyDialogTheme);
 
-        final DiloagBoxCommon diloagBoxCommon  = Utility.Alertmessage(context,context.getResources().getString(R.string.delete_Reminder)
-                ,context.getResources().getString(R.string.are_you_sure_you_want_to_delete_reminder)
-                ,context.getResources().getString(R.string.no_text)
-                ,context.getResources().getString(R.string.yes_text));
-        diloagBoxCommon.getTextView().setOnClickListener(new View.OnClickListener() {
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
+
+        TextView title_popup = layout.findViewById(R.id.title_popup);
+        TextView message_popup = layout.findViewById(R.id.message_popup);
+        TextView no_text_popup = layout.findViewById(R.id.no_text_popup);
+        TextView yes_text_popup = layout.findViewById(R.id.yes_text_popup);
+        title_popup.setText(context.getResources().getString(R.string.delete_Reminder));
+        message_popup.setText(context.getResources().getString(R.string.are_you_sure_you_want_to_delete_reminder));
+        no_text_popup.setText(context.getResources().getString(R.string.no_text));
+        yes_text_popup.setText(context.getResources().getString(R.string.yes_text));
+
+        yes_text_popup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                diloagBoxCommon.getDialog().dismiss();
+                alertDialog.dismiss();
                 if (Utility.isNetworkConnected(context)) {
                     DeletRemind(id,position,value);
                 } else {
 
-                    Utility.ShowToast(context,context.getResources().getString(R.string.net_connection));
+                    Utility.ShowToast(context, context.getResources().getString(R.string.net_connection));
                 }
             }
         });
+
+        no_text_popup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
     }
 
 

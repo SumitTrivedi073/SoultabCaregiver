@@ -1,4 +1,4 @@
-package com.soultabcaregiver.activity;
+package com.soultabcaregiver.activity.login_module;
 
 import android.content.Context;
 import android.content.Intent;
@@ -63,6 +63,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         tbRemPass = findViewById(R.id.tb_rem);
         view_pwd1 = findViewById(R.id.view_pwd1);
         tv_rem_pass = findViewById(R.id.tv_rem_pass);
+
+        if (Utility.getSharedPreferences2(mContext,APIS.save_email)!=null){
+            if (Utility.getSharedPreferences2(mContext,APIS.save_email).equals("true")){
+                etEmail.setText(Utility.getSharedPreferences2(mContext,APIS.Caregiver_email));
+            }
+        }
     }
 
     private void Listener() {
@@ -101,7 +107,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 }
                 break;
             case R.id.tv_forgot_pass:
-             //   startActivity(new Intent(LoginActivity.this, ActForgotPass.class));
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
                 break;
 
             case R.id.tv_login:
@@ -171,6 +177,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         LoginModel loginModel = new Gson().fromJson(response.toString(),LoginModel.class);
 
                         if (String.valueOf(loginModel.getStatusCode()).equals("200")){
+
+                            if (tbRemPass.isChecked()){
+                                Utility.setSharedPreference2(mContext,APIS.Caregiver_email,loginModel.getResponse().getEmail());
+                                Utility.setSharedPreference2(mContext,APIS.save_email,"true");
+
+                            }
 
                             Utility.setSharedPreference(mContext,APIS.user_id,loginModel.getResponse().getId());
                             Utility.setSharedPreference(mContext,APIS.caregiver_id,loginModel.getResponse().getCaregiver_id());

@@ -48,7 +48,7 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.Alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.Alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.Calender.fragment.CalenderFragment;
-import com.soultabcaregiver.activity.LoginActivity;
+import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.MainScreen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
@@ -242,6 +242,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     protected void onResume() {
         super.onResume();
         new ReminderCreateClass(MainActivity.this);
+
+        TimerStart();
 
     }
 
@@ -494,13 +496,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         }
                     } else {
                         Utility.ShowToast(mContext, alertCountModel.getMessage());
-                    }
-                    if (null != tmrStartEng) {
-                        tmrStartEng.cancel();
-                        tmrStartEng = null;
-                        Log.e("Timer", "Stop");
-                        TimerStart();
-
                     }
 
                 }, error -> {
