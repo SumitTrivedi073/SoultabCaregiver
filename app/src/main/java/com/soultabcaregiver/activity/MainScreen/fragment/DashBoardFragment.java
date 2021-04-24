@@ -176,7 +176,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         six_month_chart.setChecked(false);
                         twelve_month_chart.setChecked(false);
                         chart_value_data = "week";
-                        ChartAPI2(chart_value_data);
+                        ChartAPI(chart_value_data);
                     }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -196,7 +196,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         twelve_month_chart.setChecked(false);
                         chart_value_data = "3month";
 
-                        ChartAPI2(chart_value_data);
+                        ChartAPI(chart_value_data);
                     }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -214,7 +214,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         six_month_chart.setChecked(true);
                         twelve_month_chart.setChecked(false);
                         chart_value_data = "6month";
-                        ChartAPI2(chart_value_data);
+                        ChartAPI(chart_value_data);
                     }
 
                 } else {
@@ -233,7 +233,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(false);
                         chart_value_data = "12month";
-                        ChartAPI2("12month");
+                        ChartAPI("12month");
                     }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -302,72 +302,11 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
     }
 
-
-    private void ChartAPI2(String chart_value_data) {
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.LineChartAPI,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        hideProgressDialog();
-                        Log.e("response", response);
-                        chartModel = new Gson().fromJson(response, ChartModel.class);
-                        final HashMap<Integer, String> numMap = new HashMap<>();
-                        if (String.valueOf(chartModel.getOk()).equals("1")) {
-
-                            getChartData(chartModel);
-
-                        } else {
-
-                            lineChart.setVisibility(View.GONE);
-                            bar_chart_list.setVisibility(View.GONE);
-
-                        }
-
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("error", error.toString());
-
-                        hideProgressDialog();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
-                params.put("range", chart_value_data);
-                /*params.put("user_id", "878");
-                params.put("range", "week");*/
-
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-
-                return params;
-            }
-
-        };
-        AppController.getInstance().addToRequestQueue(stringRequest);
-        stringRequest.setShouldCache(false);
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-    }
-
-
     private void getChartData(ChartModel chartModel) {
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
         lineDataSet = null;
-        lineDataSet2 = null;
+       // lineDataSet2 = null;
         lineDataSet3 = null;
         lineDataSet4 = null;
         lineDataSet5 = null;
@@ -383,12 +322,12 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                     }
                 }
 
-                if (chartModel.getData().getLineChart().get(i).getName().equals("Personal")) {
+    /*            if (chartModel.getData().getLineChart().get(i).getName().equals("Personal")) {
                     if (chartModel.getData().getLineChart().get(i).getYaxis().size() > 0) {
                         lineDataSet2 = new LineDataSet(datavalue1(chartModel.getData().getLineChart().get(i).getYaxis()), chartModel.getData().getLineChart().get(i).getName());
                     }
                 }
-                if (chartModel.getData().getLineChart().get(i).getName().equals("Splash")) {
+    */            if (chartModel.getData().getLineChart().get(i).getName().equals("Splash")) {
                     if (chartModel.getData().getLineChart().get(i).getYaxis().size() > 0) {
                         lineDataSet3 = new LineDataSet(datavalue1(chartModel.getData().getLineChart().get(i).getYaxis()), chartModel.getData().getLineChart().get(i).getName());
                     }
@@ -417,21 +356,21 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
 
 
-            if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+            if (lineDataSet != null &&  lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
                 lineDataSet.setLineWidth(3f);
-                lineDataSet2.setLineWidth(3f);
+             //   lineDataSet2.setLineWidth(3f);
                 lineDataSet3.setLineWidth(3f);
                 lineDataSet4.setLineWidth(3f);
                 lineDataSet5.setLineWidth(3f);
 
                 dataSets.add(lineDataSet);
-                dataSets.add(lineDataSet2);
+              //  dataSets.add(lineDataSet2);
                 dataSets.add(lineDataSet3);
                 dataSets.add(lineDataSet4);
                 dataSets.add(lineDataSet5);
 
                 lineDataSet.setColor(Color.parseColor("#800080"));
-                lineDataSet2.setColor(Color.GREEN);
+                //lineDataSet2.setColor(Color.GREEN);
                 lineDataSet3.setColor(Color.BLUE);
                 lineDataSet4.setColor(Color.YELLOW);
                 lineDataSet5.setColor(Color.RED);
@@ -446,11 +385,11 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineChart.getDescription().setTextColor(getResources().getColor(R.color.white));
 
 
-                colorchange(lineDataSet, lineDataSet2, lineDataSet3, lineDataSet4, lineDataSet5);
+                colorchange(lineDataSet,  lineDataSet3, lineDataSet4, lineDataSet5);
 
             }
 
-        if (lineDataSet != null && lineDataSet2 != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+        if (lineDataSet != null &&  lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
 
                 lineChart.setData(data);
                 lineChart.invalidate();
@@ -494,7 +433,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
     }
 
-    private void colorchange(LineDataSet lineDataSet, LineDataSet lineDataSet2, LineDataSet
+    private void colorchange(LineDataSet lineDataSet, LineDataSet
             lineDataSet3, LineDataSet lineDataSet4, LineDataSet lineDataSet5) {
 
         lineDataSet.setHighLightColor(Color.parseColor("#BEBEBE"));
@@ -503,10 +442,10 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         lineDataSet.setValueTextSize(5f);
 
 
-        lineDataSet2.setHighLightColor(Color.parseColor("#BEBEBE"));
+      /*  lineDataSet2.setHighLightColor(Color.parseColor("#BEBEBE"));
         lineDataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
         lineDataSet2.setValueTextColor(getResources().getColor(R.color.white));
-        lineDataSet2.setValueTextSize(5f);
+        lineDataSet2.setValueTextSize(5f);*/
 
 
         lineDataSet3.setHighLightColor(Color.parseColor("#BEBEBE"));

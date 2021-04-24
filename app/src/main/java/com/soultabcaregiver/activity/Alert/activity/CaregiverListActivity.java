@@ -1,6 +1,7 @@
 package com.soultabcaregiver.activity.Alert.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -38,6 +39,7 @@ public class CaregiverListActivity extends BaseActivity {
     TextView nodata_txt;
     RecyclerView caregiver_list;
     RelativeLayout back_btn;
+    CardView blank_card;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class CaregiverListActivity extends BaseActivity {
         caregiver_list =  findViewById(R.id.caregiver_list);
         nodata_txt = findViewById(R.id.nodata_txt);
         back_btn = findViewById(R.id.back_btn);
+        blank_card = findViewById(R.id.blank_card);
 
         if (Utility.isNetworkConnected(mContext)) {
             GetCaregiverList();//for list data
@@ -92,6 +95,7 @@ public class CaregiverListActivity extends BaseActivity {
 
                             caregiver_list.setVisibility(View.VISIBLE);
                             nodata_txt.setVisibility(View.GONE);
+                            blank_card.setVisibility(View.GONE);
                             CareGiverListAdapter careGiverListAdapter = new CareGiverListAdapter(mContext, careGiverProfileModel.getResponse());
                             caregiver_list.setHasFixedSize(true);
                             caregiver_list.setAdapter(careGiverListAdapter);
@@ -100,16 +104,21 @@ public class CaregiverListActivity extends BaseActivity {
                         }else {
                             caregiver_list.setVisibility(View.GONE);
                             nodata_txt.setVisibility(View.VISIBLE);
+                            blank_card.setVisibility(View.VISIBLE);
                         }
                     } else{
                         Utility.ShowToast(mContext,careGiverProfileModel.getMessage());
                         caregiver_list.setVisibility(View.GONE);
                         nodata_txt.setVisibility(View.VISIBLE);
+                        blank_card.setVisibility(View.VISIBLE);
                     }
 
                 }, error -> {
             VolleyLog.d(TAG, "Error: " + error.getMessage());
             hideProgressDialog();
+            caregiver_list.setVisibility(View.GONE);
+            nodata_txt.setVisibility(View.VISIBLE);
+            blank_card.setVisibility(View.VISIBLE);
         }) {
             @Override
             public Map<String, String> getHeaders() {

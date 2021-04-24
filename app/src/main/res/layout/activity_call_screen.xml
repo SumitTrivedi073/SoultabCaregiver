@@ -36,8 +36,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/_30sdp"
-        android:elevation="@dimen/_2sdp"
-        android:translationZ="@dimen/_2sdp"
+        android:elevation="@dimen/_5sdp"
+        android:translationZ="@dimen/_5sdp"
         android:layout_alignParentRight="true" />
 
     <LinearLayout

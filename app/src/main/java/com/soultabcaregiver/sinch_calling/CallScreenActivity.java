@@ -111,6 +111,7 @@ public class CallScreenActivity extends BaseActivity {
                             video_play = "0";
                         } else if (video_play.equals("0")) {
                             call.resumeVideo();
+
                             Video_enable_img.setImageResource(R.drawable.video_on);
                             video_play = "1";
 
@@ -234,12 +235,11 @@ public class CallScreenActivity extends BaseActivity {
         }
 
         final VideoController vc = getSinchServiceInterface().getVideoController();
-        vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
+        vc.setResizeBehaviour(VideoScalingType.ASPECT_FIT);
 
         if (vc != null) {
             RelativeLayout localView = findViewById(R.id.localVideo);
             localView.addView(vc.getLocalView());
-
             localView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -146,6 +146,9 @@ public class AlertFragment extends BaseFragment {
                 }, error -> {
             VolleyLog.d(TAG, "Error: " + error.getMessage());
             hideProgressDialog();
+            alert_list.setVisibility(View.GONE);
+            no_data_txt.setVisibility(View.VISIBLE);
+            blank_card.setVisibility(View.VISIBLE);
         }) {
             @Override
             public Map<String, String> getHeaders() {
