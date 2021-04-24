@@ -56,7 +56,7 @@ public class CustomEventAdapter  extends
         context = context_;
         activity = (Activity) context_;
         this.tvNodata = tvNodata;
-        this.FromDate2 = FromDate2;
+        this.FromDate2 = fromDate2;
         }
 
     @NonNull
@@ -200,6 +200,7 @@ public class CustomEventAdapter  extends
 
             try {
                 mainObject.put("reminder_id", sRemindId);
+                mainObject.put("caregiver_id", Utility.getSharedPreferences(context, APIS.caregiver_id));
 
                 URL =  APIS.DELETEREMINDERAPI;
             } catch (JSONException e) {
@@ -292,6 +293,13 @@ public class CustomEventAdapter  extends
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
+                if (arRemindIn.size()>0) {
+
+                }else {
+                    tvNodata.setVisibility(View.VISIBLE);
+                    tvNodata.setText(context.getResources().getString(R.string.no_activity_scheduled) + " " + FromDate2);
+
+                }
             }
         });
 

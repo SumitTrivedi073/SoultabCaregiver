@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/_30sdp"
     android:background="@color/light_white"
+    android:layout_marginBottom="@dimen/_40sdp"
     tools:context=".activity.Calender.fragment.CalenderFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
 
@@ -239,5 +239,6 @@
         app:fabSize="auto"
         app:pressedTranslationZ="@dimen/_5sdp"
         app:tint="@android:color/white" />
+
 
 </RelativeLayout>

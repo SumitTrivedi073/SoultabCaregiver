@@ -10,8 +10,15 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.MainScreen.MainActivity;
@@ -34,6 +41,26 @@ public class SplashActivity extends BaseActivity {
         mContext = this;
 
         User_id = Utility.getSharedPreferences(mContext, APIS.user_id);
+
+
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if (resultCode == ConnectionResult.SUCCESS) {
+
+            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                @Override
+                public void onSuccess(InstanceIdResult instanceIdResult) {
+                    // Get new Instance ID token
+                    String FirebaseToken = instanceIdResult.getToken();
+                    Log.e("newToken", FirebaseToken);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
 
     }
 
@@ -83,7 +110,6 @@ public class SplashActivity extends BaseActivity {
 
 
         }else {
-            Log.e("Screen_change","True");
             new Handler().postDelayed(new Runnable() {
 
                 @Override

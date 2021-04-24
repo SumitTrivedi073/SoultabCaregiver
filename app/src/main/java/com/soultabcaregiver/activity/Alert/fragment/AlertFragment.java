@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -44,6 +45,7 @@ public class AlertFragment extends BaseFragment {
     RecyclerView alert_list;
     TextView no_data_txt;
     FloatingActionButton create_alert_btn;
+    CardView blank_card;
     MainActivity mainActivity;
 
 
@@ -63,6 +65,7 @@ public class AlertFragment extends BaseFragment {
         alert_list = view.findViewById(R.id.alert_list);
         no_data_txt = view.findViewById(R.id.no_data_txt);
         create_alert_btn = view.findViewById(R.id.create_alert_btn);
+        blank_card = view.findViewById(R.id.blank_card);
 
         mainActivity = MainActivity.instance;
         AlertCountUpdate();
@@ -119,6 +122,7 @@ public class AlertFragment extends BaseFragment {
 
                             alert_list.setVisibility(View.VISIBLE);
                             no_data_txt.setVisibility(View.GONE);
+                            blank_card.setVisibility(View.GONE);
                             AlertAdapter alertAdapter = new AlertAdapter(mContext, alertModel.getData().getCaregiverData());
                             alert_list.setHasFixedSize(true);
                             alert_list.setAdapter(alertAdapter);
@@ -127,11 +131,13 @@ public class AlertFragment extends BaseFragment {
                         }else {
                             alert_list.setVisibility(View.GONE);
                             no_data_txt.setVisibility(View.VISIBLE);
+                            blank_card.setVisibility(View.VISIBLE);
                         }
                     } else{
                         Utility.ShowToast(mContext,alertModel.getMessage());
                         alert_list.setVisibility(View.GONE);
                         no_data_txt.setVisibility(View.VISIBLE);
+                        blank_card.setVisibility(View.VISIBLE);
 
                     }
 

@@ -18,6 +18,7 @@ import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallState;
 import com.sinch.android.rtc.video.VideoCallListener;
 import com.sinch.android.rtc.video.VideoController;
+import com.sinch.android.rtc.video.VideoScalingType;
 import com.soultabcaregiver.R;
 
 import java.util.List;
@@ -128,6 +129,7 @@ public class CallScreenActivity extends BaseActivity {
                 SwitchCamera();
             }
         });
+
     }
 
     private void SwitchCamera() {
@@ -232,6 +234,8 @@ public class CallScreenActivity extends BaseActivity {
         }
 
         final VideoController vc = getSinchServiceInterface().getVideoController();
+        vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
+
         if (vc != null) {
             RelativeLayout localView = findViewById(R.id.localVideo);
             localView.addView(vc.getLocalView());

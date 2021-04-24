@@ -19,10 +19,6 @@
         android:roundIcon="@drawable/main_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.login_module.OTPVarificationActivity"></activity>
-        <activity android:name=".activity.login_module.ForgotPasswordActivity" />
-        <activity android:name=".activity.Alert.activity.CaregiverListActivity" />
-        <activity android:name=".activity.MainScreen.MainActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,6 +29,21 @@
         <activity
             android:name=".activity.login_module.LoginActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.MainScreen.MainActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.login_module.OTPVarificationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.login_module.ForgotPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.Alert.activity.CaregiverListActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.docter.AddDoctorActivity"
             android:screenOrientation="portrait" />
@@ -88,6 +99,13 @@
                 <action android:name="alarm" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".FireBaseMessaging.CustomFireBaseMessasing">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

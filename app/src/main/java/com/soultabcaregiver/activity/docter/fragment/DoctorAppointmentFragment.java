@@ -124,7 +124,7 @@ public class DoctorAppointmentFragment extends BaseFragment {
                                 doctor_appointment_list.setAdapter(adapter);
 
                             } else {
-                                tvNodata.setText(getResources().getString(R.string.no_data_found));
+                                tvNodata.setText(mContext.getResources().getString(R.string.no_data_found));
                                 tvNodata.setVisibility(View.VISIBLE);
                                 doctor_appointment_list.setVisibility(View.GONE);
                             }

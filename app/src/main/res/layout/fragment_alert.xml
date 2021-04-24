@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/light_white"
-    android:layout_marginBottom="@dimen/_20sdp"
+    android:layout_marginBottom="@dimen/_40sdp"
     tools:context=".activity.Alert.fragment.AlertFragment">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginLeft="@dimen/_10sdp"
@@ -55,8 +55,19 @@
             android:layout_marginBottom="@dimen/_10sdp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/blank_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="@dimen/_5sdp"
+            app:cardCornerRadius="@dimen/_10sdp"
+            android:visibility="gone"/>
+
 
     </LinearLayout>
+
+
 
     <TextView
         android:id="@+id/no_data_txt"

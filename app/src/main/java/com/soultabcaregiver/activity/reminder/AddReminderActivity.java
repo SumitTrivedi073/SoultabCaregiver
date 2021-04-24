@@ -326,6 +326,8 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
             mainObject.put("date", sWhenDate);//2019-02-08
             mainObject.put("time", sWhenTime.toUpperCase());//"1.20 AM"
             mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+
             mainObject.put("reminder_before", String.valueOf(valBefore));
 
 

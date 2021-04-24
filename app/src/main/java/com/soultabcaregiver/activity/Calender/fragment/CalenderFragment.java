@@ -386,14 +386,15 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                                 arRemin.add(reminderBean);
                             }
 
+
                             tvNodata.setVisibility(View.GONE);
-                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin, tvNodata, FromDate2);
+                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin, tvNodata, Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
                             rvReminder.setAdapter(adapter);
 
                         } else {
                             rvReminder.setAdapter(null);
                             tvNodata.setVisibility(View.VISIBLE);
-                            tvNodata.setText(getResources().getString(R.string.no_activity_scheduled) + " " + FromDate2);
+                            tvNodata.setText(getResources().getString(R.string.no_activity_scheduled) + " " + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
 
                         }
                     } catch (Exception e) {
