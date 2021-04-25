@@ -42,26 +42,6 @@ public class SplashActivity extends BaseActivity {
 
         User_id = Utility.getSharedPreferences(mContext, APIS.user_id);
 
-
-        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        if (resultCode == ConnectionResult.SUCCESS) {
-
-            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                @Override
-                public void onSuccess(InstanceIdResult instanceIdResult) {
-                    // Get new Instance ID token
-                    String FirebaseToken = instanceIdResult.getToken();
-                    Log.e("newToken", FirebaseToken);
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-
     }
 
 

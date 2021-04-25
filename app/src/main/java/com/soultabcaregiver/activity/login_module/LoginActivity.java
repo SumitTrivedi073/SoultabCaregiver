@@ -12,12 +12,20 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Model.LoginModel;
 import com.soultabcaregiver.R;
@@ -41,6 +49,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     EditText etEmail, etPass;
     Switch tbRemPass;
     CheckBox view_pwd1;
+    String FirebaseToken ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,12 +158,31 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void GetLogin() {
         JSONObject mainObject = new JSONObject();
 
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if (resultCode == ConnectionResult.SUCCESS) {
+
+            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                @Override
+                public void onSuccess(InstanceIdResult instanceIdResult) {
+                    // Get new Instance ID token
+                     FirebaseToken = instanceIdResult.getToken();
+                    Log.e("newToken", FirebaseToken);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
         try {
             mainObject.put("email", etEmail.getText().toString().trim());
             mainObject.put("password", etPass.getText().toString().trim());
             mainObject.put("device_type", "android");
             mainObject.put("user_roll", 4);
-
+            mainObject.put("device_token",FirebaseToken);
 
             Log.e("Login_mainObject", String.valueOf(mainObject));
 

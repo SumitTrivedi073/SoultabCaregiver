@@ -135,9 +135,10 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
 
             case R.id.otp_verify_btn:
                 if (Utility.isNetworkConnected(mContext)) {
-                    Intent intent = new Intent(mContext, LoginActivity.class);
+                   /* Intent intent = new Intent(mContext, LoginActivity.class);
                     startActivity(intent);
-                    finish();
+                    finish();*/
+
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                 }
@@ -146,6 +147,70 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
         }
 
     }
+
+    public void GetVerify() {
+        final String TAG = "GetVerify";
+        JSONObject mainObject = new JSONObject();
+        try {
+            mainObject.put("email", email);
+            mainObject.put("otp", (otp1.getText().toString().trim() + otp2.getText().toString().trim()
+                    + otp3.getText().toString().trim() + otp4.getText().toString().trim()));
+
+            Log.e("mainObject", mainObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        showProgressDialog(getResources().getString(R.string.Loading));
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                APIS.BASEURL + APIS.VERIFYOTPAPI, mainObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "response=" + response.toString());
+                        hideProgressDialog();
+                        try {
+                            String code = response.getString("status_code");
+                            if (code.equals("200")) {
+
+                                ShowAlertResponse(response.getString("message"),"1");
+
+                            }else {
+                                ShowAlertResponse(response.getString("message"), "0");
+                                otp1.getText().clear();
+                                otp2.getText().clear();
+                                otp3.getText().clear();
+                                otp4.getText().clear();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                hideProgressDialog();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                return params;
+            }
+
+        };
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+    }
+
 
     private void ForgotPassword() {
 
@@ -170,10 +235,10 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
                         try {
                             String code = response.getString("status_code");
                             if (code.equals("200")) {
-                                ShowAlertResponse(mContext.getResources().getString(R.string.otp_send_successfully));
+                                ShowAlertResponse( mContext.getResources().getString(R.string.otp_send_successfully),"0");
                             } else {
                                 String msg = response.getString("message");
-                                ShowAlertResponse(msg);
+                                ShowAlertResponse(response.getString("message"), "0");
 
                             }
                         } catch (JSONException e) {
@@ -204,7 +269,7 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
 
     }
 
-    private void ShowAlertResponse(String title) {
+    private void ShowAlertResponse(String message, String value) {
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.send_successfully_layout,
@@ -222,15 +287,29 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
         TextView OK_txt = layout.findViewById(R.id.OK_txt);
         TextView title_txt = layout.findViewById(R.id.title_txt);
 
-        title_txt.setText(title);
+        title_txt.setText(message);
+
 
         OK_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.dismiss();
+                if (value.equals("1")){
+                    Intent i = new Intent(OTPVarificationActivity.this, ChangePasswordActivity.class);
+                    i.putExtra("email_", email);
+                    startActivity(i);
+                    finish();
+                }else {
+                    alertDialog.dismiss();
+                }
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     private class GenericTextWatcher implements TextWatcher {
@@ -272,12 +351,5 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
                     break;
             }
         }
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 }

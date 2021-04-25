@@ -21,9 +21,9 @@ import com.soultabcaregiver.utils.Utility;
 
 public class CustomFireBaseMessasing extends FirebaseMessagingService {
 
+    public static final String MyNoti = "CHANNEL_ID";
     private static final String TAG = "MyFirebaseMsgService";
-    public static final String MyNoti="CHANNEL_ID";
-    public int count=0;
+    public int count = 0;
     Intent intent;
 
     @Override
@@ -31,28 +31,26 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         try {
-            if(remoteMessage !=null && remoteMessage.getNotification().getBody()!=null)
-            {
+            if (remoteMessage != null && remoteMessage.getNotification().getBody() != null) {
                 Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
                 Log.d(TAG, "Message Notification Title  : " + remoteMessage.getNotification().getTitle());
 
-                getNotifaction(remoteMessage.getNotification().getBody(),remoteMessage.getNotification().getTitle());
+                getNotifaction(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle());
 
-                Log.e("remote_msg==",remoteMessage.getNotification().getBody());
+                Log.e("remote_msg==", remoteMessage.getNotification().getBody());
             }
 
 
-            if(remoteMessage != null && remoteMessage.getData().size()>0)
-            {
+            if (remoteMessage != null && remoteMessage.getData().size() > 0) {
 
-                count=count+1;
-                Log.e("remote_msg_size==",remoteMessage.getData().toString());
+                count = count + 1;
+                Log.e("remote_msg_size==", remoteMessage.getData().toString());
                 createNotificationChannel();
-                getNotifaction(remoteMessage.getData().get("title"),remoteMessage.getData().get("message"));
+                getNotifaction(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("FCM_Error_Msg",e.getMessage());
+            Log.e("FCM_Error_Msg", e.getMessage());
         }
 
     }
@@ -61,10 +59,9 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
     public void onNewToken(String s) {
         super.onNewToken(s);
 
-        Log.e("onNewToken",s);
+        Log.e("onNewToken", s);
 
     }
-
 
 
     private void createNotificationChannel() {
@@ -85,18 +82,19 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
     private void getNotifaction(String title, String body) {
 
         if (!TextUtils.isEmpty(Utility.getSharedPreferences(this, APIS.user_id))) {
-             intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, MainActivity.class);
         } else {
-             intent = new Intent(this, LoginActivity.class);
-             }
+            intent = new Intent(this, LoginActivity.class);
+        }
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         String channelId = "Default";
-        NotificationCompat.Builder builder = new  NotificationCompat.Builder(this, MyNoti)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MyNoti)
                 .setSmallIcon(R.drawable.main_logo)
                 .setContentTitle(title)
-                .setContentText(body).setAutoCancel(true).setContentIntent(pendingIntent);;
+                .setContentText(body).setAutoCancel(true).setContentIntent(pendingIntent);
+        ;
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(MyNoti, "Default channel", NotificationManager.IMPORTANCE_DEFAULT);
