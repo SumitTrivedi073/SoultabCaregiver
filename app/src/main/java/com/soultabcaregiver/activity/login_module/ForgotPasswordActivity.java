@@ -110,7 +110,7 @@ public class ForgotPasswordActivity extends BaseActivity {
                             String code=response.getString("status_code");
                             if(code.equals("200")){
                                 String msg=response.getString("message");
-
+                                ShowAlertResponse();
                             }else {
                                 String msg=response.getString("message");
                                 Utility.ShowToast(mContext,msg);

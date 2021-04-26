@@ -3,6 +3,7 @@ package com.soultabcaregiver.activity.docter;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -537,11 +538,21 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             sendFax_btn.setLayoutParams(params);
+
+            RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            Portal.setLayoutParams(params2);
         }
+
+
 
 
         if (TextUtils.isEmpty(txt_Portal.getText().toString())) {
             Portal.setVisibility(View.GONE);
+
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            Call_btn.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -550,6 +561,15 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
         if (TextUtils.isEmpty(txt_fax.getText().toString())) {
             sendFax_btn.setVisibility(View.GONE);
+
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            Call_btn.setLayoutParams(params1);
+
+            RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            Portal.setLayoutParams(params2);
+
         }
 
         if (!TextUtils.isEmpty(txt_Portal.getText().toString()) && !TextUtils.isEmpty(txt_fax.getText().toString())) {
@@ -604,19 +624,17 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-               /* if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
-                   Intent intent = new Intent(mContext, ActSocialActivity.class);
+                if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
+                   Intent intent = new Intent(mContext, SocialActivity.class);
                     intent.putExtra("webUrl", docListBean.getPortal());
-                    intent.putExtra("title", getResources().getString(R.string.social_web));
-                    intent.putExtra(IntentKey.FromWhere, IntentKey.isAppsWebs);
                     startActivity(intent);
                     finish();
                 }else {
-                    Support.ShowToast(mContext, getResources().getString(R.string.Portal_unavailable));
+                    Utility.ShowToast(mContext, getResources().getString(R.string.Portal_unavailable));
                     finish();
 
                 }
-*/
+
 
             }
         });

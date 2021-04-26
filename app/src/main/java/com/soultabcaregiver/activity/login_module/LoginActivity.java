@@ -30,7 +30,7 @@ import com.google.gson.Gson;
 import com.soultabcaregiver.Model.LoginModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.MainScreen.MainActivity;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.Utility;
@@ -76,7 +76,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         if (Utility.getSharedPreferences2(mContext,APIS.save_email)!=null){
             if (Utility.getSharedPreferences2(mContext,APIS.save_email).equals("true")){
                 etEmail.setText(Utility.getSharedPreferences2(mContext,APIS.Caregiver_email));
+                tbRemPass.setChecked(true);
             }
+        }
+
+
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        if (resultCode == ConnectionResult.SUCCESS) {
+
+            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                @Override
+                public void onSuccess(InstanceIdResult instanceIdResult) {
+                    // Get new Instance ID token
+                    FirebaseToken = instanceIdResult.getToken();
+                    Log.e("newToken", FirebaseToken);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
@@ -94,7 +115,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     etPass.setTransformationMethod(new PasswordTransformationMethod());
 
                 } else {
-
 
                     // hide password
                     etPass.setTransformationMethod(null);
@@ -158,24 +178,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void GetLogin() {
         JSONObject mainObject = new JSONObject();
 
-        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        if (resultCode == ConnectionResult.SUCCESS) {
 
-            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                @Override
-                public void onSuccess(InstanceIdResult instanceIdResult) {
-                    // Get new Instance ID token
-                     FirebaseToken = instanceIdResult.getToken();
-                    Log.e("newToken", FirebaseToken);
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        }
 
         try {
             mainObject.put("email", etEmail.getText().toString().trim());
@@ -210,6 +213,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 Utility.setSharedPreference2(mContext,APIS.Caregiver_email,loginModel.getResponse().getEmail());
                                 Utility.setSharedPreference2(mContext,APIS.save_email,"true");
 
+                            }else {
+                                Utility.clearSpecificSharedPreference(mContext, APIS.Caregiver_email);
+                                Utility.clearSpecificSharedPreference(mContext, APIS.save_email);
                             }
 
                             Utility.setSharedPreference(mContext,APIS.user_id,loginModel.getResponse().getId());

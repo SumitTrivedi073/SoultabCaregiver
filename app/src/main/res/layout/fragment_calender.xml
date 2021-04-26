@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/light_white"
     android:layout_marginBottom="@dimen/_40sdp"
-    tools:context=".activity.Calender.fragment.CalenderFragment">
+    tools:context=".activity.calender.fragment.CalenderFragment">
 
     <!-- TODO: Update blank fragment layout -->
 

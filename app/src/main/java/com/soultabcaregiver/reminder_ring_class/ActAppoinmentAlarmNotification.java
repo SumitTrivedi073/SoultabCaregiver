@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.MainScreen.MainActivity;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.docter.UpdateDoctorAppointmentActivity;
 import com.soultabcaregiver.reminder_ring_class.model.AlarmModel;
 import com.soultabcaregiver.utils.Utility;

@@ -2,13 +2,6 @@ package com.soultabcaregiver.activity.docter.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,7 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -54,6 +53,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     public static DoctorListFragment instance;
     private int lastPage = 1;
     private String mMaxoffset = "";
+    RelativeLayout search_relative;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
          view = inflater.inflate(R.layout.fragment_doctor_list, container, false);
 
         instance = DoctorListFragment.this;
-         init();
+        init();
 
          return view;
     }
@@ -79,6 +79,18 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
         doctor_list = view.findViewById(R.id.doctor_list);
         tvNodata = view.findViewById(R.id.tv_no_data_doc_list);
         doctor_search = view.findViewById(R.id.doctor_search);
+        search_relative = view.findViewById(R.id.search_relative);
+
+
+        search_relative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doctor_search.setFocusableInTouchMode(true);
+                doctor_search.requestFocus();
+                doctor_search.onActionViewExpanded();
+
+            }
+        });
 
         ImageView searchIcon = doctor_search.findViewById(R.id.search_button);
         searchIcon.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_search));
@@ -109,6 +121,14 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                     adapter.getFilter().filter(newText);
                 }
                 return false;
+            }
+        });
+
+        searchClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                doctor_search.onActionViewCollapsed();
             }
         });
 

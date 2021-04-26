@@ -1,8 +1,11 @@
 package com.soultabcaregiver.FireBaseMessaging;
 
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
@@ -14,9 +17,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.MainScreen.MainActivity;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.utils.Utility;
+
+import java.util.List;
 
 
 public class CustomFireBaseMessasing extends FirebaseMessagingService {
@@ -25,6 +30,9 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
     public int count = 0;
     Intent intent;
+    MainActivity mainActivity;
+    boolean AppInBackground;
+
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -102,6 +110,42 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
         }
         manager.notify(0, builder.build());
 
+        AppInBackground = isAppIsInBackground(this);
+        if (!AppInBackground) {
+
+            if (!TextUtils.isEmpty(Utility.getSharedPreferences(this, APIS.user_id))) {
+                mainActivity = MainActivity.instance;
+                if (mainActivity != null) {
+                    mainActivity.Alert_countAPI();
+                }
+            }
+
+        }
+
+    }
+
+    private boolean isAppIsInBackground(Context context) {
+        boolean isInBackground = true;
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    for (String activeProcess : processInfo.pkgList) {
+                        if (activeProcess.equals(context.getPackageName())) {
+                            isInBackground = false;
+                        }
+                    }
+                }
+            }
+        } else {
+            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+            ComponentName componentInfo = taskInfo.get(0).topActivity;
+            if (componentInfo.getPackageName().equals(context.getPackageName())) {
+                isInBackground = false;
+            }
+        }
+        return isInBackground;
     }
 
 }

@@ -19,7 +19,7 @@
         android:roundIcon="@drawable/main_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.login_module.ChangePasswordActivity"></activity>
+        <activity android:name=".activity.docter.SocialActivity"></activity>
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,16 +31,19 @@
             android:name=".activity.login_module.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.MainScreen.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.login_module.OTPVarificationActivity"
+            android:name=".activity.main_screen.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.login_module.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.Alert.activity.CaregiverListActivity"
+            android:name=".activity.login_module.OTPVarificationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.login_module.ChangePasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.alert.activity.CaregiverListActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.docter.AddDoctorActivity"

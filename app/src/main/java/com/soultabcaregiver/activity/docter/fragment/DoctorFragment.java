@@ -19,12 +19,9 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.soultabcaregiver.R;
-import com.soultabcaregiver.activity.MainScreen.MainActivity;
-import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.AddDoctorActivity;
 import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.NonSwipeableViewPager;
-import com.soultabcaregiver.utils.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +35,6 @@ public class DoctorFragment extends BaseFragment {
     private NonSwipeableViewPager viewPager;
     private TextView tab_txt;
     private FloatingActionButton Add_doctor_btn;
-    DoctorListFragment doctorListFragment;
-    DoctorAppointmentFragment doctorAppointmentFragment;
     ViewPagerAdapter adapter;
 
 

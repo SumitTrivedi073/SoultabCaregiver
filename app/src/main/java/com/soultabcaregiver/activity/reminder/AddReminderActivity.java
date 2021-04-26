@@ -1,6 +1,5 @@
 package com.soultabcaregiver.activity.reminder;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -21,8 +20,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -35,11 +32,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.sinch.gson.Gson;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.Calender.CalenderModel.CommonResponseModel;
-import com.soultabcaregiver.activity.Calender.CalenderModel.ReminderBean;
+import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
+import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.reminder.adapter.CustomPopupAdapter;
 import com.soultabcaregiver.activity.reminder.model.BeforeTimeModel;
-import com.soultabcaregiver.reminder_ring_class.ReminderCreateClass;
+
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -76,7 +73,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
     List<BeforeTimeModel> beforeTimeModelList;
     List<BeforeTimeModel> repeatTimeModelList;
     SharedPreferences shp;
-    ReminderCreateClass reminderCreateClass;
+   // ReminderCreateClass reminderCreateClass;
     String date;
     Context mContext;
     boolean update_reminder;
@@ -91,7 +88,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
 
         shp = getSharedPreferences("TEXT", 0);
 
-        reminderCreateClass = new ReminderCreateClass(AddReminderActivity.this);
+       // reminderCreateClass = new ReminderCreateClass(AddReminderActivity.this);
 
         InitCompo();
         Listener();

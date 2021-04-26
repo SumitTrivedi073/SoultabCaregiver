@@ -19,6 +19,8 @@ public class APIS {
     public static final String LOGINAPI = "Caregiver/login";
     public static final String FORGOTAPI = "Users/forgot_password";
     public static final String VERIFYOTPAPI  ="Caregiver/verifyotp";
+    public static final String ChangePasswordAPI  ="Caregiver/resetpassword";
+
     public static final String DailyRoutine = "Caregiver/daily_routine";
     public static final String GetDailyRoutineAPI = "Caregiver/fetch_dailyRoutine";
 

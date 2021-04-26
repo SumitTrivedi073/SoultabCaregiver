@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.SearchView;
@@ -40,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DoctorAppointmentFragment extends BaseFragment {
+public class DoctorAppointmentFragment extends BaseFragment implements DoctorAppointedListAdptr.AppointedDocSelectionListener {
 
     public static DoctorAppointmentFragment instance;
     View view;
@@ -52,6 +53,8 @@ public class DoctorAppointmentFragment extends BaseFragment {
     String TAG = getClass().getSimpleName();
     SearchView doctor_Appointment_search;
     DoctorAppointedListAdptr adapter;
+    RelativeLayout search_relative;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,71 @@ public class DoctorAppointmentFragment extends BaseFragment {
 
     }
 
+    private void InitCompo() {
+        doctor_Appointment_search = view.findViewById(R.id.doctor_Appointment_search);
+        tvNodata = view.findViewById(R.id.tv_no_data_doc_appointment_list);
+        doctor_appointment_list = view.findViewById(R.id.doctor_appointment_list);
+        search_relative = view.findViewById(R.id.search_relative);
+    }
+
+
+    private void Listener() {
+
+
+        search_relative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doctor_Appointment_search.setFocusableInTouchMode(true);
+                doctor_Appointment_search.requestFocus();
+                doctor_Appointment_search.onActionViewExpanded();
+
+            }
+        });
+
+        ImageView searchIcon = doctor_Appointment_search.findViewById(R.id.search_button);
+        searchIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_search));
+        searchIcon.setColorFilter(getResources().getColor(R.color.themecolor));
+
+        ImageView searchClose = doctor_Appointment_search.findViewById(R.id.search_close_btn);
+        searchClose.setColorFilter(getResources().getColor(R.color.themecolor));
+
+
+        EditText searchEditText = doctor_Appointment_search.findViewById(R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.themecolor));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.themecolor));
+        searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen._14sdp));
+
+        doctor_Appointment_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (adapter != null) {
+                    adapter.getFilter().filter(query);
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (adapter != null) {
+                    adapter.getFilter().filter(newText);
+                }
+                return false;
+            }
+        });
+
+        searchClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                doctor_Appointment_search.onActionViewCollapsed();
+            }
+        });
+
+    }
+
+
+
     private void GetAppointedDocList() {
 
         arAppointedDoc = new ArrayList<>();
@@ -121,6 +189,8 @@ public class DoctorAppointmentFragment extends BaseFragment {
                                 tvNodata.setVisibility(View.GONE);
                                 doctor_appointment_list.setVisibility(View.VISIBLE);
                                 adapter = new DoctorAppointedListAdptr(mContext, arAppointedDoc, 2, tvNodata);
+                                adapter.DocSelection(DoctorAppointmentFragment.this);
+
                                 doctor_appointment_list.setAdapter(adapter);
 
                             } else {
@@ -160,136 +230,11 @@ public class DoctorAppointmentFragment extends BaseFragment {
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    private void Listener() {
-        ImageView searchIcon = doctor_Appointment_search.findViewById(R.id.search_button);
-        searchIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_search));
-        searchIcon.setColorFilter(getResources().getColor(R.color.themecolor));
-
-        ImageView searchClose = doctor_Appointment_search.findViewById(R.id.search_close_btn);
-        searchClose.setColorFilter(getResources().getColor(R.color.themecolor));
-
-
-        EditText searchEditText = doctor_Appointment_search.findViewById(R.id.search_src_text);
-        searchEditText.setTextColor(getResources().getColor(R.color.themecolor));
-        searchEditText.setHintTextColor(getResources().getColor(R.color.themecolor));
-        searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen._14sdp));
-
-        doctor_Appointment_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if (adapter != null) {
-                    adapter.getFilter().filter(query);
-                }
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (adapter != null) {
-                    adapter.getFilter().filter(newText);
-                }
-                return false;
-            }
-        });
-
-
-    }
-
-    private void InitCompo() {
-        doctor_Appointment_search = view.findViewById(R.id.doctor_Appointment_search);
-        tvNodata = view.findViewById(R.id.tv_no_data_doc_appointment_list);
-        doctor_appointment_list = view.findViewById(R.id.doctor_appointment_list);
+    @Override
+    public void DocSelectionListener(List<DoctorAppointmentList.Response.AppointmentDatum> DocBeanList, boolean isSearch) {
 
     }
 
 
 
-    /*public void DeleteAppointment() {
-        if (TextUtils.isEmpty(sAppointedDocId)) {
-
-            Utility.ShowToast(mContext, getResources().getString(R.string.select_doctor_appoint));
-        } else {
-            alertmessage();
-        }
-    }
-
-    private void alertmessage() {
-
-        final DiloagBoxCommon diloagBoxCommon = Utility.Alertmessage(mContext, getResources().getString(R.string.delete_Appointment)
-                , mContext.getResources().getString(R.string.are_you_sure_you_want_to_delete_appointment)
-                , mContext.getResources().getString(R.string.no_text)
-                , mContext.getResources().getString(R.string.yes_text));
-        diloagBoxCommon.getTextView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                diloagBoxCommon.getDialog().dismiss();
-                if (Utility.isNetworkConnected(mContext)) {
-                    DeletAppointment();
-                } else {
-
-                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-                }
-            }
-        });
-    }
-
-    public void DeletAppointment() {
-
-        final String TAG = "Delete AppointedDoc";
-        JSONObject mainObject = new JSONObject();
-        try {
-            mainObject.put("appointment_id", sAppointedDocId);
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.user_id));
-            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
-
-            Log.e(TAG, "appointmentdelete======>" + mainObject.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                APIS.BASEURL + APIS.DELETE_DOC_APPOIN_API, mainObject,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(TAG, "Delete AppointedDoc response=" + response.toString());
-                        hideProgressDialog();
-                        try {
-                            String code = response.getString("status_code");
-                            if (code.equals("200")) {
-
-                                Utility.ShowToast(mContext, response.getJSONObject("response")
-                                        .getString("appointment_data"));
-
-                                GetAppointedDocRecond();
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                hideProgressDialog();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
-            }
-
-        };
-// Adding request to request queue
-        AppController.getInstance().addToRequestQueue(jsonObjReq);
-        jsonObjReq.setShouldCache(false);
-        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
-                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
-*/
 }

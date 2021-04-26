@@ -28,6 +28,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
 import com.soultabcaregiver.activity.docter.UpdateDoctorAppointmentActivity;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorAppointmentList;
 import com.soultabcaregiver.activity.docter.fragment.DoctorAppointmentFragment;
@@ -58,14 +59,19 @@ public class DoctorAppointedListAdptr extends
     private CustomProgressDialog progressDialog;
     DoctorAppointmentFragment doctorAppointmentFragment;
     AlertDialog alertDialog;
+    private AppointedDocSelectionListener docSelectionListener;
 
 
     public DoctorAppointedListAdptr(Context mContext, List<DoctorAppointmentList.Response.AppointmentDatum> arRemind_, int diff_, TextView tvNodata) {
         arAppointedDoc = arRemind_;
+        this.arSearch = new ArrayList<>();
+        this.arSearch.addAll(arRemind_);
         context = mContext;
         this.diff = diff_;
         this.tvNodata = tvNodata;
         doctorAppointmentFragment = DoctorAppointmentFragment.instance;
+
+        Log.e("arAppointedDoc", String.valueOf(arAppointedDoc.size()));
 
 
     }
@@ -114,6 +120,18 @@ public class DoctorAppointedListAdptr extends
     }
 
 
+    public void DocSelection(AppointedDocSelectionListener actDocList) {
+        try {
+            docSelectionListener = actDocList;
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
+    public interface AppointedDocSelectionListener {
+        void DocSelectionListener(List<DoctorAppointmentList.Response.AppointmentDatum> DocBeanList, boolean isSearch);
+
+    }
+
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -144,12 +162,14 @@ public class DoctorAppointedListAdptr extends
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 arAppointedDoc = (ArrayList<DoctorAppointmentList.Response.AppointmentDatum>) filterResults.values;
-                if (arAppointedDoc.size()>0) {
-                    tvNodata.setVisibility(View.GONE);
 
+                if (arAppointedDoc.size()>0){
+                    tvNodata.setVisibility(View.GONE);
+                    if (docSelectionListener != null) {
+                        docSelectionListener.DocSelectionListener(arAppointedDoc, true);
+                    }
                 }else {
                     tvNodata.setVisibility(View.VISIBLE);
-
                 }
                 notifyDataSetChanged();
             }
