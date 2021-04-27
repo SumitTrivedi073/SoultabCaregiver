@@ -210,7 +210,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
 
             if (reminderModel.getSnooze() != null) {
 
-                if (reminderModel.getSnooze().equals("true")) {
+                if (reminderModel.getSnooze().equals("1")) {
                     snooze_on.setChecked(true);
                     editor.putString("Snooze_on", "true");
                 } else {
@@ -353,9 +353,9 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
             if (shp.getString("Snooze_on", "") != null) {
 
                 if (shp.getString("Snooze_on", "").equals("true")) {
-                    mainObject.put("snooze", "true");
+                    mainObject.put("snooze", "1");
                 } else {
-                    mainObject.put("snooze", "false");
+                    mainObject.put("snooze", "0");
                 }
             }
 

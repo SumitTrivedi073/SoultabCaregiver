@@ -18,6 +18,7 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.AllAppointmentModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.AllEventModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
+import com.soultabcaregiver.activity.reminder.AddReminderActivity;
 import com.soultabcaregiver.reminder_ring_class.model.AlarmModel;
 import com.soultabcaregiver.reminder_ring_class.model.AlarmSetModel;
 import com.soultabcaregiver.reminder_ring_class.model.AlarmSharePreferenceModel;
@@ -383,11 +384,12 @@ public class ReminderCreateClass {
                                     ReminderSet(completeDate,  uniqueId, alarmModel);
                                 } else {
 
-                                    //Log.e("Snooze", reminderBean.getSnooze());
-                                    //Log.e("For_time", reminderBean.getFor_time());
-                                    //Log.e("Alarm_Count", String.valueOf(ActAddReminder.Alarm_Count));
-                                    //Log.e("completeDate", completeDate);
-                                    if (reminderBean.getSnooze().equals("false")) {
+                                    Log.e("Snooze", reminderBean.getSnooze());
+
+                                    Log.e("For_time", reminderBean.getFor_time());
+                                    Log.e("Alarm_Count", String.valueOf(AddReminderActivity.Alarm_Count));
+                                    Log.e("completeDate", completeDate);
+                                    if (String.valueOf(reminderBean.getSnooze()).equals("0")) {
                                         if (compareDateTime(completeDate)) {
                                             AlarmModel alarmModel1 = new AlarmModel();
                                             alarmModel1.setItemId(reminderBean.getId());
@@ -407,10 +409,12 @@ public class ReminderCreateClass {
 
                                     } else {
 
+                                        Log.e("Snooze", reminderBean.getSnooze());
 
-                                        //Log.e("Snooze", reminderBean.getSnooze());
+                                        Log.e("For_time", reminderBean.getFor_time());
+                                        Log.e("Alarm_Count", String.valueOf(AddReminderActivity.Alarm_Count));
+                                        Log.e("completeDate", completeDate);
 
-                                        //Log.e("completeDate", completeDate);
                                         if (compareDateTime(completeDate)) {
                                             AlarmModel alarmModel2 = new AlarmModel();
                                             alarmModel2.setItemId(reminderBean.getId());
@@ -443,6 +447,7 @@ public class ReminderCreateClass {
                         alarmSetModel.setAlarmId(uniqueId);
                         alarmSetModel.setItemId(reminderBean.getId());
                         alarmSetModelArrayList.add(alarmSetModel);
+
 
                     }
 

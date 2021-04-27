@@ -1,9 +1,12 @@
 package com.soultabcaregiver.activity.docter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,6 +24,8 @@ import com.mukesh.countrypicker.Country;
 import com.mukesh.countrypicker.listeners.OnCountryPickerListener;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.login_module.ForgotPasswordActivity;
+import com.soultabcaregiver.activity.login_module.OTPVarificationActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.Utility;
@@ -44,6 +49,7 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
     private com.mukesh.countrypicker.CountryPicker countryPicker;
     private int sortBy = com.mukesh.countrypicker.CountryPicker.SORT_BY_NONE;
     private String filedata = "",CountryCode;
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,17 +173,20 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(TAG, "Get test report response=" + response.toString());
+
                         hideProgressDialog();
                         try {
                             String code = response.getString("status_code");
-                            if (code.equals("200")) {
+                            if (String.valueOf(code).equals("200")) {
 
-                                Utility.ShowToast(mContext, response.getString("message"));
-                                onBackPressed();
-                                finish();
+                               ShowAlertResponse(response.getString("message"));
+                            }else {
+                                ShowAlertResponse(response.getString("message"));
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -185,6 +194,7 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
+
                 hideProgressDialog();
             }
         }) {
@@ -205,8 +215,36 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
 
     }
 
+    private void ShowAlertResponse(String message) {
+        LayoutInflater inflater = (LayoutInflater) mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.send_successfully_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
 
 
+        TextView OK_txt = layout.findViewById(R.id.OK_txt);
+        TextView title_txt = layout.findViewById(R.id.title_txt);
+
+        title_txt.setText(message);
+
+        OK_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                onBackPressed();
+
+            }
+        });
+
+    }
 
     @Override
     public void onBackPressed() {

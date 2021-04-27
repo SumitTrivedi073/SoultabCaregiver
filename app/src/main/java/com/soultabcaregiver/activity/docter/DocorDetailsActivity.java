@@ -472,7 +472,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
                                 Utility.ShowToast(mContext, requestModel.getMessage());
 
-                                DoctorConectingPopup();
+                                DoctorConectingPopup(requestModel.getResponse().getId());
 
                             } else {
 
@@ -511,7 +511,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    private void DoctorConectingPopup() {
+    private void DoctorConectingPopup(String appointment_id) {
         LayoutInflater inflater = (LayoutInflater) getApplicationContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.doctor_function_popup,
@@ -606,7 +606,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 if (!TextUtils.isEmpty(txt_fax.getText().toString())) {
 
                     if (Utility.isNetworkConnected(DocorDetailsActivity.this)) {
-                        SendFax();
+                        SendFax(appointment_id);
                     } else {
 
                         Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -650,16 +650,18 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
     }
 
-    private void SendFax() {
+    private void SendFax(String appointment_id) {
 
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("doctor_id", id);
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("doctor_id", docListBean.getId());
+            mainObject.put("dr_appointment_id", appointment_id);
+            mainObject.put("userid", Utility.getSharedPreferences(mContext, APIS.user_id));
             mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         Log.e(TAG, "SendFax:input data=  " + mainObject.toString());
         showProgressDialog(getResources().getString(R.string.Loading));
 
@@ -674,21 +676,9 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
                         AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
 
-                        try {
-                            if (String.valueOf(requestModel.getOk()).equals("1")) {
-                                Utility.ShowToast(mContext, requestModel.getMessage());
-                                onBackPressed();
-                                finish();
-                            } else {
-                                Utility.ShowToast(mContext, requestModel.getMessage());
-                                onBackPressed();
-                                finish();
-
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        Utility.ShowToast(mContext, requestModel.getMessage());
+                        onBackPressed();
+                        finish();
 
                     }
                 }, new Response.ErrorListener() {

@@ -11,19 +11,11 @@ public class AppointmentRequestModel {
     @Expose
     private String status;
     @SerializedName("message")
+    @Expose
     private String message;
-
-    @SerializedName("ok")
-    private String ok;
-
-    public String getOk() {
-        return ok;
-    }
-
-    public void setOk(String ok) {
-        this.ok = ok;
-    }
-
+    @SerializedName("response")
+    @Expose
+    private Response response;
 
     public Integer getStatusCode() {
         return statusCode;
@@ -47,5 +39,62 @@ public class AppointmentRequestModel {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
+    }
+
+    public class Response {
+
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("selected_date")
+        @Expose
+        private String selectedDate;
+        @SerializedName("schedule_time")
+        @Expose
+        private String scheduleTime;
+        @SerializedName("reminder")
+        @Expose
+        private String reminder;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getSelectedDate() {
+            return selectedDate;
+        }
+
+        public void setSelectedDate(String selectedDate) {
+            this.selectedDate = selectedDate;
+        }
+
+        public String getScheduleTime() {
+            return scheduleTime;
+        }
+
+        public void setScheduleTime(String scheduleTime) {
+            this.scheduleTime = scheduleTime;
+        }
+
+        public String getReminder() {
+            return reminder;
+        }
+
+        public void setReminder(String reminder) {
+            this.reminder = reminder;
+        }
+
     }
 }

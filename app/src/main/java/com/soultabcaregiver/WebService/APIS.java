@@ -64,7 +64,7 @@ public class APIS {
     public static final String profile_image = "profile_image";
     public static final String save_email = "save_email";
 
-    public static final String CaregiverImageURL = "https://www.dev.mysoultab.com/uploads/profile_images/";
+    public static final String CaregiverImageURL = "https://dev.mysoultab.com/uploads/profile_images/";
 
 
     //Key's

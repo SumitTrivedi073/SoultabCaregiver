@@ -126,6 +126,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         user_name_txt.setText(Utility.getSharedPreferences(mContext, APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext, APIS.Caregiver_lastname));
 
 
+        Log.e("user_id",Utility.getSharedPreferences(mContext, APIS.user_id));
         if (Utility.isNetworkConnected(mContext)) {
             ChartAPI(chart_value_data);
 

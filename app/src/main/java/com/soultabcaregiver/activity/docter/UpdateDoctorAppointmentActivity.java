@@ -748,8 +748,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         try {
             mainObject.put("doctor_id", appointmentDatum.getDoctor_id());
             mainObject.put("dr_appointment_id", appointmentDatum.getAppointmentId());
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
-            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+            mainObject.put("userid", Utility.getSharedPreferences(mContext, APIS.user_id));
+           mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -767,21 +767,10 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
 
                         AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
 
-                        try {
-                            if (String.valueOf(requestModel.getOk()).equals("1")) {
-                                Utility.ShowToast(mContext, requestModel.getMessage());
-                                onBackPressed();
-                                finish();
-                            } else {
-                                Utility.ShowToast(mContext, requestModel.getMessage());
-                                onBackPressed();
-                                finish();
+                        Utility.ShowToast(mContext, requestModel.getMessage());
+                        onBackPressed();
+                        finish();
 
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
 
                     }
                 }, new Response.ErrorListener() {
