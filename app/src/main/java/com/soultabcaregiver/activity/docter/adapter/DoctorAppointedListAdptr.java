@@ -287,6 +287,7 @@ public class DoctorAppointedListAdptr extends
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 

@@ -12,6 +12,11 @@ public class ChartModel {
     @SerializedName("ok")
     @Expose
     private Integer ok;
+
+    @SerializedName("status_code")
+    @Expose
+    private Integer status_code;
+
     @SerializedName("data")
     @Expose
     private Data data;
@@ -31,6 +36,15 @@ public class ChartModel {
     public void setOk(Integer ok) {
         this.ok = ok;
     }
+
+    public Integer getStatus_code() {
+        return status_code;
+    }
+
+    public void setStatus_code(Integer status_code) {
+        this.status_code = status_code;
+    }
+
 
     public Data getData() {
         return data;

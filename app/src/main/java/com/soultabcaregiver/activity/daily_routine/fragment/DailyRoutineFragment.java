@@ -1,17 +1,13 @@
 package com.soultabcaregiver.activity.daily_routine.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
-import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -43,9 +39,9 @@ import java.util.Map;
 
 public class DailyRoutineFragment extends BaseFragment {
 
+    private final String TAG = getClass().getSimpleName();
     View view;
     Context mContext;
-    private final String TAG = getClass().getSimpleName();
     CheckBox Morning_meal, Morning_snak, Morning_Medicine, Morning_Walk, Morning_Yoga, Morning_Meditation, Morning_Nap,
             Noon_meal, Noon_snak, Noon_Medicine, Noon_Walk, Noon_Yoga, Noon_Meditation, Noon_Nap,
             Evening_meal, Evening_snak, Evening_Medicine, Evening_Walk, Evening_Yoga, Evening_Meditation, Evening_Nap,
@@ -90,6 +86,7 @@ public class DailyRoutineFragment extends BaseFragment {
 
         return view;
     }
+
     private void init() {
         Submit_btn = view.findViewById(R.id.Submit_btn);
         Morning_meal = view.findViewById(R.id.Morning_meal);
@@ -127,7 +124,7 @@ public class DailyRoutineFragment extends BaseFragment {
         BedTime_Yoga = view.findViewById(R.id.BedTime_Yoga);
         BedTime_Meditation = view.findViewById(R.id.BedTime_Meditation);
         BedTime_Nap = view.findViewById(R.id.BedTime_Nap);
-     
+
 
     }
 
@@ -181,7 +178,7 @@ public class DailyRoutineFragment extends BaseFragment {
                 CheckedListner();
             }
         });
-        
+
     }
 
     private void CheckedListner() {
@@ -483,11 +480,11 @@ public class DailyRoutineFragment extends BaseFragment {
         Dinner = SplitString(Dinner);
         BedTime = SplitString(BedTime);
 
-        System.out.println("Morninglist elements copied from aList1= "+Morning);
-        System.out.println("Noonlist elements copied from aList1= "+Noon);
-        System.out.println("Eveninglist elements copied from aList1= "+Evening);
-        System.out.println("Dinnerlist elements copied from aList1= "+Dinner);
-        System.out.println("BedTimelist elements copied from aList1= "+BedTime);
+        System.out.println("Morninglist elements copied from aList1= " + Morning);
+        System.out.println("Noonlist elements copied from aList1= " + Noon);
+        System.out.println("Eveninglist elements copied from aList1= " + Evening);
+        System.out.println("Dinnerlist elements copied from aList1= " + Dinner);
+        System.out.println("BedTimelist elements copied from aList1= " + BedTime);
 
         if (!Morning.equals("") || !Noon.equals("") || !Evening.equals("") || !Dinner.equals("")
                 || !BedTime.equals("")) {
@@ -576,7 +573,7 @@ public class DailyRoutineFragment extends BaseFragment {
         try {
 
             mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
-            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
             mainObject.put("date", Utility.yyyy_MM_dd.format(calendar.getTime()));
             //mainObject.put("date", "2021-03-15");
 
@@ -602,7 +599,7 @@ public class DailyRoutineFragment extends BaseFragment {
 
 
                                 Log.e("morning", String.valueOf(dailyRoutineModel.getResponse().getDailyRoutineData().getMorning().size()));
-                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getMorning()!=null) {
+                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getMorning() != null) {
                                     if (dailyRoutineModel.getResponse().getDailyRoutineData().getMorning().size() > 0) {
 
                                         CheckForloop(1, dailyRoutineModel.getResponse().getDailyRoutineData().getMorning());
@@ -611,7 +608,7 @@ public class DailyRoutineFragment extends BaseFragment {
 
                                 Log.e("Noon", String.valueOf(dailyRoutineModel.getResponse().getDailyRoutineData().getNoon().size()));
 
-                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getNoon()!=null) {
+                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getNoon() != null) {
 
                                     if (dailyRoutineModel.getResponse().getDailyRoutineData().getNoon().size() > 0) {
                                         CheckForloop(2, dailyRoutineModel.getResponse().getDailyRoutineData().getNoon());
@@ -620,7 +617,7 @@ public class DailyRoutineFragment extends BaseFragment {
 
 
                                 Log.e("Evening", String.valueOf(dailyRoutineModel.getResponse().getDailyRoutineData().getEvening().size()));
-                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getEvening()!=null) {
+                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getEvening() != null) {
 
                                     if (dailyRoutineModel.getResponse().getDailyRoutineData().getEvening().size() > 0) {
                                         CheckForloop(3, dailyRoutineModel.getResponse().getDailyRoutineData().getEvening());
@@ -628,7 +625,7 @@ public class DailyRoutineFragment extends BaseFragment {
                                 }
 
                                 Log.e("Dinner", String.valueOf(dailyRoutineModel.getResponse().getDailyRoutineData().getDinner().size()));
-                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getDinner()!=null) {
+                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getDinner() != null) {
 
                                     if (dailyRoutineModel.getResponse().getDailyRoutineData().getDinner().size() > 0) {
                                         CheckForloop(4, dailyRoutineModel.getResponse().getDailyRoutineData().getDinner());
@@ -636,16 +633,14 @@ public class DailyRoutineFragment extends BaseFragment {
 
                                 }
                                 Log.e("Bedtime", String.valueOf(dailyRoutineModel.getResponse().getDailyRoutineData().getBedtime().size()));
-                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getBedtime()!=null) {
+                                if (dailyRoutineModel.getResponse().getDailyRoutineData().getBedtime() != null) {
 
                                     if (dailyRoutineModel.getResponse().getDailyRoutineData().getBedtime().size() > 0) {
                                         CheckForloop(5, dailyRoutineModel.getResponse().getDailyRoutineData().getBedtime());
                                     }
                                 }
-                            } else {
-
-                                hideProgressDialog();
-
+                            } else if (String.valueOf(dailyRoutineModel.getStatusCode()).equals("403")) {
+                                logout_app(dailyRoutineModel.getMessage());
                             }
 
                         } catch (Exception e) {
@@ -666,6 +661,7 @@ public class DailyRoutineFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 
@@ -776,7 +772,7 @@ public class DailyRoutineFragment extends BaseFragment {
 
             case 4:
                 for (int i = 0; i < list.size(); i++) {
-                    Log.e("Dinner_meal_str",list.get(i));
+                    Log.e("Dinner_meal_str", list.get(i));
                     if (Dinner_meal_str.equals(list.get(i))) {
                         Dinner_meal.setChecked(true);
                     }
@@ -851,8 +847,8 @@ public class DailyRoutineFragment extends BaseFragment {
             mainObject.put("noon", Noon);
             mainObject.put("dinner", Dinner);
             mainObject.put("bedtime", BedTime);
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.user_id));
-            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
 
             Log.e("SubmitDailyRoutine_data", String.valueOf(mainObject));
         } catch (JSONException e) {
@@ -872,10 +868,17 @@ public class DailyRoutineFragment extends BaseFragment {
                         try {
                             String code = response.getString("status_code");
                             Log.e(TAG, "response=" + code);
-                            if (code.equals("200")) {
-                                String Message = response.getString("message");
+                            String Message = response.getString("message");
 
-                                Utility.ShowToast(mContext, Message);
+                            if (code.equals("200")) {
+
+                                //  Utility.ShowToast(mContext, Message);
+                                ShowAlertResponse(Message);
+
+                            } else if (code.equals("403")) {
+
+                            } else {
+                                ShowAlertResponse(Message);
 
                             }
                         } catch (JSONException e) {
@@ -896,6 +899,7 @@ public class DailyRoutineFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 
@@ -906,6 +910,36 @@ public class DailyRoutineFragment extends BaseFragment {
     }
 
 
+    private void ShowAlertResponse(String message) {
+        LayoutInflater inflater = (LayoutInflater) mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.send_successfully_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
+
+
+        TextView OK_txt = layout.findViewById(R.id.OK_txt);
+        TextView title_txt = layout.findViewById(R.id.title_txt);
+
+        title_txt.setText(message);
+
+
+        OK_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+
+            }
+        });
+
+    }
 
 
 }

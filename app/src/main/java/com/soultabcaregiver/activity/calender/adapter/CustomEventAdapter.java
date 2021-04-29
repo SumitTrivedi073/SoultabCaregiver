@@ -25,6 +25,7 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
 import com.soultabcaregiver.reminder_ring_class.ReminderBroadcastReceiver;
+import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
@@ -37,15 +38,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CustomEventAdapter  extends
+public class CustomEventAdapter extends
         RecyclerView.Adapter<CustomEventAdapter.ViewHolder> {
-    private List<ReminderBean> arRemindIn;
-    private Context context;
     Activity activity;
     TextView tvNodata;
     String FromDate2;
     AlertDialog alertDialog;
-    private  CustomProgressDialog progressDialog;
+    private List<ReminderBean> arRemindIn;
+    private Context context;
+    private CustomProgressDialog progressDialog;
 
 
     public CustomEventAdapter(Context context_, List<ReminderBean> arRemind_, TextView tvNodata, String fromDate2) {
@@ -54,7 +55,7 @@ public class CustomEventAdapter  extends
         activity = (Activity) context_;
         this.tvNodata = tvNodata;
         this.FromDate2 = fromDate2;
-        }
+    }
 
     @NonNull
     @Override
@@ -72,9 +73,9 @@ public class CustomEventAdapter  extends
         viewHolder.tvTitle.setText(reminderBean.getTitle());
         try {
 
-            if (reminderBean.getDate()!=null) {
-                 String month = Utility.MMM.format(Utility.yyyy_MM_dd.parse(reminderBean.getDate()));
-                viewHolder.day_txt.setText(Utility.dd.format(Utility.yyyy_MM_dd.parse(reminderBean.getDate()))+"\n"+month);
+            if (reminderBean.getDate() != null) {
+                String month = Utility.MMM.format(Utility.yyyy_MM_dd.parse(reminderBean.getDate()));
+                viewHolder.day_txt.setText(Utility.dd.format(Utility.yyyy_MM_dd.parse(reminderBean.getDate())) + "\n" + month);
                 viewHolder.tvDate.setText(Utility.EEE_dd_MMM_yyyy.format(Utility.yyyy_MM_dd.parse(reminderBean.getDate())));
             }
         } catch (ParseException e) {
@@ -85,8 +86,8 @@ public class CustomEventAdapter  extends
                 Log.e("Date_click", String.valueOf(arRemindIn.get(position).getDate()));
                 activity.startActivityForResult(new Intent(context, AddReminderActivity.class)
                         .putExtra(APIS.ReminderModel, arRemindIn.get(position))
-                        .putExtra("calender","calender")
-                        .putExtra(APIS.Update_reminder, true),1);
+                        .putExtra("calender", "calender")
+                        .putExtra(APIS.Update_reminder, true), 1);
 
             }
         });
@@ -94,10 +95,10 @@ public class CustomEventAdapter  extends
         viewHolder.delete_Reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (reminderBean.isAppointment()){
-                    alertmessage(reminderBean.getId(),position,"1");
-                }else {
-                    alertmessage(reminderBean.getId(),position,"0");
+                if (reminderBean.isAppointment()) {
+                    alertmessage(reminderBean.getId(), position, "1");
+                } else {
+                    alertmessage(reminderBean.getId(), position, "0");
                 }
 
             }
@@ -110,24 +111,6 @@ public class CustomEventAdapter  extends
     public int getItemCount() {
         return arRemindIn.size();
     }
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView day_txt, tvTitle, tvDate;
-        RelativeLayout rlMain;
-        RelativeLayout delete_Reminder;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            tvTitle = itemView.findViewById(R.id.Event_Title);
-            tvDate = itemView.findViewById(R.id.Event_Date);
-            day_txt = itemView.findViewById(R.id.day_txt);
-            rlMain = itemView.findViewById(R.id.rl_main);
-            delete_Reminder = itemView.findViewById(R.id.delete_Reminder);
-            delete_Reminder.setVisibility(View.VISIBLE);
-        }
-    }
-
 
     private void alertmessage(String id, int position, String value) {
         LayoutInflater inflater = (LayoutInflater) context
@@ -157,7 +140,7 @@ public class CustomEventAdapter  extends
             public void onClick(View v) {
                 alertDialog.dismiss();
                 if (Utility.isNetworkConnected(context)) {
-                    DeletRemind(id,position,value);
+                    DeletRemind(id, position, value);
                 } else {
 
                     Utility.ShowToast(context, context.getResources().getString(R.string.net_connection));
@@ -174,14 +157,12 @@ public class CustomEventAdapter  extends
 
     }
 
-
-
     public void DeletRemind(String sRemindId, int position, String value) {
 
         final String TAG = "Delete Remind";
         JSONObject mainObject = new JSONObject();
         String URL = null;
-        if (value.equals("1")){
+        if (value.equals("1")) {
             try {
                 mainObject.put("appointment_id", sRemindId);
                 mainObject.put("user_id", Utility.getSharedPreferences(context, APIS.user_id));
@@ -193,21 +174,21 @@ public class CustomEventAdapter  extends
                 e.printStackTrace();
             }
 
-        }else if (value.equals("0")){
+        } else if (value.equals("0")) {
 
             try {
                 mainObject.put("reminder_id", sRemindId);
                 mainObject.put("caregiver_id", Utility.getSharedPreferences(context, APIS.caregiver_id));
 
-                URL =  APIS.DELETEREMINDERAPI;
+                URL = APIS.DELETEREMINDERAPI;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
         }
-        Log.e("URL",URL);
+        Log.e("URL", URL);
 
-        showProgressDialog(context,context.getResources().getString(R.string.Loading));
+        showProgressDialog(context, context.getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + URL, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -222,20 +203,22 @@ public class CustomEventAdapter  extends
 
                                 ShowAlertResponse();
                                 if (ReminderBroadcastReceiver.mHandler != null) {
-                                    ReminderBroadcastReceiver.mHandler .removeCallbacksAndMessages(null);
+                                    ReminderBroadcastReceiver.mHandler.removeCallbacksAndMessages(null);
                                 }
 
-                                if (arRemindIn.size()>0) {
+                                if (arRemindIn.size() > 0) {
                                     arRemindIn.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, arRemindIn.size());
 
-                                }else {
+                                } else {
                                     tvNodata.setVisibility(View.VISIBLE);
                                     tvNodata.setText(context.getResources().getString(R.string.no_activity_scheduled) + " " + FromDate2);
 
                                 }
 
+                            } else if (String.valueOf(code).equals("403")) {
+                                BaseActivity.getInstance().logout_app(response.getString("message"));
                             }
 
                         } catch (JSONException e) {
@@ -255,6 +238,7 @@ public class CustomEventAdapter  extends
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(context,APIS.EncodeUser_id));
                 return params;
             }
 
@@ -290,9 +274,9 @@ public class CustomEventAdapter  extends
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss();
-                if (arRemindIn.size()>0) {
+                if (arRemindIn.size() > 0) {
 
-                }else {
+                } else {
                     tvNodata.setVisibility(View.VISIBLE);
                     tvNodata.setText(context.getResources().getString(R.string.no_activity_scheduled) + " " + FromDate2);
 
@@ -302,14 +286,30 @@ public class CustomEventAdapter  extends
 
     }
 
-    public  void showProgressDialog(Context mContext, String message) {
+    public void showProgressDialog(Context mContext, String message) {
         if (progressDialog == null) progressDialog = new CustomProgressDialog(mContext, message);
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
-    public  void hideProgressDialog() {
+    public void hideProgressDialog() {
         if (progressDialog != null) progressDialog.dismiss();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView day_txt, tvTitle, tvDate;
+        RelativeLayout rlMain;
+        RelativeLayout delete_Reminder;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            tvTitle = itemView.findViewById(R.id.Event_Title);
+            tvDate = itemView.findViewById(R.id.Event_Date);
+            day_txt = itemView.findViewById(R.id.day_txt);
+            rlMain = itemView.findViewById(R.id.rl_main);
+            delete_Reminder = itemView.findViewById(R.id.delete_Reminder);
+            delete_Reminder.setVisibility(View.VISIBLE);
+        }
     }
 
 }

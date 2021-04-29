@@ -203,7 +203,7 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
+               return params;
             }
 
         };

@@ -39,8 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DoctorListFragment extends BaseFragment implements DoctorListAdapter.AppointedDocSelectionListener{
+public class DoctorListFragment extends BaseFragment implements DoctorListAdapter.AppointedDocSelectionListener {
 
+    public static DoctorListFragment instance;
     View view;
     Context mContext;
     SearchView doctor_search;
@@ -50,10 +51,9 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     List<DoctorListModel.Response.DoctorDatum> doctorlist = new ArrayList<>();
     TextView tvNodata;
     DoctorCategoryModel.Response.CategoryDatum docCatBean;
-    public static DoctorListFragment instance;
+    RelativeLayout search_relative;
     private int lastPage = 1;
     private String mMaxoffset = "";
-    RelativeLayout search_relative;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,12 +66,12 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         view = inflater.inflate(R.layout.fragment_doctor_list, container, false);
+        view = inflater.inflate(R.layout.fragment_doctor_list, container, false);
 
         instance = DoctorListFragment.this;
         init();
 
-         return view;
+        return view;
     }
 
 
@@ -93,7 +93,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
         });
 
         ImageView searchIcon = doctor_search.findViewById(R.id.search_button);
-        searchIcon.setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_search));
+        searchIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_search));
         searchIcon.setColorFilter(getResources().getColor(R.color.themecolor));
 
         ImageView searchClose = doctor_search.findViewById(R.id.search_close_btn);
@@ -131,7 +131,6 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 doctor_search.onActionViewCollapsed();
             }
         });
-
 
 
         if (nested_scrollview != null) {
@@ -183,7 +182,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
             e.printStackTrace();
         }
 
-        showProgressDialog(mContext,getResources().getString(R.string.Loading));
+        showProgressDialog(mContext, getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.GETDOCLISTAPI, mainObject,
                 response -> {
@@ -209,6 +208,8 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                             tvNodata.setVisibility(View.VISIBLE);
 
                         }
+                    } else if (String.valueOf(doctorListModel.getStatusCode()).equals("403")) {
+                        logout_app(doctorListModel.getMessage());
                     } else {
                         tvNodata.setText(doctorListModel.getMessage());
                         tvNodata.setVisibility(View.VISIBLE);
@@ -223,6 +224,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
         };

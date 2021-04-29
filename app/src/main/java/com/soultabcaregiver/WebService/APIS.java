@@ -1,5 +1,9 @@
 package com.soultabcaregiver.WebService;
 
+import android.util.Base64;
+
+import com.soultabcaregiver.utils.Utility;
+
 public class APIS {
     //Live Server Base URL
     public static final String BASEURL1 = "https://mysoultab.com/api/";
@@ -15,6 +19,7 @@ public class APIS {
     public static final String HEADERVALUE = "123456";
     public static final String HEADERKEY1 = "Content-Type";
     public static final String HEADERVALUE1 = "application/json";
+    public static final String HEADERKEY2 = "auth";
 
     public static final String LOGINAPI = "Caregiver/login";
     public static final String FORGOTAPI = "Users/forgot_password";
@@ -54,6 +59,7 @@ public class APIS {
     //User Detail
     public static final String user_id = "user_id";
     public static final String caregiver_id = "caregiver_id";
+    public static final String EncodeUser_id ="EncodeUser_id";
     public static final String Caregiver_name = "name";
     public static final String Caregiver_lastname = "lastname";
     public static final String Caregiver_email = "email";
@@ -74,5 +80,25 @@ public class APIS {
     public static final String Update_reminder = "Update_reminder";
     public static final String Send_alarmData = "Send_alarmData";
 
+
+
+    // public static final String LineChartAPI = "caregiver/lineChart";
+
+
+    /*public static final String Add_Doctor_API = "Users/add_doctor";
+    public static final String EVENTLIST = "Users/activity_details";
+    public static final String DELETEREMINDERAPI = "Users/reminderdelete";
+    public static final String QuickAlery = "Users/quik_alert";
+    public static final String AlertCount = "Users/get_unread_alert_count";
+    public static final String AlertCountUpdate = "Users/update_unread_alert";
+
+
+
+
+    ///////Need to develop for caregiver
+    public static final String UPDATEREMINDERAPI = "Users/updatereminder";
+    public static final String ADDREMINDERAPI = "Users/reminder_add";
+    public static final String DoctorSendFaxAPI = "Users_milan/sendFax";
+*/
 
 }

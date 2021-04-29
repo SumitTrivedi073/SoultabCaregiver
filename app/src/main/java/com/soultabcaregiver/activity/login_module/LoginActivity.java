@@ -1,10 +1,13 @@
 package com.soultabcaregiver.activity.login_module;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -50,6 +53,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     Switch tbRemPass;
     CheckBox view_pwd1;
     String FirebaseToken ="";
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,8 +182,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void GetLogin() {
         JSONObject mainObject = new JSONObject();
 
-
-
         try {
             mainObject.put("email", etEmail.getText().toString().trim());
             mainObject.put("password", etPass.getText().toString().trim());
@@ -218,6 +220,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 Utility.clearSpecificSharedPreference(mContext, APIS.save_email);
                             }
 
+                            String encodeValue =  Base64.encodeToString(loginModel.getResponse().getId().getBytes(), Base64.NO_WRAP);
+//                            byte[] encodeValue = Base64.encode(loginModel.getResponse().getId().getBytes(), Base64.DEFAULT);
+                            Log.d("ENCODE_DECODE", "encodeValue = " + new String(encodeValue));
+
+                            Utility.setSharedPreference(mContext,APIS.EncodeUser_id,new String(encodeValue));
+
                             Utility.setSharedPreference(mContext,APIS.user_id,loginModel.getResponse().getId());
                             Utility.setSharedPreference(mContext,APIS.caregiver_id,loginModel.getResponse().getCaregiver_id());
                             Utility.setSharedPreference(mContext,APIS.Caregiver_name,loginModel.getResponse().getName());
@@ -228,13 +236,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             Utility.setSharedPreference(mContext,APIS.Caregiver_mobile,loginModel.getResponse().getMobile());
                             Utility.setSharedPreference(mContext,APIS.profile_image,loginModel.getResponse().getProfileImage());
 
-                            Intent intent = new Intent(mContext, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            ShowAlertResponse(loginModel.getMessage(),"1");
+
 
 
                         }else {
-                            Utility.ShowToast(mContext,loginModel.getMessage());
+                            ShowAlertResponse(loginModel.getMessage(),"0");
                         }
 
                         }
@@ -250,13 +257,53 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                 return params;
             }
 
         };
         AppController.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    private void ShowAlertResponse(String message, String value) {
+        LayoutInflater inflater = (LayoutInflater) mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.send_successfully_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
+
+
+        TextView OK_txt = layout.findViewById(R.id.OK_txt);
+        TextView title_txt = layout.findViewById(R.id.title_txt);
+
+        title_txt.setText(message);
+
+
+
+        OK_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (value.equals("1")){
+
+                    Intent intent = new Intent(mContext, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+
+                alertDialog.dismiss();
+
+            }
+        });
+
     }
 
 }

@@ -123,7 +123,9 @@ public class DoctorCategoryActivity extends BaseActivity implements View.OnClick
                                     gvDocCat.setAdapter(docCatAdpt);
 
                                 }
-                            } else {
+                            }else if (String.valueOf(doctorCategoryModel.getStatusCode()).equals("403")) {
+                                logout_app(doctorCategoryModel.getMessage());
+                            }  else {
                                 tvNodata.setText(doctorCategoryModel.getMessage());
                                 tvNodata.setVisibility(View.VISIBLE);
                                 Utility.ShowToast(mContext, doctorCategoryModel.getMessage());
@@ -147,6 +149,7 @@ public class DoctorCategoryActivity extends BaseActivity implements View.OnClick
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 

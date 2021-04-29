@@ -407,9 +407,8 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
+               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);return params;
             }
 
         };

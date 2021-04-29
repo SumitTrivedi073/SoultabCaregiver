@@ -103,6 +103,8 @@ public class CaregiverListActivity extends BaseActivity {
                             nodata_txt.setVisibility(View.VISIBLE);
                             blank_card.setVisibility(View.VISIBLE);
                         }
+                    }else if(String.valueOf(careGiverProfileModel.getStatusCode()).equals("403")){
+                        logout_app(careGiverProfileModel.getMessage());
                     } else{
                         Utility.ShowToast(mContext,careGiverProfileModel.getMessage());
                         caregiver_list.setVisibility(View.GONE);
@@ -122,6 +124,7 @@ public class CaregiverListActivity extends BaseActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 

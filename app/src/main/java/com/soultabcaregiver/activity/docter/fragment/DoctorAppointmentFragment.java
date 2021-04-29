@@ -154,7 +154,6 @@ public class DoctorAppointmentFragment extends BaseFragment implements DoctorApp
     }
 
 
-
     private void GetAppointedDocList() {
 
         arAppointedDoc = new ArrayList<>();
@@ -199,6 +198,8 @@ public class DoctorAppointmentFragment extends BaseFragment implements DoctorApp
                                 doctor_appointment_list.setVisibility(View.GONE);
                             }
 
+                        } else if (String.valueOf(doctorAppointmentList.getStatusCode()).equals("403")) {
+                            logout_app(doctorAppointmentList.getMessage());
                         } else {
                             tvNodata.setText(getResources().getString(R.string.no_data_found));
                             tvNodata.setVisibility(View.VISIBLE);
@@ -219,6 +220,7 @@ public class DoctorAppointmentFragment extends BaseFragment implements DoctorApp
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 
@@ -234,7 +236,6 @@ public class DoctorAppointmentFragment extends BaseFragment implements DoctorApp
     public void DocSelectionListener(List<DoctorAppointmentList.Response.AppointmentDatum> DocBeanList, boolean isSearch) {
 
     }
-
 
 
 }

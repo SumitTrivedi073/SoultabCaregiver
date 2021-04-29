@@ -508,6 +508,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 
@@ -567,6 +568,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
 
                                 DoctorConectingPopup();
 
+                            }else if (String.valueOf(requestModel.getStatusCode()).equals("403")) {
+                                logout_app(requestModel.getMessage());
                             } else {
 
                                 Utility.ShowToast(mContext, requestModel.getMessage());
@@ -593,6 +596,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 
@@ -784,9 +788,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
+               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);return params;
             }
 
         };

@@ -44,12 +44,12 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
     private final String TAG = getClass().getSimpleName();
     public List<CareGiverListModel.Response> CaregiverListdata;
     public List<CareGiverListModel.Response> CaregiverList_Filtered;
+    public CustomProgressDialog progressDialog;
     Context mContext;
     RequestOptions options;
     String Message;
     AlertDialog alertDialog;
     RadioButton call_me_checkbox, grocery_checkbox, pickup_medicine_checkbox, book_taxi_checkbox, book_doctor_checkbox;
-    public  CustomProgressDialog progressDialog;
 
 
     public CareGiverListAdapter(Context mContext, List<CareGiverListModel.Response> myListData) {
@@ -96,31 +96,6 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
     public int getItemCount() {
         //return histories.size();
         return CaregiverList_Filtered.size();
-    }
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        TextView caregiver_name_txt;
-        ImageView caregiver_image;
-        CardView Caregiver_profile_item;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            caregiver_name_txt = itemView.findViewById(R.id.caregiver_name_txt);
-            caregiver_image = itemView.findViewById(R.id.caregiver_image);
-            Caregiver_profile_item = itemView.findViewById(R.id.Caregiver_profile_item);
-
-            options = new RequestOptions()
-                    .centerCrop()
-                    .dontAnimate()
-                    .fitCenter()
-                    .placeholder(R.drawable.place_holder_photo)
-                    .error(R.drawable.place_holder_photo);
-
-
-        }
     }
 
     private void SendAlert(String Selected_caregiver_id) {
@@ -230,19 +205,20 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
             @Override
             public void onClick(View v) {
 
-                if (call_me_checkbox.isChecked()){
+                if (call_me_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.Call_me);
-                } if (grocery_checkbox.isChecked()){
+                }
+                if (grocery_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.pickup_grocery_txt);
                 }
-                if (pickup_medicine_checkbox.isChecked()){
+                if (pickup_medicine_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.pickup_medicine);
                 }
 
-                if (book_taxi_checkbox.isChecked()){
+                if (book_taxi_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.book_taxi);
                 }
-                if (book_doctor_checkbox.isChecked()){
+                if (book_doctor_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.book_doctor_appointment);
                 }
 
@@ -269,11 +245,10 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
         String created_at = format.format(today);
 
 
-
         try {
             mainObject.put("created_to", selected_caregiver_id);
-            mainObject.put("created_by", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
-            mainObject.put("created_at",created_at);
+            mainObject.put("created_by", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+            mainObject.put("created_at", created_at);
             mainObject.put("message", Message);
             mainObject.put("alert_category", "1");
 
@@ -282,7 +257,7 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
             e.printStackTrace();
         }
 
-        showProgressDialog(mContext,mContext.getResources().getString(R.string.Loading));
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
         System.out.println(mainObject.toString());
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.QuickAlery, mainObject,
@@ -298,7 +273,9 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
 
                             if (code.equals("200")) {
 
-                                ShowAlertResponse();
+                                ShowAlertResponse(mContext.getResources().getString(R.string.Alert_Send));
+                            }else {
+                                ShowAlertResponse(response.getString("message"));
                             }
 
                         } catch (JSONException e) {
@@ -329,7 +306,7 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
         AppController.getInstance().addToRequestQueue(jsonObjReq);
     }
 
-    private void ShowAlertResponse() {
+    private void ShowAlertResponse(String message) {
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.send_successfully_layout,
@@ -343,7 +320,10 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
         alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         alertDialog.show();
 
+        TextView title_txt = layout.findViewById(R.id.title_txt);
         TextView OK_txt = layout.findViewById(R.id.OK_txt);
+
+        title_txt.setText(mContext.getResources().getString(R.string.Alert_Send));
 
         OK_txt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -354,15 +334,38 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
 
     }
 
-
-    public  void showProgressDialog(Context context, String message){
-        if(progressDialog == null) progressDialog = new CustomProgressDialog(context, message);
+    public void showProgressDialog(Context context, String message) {
+        if (progressDialog == null) progressDialog = new CustomProgressDialog(context, message);
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
-    public  void hideProgressDialog(){
-        if(progressDialog != null) progressDialog.dismiss();
+    public void hideProgressDialog() {
+        if (progressDialog != null) progressDialog.dismiss();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView caregiver_name_txt;
+        ImageView caregiver_image;
+        CardView Caregiver_profile_item;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            caregiver_name_txt = itemView.findViewById(R.id.caregiver_name_txt);
+            caregiver_image = itemView.findViewById(R.id.caregiver_image);
+            Caregiver_profile_item = itemView.findViewById(R.id.Caregiver_profile_item);
+
+            options = new RequestOptions()
+                    .centerCrop()
+                    .dontAnimate()
+                    .fitCenter()
+                    .placeholder(R.drawable.place_holder_photo)
+                    .error(R.drawable.place_holder_photo);
+
+
+        }
     }
 
 }

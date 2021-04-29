@@ -37,6 +37,7 @@ import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
 
+import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -247,10 +248,12 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         hideProgressDialog();
                         Log.e("response", response);
                         chartModel = new Gson().fromJson(response, ChartModel.class);
-                        if (String.valueOf(chartModel.getOk()).equals("1")) {
+                        if (String.valueOf(chartModel.getStatus_code()).equals("200")) {
 
                             getChartData(chartModel);
 
+                        }else if (String.valueOf(chartModel.getStatus_code()).equals("403")){
+                            logout_app(chartModel.getMessage());
                         } else {
 
                             lineChart.setVisibility(View.GONE);
@@ -284,7 +287,10 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+               // params.put("auth", "OTg4");
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
 
+                Log.e("dahsbord_param", String.valueOf(params));
                 return params;
             }
 
@@ -589,9 +595,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
                     if (mainActivity != null) {
                         diloagBoxCommon.getDialog().dismiss();
-                        mainActivity.stopButtonClicked();
-                        Utility.clearSharedPreference(mContext);
-
+                              logout_app("Logout Successfully");
                     }
 
                 });

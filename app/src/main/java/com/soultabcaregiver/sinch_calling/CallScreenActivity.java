@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sinch.android.rtc.AudioController;
 import com.sinch.android.rtc.calling.Call;
@@ -68,7 +69,7 @@ public class CallScreenActivity extends BaseActivity {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, getLocalClassName().trim());
-       bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, getLocalClassName().trim());
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, getLocalClassName().trim());
 
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

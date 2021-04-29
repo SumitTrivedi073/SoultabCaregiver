@@ -132,6 +132,8 @@ public class AlertFragment extends BaseFragment {
                             no_data_txt.setVisibility(View.VISIBLE);
                             blank_card.setVisibility(View.VISIBLE);
                         }
+                    }else if(String.valueOf(alertModel.getStatusCode()).equals("403")){
+                        logout_app(alertModel.getMessage());
                     } else{
                         Utility.ShowToast(mContext,alertModel.getMessage());
                         alert_list.setVisibility(View.GONE);
@@ -139,8 +141,6 @@ public class AlertFragment extends BaseFragment {
                         blank_card.setVisibility(View.VISIBLE);
 
                     }
-
-
 
                 }, error -> {
             VolleyLog.d(TAG, "Error: " + error.getMessage());
@@ -154,6 +154,7 @@ public class AlertFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                 return params;
             }
 
@@ -204,9 +205,8 @@ public class AlertFragment extends BaseFragment {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<>();
-                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
+               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);return params;
             }
 
         };

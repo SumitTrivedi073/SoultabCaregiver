@@ -39,14 +39,12 @@ import java.util.Map;
 
 public class ReminderCreateClass {
 
+    public static ReminderCreateClass instance;
     String TAG = this.getClass().getSimpleName();
-
+    ArrayList<Integer> Reminder_ID_array = new ArrayList<>();
     private AlarmSharePreferenceModel alarmSharePreferenceModel;
     private PersonalAlarmModel personalAlarmModel;
     private Activity activity;
-    ArrayList<Integer> Reminder_ID_array = new ArrayList<>();
-
-    public static ReminderCreateClass instance;
 
     public ReminderCreateClass(Activity activity) {
         this.activity = activity;
@@ -212,13 +210,12 @@ public class ReminderCreateClass {
     }
 
 
-
     //    PersonalReminder Methods
     private void GetPersonalReminderList() {
         final String TAG = "GetReminderList";
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("user_id", Utility.getSharedPreferences(activity,APIS.user_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(activity, APIS.user_id));
             mainObject.put("device_type", "android");
 
             //Log.e(TAG, "GetPersonalReminderList======>" + mainObject.toString());
@@ -381,7 +378,7 @@ public class ReminderCreateClass {
                                 if (reminderBean.isAppointment()) {
                                     alarmModel.setAlarmDescription(reminderBean.getDoctoraddress());
                                     alarmModel.setAlarmFrom("Appointment");
-                                    ReminderSet(completeDate,  uniqueId, alarmModel);
+                                    ReminderSet(completeDate, uniqueId, alarmModel);
                                 } else {
 
                                     Log.e("Snooze", reminderBean.getSnooze());
@@ -400,7 +397,7 @@ public class ReminderCreateClass {
                                             alarmModel1.setActualTime(Utility.hh_mm_aa.format(now.getTime()));
                                             alarmModel1.setAlarmType(reminderBean.getRepeat());
                                             alarmModel1.setAlarmFrom("Personal Reminder");
-                                            ReminderSet(completeDate,  uniqueId, alarmModel1);
+                                            ReminderSet(completeDate, uniqueId, alarmModel1);
                                             Log.e("personalReminder_false", reminderBean.getTitle());
 
                                         } else {
@@ -426,7 +423,7 @@ public class ReminderCreateClass {
                                             alarmModel2.setActualTime(Utility.hh_mm_aa.format(now.getTime()));
                                             alarmModel2.setAlarmType(reminderBean.getRepeat());
                                             alarmModel2.setAlarmFrom("Personal Reminder");
-                                            ReminderSet(completeDate,  uniqueId, alarmModel2);
+                                            ReminderSet(completeDate, uniqueId, alarmModel2);
                                             Log.e("personalReminder_true", reminderBean.getTitle());
 
                                         } else {
@@ -450,7 +447,6 @@ public class ReminderCreateClass {
 
 
                     }
-
 
                 }
             }

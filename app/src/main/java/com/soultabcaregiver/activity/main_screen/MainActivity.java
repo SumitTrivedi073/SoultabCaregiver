@@ -48,11 +48,10 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
-import com.soultabcaregiver.activity.login_module.LoginActivity;
-import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
-
+import com.soultabcaregiver.activity.login_module.LoginActivity;
+import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.sinch_calling.CallScreenActivity;
 import com.soultabcaregiver.sinch_calling.SinchService;
@@ -67,7 +66,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, SinchService.StartFailedListener {
@@ -89,6 +87,10 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     private GoogleApiClient googleApiClient;
     private String TAG = getClass().getSimpleName();
     private Timer tmrStartEng;
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +130,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                     case R.id.navigation_dashboard:
                         video_call.setVisibility(View.VISIBLE);
-                       Utility.loadFragment(MainActivity.this, new DashBoardFragment(), false, null);
+                        Utility.loadFragment(MainActivity.this, new DashBoardFragment(), false, null);
 
                         return true;
 
@@ -241,12 +243,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     @Override
     protected void onResume() {
         super.onResume();
-      //  new ReminderCreateClass(MainActivity.this);
+        //  new ReminderCreateClass(MainActivity.this);
 
-     //   TimerStart();
+        //   TimerStart();
 
     }
-
 
     private void buildGoogleApiClient() {
 
@@ -362,7 +363,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         getSinchServiceInterface().setStartListener(this);
     }
 
-
     //to kill the current session of SinchService
     public void stopButtonClicked() {
         if (getSinchServiceInterface() != null) {
@@ -372,8 +372,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         startActivity(intent);
         finish();
     }
-
-
 
     public void Alert_countAPI() {
 
@@ -496,6 +494,4 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
             }
         }
     }
-
-
 }

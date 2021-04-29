@@ -28,7 +28,6 @@ import com.soultabcaregiver.activity.calender.CalenderModel.AllEventModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.calender.adapter.CustomEventAdapter;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
-
 import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -53,7 +52,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     FloatingActionButton reminder_btn;
     ArrayList<String> eventDays;
     String FromDate = "", FromDate2 = "", TODate = "", TODate2 = "";
-    Calendar calendar,calendar1;
+    Calendar calendar, calendar1;
     AlertDialog alertDialog;
     boolean isFirstTimeCalendar = true, Daily_select = true, Weekly_select = false, Monthly_select = false;
     List<ReminderBean> arRemin;
@@ -100,14 +99,14 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         reminder_btn = view.findViewById(R.id.reminder_btn);
 
 
-        curret_date_txt.setText(Utility.MMM_dd_yyyy.format(calendar.getTime())+ " - "
+        curret_date_txt.setText(Utility.MMM_dd_yyyy.format(calendar.getTime()) + " - "
                 + Utility.MMM_dd_yyyy.format(calendar.getTime()));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-       // new ReminderCreateClass(getActivity());
+        // new ReminderCreateClass(getActivity());
 
         if (Utility.isNetworkConnected(mContext)) {
             GetAllEventAPI(FromDate, TODate);//for list data
@@ -157,7 +156,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
 
                 try {
 
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate))+ " - "
+                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)) + " - "
                             + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
 
                 } catch (ParseException e) {
@@ -187,7 +186,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 try {
                     TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 7);
 
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate))+ " - "
+                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)) + " - "
                             + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
 
                 } catch (ParseException e) {
@@ -218,10 +217,10 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 try {
                     TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 30);
 
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate))+ " - "
+                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)) + " - "
                             + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
 
-           } catch (ParseException e) {
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
@@ -288,7 +287,6 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 FromDate = Utility.yyyy_MM_dd.format(calendar1.getTime());
 
 
-
                 if (Daily_select) {
 
                     TODate = Utility.yyyy_MM_dd.format(calendar1.getTime());
@@ -310,7 +308,6 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 }
 
 
-
             }
         });
 
@@ -320,7 +317,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             public void onClick(View v) {
 
                 try {
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate))+ " - "
+                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)) + " - "
                             + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
                 } catch (ParseException e) {
                     e.printStackTrace();

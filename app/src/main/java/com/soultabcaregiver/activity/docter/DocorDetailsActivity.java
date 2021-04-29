@@ -168,7 +168,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         }
 
 
-
     }
 
     private void GetValuFromIntent() {
@@ -474,6 +473,8 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
                                 DoctorConectingPopup(requestModel.getResponse().getId());
 
+                            } else if (String.valueOf(requestModel.getStatusCode()).equals("403")) {
+                                logout_app(requestModel.getMessage());
                             } else {
 
                                 Utility.ShowToast(mContext, requestModel.getMessage());
@@ -500,7 +501,8 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                return params;
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                  return params;
             }
 
         };
@@ -543,8 +545,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             Portal.setLayoutParams(params2);
         }
-
-
 
 
         if (TextUtils.isEmpty(txt_Portal.getText().toString())) {
@@ -625,11 +625,11 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             public void onClick(View v) {
                 alertDialog.dismiss();
                 if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
-                   Intent intent = new Intent(mContext, SocialActivity.class);
+                    Intent intent = new Intent(mContext, SocialActivity.class);
                     intent.putExtra("webUrl", docListBean.getPortal());
                     startActivity(intent);
                     finish();
-                }else {
+                } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.Portal_unavailable));
                     finish();
 

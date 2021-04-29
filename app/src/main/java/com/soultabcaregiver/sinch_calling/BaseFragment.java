@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
@@ -33,6 +34,7 @@ public class BaseFragment extends Fragment implements ServiceConnection {
     private SinchService.SinchServiceInterface mSinchServiceInterface;
     public  CustomProgressDialog progressDialog;
     public  AlertDialog alertDialog;
+    MainActivity mainActivity;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -47,6 +49,8 @@ public class BaseFragment extends Fragment implements ServiceConnection {
 
         getActivity().bindService(new Intent(getActivity(), SinchService.class), this,
                 BIND_AUTO_CREATE);
+
+        mainActivity = MainActivity.instance;
         return textView;
     }
 
@@ -143,5 +147,39 @@ public class BaseFragment extends Fragment implements ServiceConnection {
 
             Utility.ShowToast(getActivity(),"This application needs permission to use your microphone and camera to function properly.");
         }
+    }
+
+    public void logout_app(String message){
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.send_successfully_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
+
+
+        TextView OK_txt = layout.findViewById(R.id.OK_txt);
+        TextView title_txt = layout.findViewById(R.id.title_txt);
+
+        title_txt.setText(message);
+
+        OK_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                MainActivity.getInstance().stopButtonClicked();
+                Utility.clearSharedPreference(getActivity());
+
+                alertDialog.dismiss();
+
+            }
+        });
+
     }
 }

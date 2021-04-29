@@ -19,17 +19,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
-import com.soultabcaregiver.sinch_calling.SinchService;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
 
 public abstract class BaseActivity extends AppCompatActivity implements ServiceConnection {
 
-    public Context mContext;
     private SinchService.SinchServiceInterface mSinchServiceInterface;
     AlertDialog alertDialog;
-
+    MainActivity mainActivity;
+    public static BaseActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,8 @@ public abstract class BaseActivity extends AppCompatActivity implements ServiceC
 
         getApplicationContext().bindService(new Intent(this, SinchService.class), this,
                 BIND_AUTO_CREATE);
+        mainActivity = MainActivity.instance;
+        instance = BaseActivity.this;
 
     }
 
@@ -141,6 +143,48 @@ public abstract class BaseActivity extends AppCompatActivity implements ServiceC
         InputMethodManager imm =(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public void logout_app(String message){
+        LayoutInflater inflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.send_successfully_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
+
+
+        TextView OK_txt = layout.findViewById(R.id.OK_txt);
+        TextView title_txt = layout.findViewById(R.id.title_txt);
+
+        title_txt.setText(message);
+
+
+
+        OK_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mainActivity.stopButtonClicked();
+                Utility.clearSharedPreference(getApplicationContext());
+
+                alertDialog.dismiss();
+
+            }
+        });
+
+
+
+    }
+    public static BaseActivity getInstance() {
+        return instance;
+    }
+
 
 
 }

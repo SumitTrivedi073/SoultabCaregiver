@@ -36,7 +36,7 @@ public class ReminderBroadcastReceiver extends BroadcastReceiver {
         if (alarmModel != null) {
             if (alarmModel.getAlarmFrom().equalsIgnoreCase("Personal Reminder")) {
                 if (alarmModel.getSnooze()!=null){
-                if (alarmModel.getSnooze().equals("false")) {
+                if (alarmModel.getSnooze().equals("0")) {
 
                     Intent newIntent = new Intent(context, ActAlarmNotification.class);
                     newIntent.putExtra(APIS.Send_alarmData, alarmModel);
