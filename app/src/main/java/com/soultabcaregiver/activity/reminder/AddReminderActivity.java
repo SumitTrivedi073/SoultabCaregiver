@@ -36,7 +36,6 @@ import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.reminder.adapter.CustomPopupAdapter;
 import com.soultabcaregiver.activity.reminder.model.BeforeTimeModel;
-
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -63,7 +62,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
     EditText et_title;
     TextView tvWhenDate, tvWhenTime, tv_text, tv_snooze_txt;
     TextView tvRepeat, tvBeforRemindTxt, btn_submit_reminder;
-    RelativeLayout tv_snooze_layout,back_btn;
+    RelativeLayout tv_snooze_layout, back_btn;
     int alarmHours = 0, alarmMin = 0;
     Calendar myCalendar;
     String sTitle = "", sWhenDate = "", sWhenTime = "", sReminder = "", sRepeat = "", value;
@@ -73,7 +72,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
     List<BeforeTimeModel> beforeTimeModelList;
     List<BeforeTimeModel> repeatTimeModelList;
     SharedPreferences shp;
-   // ReminderCreateClass reminderCreateClass;
+    // ReminderCreateClass reminderCreateClass;
     String date;
     Context mContext;
     boolean update_reminder;
@@ -88,7 +87,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
 
         shp = getSharedPreferences("TEXT", 0);
 
-       // reminderCreateClass = new ReminderCreateClass(AddReminderActivity.this);
+        // reminderCreateClass = new ReminderCreateClass(AddReminderActivity.this);
 
         InitCompo();
         Listener();
@@ -379,21 +378,23 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                         Log.d(TAG, "addReminder response=" + response.toString());
                         hideProgressDialog();
                         CommonResponseModel commonResponseModel = new Gson().fromJson(response.toString(), CommonResponseModel.class);
-                        if (commonResponseModel.getStatus().equalsIgnoreCase("true")) {
+                        if (String.valueOf(commonResponseModel.getStatusCode()).equals("200")) {
 
                             onBackPressed();
+
+
+                            if (update_reminder) {
+
+                                Utility.ShowToast(mContext, getResources().getString(R.string.update_reminder_successfully));
+
+                            } else {
+                                Utility.ShowToast(mContext, commonResponseModel.getMessage());
+                            }
+                        }else if (String.valueOf(commonResponseModel.getStatusCode()).equals("403")) {
+                            logout_app(commonResponseModel.getMessage());
                         }
 
-                        if (update_reminder) {
-
-                            Utility.ShowToast(mContext, getResources().getString(R.string.update_reminder_successfully));
-
-                        } else {
-                            Utility.ShowToast(mContext, commonResponseModel.getMessage());
-                        }
-
-
-                    } catch (Exception e) {
+                        } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }, new Response.ErrorListener() {
@@ -407,8 +408,11 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);return params;
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+
+                return params;
             }
 
         };
@@ -430,7 +434,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
     private void chooseTimePicker() {
         try {
             // Get Current Time
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this,  R.style.DialogTheme,
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, R.style.DialogTheme,
                     new TimePickerDialog.OnTimeSetListener() {
 
                         @Override
@@ -617,7 +621,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         Switch tbbeforeRemindTog;
-        TextView cancel,ok;
+        TextView cancel, ok;
         RecyclerView rvbeforeReminder;
 
         ok = dialog.findViewById(R.id.ok);
@@ -678,7 +682,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         RecyclerView rvRepeatReminder;
-        TextView ok,cancel;
+        TextView ok, cancel;
         ok = dialog.findViewById(R.id.ok);
         cancel = dialog.findViewById(R.id.cancel);
 

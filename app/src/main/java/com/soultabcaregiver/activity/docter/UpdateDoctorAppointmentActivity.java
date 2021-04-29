@@ -26,7 +26,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.sinch.android.rtc.ClientRegistration;
 import com.sinch.android.rtc.PushPair;
@@ -120,7 +119,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         tbDocAppTog = findViewById(R.id.tb_doc_appoint);
         rlDate = findViewById(R.id.rl_date);
         tvDate = findViewById(R.id.tv_date);
-         tv_time = findViewById(R.id.tv_time);
+        tv_time = findViewById(R.id.tv_time);
         rl_time = findViewById(R.id.rl_time);
         tvMakeAppoint = findViewById(R.id.tv_make_appoi);
         txt_fax = findViewById(R.id.txt_fax);
@@ -508,7 +507,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 
@@ -568,7 +567,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
 
                                 DoctorConectingPopup();
 
-                            }else if (String.valueOf(requestModel.getStatusCode()).equals("403")) {
+                            } else if (String.valueOf(requestModel.getStatusCode()).equals("403")) {
                                 logout_app(requestModel.getMessage());
                             } else {
 
@@ -596,7 +595,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 
@@ -723,7 +722,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                     intent.putExtra("webUrl", appointmentDatum.getWebsite());
                     startActivity(intent);
                     finish();
-                }else {
+                } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.Portal_unavailable));
                     finish();
 
@@ -743,7 +742,6 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         });
 
 
-
     }
 
     private void SendFax() {
@@ -753,7 +751,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             mainObject.put("doctor_id", appointmentDatum.getDoctor_id());
             mainObject.put("dr_appointment_id", appointmentDatum.getAppointmentId());
             mainObject.put("userid", Utility.getSharedPreferences(mContext, APIS.user_id));
-           mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -788,8 +786,11 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);return params;
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+
+                return params;
             }
 
         };

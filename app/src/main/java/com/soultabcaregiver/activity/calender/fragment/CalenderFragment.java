@@ -366,7 +366,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                     isFirstTimeShowLoader = false;
                     try {
                         AllEventModel allEventModel = new Gson().fromJson(response.toString(), AllEventModel.class);
-                        if (allEventModel.getStatus().equalsIgnoreCase("true")) {
+                        if (String.valueOf(allEventModel.getStatusCode()).equals("200")) {
                             arRemin = allEventModel.getResponse().getActivities().getReminders();
 
                             for (int i = 0; i < allEventModel.getResponse().getActivities().getAppointments().size(); i++) {
@@ -385,6 +385,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                             CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin, tvNodata, Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
                             rvReminder.setAdapter(adapter);
 
+                        }else if (String.valueOf(allEventModel.getStatusCode()).equals("403")) {
+                            logout_app(response.getString("message"));
                         } else {
                             rvReminder.setAdapter(null);
                             tvNodata.setVisibility(View.VISIBLE);
@@ -403,6 +405,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+
                 return params;
             }
 

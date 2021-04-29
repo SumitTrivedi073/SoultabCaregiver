@@ -405,6 +405,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                             tv_badge.setText(String.valueOf(alertCountModel.getResponse().getUnreadCount()));
                             itemView.addView(badge);
                         }
+                    }else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
+                       logout_app(alertCountModel.getMessage());
                     } else {
                         Utility.ShowToast(mContext, alertCountModel.getMessage());
                     }
@@ -418,6 +420,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+
                 return params;
             }
 

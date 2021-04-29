@@ -501,8 +501,8 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
-                  return params;
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+                return params;
             }
 
         };
@@ -672,13 +672,21 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "SendFax response=" + response.toString());
 
-                        hideProgressDialog();
+                        try {
+                            if (String.valueOf(response.getString("status_code")).equals("200")) {
+                                hideProgressDialog();
 
-                        AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
+                                AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
 
-                        Utility.ShowToast(mContext, requestModel.getMessage());
-                        onBackPressed();
-                        finish();
+                                Utility.ShowToast(mContext, requestModel.getMessage());
+                                onBackPressed();
+                                finish();
+                            } else if (String.valueOf(response.getString("status_code")).equals("403")) {
+                                logout_app(response.getString("message"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 }, new Response.ErrorListener() {
@@ -694,6 +702,8 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+
                 return params;
             }
 

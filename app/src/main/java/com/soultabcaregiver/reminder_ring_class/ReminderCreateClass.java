@@ -23,6 +23,7 @@ import com.soultabcaregiver.reminder_ring_class.model.AlarmModel;
 import com.soultabcaregiver.reminder_ring_class.model.AlarmSetModel;
 import com.soultabcaregiver.reminder_ring_class.model.AlarmSharePreferenceModel;
 import com.soultabcaregiver.reminder_ring_class.model.PersonalAlarmModel;
+import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -228,7 +229,7 @@ public class ReminderCreateClass {
                     //Log.e(TAG, "GetReminderList response=" + response.toString());
                     try {
                         AllEventModel allEventModel = new Gson().fromJson(response.toString(), AllEventModel.class);
-                        if (allEventModel.getStatus().equalsIgnoreCase("true")) {
+                        if (String.valueOf(allEventModel.getStatusCode()).equals("200")) {
                             try {
 
                                 ArrayList<ReminderBean> reminderBeanArrayList = new ArrayList<>();
@@ -283,6 +284,8 @@ public class ReminderCreateClass {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        }else if (String.valueOf(allEventModel.getStatusCode()).equals("403")) {
+                            BaseActivity.getInstance().logout_app(response.getString("message"));
                         } else {
                             if (Utility.GetPersonalAlarmSetModel(activity) != null) {
                                 PersonalReminderDeleteAbilityCheck(new ArrayList<>());

@@ -3,15 +3,14 @@ package com.soultabcaregiver.activity.alert.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -38,7 +37,7 @@ import java.util.Map;
 
 public class AlertFragment extends BaseFragment {
 
-    private  final String TAG = getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
     Context mContext;
     View view;
     RecyclerView alert_list;
@@ -91,7 +90,7 @@ public class AlertFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-      }
+    }
 
     private void GetAlertList() {
 
@@ -105,7 +104,7 @@ public class AlertFragment extends BaseFragment {
 
         }
 
-            showProgressDialog(mContext, getResources().getString(R.string.Loading));
+        showProgressDialog(mContext, getResources().getString(R.string.Loading));
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.AlertListAPI, mainObject,
@@ -115,9 +114,9 @@ public class AlertFragment extends BaseFragment {
 
                     AlertModel alertModel = new Gson().fromJson(response.toString(), AlertModel.class);
 
-                    if (String.valueOf(alertModel.getStatusCode()).equals("200")){
+                    if (String.valueOf(alertModel.getStatusCode()).equals("200")) {
 
-                        if (alertModel.getData().getCaregiverData().size()>0){
+                        if (alertModel.getData().getCaregiverData().size() > 0) {
 
                             alert_list.setVisibility(View.VISIBLE);
                             no_data_txt.setVisibility(View.GONE);
@@ -127,15 +126,15 @@ public class AlertFragment extends BaseFragment {
                             alert_list.setAdapter(alertAdapter);
 
 
-                        }else {
+                        } else {
                             alert_list.setVisibility(View.GONE);
                             no_data_txt.setVisibility(View.VISIBLE);
                             blank_card.setVisibility(View.VISIBLE);
                         }
-                    }else if(String.valueOf(alertModel.getStatusCode()).equals("403")){
+                    } else if (String.valueOf(alertModel.getStatusCode()).equals("403")) {
                         logout_app(alertModel.getMessage());
-                    } else{
-                        Utility.ShowToast(mContext,alertModel.getMessage());
+                    } else {
+                        Utility.ShowToast(mContext, alertModel.getMessage());
                         alert_list.setVisibility(View.GONE);
                         no_data_txt.setVisibility(View.VISIBLE);
                         blank_card.setVisibility(View.VISIBLE);
@@ -154,7 +153,7 @@ public class AlertFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 
@@ -170,7 +169,7 @@ public class AlertFragment extends BaseFragment {
 
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("user_id", Utility.getSharedPreferences(mContext,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
 
             Log.e(TAG, "CaregiverList API========>" + mainObject.toString());
         } catch (JSONException e) {
@@ -188,14 +187,16 @@ public class AlertFragment extends BaseFragment {
                     CommonResponseModel alertCountModel = new Gson().fromJson(response.toString(),
                             CommonResponseModel.class);
 
-                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")){
+                    if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
 
-                        if (mainActivity!=null){
+                        if (mainActivity != null) {
                             mainActivity.Alert_countAPI();
                         }
 
-                    } else{
-                        Utility.ShowToast(mContext,alertCountModel.getMessage());
+                    }else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
+                        logout_app(alertCountModel.getMessage());
+                    }else {
+                        Utility.ShowToast(mContext, alertCountModel.getMessage());
                     }
 
                 }, error -> {
@@ -205,8 +206,12 @@ public class AlertFragment extends BaseFragment {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<>();
-               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);return params;
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+
+                return params;
+
             }
 
         };

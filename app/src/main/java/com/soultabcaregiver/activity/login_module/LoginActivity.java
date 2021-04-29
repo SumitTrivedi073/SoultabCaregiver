@@ -34,8 +34,8 @@ import com.soultabcaregiver.Model.LoginModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
-import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONException;
@@ -46,13 +46,13 @@ import java.util.Map;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
-    private  final String TAG = getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
     Context mContext;
-    TextView tvLogin, tvForgot,tv_rem_pass;
+    TextView tvLogin, tvForgot, tv_rem_pass;
     EditText etEmail, etPass;
     Switch tbRemPass;
     CheckBox view_pwd1;
-    String FirebaseToken ="";
+    String FirebaseToken = "";
     AlertDialog alertDialog;
 
     @Override
@@ -77,9 +77,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         view_pwd1 = findViewById(R.id.view_pwd1);
         tv_rem_pass = findViewById(R.id.tv_rem_pass);
 
-        if (Utility.getSharedPreferences2(mContext,APIS.save_email)!=null){
-            if (Utility.getSharedPreferences2(mContext,APIS.save_email).equals("true")){
-                etEmail.setText(Utility.getSharedPreferences2(mContext,APIS.Caregiver_email));
+        if (Utility.getSharedPreferences2(mContext, APIS.save_email) != null) {
+            if (Utility.getSharedPreferences2(mContext, APIS.save_email).equals("true")) {
+                etEmail.setText(Utility.getSharedPreferences2(mContext, APIS.Caregiver_email));
                 tbRemPass.setChecked(true);
             }
         }
@@ -131,7 +131,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tv_rem_pass:
                 if (tbRemPass.isChecked()) {
                     tbRemPass.setChecked(false);
@@ -169,7 +169,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 Utility.ShowToast(mContext, getResources().getString(R.string.password_notvalid));
 
             } else {
-               GetLogin();
+                GetLogin();
             }
         } else {
 
@@ -187,7 +187,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             mainObject.put("password", etPass.getText().toString().trim());
             mainObject.put("device_type", "android");
             mainObject.put("user_roll", 4);
-            mainObject.put("device_token",FirebaseToken);
+            mainObject.put("device_token", FirebaseToken);
 
             Log.e("Login_mainObject", String.valueOf(mainObject));
 
@@ -197,7 +197,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
         System.out.println(mainObject.toString());
-       showProgressDialog(getResources().getString(R.string.Loading));
+        showProgressDialog(getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.LOGINAPI, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -207,44 +207,43 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
                         hideProgressDialog();
 
-                        LoginModel loginModel = new Gson().fromJson(response.toString(),LoginModel.class);
+                        LoginModel loginModel = new Gson().fromJson(response.toString(), LoginModel.class);
 
-                        if (String.valueOf(loginModel.getStatusCode()).equals("200")){
+                        if (String.valueOf(loginModel.getStatusCode()).equals("200")) {
 
-                            if (tbRemPass.isChecked()){
-                                Utility.setSharedPreference2(mContext,APIS.Caregiver_email,loginModel.getResponse().getEmail());
-                                Utility.setSharedPreference2(mContext,APIS.save_email,"true");
+                            if (tbRemPass.isChecked()) {
+                                Utility.setSharedPreference2(mContext, APIS.Caregiver_email, loginModel.getResponse().getEmail());
+                                Utility.setSharedPreference2(mContext, APIS.save_email, "true");
 
-                            }else {
+                            } else {
                                 Utility.clearSpecificSharedPreference(mContext, APIS.Caregiver_email);
                                 Utility.clearSpecificSharedPreference(mContext, APIS.save_email);
                             }
 
-                            String encodeValue =  Base64.encodeToString(loginModel.getResponse().getId().getBytes(), Base64.NO_WRAP);
+                            String encodeValue = Base64.encodeToString(loginModel.getResponse().getCaregiver_id().getBytes(), Base64.NO_WRAP);
 //                            byte[] encodeValue = Base64.encode(loginModel.getResponse().getId().getBytes(), Base64.DEFAULT);
                             Log.d("ENCODE_DECODE", "encodeValue = " + new String(encodeValue));
 
-                            Utility.setSharedPreference(mContext,APIS.EncodeUser_id,new String(encodeValue));
+                            Utility.setSharedPreference(mContext, APIS.EncodeUser_id, new String(encodeValue));
 
-                            Utility.setSharedPreference(mContext,APIS.user_id,loginModel.getResponse().getId());
-                            Utility.setSharedPreference(mContext,APIS.caregiver_id,loginModel.getResponse().getCaregiver_id());
-                            Utility.setSharedPreference(mContext,APIS.Caregiver_name,loginModel.getResponse().getName());
-                            Utility.setSharedPreference(mContext,APIS.Caregiver_lastname,loginModel.getResponse().getLastname());
-                            Utility.setSharedPreference(mContext,APIS.Caregiver_email,loginModel.getResponse().getEmail());
-                            Utility.setSharedPreference(mContext,APIS.user_email,loginModel.getResponse().getUser_email_address());
+                            Utility.setSharedPreference(mContext, APIS.user_id, loginModel.getResponse().getId());
+                            Utility.setSharedPreference(mContext, APIS.caregiver_id, loginModel.getResponse().getCaregiver_id());
+                            Utility.setSharedPreference(mContext, APIS.Caregiver_name, loginModel.getResponse().getName());
+                            Utility.setSharedPreference(mContext, APIS.Caregiver_lastname, loginModel.getResponse().getLastname());
+                            Utility.setSharedPreference(mContext, APIS.Caregiver_email, loginModel.getResponse().getEmail());
+                            Utility.setSharedPreference(mContext, APIS.user_email, loginModel.getResponse().getUser_email_address());
 
-                            Utility.setSharedPreference(mContext,APIS.Caregiver_mobile,loginModel.getResponse().getMobile());
-                            Utility.setSharedPreference(mContext,APIS.profile_image,loginModel.getResponse().getProfileImage());
+                            Utility.setSharedPreference(mContext, APIS.Caregiver_mobile, loginModel.getResponse().getMobile());
+                            Utility.setSharedPreference(mContext, APIS.profile_image, loginModel.getResponse().getProfileImage());
 
-                            ShowAlertResponse(loginModel.getMessage(),"1");
+                            ShowAlertResponse(loginModel.getMessage(), "1");
 
 
-
-                        }else {
-                            ShowAlertResponse(loginModel.getMessage(),"0");
+                        } else {
+                            ShowAlertResponse(loginModel.getMessage(), "0");
                         }
 
-                        }
+                    }
                 }, new Response.ErrorListener() {
 
             @Override
@@ -257,7 +256,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-               params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                 return params;
             }
@@ -287,12 +286,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         title_txt.setText(message);
 
 
-
         OK_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (value.equals("1")){
+                if (value.equals("1")) {
 
                     Intent intent = new Intent(mContext, MainActivity.class);
                     startActivity(intent);

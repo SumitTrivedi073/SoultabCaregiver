@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.model.CareGiverListModel;
+import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
@@ -274,6 +275,8 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
                             if (code.equals("200")) {
 
                                 ShowAlertResponse(mContext.getResources().getString(R.string.Alert_Send));
+                            }else if (String.valueOf(code).equals("403")) {
+                                BaseActivity.getInstance().logout_app(response.getString("message"));
                             }else {
                                 ShowAlertResponse(response.getString("message"));
                             }
@@ -298,6 +301,8 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+
                 return params;
             }
 

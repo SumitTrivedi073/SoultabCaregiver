@@ -180,6 +180,8 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
                             if (String.valueOf(code).equals("200")) {
 
                                ShowAlertResponse(response.getString("message"));
+                            }else if (String.valueOf(code).equals("403")) {
+                                logout_app(response.getString("message"));
                             }else {
                                 ShowAlertResponse(response.getString("message"));
 
@@ -203,6 +205,7 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
                return params;
             }
 
