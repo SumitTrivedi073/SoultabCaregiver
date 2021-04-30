@@ -53,6 +53,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -417,9 +418,17 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                                               int minute) {
                             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                                     calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                            tv_time.setText(Utility.hh_mm_aa.format(calendar.getTime()));
+                            if(calendar.before(GregorianCalendar.getInstance())){
+                                Utility.ShowToast(mContext,getResources().getString(R.string.select_future_time));
+                            } else {
+                                Calendar datetime=Calendar.getInstance();
+                                datetime.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                                datetime.set(Calendar.MINUTE,minute);
+                                tv_time.setText(Utility.hh_mm_aa.format(calendar.getTime()));
 
-                            sSelTimeId = Utility.hh_mm_aa.format(calendar.getTime());
+                                sSelTimeId = Utility.hh_mm_aa.format(calendar.getTime());
+
+                            }
                         }
                     }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
             timePickerDialog.show();

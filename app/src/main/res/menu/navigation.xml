@@ -35,6 +35,7 @@
         android:enabled="true"/>
 
 
+<!--
     <item
         android:id="@+id/navigation_calender"
         android:icon="@drawable/calendar_bottom"
@@ -42,6 +43,7 @@
 
         android:enabled="true"/>
 
+-->
 
 
 

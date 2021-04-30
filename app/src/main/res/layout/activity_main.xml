@@ -36,7 +36,7 @@
             android:layout_gravity="start"
             android:theme="@style/Widget.BottomNavigationView"
             app:menu="@menu/navigation"
-            app:labelVisibilityMode="auto"/>
+            app:labelVisibilityMode="labeled"/>
 
     </RelativeLayout>
 
