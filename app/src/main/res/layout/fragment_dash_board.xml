@@ -84,11 +84,16 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:background="@color/white"
             android:fontFamily="@font/muli_bolditalic"
             android:padding="@dimen/_4sdp"
             android:textColor="@color/blackish"
-            android:textSize="@dimen/_12sdp" />
+            android:textSize="@dimen/_10sdp"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

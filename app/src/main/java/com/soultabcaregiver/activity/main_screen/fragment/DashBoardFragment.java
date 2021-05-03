@@ -36,8 +36,6 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
-
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -127,7 +125,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         user_name_txt.setText(Utility.getSharedPreferences(mContext, APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext, APIS.Caregiver_lastname));
 
 
-        Log.e("user_id",Utility.getSharedPreferences(mContext, APIS.user_id));
+        Log.e("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
         if (Utility.isNetworkConnected(mContext)) {
             ChartAPI(chart_value_data);
 
@@ -164,7 +162,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
-                    if(isChecked) {
+                    if (isChecked) {
 
                         weekly_chart.setChecked(true);
                         three_month_chart.setChecked(false);
@@ -183,7 +181,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
-                    if(isChecked) {
+                    if (isChecked) {
 
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(true);
@@ -202,7 +200,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
-                    if(isChecked) {
+                    if (isChecked) {
 
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(false);
@@ -222,7 +220,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
 
-                    if(isChecked) {
+                    if (isChecked) {
                         twelve_month_chart.setChecked(true);
                         weekly_chart.setChecked(false);
                         three_month_chart.setChecked(false);
@@ -252,7 +250,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
                             getChartData(chartModel);
 
-                        }else if (String.valueOf(chartModel.getStatus_code()).equals("403")){
+                        } else if (String.valueOf(chartModel.getStatus_code()).equals("403")) {
                             logout_app(chartModel.getMessage());
                         } else {
 
@@ -287,8 +285,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-               // params.put("auth", "OTg4");
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                // params.put("auth", "OTg4");
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
 
                 Log.e("dahsbord_param", String.valueOf(params));
                 return params;
@@ -306,7 +304,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
         lineDataSet = null;
-       // lineDataSet2 = null;
+        // lineDataSet2 = null;
         lineDataSet3 = null;
         lineDataSet4 = null;
         lineDataSet5 = null;
@@ -327,7 +325,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         lineDataSet2 = new LineDataSet(datavalue1(chartModel.getData().getLineChart().get(i).getYaxis()), chartModel.getData().getLineChart().get(i).getName());
                     }
                 }
-    */            if (chartModel.getData().getLineChart().get(i).getName().equals("Splash")) {
+    */
+                if (chartModel.getData().getLineChart().get(i).getName().equals("Splash")) {
                     if (chartModel.getData().getLineChart().get(i).getYaxis().size() > 0) {
                         lineDataSet3 = new LineDataSet(datavalue1(chartModel.getData().getLineChart().get(i).getYaxis()), chartModel.getData().getLineChart().get(i).getName());
                     }
@@ -355,16 +354,15 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             }
 
 
-
-            if (lineDataSet != null &&  lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+            if (lineDataSet != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
                 lineDataSet.setLineWidth(3f);
-             //   lineDataSet2.setLineWidth(3f);
+                //   lineDataSet2.setLineWidth(3f);
                 lineDataSet3.setLineWidth(3f);
                 lineDataSet4.setLineWidth(3f);
                 lineDataSet5.setLineWidth(3f);
 
                 dataSets.add(lineDataSet);
-              //  dataSets.add(lineDataSet2);
+                //  dataSets.add(lineDataSet2);
                 dataSets.add(lineDataSet3);
                 dataSets.add(lineDataSet4);
                 dataSets.add(lineDataSet5);
@@ -385,19 +383,23 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineChart.getDescription().setTextColor(getResources().getColor(R.color.white));
 
 
-                colorchange(lineDataSet,  lineDataSet3, lineDataSet4, lineDataSet5);
+                colorchange(lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5);
 
             }
 
-        if (lineDataSet != null &&  lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+            if (lineDataSet != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+
 
                 lineChart.setData(data);
                 lineChart.invalidate();
 
+            } else {
+               // lineChart.setNoDataText(getResources().getString(R.string.Chart_Message));
+
             }
 
 
-        }else {
+        } else {
             lineChart.setVisibility(View.GONE);
 
         }
@@ -412,13 +414,13 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         }
 
 
-            try {
+        try {
 
-                last_seen_txt.setText(chartModel.getData().getDeviceData().getPrimaryUsername() + " Last Seen "
-                        + Utility.EEEhh_mm_aa.format(Utility.yyyy_mm_dd_hh_mm_ss.parse(chartModel.getData().getDeviceData().getDeviceLastOnline())));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            last_seen_txt.setText(chartModel.getData().getDeviceData().getPrimaryUsername() + " Last Seen "
+                    + Utility.EEEhh_mm_aa.format(Utility.yyyy_mm_dd_hh_mm_ss.parse(chartModel.getData().getDeviceData().getDeviceLastOnline())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (chartModel.getData().getCompliance().getDaily().getType() != null) {
 
@@ -591,18 +593,17 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         , getResources().getString(R.string.no_text)
                         , getResources().getString(R.string.yes_text));
                 diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
-                  //  ReminderCreateClass.getInstance().DeleteReminderlogout();
+                    //  ReminderCreateClass.getInstance().DeleteReminderlogout();
 
                     if (mainActivity != null) {
                         diloagBoxCommon.getDialog().dismiss();
-                              logout_app("Logout Successfully");
+                        logout_app("Logout Successfully");
                     }
 
                 });
                 break;
         }
     }
-
 
 
 }

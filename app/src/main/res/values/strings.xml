@@ -117,7 +117,7 @@
     <string name="three_month">3 Month</string>
     <string name="six_month">6 Month</string>
     <string name="twelve_month">12 Month</string>
-
+     <string name="Chart_Message">We are setting thing\'s up for you please wait...</string>
 
     <!--Act Calender-->
 

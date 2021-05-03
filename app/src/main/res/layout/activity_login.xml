@@ -176,7 +176,7 @@
                     android:layout_toRightOf="@+id/tv_rem_pass"
                     android:layout_marginStart="@dimen/_5sdp"
                     android:layout_marginLeft="@dimen/_5sdp"
-                    android:checked="false"
+                    android:checked="true"
                     android:trackTintMode="@color/blackish"
                     android:theme="@style/SCBSwitch" />
 

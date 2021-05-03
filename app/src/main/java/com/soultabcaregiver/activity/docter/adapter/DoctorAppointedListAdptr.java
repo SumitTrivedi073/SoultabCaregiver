@@ -96,7 +96,7 @@ public class DoctorAppointedListAdptr extends
 
 
 
-        viewHolder.update_appointment.setOnClickListener(new View.OnClickListener() {
+        viewHolder.doctor_list_relative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent mINTENT = new Intent(context, UpdateDoctorAppointmentActivity.class);//for update appointed doc
@@ -181,13 +181,13 @@ public class DoctorAppointedListAdptr extends
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView doctor_name;
-        RelativeLayout update_appointment,delete_appointment;
+        RelativeLayout doctor_list_relative,delete_appointment;
 
         public ViewHolder(View itemView) {
             super(itemView);
             doctor_name = itemView.findViewById(R.id.doctor_name);
             delete_appointment = itemView.findViewById(R.id.delete_appointment);
-            update_appointment = itemView.findViewById(R.id.update_appointment);
+            doctor_list_relative = itemView.findViewById(R.id.doctor_list_relative);
         }
     }
 

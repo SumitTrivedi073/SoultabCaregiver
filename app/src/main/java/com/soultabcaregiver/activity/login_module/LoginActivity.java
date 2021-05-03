@@ -81,6 +81,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             if (Utility.getSharedPreferences2(mContext, APIS.save_email).equals("true")) {
                 etEmail.setText(Utility.getSharedPreferences2(mContext, APIS.Caregiver_email));
                 tbRemPass.setChecked(true);
+            }else{
+                tbRemPass.setChecked(false);
+
             }
         }
 
