@@ -681,22 +681,13 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "SendFax response=" + response.toString());
+                        hideProgressDialog();
 
-                        try {
-                            if (String.valueOf(response.getString("status_code")).equals("200")) {
-                                hideProgressDialog();
+                        AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
 
-                                AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
-
-                                Utility.ShowToast(mContext, requestModel.getMessage());
-                                onBackPressed();
-                                finish();
-                            } else if (String.valueOf(response.getString("status_code")).equals("403")) {
-                                logout_app(response.getString("message"));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Utility.ShowToast(mContext, requestModel.getMessage());
+                        onBackPressed();
+                        finish();
 
                     }
                 }, new Response.ErrorListener() {

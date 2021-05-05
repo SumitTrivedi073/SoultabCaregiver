@@ -21,13 +21,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            def appName = "Soultab Caregiver05-02-2021"
+            def appName = "Soultab Caregiver05-04-2021"
             outputFileName = appName + ".apk"
         }
     }
