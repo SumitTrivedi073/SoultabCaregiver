@@ -694,7 +694,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             public void onClick(View v) {
                 alertDialog.dismiss();
                 if (!TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
-                    AccessCall(appointmentDatum.getDoctorMobile(), appointmentDatum.getDoctorName());
+                    AccessCall(txt_mobile_number.getText().toString().trim(), appointmentDatum.getDoctorName());
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.mobile_unavailable));
                     finish();

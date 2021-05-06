@@ -124,7 +124,7 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
             Utility.ShowToast(mContext, getResources().getString(R.string.enter_doctor_name));
         } else if (TextUtils.isEmpty(txt_Address.getText().toString())) {
             Utility.ShowToast(mContext, getResources().getString(R.string.address));
-        }else if (TextUtils.isEmpty(CountryCode)){
+        }else if (TextUtils.isEmpty(countryCodeTv.getText().toString().trim())){
             Utility.ShowToast(mContext, getResources().getString(R.string.select_country_code));
 
         }else if (TextUtils.isEmpty(txt_mobile_number.getText().toString())) {

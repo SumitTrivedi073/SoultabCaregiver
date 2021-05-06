@@ -9,10 +9,10 @@ public class APIS {
     public static final String BASEURL1 = "https://mysoultab.com/api/";
 
     //  Development Server Base URL
-    public static final String BASEURL = "https://dev.mysoultab.com/api/";
+    public static final String BASEURL2 = "https://dev.mysoultab.com/api/";
 
     //Streaging ke liye Base URL
-    public static final String BASEURL2 = "https://stage.mysoultab.com/api/";
+    public static final String BASEURL = "https://stage.mysoultab.com/api/";
 
 
     public static final String HEADERKEY = "soultab";
@@ -70,7 +70,7 @@ public class APIS {
     public static final String profile_image = "profile_image";
     public static final String save_email = "save_email";
 
-    public static final String CaregiverImageURL = "https://dev.mysoultab.com/uploads/profile_images/";
+    public static final String CaregiverImageURL = "https://mysoultab.com/uploads/profile_images/";
 
 
     //Key's

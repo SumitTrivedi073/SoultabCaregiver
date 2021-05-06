@@ -601,7 +601,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             public void onClick(View v) {
                 alertDialog.dismiss();
                 if (!TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
-                    AccessCall(docListBean.getContact(), docListBean.getName());
+                    AccessCall(txt_mobile_number.getText().toString().trim(), docListBean.getName());
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.mobile_unavailable));
                     finish();
