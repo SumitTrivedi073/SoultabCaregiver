@@ -147,9 +147,7 @@ public class ChangePasswordActivity extends BaseActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-             //   params.put("email", getIntent().getStringExtra("email_"));
-                params.put("email", "shriyal@yopmail.com");
-
+                params.put("email", getIntent().getStringExtra("email"));
                 params.put("password", et_new_pass.getText().toString().trim());
                 params.put("confirm_password", et_confirm_password.getText().toString().trim());
 

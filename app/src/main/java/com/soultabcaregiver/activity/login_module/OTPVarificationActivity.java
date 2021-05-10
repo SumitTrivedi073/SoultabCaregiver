@@ -370,7 +370,7 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
             public void onClick(View v) {
                 if (value.equals("1")){
                     Intent i = new Intent(OTPVarificationActivity.this, ChangePasswordActivity.class);
-                    i.putExtra("email_", email);
+                    i.putExtra("email", email);
                     startActivity(i);
                     finish();
                 }else {
