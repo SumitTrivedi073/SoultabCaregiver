@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android"
-    android:paddingBottom="1dp"
     android:paddingLeft="1dp"
-    android:paddingRight="1dp"
     android:paddingTop="1dp"
-    >
+    android:paddingRight="1dp"
+    android:paddingBottom="1dp">
     <item>
         <shape>
-            <corners android:radius="10dp"/>
-            <solid android:color="@color/muzli_color"/>
+            <corners android:radius="10dp" />
+            <solid android:color="@color/muzli_color" />
             <stroke
                 android:width="1.5dp"
-                android:color="@color/muzli_color"/>
+                android:color="@color/muzli_color" />
         </shape>
     </item>
 

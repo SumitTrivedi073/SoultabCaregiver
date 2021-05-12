@@ -72,6 +72,7 @@ public class IncomingCallScreenActivity extends BaseActivity {
             call.answer();
             Intent intent = new Intent(this, CallScreenActivity.class);
             intent.putExtra(SinchService.CALL_ID, mCallId);
+            intent.putExtra(SinchService.CALLER_NAME, call.getRemoteUserId());
             startActivity(intent);
         } else {
             finish();

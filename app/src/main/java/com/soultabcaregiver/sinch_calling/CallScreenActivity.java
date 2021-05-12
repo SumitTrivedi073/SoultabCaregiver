@@ -35,8 +35,8 @@ public class CallScreenActivity extends BaseActivity {
     static final String CALL_START_TIME = "callStartTime";
     static final String ADDED_LISTENER = "addedListener";
     AudioController audioController;
-    CardView Video_enable_Card, switch_camera_Card;
-    ImageView Video_enable_img;
+    CardView Video_enable_Card;
+    ImageView Video_enable_img,switch_camera_Card;
     private AudioPlayer mAudioPlayer;
     private Timer mTimer;
     private UpdateCallDurationTask mDurationTask;
@@ -69,11 +69,10 @@ public class CallScreenActivity extends BaseActivity {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, getLocalClassName().trim());
-        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, getLocalClassName().trim());
+       bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, getLocalClassName().trim());
 
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -89,7 +88,7 @@ public class CallScreenActivity extends BaseActivity {
 
         endCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)  {
                 endCall();
             }
         });
@@ -112,7 +111,6 @@ public class CallScreenActivity extends BaseActivity {
                             video_play = "0";
                         } else if (video_play.equals("0")) {
                             call.resumeVideo();
-
                             Video_enable_img.setImageResource(R.drawable.video_on);
                             video_play = "1";
 
@@ -131,7 +129,6 @@ public class CallScreenActivity extends BaseActivity {
                 SwitchCamera();
             }
         });
-
     }
 
     private void SwitchCamera() {
@@ -172,7 +169,7 @@ public class CallScreenActivity extends BaseActivity {
         Call call = getSinchServiceInterface().getCall(mCallId);
         if (call != null) {
             mCallerName.setText(getIntent().getStringExtra(SinchService.CALLER_NAME));
-            mCallState.setText(call.getState().toString());
+             mCallState.setText(call.getState().toString());
             if (call.getState() == CallState.ESTABLISHED) {
                 //when the call is established, addVideoViews configures the video to  be shown
                 addVideoViews();
@@ -236,11 +233,12 @@ public class CallScreenActivity extends BaseActivity {
         }
 
         final VideoController vc = getSinchServiceInterface().getVideoController();
-        vc.setResizeBehaviour(VideoScalingType.ASPECT_FIT);
+        vc.setResizeBehaviour(VideoScalingType.ASPECT_FILL);
 
         if (vc != null) {
-            RelativeLayout localView = findViewById(R.id.localVideo);
+            CardView localView = findViewById(R.id.localVideo);
             localView.addView(vc.getLocalView());
+
             localView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -266,7 +264,7 @@ public class CallScreenActivity extends BaseActivity {
             RelativeLayout view = findViewById(R.id.remoteVideo);
             view.removeView(vc.getRemoteView());
 
-            RelativeLayout localView = findViewById(R.id.localVideo);
+            CardView localView = findViewById(R.id.localVideo);
             localView.removeView(vc.getLocalView());
             mVideoViewsAdded = false;
         }
