@@ -80,7 +80,8 @@
             android:keepScreenOn="true"
             android:screenOrientation="fullSensor" />
 
-        <service android:name=".sinch_calling.SinchService" />
+        <service android:name=".sinch_calling.SinchService"
+            android:exported="false"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -1,5 +1,6 @@
 package com.soultabcaregiver.activity.reminder;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -63,7 +65,6 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
     TextView tvWhenDate, tvWhenTime, tv_text, tv_snooze_txt;
     TextView tvRepeat, tvBeforRemindTxt, btn_submit_reminder;
     RelativeLayout tv_snooze_layout, back_btn;
-    int alarmHours = 0, alarmMin = 0;
     Calendar myCalendar;
     String sTitle = "", sWhenDate = "", sWhenTime = "", sReminder = "", sRepeat = "", value;
     int valBefore = 0;
@@ -72,7 +73,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
     List<BeforeTimeModel> beforeTimeModelList;
     List<BeforeTimeModel> repeatTimeModelList;
     SharedPreferences shp;
-    // ReminderCreateClass reminderCreateClass;
+    AlertDialog alertDialog;
     String date;
     Context mContext;
     boolean update_reminder;
@@ -378,23 +379,22 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                         Log.d(TAG, "addReminder response=" + response.toString());
                         hideProgressDialog();
                         CommonResponseModel commonResponseModel = new Gson().fromJson(response.toString(), CommonResponseModel.class);
-                        if (String.valueOf(commonResponseModel.getStatusCode()).equals("200")) {
-
-                            onBackPressed();
+                        if (commonResponseModel.getStatus().equalsIgnoreCase("true")) {
 
 
                             if (update_reminder) {
-
-                                Utility.ShowToast(mContext, getResources().getString(R.string.update_reminder_successfully));
+                                ShowAlertResponse(getResources().getString(R.string.update_reminder_successfully), "1");
 
                             } else {
-                                Utility.ShowToast(mContext, commonResponseModel.getMessage());
+                                ShowAlertResponse(commonResponseModel.getMessage(), "1");
                             }
-                        }else if (String.valueOf(commonResponseModel.getStatusCode()).equals("403")) {
+
+                   
+                        } else if (String.valueOf(commonResponseModel.getStatusCode()).equals("403")) {
                             logout_app(commonResponseModel.getMessage());
                         }
 
-                        } catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }, new Response.ErrorListener() {
@@ -421,6 +421,37 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         jsonObjReq.setShouldCache(false);
         jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
                 10000, 8, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+    }
+
+    private void ShowAlertResponse(String message, String value) {
+        LayoutInflater inflater = (LayoutInflater) mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.send_successfully_layout,
+                null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
+
+        builder.setView(layout);
+        builder.setCancelable(false);
+        alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        alertDialog.show();
+
+
+        TextView OK_txt = layout.findViewById(R.id.OK_txt);
+        TextView title_txt = layout.findViewById(R.id.title_txt);
+
+        title_txt.setText(message);
+
+
+        OK_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+                onBackPressed();
+            }
+        });
+
     }
 
 

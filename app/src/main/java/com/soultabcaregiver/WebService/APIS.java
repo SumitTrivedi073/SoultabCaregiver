@@ -6,10 +6,10 @@ import com.soultabcaregiver.utils.Utility;
 
 public class APIS {
     //Live Server Base URL
-    public static final String BASEURL1 = "https://mysoultab.com/api/";
+    public static final String BASEURL = "https://mysoultab.com/api/";
 
     //  Development Server Base URL
-    public static final String BASEURL = "https://dev.mysoultab.com/api/";
+    public static final String BASEURL1 = "https://dev.mysoultab.com/api/";
 
     //Streaging ke liye Base URL
     public static final String BASEURL2 = "https://stage.mysoultab.com/api/";

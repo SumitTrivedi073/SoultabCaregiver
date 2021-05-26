@@ -53,7 +53,7 @@
         app:backgroundTint="@color/orange_color"
         app:elevation="@dimen/_5sdp"
         app:pressedTranslationZ="@dimen/_5sdp"
-        android:src="@drawable/video_on"
+        android:src="@drawable/ic_baseline_videocam_24"
         app:tint="@android:color/white"
         app:fabSize="auto"/>
         <!--android:layout_alignParentEnd="true"

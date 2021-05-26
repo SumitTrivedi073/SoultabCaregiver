@@ -588,6 +588,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
 
                         } catch (Exception e) {
                             e.printStackTrace();
+                            hideProgressDialog();
+
                         }
 
                     }

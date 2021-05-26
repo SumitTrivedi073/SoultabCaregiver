@@ -151,12 +151,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         Utility.loadFragment(MainActivity.this, new AlertFragment(), false, null);
 
                         return true;
-                /*    case R.id.navigation_calender:
+                    case R.id.navigation_calender:
 
                         video_call.setVisibility(View.GONE);
                         Utility.loadFragment(MainActivity.this, new CalenderFragment(), false, null);
                         break;
-               */
                 }
                 return true;
             }

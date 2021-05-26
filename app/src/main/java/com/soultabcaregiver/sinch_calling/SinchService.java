@@ -59,6 +59,7 @@ public class SinchService extends Service {
 
             mSinchClient.setSupportCalling(true);
             mSinchClient.startListeningOnActiveConnection();
+            mSinchClient.setSupportActiveConnectionInBackground(true);
 
             mSinchClient.addSinchClientListener(new MySinchClientListener());
             mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());

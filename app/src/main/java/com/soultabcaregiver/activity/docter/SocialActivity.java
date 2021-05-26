@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.CustomProgressDialog;
+import com.soultabcaregiver.utils.Utility;
 
 public class SocialActivity extends AppCompatActivity {
 
@@ -48,18 +49,21 @@ public class SocialActivity extends AppCompatActivity {
             }
         });
 
-        showProgressDialog(getResources().getString(R.string.Loading));
-        wv_webview.getSettings().setJavaScriptEnabled(true);
-        wv_webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        wv_webview.setWebViewClient(new WebViewClient());
-        wv_webview.setWebChromeClient(new WebChromeClient());
-        wv_webview.getSettings().setDisplayZoomControls(true);
-        wv_webview.getSettings().setDomStorageEnabled(true);
-        wv_webview.loadUrl(urlString);
-        wv_webview.setWebViewClient(new MyWebViewClient());
+        if (Utility.isNetworkConnected(mContext)) {
+            showProgressDialog(getResources().getString(R.string.Loading));
+            wv_webview.getSettings().setJavaScriptEnabled(true);
+            wv_webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+            wv_webview.setWebViewClient(new WebViewClient());
+            wv_webview.setWebChromeClient(new WebChromeClient());
+            wv_webview.getSettings().setDisplayZoomControls(true);
+            wv_webview.getSettings().setDomStorageEnabled(true);
+            wv_webview.loadUrl(urlString);
+            wv_webview.setWebViewClient(new MyWebViewClient());
 
-        TimerStart();
-
+            TimerStart();
+        }else {
+            Utility.ShowToast(mContext,getResources().getString(R.string.net_connection));
+        }
     }
 
     public class MyWebViewClient extends WebViewClient {
@@ -73,9 +77,13 @@ public class SocialActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // TODO Auto-generated method stub
-            showProgressDialog(getResources().getString(R.string.Loading));
-            view.loadUrl(url);
-            // wv_webview.loadUrl(urlString);
+            if (Utility.isNetworkConnected(mContext)) {
+
+                showProgressDialog(getResources().getString(R.string.Loading));
+                view.loadUrl(url);
+            }else {
+                Utility.ShowToast(mContext,getResources().getString(R.string.net_connection));
+            }
             return true;
 
         }

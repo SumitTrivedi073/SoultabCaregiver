@@ -367,8 +367,9 @@ public class ReminderCreateClass {
                         if (isSelectedReminder) {
                             Calendar now = Calendar.getInstance();
                             now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(reminderBean.getDate() + " " + reminderBean.getTime()));
-                            now.add(Calendar.MINUTE, -Integer.parseInt(reminderBean.getReminderBefore()));
-
+                            if (!reminderBean.isAppointment()) {
+                                now.add(Calendar.MINUTE, - Integer.parseInt(reminderBean.getReminderBefore()));
+                            }
                             String completeDate = Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
 
                             if (compareDateTime(completeDate)) {

@@ -473,6 +473,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "MakeDocAppointment response=" + response.toString());
+                        hideProgressDialog();
 
                         AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
 
@@ -495,6 +496,8 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
                         } catch (Exception e) {
                             e.printStackTrace();
+                            hideProgressDialog();
+
                         }
 
                     }
