@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".utils.AppController"
@@ -63,15 +64,7 @@
         <activity
             android:name=".activity.reminder.AddSnoozeTime"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".reminder_ring_class.ActAlarmNotification"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".reminder_ring_class.ActAppoinmentAlarmNotification"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
+           <activity
             android:name=".sinch_calling.IncomingCallScreenActivity"
             android:noHistory="true"
             android:screenOrientation="portrait" />
@@ -81,7 +74,7 @@
             android:screenOrientation="fullSensor" />
 
         <service android:name=".sinch_calling.SinchService"
-            android:exported="false"/>
+            android:foregroundServiceType="phoneCall"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -90,17 +83,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <receiver
-            android:name=".reminder_ring_class.ReminderBroadcastReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="alarm" />
-            </intent-filter>
-        </receiver>
 
         <service android:name=".FireBaseMessaging.CustomFireBaseMessasing">
             <intent-filter>

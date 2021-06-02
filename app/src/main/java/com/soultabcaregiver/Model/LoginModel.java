@@ -94,6 +94,10 @@ public class LoginModel {
         @Expose
         private String profileImage;
 
+        @SerializedName("parent_user")
+        @Expose
+        private String parent_user;
+
         public String getId() {
             return id;
         }
@@ -197,6 +201,14 @@ public class LoginModel {
 
         public void setProfileImage(String profileImage) {
             this.profileImage = profileImage;
+        }
+
+        public String getParent_user() {
+            return parent_user;
+        }
+
+        public void setParent_user(String parent_user) {
+            this.parent_user = parent_user;
         }
 
     }

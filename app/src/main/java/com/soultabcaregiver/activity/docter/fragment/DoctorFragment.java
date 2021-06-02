@@ -3,7 +3,6 @@ package com.soultabcaregiver.activity.docter.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,18 +29,17 @@ public class DoctorFragment extends BaseFragment {
 
     View view;
     Context mContext;
+    ViewPagerAdapter adapter;
     private Toolbar toolbar_main;
     private TabLayout tabLayout;
     private NonSwipeableViewPager viewPager;
     private TextView tab_txt;
     private FloatingActionButton Add_doctor_btn;
-    ViewPagerAdapter adapter;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         mContext = getActivity();
+        mContext = getActivity();
     }
 
     @Override
@@ -58,17 +56,19 @@ public class DoctorFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter!=null){
-        adapter.notifyDataSetChanged();
-    }
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+
+        }
+     //   new ReminderCreateClass(getActivity());
 
     }
 
     private void InitCompo() {
         toolbar_main = view.findViewById(R.id.toolbar_main);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar_main);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar_main);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewPager = view.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -82,7 +82,7 @@ public class DoctorFragment extends BaseFragment {
         Add_doctor_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext,AddDoctorActivity.class);
+                Intent intent = new Intent(mContext, AddDoctorActivity.class);
                 startActivity(intent);
             }
         });
@@ -91,10 +91,10 @@ public class DoctorFragment extends BaseFragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
-                if (tab.getPosition()==1){
+                if (tab.getPosition() == 1) {
                     tab_txt.setText(mContext.getResources().getString(R.string.doctor_appointment));
 
-                }else {
+                } else {
                     tab_txt.setText(mContext.getResources().getString(R.string.doctor_list));
 
                 }
@@ -116,7 +116,7 @@ public class DoctorFragment extends BaseFragment {
 
     private void setupViewPager(ViewPager viewPager) {
         //if tablayout use inside fragment so instead of getFragmentManager() Use getChildFragmentManager()
-         adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new DoctorListFragment(), "Doctor List");
         adapter.addFragment(new DoctorAppointmentFragment(), "Doctor Appointment");
 

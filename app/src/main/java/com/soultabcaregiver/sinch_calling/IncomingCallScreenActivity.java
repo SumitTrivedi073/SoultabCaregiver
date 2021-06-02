@@ -6,10 +6,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.sinch.android.rtc.PushPair;
 import com.sinch.android.rtc.calling.Call;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.video.VideoCallListener;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.List;
 
@@ -20,25 +24,21 @@ public class IncomingCallScreenActivity extends BaseActivity {
     static final String TAG = IncomingCallScreenActivity.class.getSimpleName();
     private String mCallId;
     private AudioPlayer mAudioPlayer;
-    private View.OnClickListener mClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.answerButton:
-                    answerClicked();
-                    break;
-                case R.id.declineButton:
-                    declineClicked();
-                    break;
-            }
-        }
-    };
+    private boolean mAcceptVideo = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incoming_call_screen);
 
+
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, getLocalClassName().trim());
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, getLocalClassName().trim());
+
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
 
 
         CircleImageView answer = findViewById(R.id.answerButton);
@@ -56,7 +56,7 @@ public class IncomingCallScreenActivity extends BaseActivity {
         Call call = getSinchServiceInterface().getCall(mCallId);
         if (call != null) {
             call.addCallListener(new SinchCallListener());
-            TextView remoteUser = findViewById(R.id.remoteUser);
+            TextView remoteUser = (TextView) findViewById(R.id.remoteUser);
             remoteUser.setText(call.getRemoteUserId());
 
         } else {
@@ -73,6 +73,7 @@ public class IncomingCallScreenActivity extends BaseActivity {
             Intent intent = new Intent(this, CallScreenActivity.class);
             intent.putExtra(SinchService.CALL_ID, mCallId);
             intent.putExtra(SinchService.CALLER_NAME, call.getRemoteUserId());
+            intent.putExtra("user_email",Utility.getSharedPreferences(getApplicationContext(), APIS.user_email));
             startActivity(intent);
         } else {
             finish();
@@ -109,23 +110,37 @@ public class IncomingCallScreenActivity extends BaseActivity {
         }
 
         @Override
-        public void onShouldSendPushNotification(Call call, List pushPairs) {
+        public void onShouldSendPushNotification(Call call, List<PushPair> pushPairs) {
             // Send a push through your push provider here, e.g. GCM
         }
 
         @Override
         public void onVideoTrackAdded(Call call) {
             // Display some kind of icon showing it's a video call
+            // and pass it to the CallScreenActivity via Intent and mAcceptVideo
+            mAcceptVideo = true;
         }
-
         @Override
         public void onVideoTrackPaused(Call call) {
-
+            // Display some kind of icon showing it's a video call
         }
-
         @Override
         public void onVideoTrackResumed(Call call) {
-
+            // Display some kind of icon showing it's a video call
         }
     }
+
+    private final View.OnClickListener mClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.answerButton:
+                    answerClicked();
+                    break;
+                case R.id.declineButton:
+                    declineClicked();
+                    break;
+            }
+        }
+    };
 }

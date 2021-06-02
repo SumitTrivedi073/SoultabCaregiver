@@ -236,6 +236,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             Utility.setSharedPreference(mContext, APIS.Caregiver_email, loginModel.getResponse().getEmail());
                             Utility.setSharedPreference(mContext, APIS.user_email, loginModel.getResponse().getUser_email_address());
 
+                            Utility.setSharedPreference(mContext, APIS.user_name, loginModel.getResponse().getParent_user());
+
                             Utility.setSharedPreference(mContext, APIS.Caregiver_mobile, loginModel.getResponse().getMobile());
                             Utility.setSharedPreference(mContext, APIS.profile_image, loginModel.getResponse().getProfileImage());
 

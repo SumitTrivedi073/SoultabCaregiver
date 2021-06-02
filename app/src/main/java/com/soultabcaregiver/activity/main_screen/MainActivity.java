@@ -115,7 +115,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         tv_badge = badge.findViewById(R.id.notification_badge);
 
         Alert_countAPI();
-
         listner();
     }
 
@@ -243,9 +242,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     @Override
     protected void onResume() {
         super.onResume();
-        //  new ReminderCreateClass(MainActivity.this);
-
-        //   TimerStart();
+      //   new ReminderCreateClass(MainActivity.this);
 
     }
 
@@ -300,7 +297,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             }
 
-
                         }
                     }
                 } catch (Exception e) {
@@ -336,6 +332,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
     }
 
+
     private void openPlaceCallActivity() {
         Utility.setSharedPreference(mContext, Utility.SinchServiceConnected, "1");
 
@@ -346,12 +343,13 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         if (TextUtils.isEmpty(Utility.getSharedPreferences(mContext, APIS.user_name))) {
             callScreen.putExtra(SinchService.CALL_ID, callId);
-            callScreen.putExtra(SinchService.CALLER_NAME, Utility.getSharedPreferences(mContext, APIS.user_email));
-
+            callScreen.putExtra(SinchService.CALLER_NAME, Utility.getSharedPreferences(mContext, APIS.user_name));
+            callScreen.putExtra("user_email",Utility.getSharedPreferences(mContext, APIS.user_email));
             startActivity(callScreen);
         } else {
             callScreen.putExtra(SinchService.CALL_ID, callId);
             callScreen.putExtra(SinchService.CALLER_NAME, Utility.getSharedPreferences(mContext, APIS.user_name));
+            callScreen.putExtra("user_email",Utility.getSharedPreferences(mContext, APIS.user_email));
 
             startActivity(callScreen);
 

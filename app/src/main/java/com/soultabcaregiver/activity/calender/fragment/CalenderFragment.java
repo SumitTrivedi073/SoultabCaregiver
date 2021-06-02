@@ -106,7 +106,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        // new ReminderCreateClass(getActivity());
+       //  new ReminderCreateClass(getActivity());
 
         if (Utility.isNetworkConnected(mContext)) {
             GetAllEventAPI(FromDate, TODate);//for list data

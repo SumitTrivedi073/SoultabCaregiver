@@ -24,7 +24,6 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
-import com.soultabcaregiver.reminder_ring_class.ReminderBroadcastReceiver;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.CustomProgressDialog;
@@ -202,9 +201,6 @@ public class CustomEventAdapter extends
                             if (code.equals("200")) {
 
                                 ShowAlertResponse();
-                                if (ReminderBroadcastReceiver.mHandler != null) {
-                                    ReminderBroadcastReceiver.mHandler.removeCallbacksAndMessages(null);
-                                }
 
                                 if (arRemindIn.size() > 0) {
                                     arRemindIn.remove(position);

@@ -51,7 +51,6 @@ import com.google.gson.Gson;
 import com.sinch.gson.reflect.TypeToken;
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
-import com.soultabcaregiver.reminder_ring_class.model.PersonalAlarmModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -778,24 +777,8 @@ public class Utility {
         }.getType();
         return gson.fromJson(json, type);
     }
-    public static void SetPersonalAlarmSetModel(Context context, PersonalAlarmModel userNameModel) {
 
-        Gson gson = new Gson();
-        String json = gson.toJson(userNameModel);
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
-        prefsEditor.putString("PersonalAlarmSetModel", json).apply();
 
-    }
-
-    public static PersonalAlarmModel GetPersonalAlarmSetModel(Context context) {
-        Gson gson = new Gson();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                PREFERENCE, Context.MODE_PRIVATE);
-        String json = sharedPreferences.getString("PersonalAlarmSetModel", "");
-        return gson.fromJson(json, PersonalAlarmModel.class);
-    }
 
     public static  void loadFragment(FragmentActivity activty, Fragment fragment, boolean backstack, String tagName) {
         // load fragment0.....

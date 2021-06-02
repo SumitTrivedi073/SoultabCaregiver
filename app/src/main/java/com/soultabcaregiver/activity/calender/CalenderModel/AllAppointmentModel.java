@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class AllAppointmentModel implements Serializable {
-    @SerializedName("id")
+    @SerializedName("appointment_id")
     @Expose
     private String id;
     @SerializedName("selected_date")
@@ -15,6 +15,11 @@ public class AllAppointmentModel implements Serializable {
     @SerializedName("schedule_time")
     @Expose
     private String scheduleTime;
+
+
+    @SerializedName("doctor_id")
+    @Expose
+    private String doctor_id;
     @SerializedName("user_id")
     @Expose
     private String userId;
@@ -24,7 +29,7 @@ public class AllAppointmentModel implements Serializable {
     @SerializedName("doctoraddress")
     @Expose
     private String doctoraddress;
-    @SerializedName("reminder")
+    @SerializedName("appointments_reminder")
     @Expose
     private String reminder;
 
@@ -85,4 +90,13 @@ public class AllAppointmentModel implements Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    public String getDoctor_id() {
+        return doctor_id;
+    }
+
+    public void setDoctor_id(String doctor_id) {
+        this.doctor_id = doctor_id;
+    }
+
 }

@@ -132,8 +132,7 @@
 
 
             <ImageView
-                android:id="@+id/switch_camera_Card"
-
+                android:id="@+id/switch_camera_img"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_gravity="center"
