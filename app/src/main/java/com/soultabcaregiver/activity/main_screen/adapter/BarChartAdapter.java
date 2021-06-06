@@ -49,10 +49,18 @@ public class BarChartAdapter extends RecyclerView.Adapter<BarChartAdapter.ViewHo
 
         holder.bar_title.setText(barChart.getName());
 
-        String Value = String.valueOf(barChart.getValue());
+        if (Integer.parseInt(barChart.getValue())<=200){
 
-        holder.Continues_Slider.setValue(Float.parseFloat(Value));
-        
+            String Value = String.valueOf(barChart.getValue());
+
+            holder.Continues_Slider.setValue(Float.parseFloat(Value));
+
+        }else {
+            String Value = "200";
+
+            holder.Continues_Slider.setValue(Float.parseFloat(Value));
+
+        }
     }
 
 

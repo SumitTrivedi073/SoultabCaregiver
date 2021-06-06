@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
+import com.soultabcaregiver.activity.docter.UpdateDoctorAppointmentActivity;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
@@ -82,12 +83,22 @@ public class CustomEventAdapter extends
         }
         viewHolder.rlMain.setOnClickListener(v -> {
             if (!reminderBean.isAppointment()) {
-                Log.e("Date_click", String.valueOf(arRemindIn.get(position).getDate()));
                 activity.startActivityForResult(new Intent(context, AddReminderActivity.class)
                         .putExtra(APIS.ReminderModel, arRemindIn.get(position))
                         .putExtra("calender", "calender")
                         .putExtra(APIS.Update_reminder, true), 1);
 
+            }else {
+                Intent mINTENT = new Intent(context, UpdateDoctorAppointmentActivity.class);//for only view appointed doc details
+
+                mINTENT.putExtra("id", reminderBean.getId());
+                mINTENT.putExtra("diff_", "2");
+                mINTENT.putExtra("Doctor_id", reminderBean.getDoctor_id());
+                mINTENT.putExtra("Doctor_Email", reminderBean.getDoctor_Email());
+                mINTENT.putExtra("Doctor_Fax", reminderBean.getDoctor_Fax());
+                mINTENT.putExtra("Doctor_Website", reminderBean.getDoctor_Website());
+
+                context.startActivity(mINTENT);
             }
         });
 

@@ -15,20 +15,37 @@ public class AllAppointmentModel implements Serializable {
     @SerializedName("schedule_time")
     @Expose
     private String scheduleTime;
-
-
-    @SerializedName("doctor_id")
-    @Expose
-    private String doctor_id;
     @SerializedName("user_id")
     @Expose
     private String userId;
+    @SerializedName("doctor_id")
+    @Expose
+    private String doctor_id;
+
     @SerializedName("doctorName")
     @Expose
     private String doctorName;
     @SerializedName("doctoraddress")
     @Expose
     private String doctoraddress;
+
+    @SerializedName("doctor_mobile")
+    @Expose
+    private String doctor_mobile;
+
+    @SerializedName("Email")
+    @Expose
+    private String Email;
+
+    @SerializedName("Fax")
+    @Expose
+    private String Fax;
+
+    @SerializedName("website")
+    @Expose
+    private String website;
+
+
     @SerializedName("appointments_reminder")
     @Expose
     private String reminder;
@@ -98,5 +115,38 @@ public class AllAppointmentModel implements Serializable {
     public void setDoctor_id(String doctor_id) {
         this.doctor_id = doctor_id;
     }
+
+    public String getDoctor_mobile() {
+        return doctor_mobile;
+    }
+
+    public void setDoctor_mobile(String doctor_mobile) {
+        this.doctor_mobile = doctor_mobile;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String email) {
+        Email = email;
+    }
+
+    public String getFax() {
+        return Fax;
+    }
+
+    public void setFax(String fax) {
+        Fax = fax;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
 
 }

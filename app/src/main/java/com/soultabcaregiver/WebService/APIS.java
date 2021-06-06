@@ -36,6 +36,7 @@ public class APIS {
     public static final String DOC_UPDATE_APPOIN_API = "Caregiver/update_appointment";
     public static final String DOC_Cancel_APPOIN_API = "Caregiver/cancel_appointment";
     public static final String DELETE_DOC_APPOIN_API = "Caregiver/appointmentdelete";
+    public static final String DOC_APPOIN_DETAILS_API = "Users/show_appointments";
     public static final String Add_Doctor_API = "Users/add_doctor";
     public static final String EVENTLIST = "Users/activity_details";
     public static final String LineChartAPI = "caregiver/lineChart";

@@ -83,7 +83,6 @@ public class CallScreenActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, getLocalClassName().trim());
         bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, getLocalClassName().trim());
-
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 

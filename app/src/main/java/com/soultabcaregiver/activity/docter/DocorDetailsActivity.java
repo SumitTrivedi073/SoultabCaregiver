@@ -69,7 +69,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
     TextView tvDocNm, txt_doctor_address, txt_mobile_number, tvDate, txt_fax, txt_Portal, txt_doctor_email;
     Switch tbDocAppTog;
     RelativeLayout rlDate, rl_time, back_btn;
-    String myFormat = "MM/dd/yyyy";
+    String myFormat = "MM-dd-yyyy";
     SimpleDateFormat sdf;
     String myFormat1 = "yyyy-MM-dd"; //for webservice
     SimpleDateFormat sdf1;

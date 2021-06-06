@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:valueFrom="0.0"
         android:valueTo="200.0"
-        android:value="20.0"
+        android:value="190.0"
         app:labelBehavior="gone"
         app:haloRadius="@dimen/_5sdp"
         app:trackHeight="@dimen/_8sdp"

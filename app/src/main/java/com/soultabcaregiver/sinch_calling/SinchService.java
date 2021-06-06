@@ -122,23 +122,6 @@ public class SinchService extends Service {
             mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
             mSinchClient.start();
 
-            if (mSinchClient == null) {
-                mUserId = userName;
-                mSinchClient = Sinch.getSinchClientBuilder().context(getApplicationContext()).userId(userName)
-                        .applicationKey(getResources().getString(R.string.sinch_applicationKey))
-                        .applicationSecret(getResources().getString(R.string.sinch_application_secreat))
-                        .environmentHost(getResources().getString(R.string.sinch_enviorement_host))
-                        .build();
-
-                mSinchClient.setSupportCalling(true);
-                mSinchClient.startListeningOnActiveConnection();
-                mSinchClient.setSupportActiveConnectionInBackground(true);
-                mSinchClient.addSinchClientListener(new MySinchClientListener());
-                mSinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
-                mSinchClient.start();
-
-
-            }
         }
     }
 
