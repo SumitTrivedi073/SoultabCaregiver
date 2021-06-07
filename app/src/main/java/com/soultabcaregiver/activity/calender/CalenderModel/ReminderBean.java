@@ -90,6 +90,11 @@ public class ReminderBean implements Serializable {
     @SerializedName("reminder")
     private String reminder;
 
+
+    private String doctor_id, doctor_Email, doctor_Fax, doctor_Website;
+
+
+
     public String getReminder() {
         return reminder;
     }
@@ -180,5 +185,38 @@ public class ReminderBean implements Serializable {
     public void setCheck(boolean check) {
         this.check = check;
     }
+
+    public String getDoctor_id() {
+        return doctor_id;
+    }
+
+    public void setDoctor_id(String doctor_id) {
+        this.doctor_id = doctor_id;
+    }
+
+    public String getDoctor_Email() {
+        return doctor_Email;
+    }
+
+    public void setDoctor_Email(String doctor_Email) {
+        this.doctor_Email = doctor_Email;
+    }
+
+    public String getDoctor_Fax() {
+        return doctor_Fax;
+    }
+
+    public void setDoctor_Fax(String doctor_Fax) {
+        this.doctor_Fax = doctor_Fax;
+    }
+
+    public String getDoctor_Website() {
+        return doctor_Website;
+    }
+
+    public void setDoctor_Website(String doctor_Website) {
+        this.doctor_Website = doctor_Website;
+    }
+
 
 }

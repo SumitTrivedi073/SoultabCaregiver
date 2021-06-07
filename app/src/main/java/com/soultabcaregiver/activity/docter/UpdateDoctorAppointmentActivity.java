@@ -36,6 +36,7 @@ import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,7 +61,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     Switch tbDocAppTog;
 
     RelativeLayout rlDate, rl_time;
-    String myFormat = "MM/dd/yyyy";
+    String myFormat = "MM-dd-yyyy";
     SimpleDateFormat sdf;
     String myFormat1 = "yyyy-MM-dd";//for webservice
     SimpleDateFormat sdf1;
@@ -68,7 +69,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     TextView tvMakeAppoint;
 
     Calendar myCalendar;
-    String AppointmentId;
+    String AppointmentId,DoctorID;
     String curDate = "";
     
     LinearLayout main_call_layout, call_end_layout;
@@ -128,7 +129,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     
     }
 
-    private void GetValuFromIntent() {
+  /*  private void GetValuFromIntent() {
 
         appointmentDatum = (DoctorAppointmentList.Response.AppointmentDatum) getIntent().getSerializableExtra(APIS.DocListItem);
 
@@ -143,9 +144,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             txt_doctor_email.setText(appointmentDatum.getEmail());
         }
 
-        tvDate.setText(appointmentDatum.getDate());
-        sSelDateId = String.valueOf(Utility.ChangeDateFormat("MM-dd-yyyy", "yyyy-MM-dd", appointmentDatum.getDate()));
-        Log.e("sSelDateId", sSelDateId);
+        tvDate.setText(String.valueOf(Utility.ChangeDateFormat("yyyy-MM-dd", "MM-dd-yyyy", appointmentDatum.getDate())));
+        sSelDateId = appointmentDatum.getDate();
 
 
         if (String.valueOf(appointmentDatum.getAppointmentsReminder()).equals("1")) {
@@ -159,6 +159,144 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         sSelTimeId = appointmentDatum.getTime();
 
     }
+*/
+
+    private void GetValuFromIntent() {
+
+
+        if (!String.valueOf(getIntent().getStringExtra("diff_")).equals("2")) {
+            appointmentDatum = (DoctorAppointmentList.Response.AppointmentDatum) getIntent().getSerializableExtra(APIS.DocListItem);
+
+            assert appointmentDatum != null;
+            AppointmentId = String.valueOf(appointmentDatum.getAppointmentId());
+            DoctorID = String.valueOf(appointmentDatum.getDoctor_id());
+            tvDocNm.setText(appointmentDatum.getDoctorName());
+            txt_doctor_address.setText(appointmentDatum.getDoctorAddress());
+            txt_mobile_number.setText(appointmentDatum.getDoctorMobile());
+            txt_fax.setText(appointmentDatum.getFax());
+            txt_Portal.setText(appointmentDatum.getWebsite());
+            if (appointmentDatum.getEmail() != null) {
+                txt_doctor_email.setText(appointmentDatum.getEmail());
+            }
+
+            tvDate.setText(String.valueOf(Utility.ChangeDateFormat("yyyy-MM-dd", "MM-dd-yyyy", appointmentDatum.getDate())));
+            sSelDateId = appointmentDatum.getDate();
+
+
+            tbDocAppTog.setChecked(String.valueOf(appointmentDatum.getAppointmentsReminder()).equals("1"));
+
+
+            tv_time.setText(appointmentDatum.getTime());
+            sSelTimeId = appointmentDatum.getTime();
+
+        } else {
+            AppointmentId = getIntent().getStringExtra("id");
+            DoctorID = getIntent().getStringExtra("Doctor_id");
+            GetDoctorApointmentDetail();
+        }
+    }
+
+    private void GetDoctorApointmentDetail() {
+        final String TAG = "Get Doc details";
+        JSONObject mainObject = new JSONObject();
+        try {
+            mainObject.put("appointment_id", AppointmentId);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.e("", "show_appointments= " + mainObject.toString());
+        showProgressDialog(getResources().getString(R.string.Loading));
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                APIS.BASEURL + APIS.DOC_APPOIN_DETAILS_API, mainObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "Get Doc details response=" + response.toString());
+                        hideProgressDialog();
+
+                        try {
+                            String code = response.getString("status_code");
+                            if (code.equals("200")) {
+                                try {
+                                    JSONArray jsArray = response.getJSONObject("response").getJSONArray("appointment_data");
+                                    if (jsArray != null && jsArray.length() > 0) {
+
+                                        JSONObject jsDocAvaiTimeMain = jsArray.getJSONObject(0);
+                                        tvDocNm.setText(jsDocAvaiTimeMain.getString("doctor_name"));
+                                        txt_doctor_address.setText(jsDocAvaiTimeMain.getString("doctor_address"));
+                                        txt_mobile_number.setText(jsDocAvaiTimeMain.getString("contact"));
+
+                                        tvDate.setText(String.valueOf(Utility.ChangeDateFormat("yyyy-MM-dd", "MM-dd-yyyy",jsDocAvaiTimeMain.getString("date_id") )));
+
+                                        sSelDateId = jsDocAvaiTimeMain.getString("date_id");
+                                        Log.e("sSelDateId", sSelDateId);
+
+
+                                        tbDocAppTog.setChecked(jsDocAvaiTimeMain.getString("reminder").equals("1"));
+
+
+                                        tv_time.setText(jsDocAvaiTimeMain.getString("time_id"));
+                                        sSelTimeId = jsDocAvaiTimeMain.getString("time_id");
+
+
+                                        if (!TextUtils.isEmpty(getIntent().getStringExtra("Doctor_Fax"))) {
+                                            txt_fax.setText(getIntent().getStringExtra("Doctor_Fax"));
+                                        }
+
+                                        if (!TextUtils.isEmpty(getIntent().getStringExtra("Doctor_Website"))) {
+                                            txt_Portal.setText(getIntent().getStringExtra("Doctor_Website"));
+                                        }
+
+                                        if (!TextUtils.isEmpty(getIntent().getStringExtra("Doctor_Email"))) {
+                                            txt_doctor_email.setText(getIntent().getStringExtra("Doctor_Email"));
+                                        }
+
+                                    }
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else if (String.valueOf(code).equals("403")) {
+                                logout_app(response.getString("message"));
+                            } else {
+
+                                Utility.ShowToast(mContext, response.getString("message"));
+                                hideProgressDialog();
+                                finish();
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                hideProgressDialog();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+                return params;
+            }
+
+        };
+// Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+    }
+
 
 
     private void Listener() {
@@ -389,7 +527,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         final String TAG = "Delete AppointedDoc";
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("appointment_id", appointmentDatum.getAppointmentId());
+            mainObject.put("appointment_id", AppointmentId);
             mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
             mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
 
@@ -645,7 +783,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
                     Intent intent = new Intent(mContext, SocialActivity.class);
-                    intent.putExtra("webUrl", appointmentDatum.getWebsite());
+                    intent.putExtra("webUrl", txt_Portal.getText().toString().trim());
                     startActivity(intent);
                     finish();
                 } else {
@@ -674,8 +812,8 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
 
         JSONObject mainObject = new JSONObject();
         try {
-            mainObject.put("doctor_id", appointmentDatum.getDoctor_id());
-            mainObject.put("dr_appointment_id", appointmentDatum.getAppointmentId());
+            mainObject.put("doctor_id", DoctorID);
+            mainObject.put("dr_appointment_id", AppointmentId);
             mainObject.put("userid", Utility.getSharedPreferences(mContext, APIS.user_id));
             mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
         } catch (JSONException e) {

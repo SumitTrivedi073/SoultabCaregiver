@@ -377,6 +377,11 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                                 reminderBean.setDate(allEventModel.getResponse().getActivities().getAppointments().get(i).getSelectedDate());
                                 reminderBean.setTime(allEventModel.getResponse().getActivities().getAppointments().get(i).getScheduleTime());//time
                                 reminderBean.setAppointment(true);
+                                reminderBean.setDoctor_id(allEventModel.getResponse().getActivities().getAppointments().get(i).getDoctor_id());
+                                reminderBean.setDoctor_Email(allEventModel.getResponse().getActivities().getAppointments().get(i).getEmail());
+                                reminderBean.setDoctor_Fax(allEventModel.getResponse().getActivities().getAppointments().get(i).getFax());
+                                reminderBean.setDoctor_Website(allEventModel.getResponse().getActivities().getAppointments().get(i).getWebsite());
+
                                 arRemin.add(reminderBean);
                             }
 
