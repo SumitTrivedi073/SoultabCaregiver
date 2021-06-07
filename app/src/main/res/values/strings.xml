@@ -244,4 +244,35 @@
     <string name="Portal_unavailable">Portal link not available</string>
 
 
+    <!--  Added By AJay  -->
+    <!--  EndCall Strings  -->
+    <string name="calls_end_result_no_answer">No answer</string>
+    <string name="calls_end_result_canceled">Canceled</string>
+    <string name="calls_end_result_declined">Declined</string>
+    <string name="calls_end_result_completed">Ended</string>
+    <string name="calls_end_result_timed_out">Timed out</string>
+    <string name="calls_end_result_connection_lost">Connection lost</string>
+    <string name="calls_end_result_unknown">Unknown</string>
+    <string name="calls_end_result_accept_failed">Accept failed</string>
+    <string name="calls_end_result_dial_failed">Dial failed</string>
+    <string name="calls_end_result_other_device_accepted">Other device accepted</string>
+    <!--  EndCall Strings  -->
+    <string name="calls_muted_this_call">%s is muted</string>
+    <string name="calls_incoming_voice_call">incoming voice call&#8230;</string>
+    <string name="calls_incoming_video_call">incoming video call&#8230;</string>
+    <string name="calls_connecting_call">connecting&#8230;</string>
+    <string name="calls_calling">making voice call&#8230;</string>
+    <string name="calls_video_calling">making video call&#8230;</string>
+    <string name="calls_ending_voice_call">voice call ending&#8230;</string>
+    <string name="calls_ending_video_call">video call ending&#8230;</string>
+
+
+    <string name="calls_notification_accept">Accept</string>
+    <string name="calls_notification_decline">Decline</string>
+    <string name="calls_notification_end">End</string>
+
+    <string name="calls_notification_voice_calling_content">Voice call from %s</string>
+    <string name="calls_notification_video_calling_content">Video call from %s</string>
+    <!--  Added By AJay  -->
+
 </resources>

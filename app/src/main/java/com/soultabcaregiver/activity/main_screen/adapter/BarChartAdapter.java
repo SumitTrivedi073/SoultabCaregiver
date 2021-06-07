@@ -6,9 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.slider.Slider;
 import com.soultabcaregiver.R;
@@ -16,13 +13,20 @@ import com.soultabcaregiver.activity.main_screen.model.ChartModel;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 public class BarChartAdapter extends RecyclerView.Adapter<BarChartAdapter.ViewHolder> {
-
+    
     private final String TAG = getClass().getSimpleName();
+    
     public List<ChartModel.Data.BarChart> BarChartListdata;
+    
     public List<ChartModel.Data.BarChart> BarChartList_Filtered;
+    
     Context mContext;
+    
     RequestOptions options;
     
 
@@ -50,8 +54,8 @@ public class BarChartAdapter extends RecyclerView.Adapter<BarChartAdapter.ViewHo
         holder.bar_title.setText(barChart.getName());
 
         String Value = String.valueOf(barChart.getValue());
-
-        holder.Continues_Slider.setValue(Float.parseFloat(Value));
+    
+        //holder.Continues_Slider.setValue(Float.parseFloat(Value));
         
     }
 

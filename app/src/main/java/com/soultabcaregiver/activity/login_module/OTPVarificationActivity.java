@@ -3,7 +3,6 @@ package com.soultabcaregiver.activity.login_module;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -24,19 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.sinch.android.rtc.ClientRegistration;
-import com.sinch.android.rtc.PushPair;
-import com.sinch.android.rtc.Sinch;
-import com.sinch.android.rtc.SinchClient;
-import com.sinch.android.rtc.SinchClientListener;
-import com.sinch.android.rtc.SinchError;
-import com.sinch.android.rtc.calling.Call;
-import com.sinch.android.rtc.calling.CallClient;
-import com.sinch.android.rtc.calling.CallClientListener;
-import com.sinch.android.rtc.calling.CallListener;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.sinch_calling.AudioPlayer;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -45,34 +33,41 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class OTPVarificationActivity extends BaseActivity implements View.OnClickListener {
 
     String TAG = getClass().getSimpleName();
+    
     Context mContext;
+    
     EditText otp1, otp2, otp3, otp4;
+    
     TextView chronometer, resend_otp, otp_verify_btn;
+    
     RelativeLayout need_help_relative;
+    
     String email;
+    
     AlertDialog alertDialog;
-    SinchClient sinchClient;
+    
     LinearLayout btn_call, decline_call;
+    
     LinearLayout main_call_layout, call_end_layout;
+    
     TextView call_state;
-    private Call calling;
-    AudioPlayer mAudioPlayer;
-
-
+    
+    //AudioPlayer mAudioPlayer;
+    
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp_varification);
-
+        
         mContext = this;
-        mAudioPlayer = new AudioPlayer(this);
+        //mAudioPlayer = new AudioPlayer(this);
 
         otp1 = findViewById(R.id.otp1);
         otp2 = findViewById(R.id.otp2);
@@ -88,55 +83,7 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
 
         countdownFunction();
         listner();
-
-        if (Utility.isNetworkConnected(mContext)) {
-            sinchClient = Sinch.getSinchClientBuilder().context(mContext)
-                    .applicationKey(mContext.getResources().getString(R.string.sinch_applicationKey))
-                    .applicationSecret(mContext.getResources().getString(R.string.sinch_application_secreat))
-                    .environmentHost(mContext.getResources().getString(R.string.sinch_enviorement_host))
-                    .userId(mContext.getResources().getString(R.string.sinch_user_id))
-                    .build();
-
-            sinchClient.setSupportCalling(true);
-            sinchClient.setSupportActiveConnectionInBackground(true);
-            sinchClient.startListeningOnActiveConnection();
-            sinchClient.start();
-
-            sinchClient.addSinchClientListener(new SinchClientListener() {
-
-                public void onClientStarted(SinchClient client) {
-
-                }
-
-                public void onClientStopped(SinchClient client) {
-                }
-
-                public void onClientFailed(SinchClient client, SinchError error) {
-                }
-
-                public void onRegistrationCredentialsRequired(SinchClient client, ClientRegistration registrationCallback) {
-                }
-
-                public void onLogMessage(int level, String area, String message) {
-                }
-            });
-
-
-            sinchClient.getCallClient().addCallClientListener(new CallClientListener() {
-                @Override
-                public void onIncomingCall(CallClient callClient, Call call) {
-                    calling = call;
-
-                    call.answer();
-                    call.addCallListener(new SinchCallListener());
-                    main_call_layout.setVisibility(View.GONE);
-                    call_end_layout.setVisibility(View.VISIBLE);
-
-                }
-            });
-        } else {
-            Utility.ShowToast(mContext, mContext.getResources().getString(R.string.net_connection));
-        }
+        
     }
 
     private void listner() {
@@ -411,92 +358,25 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
         close_window.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (calling != null) {
-                    calling.hangup();
-                    calling = null;
-                    alertDialog.dismiss();
-                } else {
-                    alertDialog.dismiss();
-                }
+
             }
         });
 
         call_end_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (calling != null) {
-                    calling.hangup();
-                    calling = null;
-                    alertDialog.dismiss();
 
-                } else {
-                    alertDialog.dismiss();
-                }
             }
         });
 
         btn_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (calling == null) {
-                    call_state.setText(mContext.getResources().getString(R.string.connecting));
 
-                    calling = sinchClient.getCallClient().callPhoneNumber("+918770957105");
-                    main_call_layout.setVisibility(View.GONE);
-                    call_end_layout.setVisibility(View.VISIBLE);
-                    calling.addCallListener(new SinchCallListener());
-
-                }
             }
         });
     }
-
-    private class SinchCallListener implements CallListener {
-
-        //the call is ended for any reason
-        @Override
-        public void onCallEnded(Call endedCall) {
-            calling = null; //no longer a current call
-            main_call_layout.setVisibility(View.VISIBLE); //change text on button
-            call_end_layout.setVisibility(View.GONE);
-            call_state.setText(""); //empty call state
-            mAudioPlayer.stopProgressTone();
-            alertDialog.dismiss();
-
-            //hardware volume buttons should revert to their normal function
-            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-
-            Log.e("callended", String.valueOf(endedCall));
-        }
-
-        //call is connected
-        @Override
-        public void onCallEstablished(Call establishedCall) {
-            //change the call state in the view
-            call_state.setText(mContext.getResources().getString(R.string.connected));
-            //the hardware volume buttons should control the voice stream volume
-            mAudioPlayer.stopProgressTone();
-
-
-            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
-        }
-
-        //call is trying to connect
-        @Override
-        public void onCallProgressing(Call progressingCall) {
-            //set call state to "ringing" in the view
-            call_state.setText(mContext.getResources().getString(R.string.ringing));
-            mAudioPlayer.playProgressTone();
-
-
-        }
-
-        @Override
-        public void onShouldSendPushNotification(Call call, List<PushPair> pushPairs) {
-            //intentionally left empty
-        }
-    }
-
+    
     @Override
     public void onBackPressed() {
         super.onBackPressed();

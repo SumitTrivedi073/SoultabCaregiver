@@ -62,9 +62,17 @@ dependencies {
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    /*Sinch library*/
-    implementation(name: 'sinch-android-rtc', version: '+', ext: 'aar')
+//    /*Sinch library*/
+//    implementation(name: 'sinch-android-rtc', version: '+', ext: 'aar')
 
+    // [Sendbird Chat]
+    implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.164'
+    
+    // [Sendbird Calls]
+    implementation 'com.sendbird.sdk:sendbird-calls:1.6.1'
+
+    // GSON
+    implementation 'com.google.code.gson:gson:2.8.7'
 
     /*Circle image view*/
     implementation 'de.hdodenhof:circleimageview:3.0.0'

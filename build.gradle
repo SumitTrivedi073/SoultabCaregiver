@@ -35,6 +35,7 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        maven { url "https://repo.sendbird.com/public/maven" }
     }
 }
 
