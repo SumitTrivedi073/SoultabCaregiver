@@ -117,7 +117,7 @@
     <string name="three_month">3 Month</string>
     <string name="six_month">6 Month</string>
     <string name="twelve_month">12 Month</string>
-     <string name="Chart_Message">We are setting thing\'s up for you please wait...</string>
+    <string name="Chart_Message">We are setting thing\'s up for you please wait...</string>
 
     <!--Act Calender-->
 
@@ -271,8 +271,10 @@
     <string name="calls_notification_decline">Decline</string>
     <string name="calls_notification_end">End</string>
 
-    <string name="calls_notification_voice_calling_content">Voice call from %s</string>
-    <string name="calls_notification_video_calling_content">Video call from %s</string>
+    <string name="calls_notification_voice_calling_content_from">Voice call from %s</string>
+    <string name="calls_notification_voice_calling_content_to">Voice call to %s</string>
+    <string name="calls_notification_video_calling_content_from">Video call from %s</string>
+    <string name="calls_notification_video_calling_content_to">Video call to %s</string>
     <!--  Added By AJay  -->
 
 </resources>

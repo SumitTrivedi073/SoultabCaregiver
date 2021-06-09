@@ -20,7 +20,9 @@ import android.util.Log;
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -142,6 +144,15 @@ public class SendbirdCallService extends Service {
 				case AudioManager.RINGER_MODE_SILENT:
 				case AudioManager.RINGER_MODE_VIBRATE:
 					mRingtone.setStreamType(AudioManager.STREAM_ALARM);
+					am.setStreamVolume(AudioManager.STREAM_RING,
+							am.getStreamMaxVolume(AudioManager.STREAM_RING),
+							AudioManager.FLAG_SHOW_UI);
+					am.setStreamVolume(AudioManager.STREAM_MUSIC,
+							am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+							AudioManager.FLAG_SHOW_UI);
+					am.setStreamVolume(AudioManager.STREAM_ALARM,
+							am.getStreamMaxVolume(AudioManager.STREAM_ALARM),
+							AudioManager.FLAG_SHOW_UI);
 					ringToneTimer = new Timer();
 					ringToneTimer.scheduleAtFixedRate(new TimerTask() {
 						public void run() {
@@ -158,13 +169,28 @@ public class SendbirdCallService extends Service {
 	}
 	
 	private Notification getNotification(@NonNull ServiceData serviceData) {
-		String content = "Demo Text";
+		String content;
+		String currentUserId = Utility.getSharedPreferences(this, APIS.caregiver_id);
 		if (serviceData.isVideoCall) {
-			content = mContext.getString(R.string.calls_notification_video_calling_content,
-					serviceData.remoteNicknameOrUserId);
+			if (serviceData.calleeIdToDial != null && !serviceData.calleeIdToDial.equals(
+					currentUserId)) {
+				content = mContext.getString(R.string.calls_notification_video_calling_content_to,
+						serviceData.remoteNicknameOrUserId);
+			} else {
+				content =
+						mContext.getString(R.string.calls_notification_video_calling_content_from,
+						serviceData.remoteNicknameOrUserId);
+			}
 		} else {
-			content = mContext.getString(R.string.calls_notification_voice_calling_content,
-					serviceData.remoteNicknameOrUserId);
+			if (serviceData.calleeIdToDial != null && !serviceData.calleeIdToDial.equals(
+					currentUserId)) {
+				content = mContext.getString(R.string.calls_notification_voice_calling_content_to,
+						serviceData.remoteNicknameOrUserId);
+			} else {
+				content =
+						mContext.getString(R.string.calls_notification_voice_calling_content_from,
+						serviceData.remoteNicknameOrUserId);
+			}
 		}
 		
 		final int currentTime = (int) System.currentTimeMillis();
@@ -194,10 +220,21 @@ public class SendbirdCallService extends Service {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId);
 		builder.setContentTitle(serviceData.remoteNicknameOrUserId).setContentText(
 				content).setSmallIcon(R.drawable.launcher_icon2).setLargeIcon(
-				BitmapFactory.decodeResource(mContext.getResources(),
-						R.drawable.launcher_icon2)).setPriority(
+				BitmapFactory.decodeResource(mContext.getResources(), R.drawable.launcher_icon2));
+		
+		//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+		//			builder.setPriority(NotificationCompat.PRIORITY_HIGH).setCategory(
+		//					NotificationCompat.CATEGORY_CALL);
+		//			PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
+		//			callIntent,
+		//					PendingIntent.FLAG_UPDATE_CURRENT);
+		//			builder.setFullScreenIntent(fullScreenPendingIntent, true);
+		//		} else {
+		builder.setPriority(
 				serviceData.isHeadsUpNotification ? NotificationCompat.PRIORITY_HIGH :
 						NotificationCompat.PRIORITY_LOW);
+		//		}
+		
 		
 		if (SendBirdCall.getOngoingCallCount() > 0) {
 			if (serviceData.doAccept) {
