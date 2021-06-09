@@ -5,7 +5,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,16 +26,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
-import com.sinch.android.rtc.ClientRegistration;
-import com.sinch.android.rtc.PushPair;
-import com.sinch.android.rtc.Sinch;
-import com.sinch.android.rtc.SinchClient;
-import com.sinch.android.rtc.SinchClientListener;
-import com.sinch.android.rtc.SinchError;
-import com.sinch.android.rtc.calling.Call;
-import com.sinch.android.rtc.calling.CallClient;
-import com.sinch.android.rtc.calling.CallClientListener;
-import com.sinch.android.rtc.calling.CallListener;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.AppointmentRequestModel;
@@ -54,7 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -74,13 +62,12 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
     String myFormat1 = "yyyy-MM-dd"; //for webservice
     SimpleDateFormat sdf1;
     TextView tvMakeAppoint, tv_time;
-    SinchClient sinchClient;
     LinearLayout main_call_layout, call_end_layout;
     TextView call_state;
     AlertDialog alertDialog;
     LinearLayout btn_call, decline_call;
     String sSelTimeId = "", sSelTimeNm = "", sSelDateId = "";
-    private Call calling;
+    
     private Calendar calendar;
 
 
@@ -114,61 +101,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         calendar = Calendar.getInstance();
         sdf = new SimpleDateFormat(myFormat, Locale.US);
         sdf1 = new SimpleDateFormat(myFormat1, Locale.US);
-
-
-        if (Utility.isNetworkConnected(mContext)) {
-            sinchClient = Sinch.getSinchClientBuilder().context(mContext)
-                    .applicationKey(mContext.getResources().getString(R.string.sinch_applicationKey))
-                    .applicationSecret(mContext.getResources().getString(R.string.sinch_application_secreat))
-                    .environmentHost(mContext.getResources().getString(R.string.sinch_enviorement_host))
-                    .userId(mContext.getResources().getString(R.string.sinch_user_id))
-                    .build();
-
-            sinchClient.setSupportCalling(true);
-            sinchClient.setSupportActiveConnectionInBackground(true);
-            sinchClient.startListeningOnActiveConnection();
-            sinchClient.start();
-
-            sinchClient.addSinchClientListener(new SinchClientListener() {
-
-                public void onClientStarted(SinchClient client) {
-
-                }
-
-                public void onClientStopped(SinchClient client) {
-                    Log.e("callended", "Call Stop");
-
-                }
-
-                public void onClientFailed(SinchClient client, SinchError error) {
-                    Log.e("callended", "Call failed");
-
-                }
-
-                public void onRegistrationCredentialsRequired(SinchClient client, ClientRegistration registrationCallback) {
-                }
-
-                public void onLogMessage(int level, String area, String message) {
-                }
-            });
-
-
-            sinchClient.getCallClient().addCallClientListener(new CallClientListener() {
-                @Override
-                public void onIncomingCall(CallClient callClient, Call call) {
-                    calling = call;
-
-                    call.answer();
-                    call.addCallListener(new SinchCallListener());
-                    main_call_layout.setVisibility(View.GONE);
-                    call_end_layout.setVisibility(View.VISIBLE);
-                }
-            });
-        } else {
-            Utility.ShowToast(mContext, mContext.getResources().getString(R.string.net_connection));
-        }
-
-
     }
 
     private void GetValuFromIntent() {
@@ -296,13 +228,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         close_window.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (calling != null) {
-                    calling.hangup();
-                    calling = null;
-                    alertDialog.dismiss();
-                } else {
-                    alertDialog.dismiss();
-                }
                 finish();
 
             }
@@ -311,13 +236,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         call_end_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (calling != null) {
-                    calling.hangup();
-                    calling = null;
-                    alertDialog.dismiss();
-                } else {
-                    alertDialog.dismiss();
-                }
                 finish();
             }
 
@@ -326,15 +244,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         btn_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (calling == null) {
-                    call_state.setText(mContext.getResources().getString(R.string.connecting));
-
-                    calling = sinchClient.getCallClient().callPhoneNumber(number);
-                    main_call_layout.setVisibility(View.GONE);
-                    call_end_layout.setVisibility(View.VISIBLE);
-                    calling.addCallListener(new SinchCallListener());
-
-                }
             }
         });
 
@@ -719,44 +628,5 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
     }
-
-
-    private class SinchCallListener implements CallListener {
-
-        //the call is ended for any reason
-        @Override
-        public void onCallEnded(Call endedCall) {
-            calling = null; //no longer a current call
-            main_call_layout.setVisibility(View.VISIBLE); //change text on button
-            call_end_layout.setVisibility(View.GONE);
-            call_state.setText(""); //empty call state
-            //hardware volume buttons should revert to their normal function
-            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-
-            Log.e("callended", String.valueOf(endedCall));
-        }
-
-        //call is connected
-        @Override
-        public void onCallEstablished(Call establishedCall) {
-            //change the call state in the view
-            call_state.setText(mContext.getResources().getString(R.string.connected));
-            //the hardware volume buttons should control the voice stream volume
-            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
-        }
-
-        //call is trying to connect
-        @Override
-        public void onCallProgressing(Call progressingCall) {
-            //set call state to "ringing" in the view
-            call_state.setText(mContext.getResources().getString(R.string.ringing));
-        }
-
-        @Override
-        public void onShouldSendPushNotification(Call call, List<PushPair> pushPairs) {
-            //intentionally left empty
-        }
-    }
-
 
 }

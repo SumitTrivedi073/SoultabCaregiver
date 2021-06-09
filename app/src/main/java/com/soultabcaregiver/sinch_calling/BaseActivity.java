@@ -1,13 +1,9 @@
 package com.soultabcaregiver.sinch_calling;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,60 +11,31 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
+import androidx.appcompat.app.AppCompatActivity;
 
-public abstract class BaseActivity extends AppCompatActivity implements ServiceConnection {
 
-    private SinchService.SinchServiceInterface mSinchServiceInterface;
+public abstract class BaseActivity extends AppCompatActivity {
+    
     AlertDialog alertDialog;
+    
     MainActivity mainActivity;
+    
     public static BaseActivity instance;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getApplicationContext().bindService(new Intent(this, SinchService.class), this,
-                BIND_AUTO_CREATE);
         mainActivity = MainActivity.instance;
         instance = BaseActivity.this;
 
     }
 
-    @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        if (SinchService.class.getName().equals(componentName.getClassName())) {
-            mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
-            onServiceConnected();
-        }
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-        if (SinchService.class.getName().equals(componentName.getClassName())) {
-            mSinchServiceInterface = null;
-            onServiceDisconnected();
-        }
-    }
-
-    protected void onServiceConnected() {
-        // for subclasses
-    }
-
-    protected void onServiceDisconnected() {
-        // for subclasses
-    }
-
-    protected SinchService.SinchServiceInterface getSinchServiceInterface() {
-        return mSinchServiceInterface;
-    }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         boolean granted = grantResults.length > 0;

@@ -1,16 +1,9 @@
 package com.soultabcaregiver.sinch_calling;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.os.IBinder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,18 +17,19 @@ import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
-import static android.content.Context.BIND_AUTO_CREATE;
+import androidx.fragment.app.Fragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BaseFragment extends Fragment implements ServiceConnection {
-
-    private SinchService.SinchServiceInterface mSinchServiceInterface;
-    public  CustomProgressDialog progressDialog;
-    public  AlertDialog alertDialog;
+public class BaseFragment extends Fragment {
+    
+    public CustomProgressDialog progressDialog;
+    
+    public AlertDialog alertDialog;
+    
     MainActivity mainActivity;
-
+    
     public BaseFragment() {
         // Required empty public constructor
     }
@@ -47,41 +41,11 @@ public class BaseFragment extends Fragment implements ServiceConnection {
         TextView textView = new TextView(getActivity());
         textView.setText(R.string.hello_blank_fragment);
 
-        getActivity().bindService(new Intent(getActivity(), SinchService.class), this,
-                BIND_AUTO_CREATE);
-
         mainActivity = MainActivity.instance;
         return textView;
     }
-
-    @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        if (SinchService.class.getName().equals(componentName.getClassName())) {
-            mSinchServiceInterface = (SinchService.SinchServiceInterface) iBinder;
-            onServiceConnected();
-        }
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-        if (SinchService.class.getName().equals(componentName.getClassName())) {
-            mSinchServiceInterface = null;
-            onServiceDisconnected();
-        }
-    }
-
-    protected void onServiceConnected() {
-        // for subclasses
-    }
-
-    protected void onServiceDisconnected() {
-        // for subclasses
-    }
-
-    protected SinchService.SinchServiceInterface getSinchServiceInterface() {
-        return mSinchServiceInterface;
-    }
-
+    
+    
     public  DiloagBoxCommon Alertmessage(final Context context, String titleString, String descriptionString,
                                                String negetiveText, String positiveText) {
         DiloagBoxCommon diloagBoxCommon = new DiloagBoxCommon();

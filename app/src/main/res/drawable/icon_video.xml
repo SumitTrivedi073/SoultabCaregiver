@@ -1,0 +1,13 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/selector_audio_image_view"
+        android:gravity="fill" />
+    <item
+        android:bottom="10dp"
+        android:drawable="@drawable/icon_video_off"
+        android:gravity="center"
+        android:left="10dp"
+        android:right="10dp"
+        android:top="10dp" />
+
+</layer-list>

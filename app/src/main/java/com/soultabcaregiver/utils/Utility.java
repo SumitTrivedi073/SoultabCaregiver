@@ -2,7 +2,6 @@ package com.soultabcaregiver.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -30,10 +28,8 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
@@ -41,15 +37,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.sinch.gson.reflect.TypeToken;
-import com.soultabcaregiver.Model.DiloagBoxCommon;
+import com.google.gson.reflect.TypeToken;
 import com.soultabcaregiver.R;
 
 import java.io.ByteArrayOutputStream;
@@ -72,13 +62,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 
 public class Utility {
 
     public static Context mContext;
+
     static int mMaxWidth, mMaxHeight;
+
     static AlertDialog alertDialog;
+
     private static String PREFERENCE = "Soultab Caregiver";
+
     private static int MAX_IMAGE_DIMENSION = 720;
 
     public static final String SinchServiceConnected = "SinchServiceConnected";
@@ -87,10 +86,16 @@ public class Utility {
     public final static SimpleDateFormat yyyy_MM_dd = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     public final static SimpleDateFormat hh_mm_aa = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
     public final static SimpleDateFormat EEE_dd_MMM_yyyy = new SimpleDateFormat("EEE, MMM dd yyyy", Locale.ENGLISH);
-    public final static SimpleDateFormat EEE_dd_MMM = new SimpleDateFormat("EEE, dd MMM", Locale.ENGLISH);
+    public final static SimpleDateFormat EEE_dd_MMM = new SimpleDateFormat("EEE, dd MMM",
+		    Locale.ENGLISH);
+
     public final static SimpleDateFormat dd_MMM = new SimpleDateFormat("dd MMM", Locale.ENGLISH);
-    public final static SimpleDateFormat  MMM_dd_yyyy = new SimpleDateFormat("MMM dd yyyy", Locale.ENGLISH);
+
+    public final static SimpleDateFormat MMM_dd_yyyy =
+            new SimpleDateFormat("MMM dd yyyy", Locale.ENGLISH);
+
     public final static SimpleDateFormat dd = new SimpleDateFormat("dd", Locale.ENGLISH);
+
     public final static SimpleDateFormat MMM = new SimpleDateFormat("MMM", Locale.ENGLISH);
     public final static SimpleDateFormat EEE_dd_MMM_yyyy_hh_mm_aa = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm aa", Locale.ENGLISH);
 
@@ -99,6 +104,23 @@ public class Utility {
     public final static SimpleDateFormat yyyy_mm_dd_hh_mm_aa = new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.ENGLISH);
     public final static SimpleDateFormat yyyy_mm_dd_hh_mm_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
+
+
+
+    public final static SimpleDateFormat EEE_dd_MMM_yyyy_hh_mm_aa =
+            new SimpleDateFormat("EEE, dd MMM yyyy HH:mm aa", Locale.ENGLISH);
+
+    public final static SimpleDateFormat EEEhh_mm_aa =
+            new SimpleDateFormat("EEE, MM/dd/yy, hh:mm aa", Locale.ENGLISH);
+
+    public final static SimpleDateFormat yyyy_mm_dd_hh_mm_aa =
+            new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.ENGLISH);
+
+    public final static SimpleDateFormat yyyy_mm_dd_hh_mm_ss =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+
+
+    public static final String FCM_TOKEN = "FirebaseToken";
 
 
     // for username string preferences

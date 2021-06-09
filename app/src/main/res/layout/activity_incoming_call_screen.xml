@@ -6,7 +6,7 @@
     android:background="#010204"
     android:orientation="vertical"
     android:weightSum="5"
-    tools:context=".sinch_calling.IncomingCallScreenActivity">
+    tools:context=".sendbird_calls.IncomingCallActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,12 +20,11 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
             android:fontFamily="@font/muli_black"
             android:text="Sample user"
             android:textColor="@color/white"
-            android:textSize="@dimen/_16sdp"
-            android:layout_marginLeft="@dimen/_10sdp" />
+            android:textSize="@dimen/_16sdp" />
 
         <TextView
             android:id="@+id/callState"
@@ -33,21 +32,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/remoteUser"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginLeft="@dimen/_15sdp"
             android:fontFamily="@font/muli_black"
             android:text="Incoming call"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_15sdp" />
+            android:textSize="@dimen/_10sdp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="@dimen/_70sdp"
             android:layout_height="@dimen/_70sdp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/_20sdp"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/_20sdp" />
 
     </RelativeLayout>
@@ -61,32 +57,28 @@
 
     </ImageView>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_weight="1"
         android:gravity="center">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/answerButton"
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="@dimen/_70sdp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/pick_call" />
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_margin="@dimen/_8sdp"
+            android:src="@drawable/call_accept_img" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/declineButton"
-            android:layout_width="@dimen/_55sdp"
-            android:layout_height="@dimen/_70sdp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/_20sdp"
-            android:layout_toEndOf="@+id/answerButton"
-            android:src="@drawable/call_hangup"
-            android:layout_marginLeft="@dimen/_20sdp"
-            android:layout_toRightOf="@+id/answerButton" />
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_margin="@dimen/_8sdp"
+            android:src="@drawable/call_hangup_img" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

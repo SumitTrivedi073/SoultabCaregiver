@@ -21,9 +21,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -31,7 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.sinch.gson.Gson;
+import com.google.gson.Gson;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
@@ -55,14 +52,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class AddReminderActivity extends BaseActivity implements View.OnClickListener {
-
-
+    
+    
     public static final int REQUEST_Snooze = 102;
+    
     public static int Alarm_Count;
+    
     String TAG = getClass().getSimpleName();
+    
     EditText et_title;
+    
     TextView tvWhenDate, tvWhenTime, tv_text, tv_snooze_txt;
+    
     TextView tvRepeat, tvBeforRemindTxt, btn_submit_reminder;
     RelativeLayout tv_snooze_layout, back_btn;
     Calendar myCalendar;
