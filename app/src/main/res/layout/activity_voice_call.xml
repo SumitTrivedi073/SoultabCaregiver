@@ -18,10 +18,7 @@
             android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_60sdp"
             android:layout_marginBottom="24dp"
-            android:background="@drawable/circle_grey"
-            android:padding="@dimen/_16sdp"
-            android:src="@drawable/icon_avatar_outline" />
-
+            android:src="@drawable/icon_avatar" />
 
         <TextView
             android:id="@+id/text_view_user_id"
@@ -107,8 +104,7 @@
                 android:id="@+id/image_view_audio_off"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:background="@drawable/selector_audio_image_view" />
+                android:layout_alignParentLeft="true" />
 
             <ImageView
                 android:id="@+id/image_view_speakerphone"
