@@ -118,6 +118,7 @@ public class DoctorFragment extends BaseFragment {
         //if tablayout use inside fragment so instead of getFragmentManager() Use getChildFragmentManager()
         adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new DoctorListFragment(), "Doctor List");
+        adapter.addFragment(new MyDoctorListFragment(), "My Doctor List");
         adapter.addFragment(new DoctorAppointmentFragment(), "Doctor Appointment");
 
         viewPager.setAdapter(adapter);

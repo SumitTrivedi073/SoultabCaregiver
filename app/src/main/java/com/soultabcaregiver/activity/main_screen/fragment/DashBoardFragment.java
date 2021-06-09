@@ -328,7 +328,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     */
                 if (chartModel.getData().getLineChart().get(i).getName().equals("Splash")) {
                     if (chartModel.getData().getLineChart().get(i).getYaxis().size() > 0) {
-                        lineDataSet3 = new LineDataSet(datavalue1(chartModel.getData().getLineChart().get(i).getYaxis()), chartModel.getData().getLineChart().get(i).getName());
+                        lineDataSet3 = new LineDataSet(datavalue1(chartModel.getData().getLineChart().get(i).getYaxis()), "App Activity Time");
                     }
                 }
                 if (chartModel.getData().getLineChart().get(i).getName().equals("Yoga")) {

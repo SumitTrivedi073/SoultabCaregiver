@@ -367,8 +367,10 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                     try {
                         AllEventModel allEventModel = new Gson().fromJson(response.toString(), AllEventModel.class);
                         if (String.valueOf(allEventModel.getStatusCode()).equals("200")) {
-                            arRemin = allEventModel.getResponse().getActivities().getReminders();
-
+                            if (allEventModel.getResponse().getActivities().getReminders() != null &&
+                                    allEventModel.getResponse().getActivities().getReminders().size() > 0) {
+                                arRemin = allEventModel.getResponse().getActivities().getReminders();
+                            }
                             for (int i = 0; i < allEventModel.getResponse().getActivities().getAppointments().size(); i++) {
                                 ReminderBean reminderBean = new ReminderBean();
 
@@ -384,10 +386,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
 
                                 arRemin.add(reminderBean);
                             }
-
-
                             tvNodata.setVisibility(View.GONE);
-                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin, tvNodata, Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
+                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin,  tvNodata, FromDate2);
                             rvReminder.setAdapter(adapter);
 
                         }else if (String.valueOf(allEventModel.getStatusCode()).equals("403")) {

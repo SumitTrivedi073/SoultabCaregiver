@@ -1,7 +1,15 @@
 package com.soultabcaregiver.activity.docter.fragment;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -11,11 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -27,6 +30,7 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorCategoryModel;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
 import com.soultabcaregiver.activity.docter.adapter.DoctorListAdapter;
+import com.soultabcaregiver.activity.docter.adapter.MyDoctorListAdapter;
 import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -39,13 +43,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DoctorListFragment extends BaseFragment implements DoctorListAdapter.AppointedDocSelectionListener {
+public class MyDoctorListFragment extends BaseFragment implements MyDoctorListAdapter.AppointedDocSelectionListener {
 
-    public static DoctorListFragment instance;
+    public static MyDoctorListFragment instance;
     View view;
     Context mContext;
     SearchView doctor_search;
-    DoctorListAdapter adapter;
+    MyDoctorListAdapter adapter;
     RecyclerView doctor_list;
     NestedScrollView nested_scrollview;
     List<DoctorListModel.Response.DoctorDatum> doctorlist = new ArrayList<>();
@@ -54,6 +58,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     RelativeLayout search_relative;
     private int lastPage = 1;
     private String mMaxoffset = "";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,17 +71,17 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_doctor_list, container, false);
+        view = inflater.inflate(R.layout.fragment_my_doctor_list, container, false);
 
-        instance = DoctorListFragment.this;
+        instance = MyDoctorListFragment.this;
         init();
 
-        return view;
+        return  view;
+
     }
 
-
     private void init() {
-        doctor_list = view.findViewById(R.id.doctor_list);
+        doctor_list = view.findViewById(R.id.my_doctor_list);
         tvNodata = view.findViewById(R.id.tv_no_data_doc_list);
         doctor_search = view.findViewById(R.id.doctor_search);
         search_relative = view.findViewById(R.id.search_relative);
@@ -162,7 +167,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     public void onResume() {
         super.onResume();
         if (Utility.isNetworkConnected(mContext)) {
-            GetDocList();
+       //     GetDocList();
         } else {
 
             Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -198,8 +203,8 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
 
                         mMaxoffset = String.valueOf(doctorListModel.getPages());
                         if (doctorlist.size() > 0) {
-                            adapter = new DoctorListAdapter(getActivity(), doctorlist, tvNodata);
-                            adapter.DocSelection(DoctorListFragment.this);
+                            adapter = new MyDoctorListAdapter(getActivity(), doctorlist, tvNodata);
+                            adapter.DocSelection(MyDoctorListFragment.this);
 
                             doctor_list.setAdapter(adapter);
                             tvNodata.setVisibility(View.GONE);
@@ -241,4 +246,5 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     public void DocSelectionListener(List<DoctorListModel.Response.DoctorDatum> DocBeanList, boolean isSearch) {
 
     }
+
 }
