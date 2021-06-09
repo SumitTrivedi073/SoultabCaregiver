@@ -19,6 +19,7 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
+import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONObject;
@@ -138,9 +139,8 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
 	@Override
 	public void onNewToken(String s) {
 		super.onNewToken(s);
-		
 		Log.e("onNewToken", s);
-		
+		SendBirdAuthentication.registerPushToken(this, s);
 	}
 	
 	private boolean isAppIsInBackground(Context context) {

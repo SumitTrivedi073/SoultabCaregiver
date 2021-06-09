@@ -29,8 +29,6 @@ public class SendBirdAuthentication {
 	public static void autoAuthenticate(Context context, AutoAuthenticateHandler handler) {
 		Log.i(TAG, "[AuthenticationUtils] autoAuthenticate()");
 		
-		SendBirdCall.getCurrentUser();
-		
 		if (SendBirdCall.getCurrentUser() != null) {
 			Log.i(TAG,
 					"[AuthenticationUtils] autoAuthenticate(userId: " + SendBirdCall.getCurrentUser().getUserId() + ") => OK (SendBirdCall.getCurrentUser() != null)");

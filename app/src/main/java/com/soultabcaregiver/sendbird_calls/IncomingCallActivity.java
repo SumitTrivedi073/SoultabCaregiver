@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
+import com.sendbird.calls.handler.DirectCallListener;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
+
+import org.jetbrains.annotations.NotNull;
 
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALLEE_ID_TO_DIAL;
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALL_ID;
@@ -22,6 +26,8 @@ public class IncomingCallActivity extends BaseActivity {
 	
 	private SendbirdCallService.ServiceData mServiceData;
 	
+	private DirectCall mDirectCall;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,16 +38,31 @@ public class IncomingCallActivity extends BaseActivity {
 		TextView userName = findViewById(R.id.remoteUser);
 		userName.setText(mServiceData.remoteNicknameOrUserId);
 		
+		try {
+			mDirectCall = SendBirdCall.getCall(mServiceData.callId);
+			mDirectCall.setListener(new DirectCallListener() {
+				@Override
+				public void onConnected(@NotNull DirectCall directCall) {
+					finish();
+				}
+				
+				@Override
+				public void onEnded(@NotNull DirectCall directCall) {
+					finish();
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		findViewById(R.id.answerButton).setOnClickListener(v -> {
 			finish();
 			startActivity(getCallActivityIntent());
 		});
 		
 		findViewById(R.id.declineButton).setOnClickListener(v -> {
-			try {
-				SendBirdCall.getCall(mServiceData.callId).end();
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (mDirectCall != null) {
+				mDirectCall.end();
 			}
 			finish();
 		});
