@@ -106,12 +106,14 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
 		SendBirdAuthentication.autoAuthenticate(this, userId -> {
 			if (userId == null) {
 				ShowToast(mContext, "Sendbird Auth Failed");
 				return;
 			}
 		});
+
 		mContext = this;
 		buildGoogleApiClient();
 		
@@ -279,27 +281,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 						
 						
 					} else {
-						//                        if (Utility.getSharedPreferences(mContext,
-						//                        Utility.SinchServiceConnected) == null &&
-						//                                TextUtils.isEmpty(Utility
-						//                                .getSharedPreferences(mContext, Utility
-						//                                .SinchServiceConnected))) {
-						//
-						//                            if (!getSinchServiceInterface().isStarted
-						//                            ()) {
-						//                                getSinchServiceInterface().startClient
-						//                                (Utility.getSharedPreferences(mContext,
-						//                                APIS.Caregiver_email));
-						//                                //   showProgressDialog(getResources()
-						//                                .getString(R.string.Loading));
-						//
-						//                            } else {
-						//                                openPlaceCallActivity();
-						//                            }
-						//
-						//                        } else {
-						//                            openPlaceCallActivity();
-						//                        }
 						openPlaceCallActivity();
 					}
 					
@@ -315,31 +296,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
 				Utility.getSharedPreferences(this, APIS.user_name), true);
-		//        Utility.setSharedPreference(mContext, Utility.SinchServiceConnected, "1");
-		//
-		//        Call call = getSinchServiceInterface().callUserVideo(Utility
-		//        .getSharedPreferences(mContext, APIS.user_email));
-		//        String callId = call.getCallId();
-		//
-		//        Intent callScreen = new Intent(this, CallScreenActivity.class);
-		//
-		//        if (TextUtils.isEmpty(Utility.getSharedPreferences(mContext, APIS.user_name))) {
-		//            callScreen.putExtra(SinchService.CALL_ID, callId);
-		//            callScreen.putExtra(SinchService.CALLER_NAME, Utility.getSharedPreferences
-		//            (mContext, APIS.user_name));
-		//            callScreen.putExtra("user_email",Utility.getSharedPreferences(mContext, APIS
-		//            .user_email));
-		//            startActivity(callScreen);
-		//        } else {
-		//            callScreen.putExtra(SinchService.CALL_ID, callId);
-		//            callScreen.putExtra(SinchService.CALLER_NAME, Utility.getSharedPreferences
-		//            (mContext, APIS.user_name));
-		//            callScreen.putExtra("user_email",Utility.getSharedPreferences(mContext, APIS
-		//            .user_email));
-		//
-		//            startActivity(callScreen);
-		//
-		//        }
 	}
 	
 	@Override
@@ -433,7 +389,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 									mLastLocation.getLongitude(), 1);
 					if (addressList != null && addressList.size() > 0) {
 						
-						Log.e("addressList", String.valueOf(addressList));
 						if (addressList.get(0).getAddressLine(0) != null && addressList.get(
 								0).getCountryName() != null) {
 							String locality = addressList.get(0).getAddressLine(0);

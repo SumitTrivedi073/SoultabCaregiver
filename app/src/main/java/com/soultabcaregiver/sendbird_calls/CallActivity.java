@@ -1,6 +1,8 @@
 package com.soultabcaregiver.sendbird_calls;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.sendbird_calls.utils.EndResultUtils;
 import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
 
+import java.util.Calendar;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -481,6 +484,19 @@ public abstract class CallActivity extends AppCompatActivity {
 			
 			if (mDirectCall.isEnded()) {
 				setState(STATE.STATE_ENDED, mDirectCall);
+
+				AlarmManager mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+				Calendar calendar = Calendar.getInstance();
+				Intent intent = new Intent(this, FinishIncomingCallFromNotification.class);
+				PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+				}else {
+					mAlarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+
+				}
+
+
 			} else {
 				setState(STATE.STATE_ENDING, mDirectCall);
 				mDirectCall.end();
@@ -501,8 +517,9 @@ public abstract class CallActivity extends AppCompatActivity {
 				public void run() {
 					runOnUiThread(() -> {
 						Log.i(TAG, "[CallActivity] finish()");
+
 						finish();
-						
+
 						unbindCallService();
 						stopCallService();
 					});

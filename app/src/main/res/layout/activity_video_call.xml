@@ -109,7 +109,7 @@
                 android:layout_width="@dimen/_42sdp"
                 android:layout_height="@dimen/_42sdp"
                 android:layout_margin="@dimen/_8sdp"
-                android:src="@drawable/icon_video" />
+                android:src="@drawable/icon_video_turn_off" />
 
             <ImageView
                 android:id="@+id/image_view_audio_off"

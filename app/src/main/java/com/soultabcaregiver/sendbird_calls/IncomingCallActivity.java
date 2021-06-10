@@ -2,6 +2,7 @@ package com.soultabcaregiver.sendbird_calls;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.sendbird.calls.DirectCall;
@@ -27,12 +28,14 @@ public class IncomingCallActivity extends BaseActivity {
 	private SendbirdCallService.ServiceData mServiceData;
 	
 	private DirectCall mDirectCall;
-	
+	public static IncomingCallActivity instance;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_incoming_call_screen);
-		
+		instance = IncomingCallActivity.this;
+
 		setServiceData();
 		
 		TextView userName = findViewById(R.id.remoteUser);
@@ -66,11 +69,17 @@ public class IncomingCallActivity extends BaseActivity {
 			}
 			finish();
 		});
+
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 		if (getIntent().getBooleanExtra("callEnded", false)) {
 			finish();
 		}
 	}
-	
+
 	private void setServiceData() {
 		mServiceData = new SendbirdCallService.ServiceData();
 		mServiceData.isHeadsUpNotification = true;
@@ -114,6 +123,16 @@ public class IncomingCallActivity extends BaseActivity {
 		if (intent.getBooleanExtra("callEnded", false)) {
 			//TODO Generate the missed-call notification
 			finish();
+		}
+	}
+	public static IncomingCallActivity getInstance() {
+		return instance;
+	}
+	public void finishCall(){
+		Log.e("Finish_Screen","True");
+		finish();
+		if (mDirectCall != null) {
+			mDirectCall.end();
 		}
 	}
 }

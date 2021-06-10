@@ -218,8 +218,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
-								
-								
+
+
 								hideProgressDialog();
 								
 								LoginModel loginModel =
@@ -292,6 +292,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 													ShowToast(mContext, "Sendbird Auth Failed");
 												}
 											});
+									ShowAlertResponse(loginModel.getMessage(),
+											"1");
+
 								} else {
 									ShowAlertResponse(loginModel.getMessage(), "0");
 								}

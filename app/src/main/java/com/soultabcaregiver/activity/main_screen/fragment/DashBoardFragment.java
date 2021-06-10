@@ -125,7 +125,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         user_name_txt.setText(Utility.getSharedPreferences(mContext, APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext, APIS.Caregiver_lastname));
 
 
-        Log.e("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
         if (Utility.isNetworkConnected(mContext)) {
             ChartAPI(chart_value_data);
 
@@ -354,47 +353,57 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             }
 
 
-            if (lineDataSet != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+            if (lineDataSet != null) {
                 lineDataSet.setLineWidth(3f);
-                //   lineDataSet2.setLineWidth(3f);
-                lineDataSet3.setLineWidth(3f);
-                lineDataSet4.setLineWidth(3f);
-                lineDataSet5.setLineWidth(3f);
-
                 dataSets.add(lineDataSet);
-                //  dataSets.add(lineDataSet2);
-                dataSets.add(lineDataSet3);
-                dataSets.add(lineDataSet4);
-                dataSets.add(lineDataSet5);
-
                 lineDataSet.setColor(Color.parseColor("#800080"));
-                //lineDataSet2.setColor(Color.GREEN);
-                lineDataSet3.setColor(Color.BLUE);
-                lineDataSet4.setColor(Color.YELLOW);
-                lineDataSet5.setColor(Color.RED);
-
-                data = new LineData(dataSets);
-
-
-                lineChart.getAxisLeft().setTextColor(getResources().getColor(R.color.white));
-                lineChart.getAxisRight().setTextColor(getResources().getColor(R.color.white));
-                lineChart.getXAxis().setTextColor(getResources().getColor(R.color.white));
-                lineChart.getLegend().setTextColor(getResources().getColor(R.color.white));
-                lineChart.getDescription().setTextColor(getResources().getColor(R.color.white));
-
-
-                colorchange(lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5);
 
             }
 
-            if (lineDataSet != null && lineDataSet3 != null && lineDataSet4 != null && lineDataSet5 != null) {
+            if (lineDataSet3 != null) {
+                lineDataSet3.setLineWidth(3f);
+                dataSets.add(lineDataSet3);
+                lineDataSet3.setColor(Color.BLUE);
+
+            }
+
+            if (lineDataSet4 != null) {
+                lineDataSet4.setLineWidth(3f);
+                dataSets.add(lineDataSet4);
+                lineDataSet4.setColor(Color.YELLOW);
+
+            }
+
+
+            if (lineDataSet5 != null) {
+                lineDataSet5.setLineWidth(3f);
+                dataSets.add(lineDataSet5);
+                lineDataSet5.setColor(Color.RED);
+
+            }
+            //  dataSets.add(lineDataSet2);
+
+
+            data = new LineData(dataSets);
+
+
+            lineChart.getAxisLeft().setTextColor(getResources().getColor(R.color.white));
+            lineChart.getAxisRight().setTextColor(getResources().getColor(R.color.white));
+            lineChart.getXAxis().setTextColor(getResources().getColor(R.color.white));
+            lineChart.getLegend().setTextColor(getResources().getColor(R.color.white));
+            lineChart.getDescription().setTextColor(getResources().getColor(R.color.white));
+
+
+            colorchange(lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5);
+
+            if (lineDataSet != null || lineDataSet3 != null || lineDataSet4 != null || lineDataSet5 != null) {
 
 
                 lineChart.setData(data);
                 lineChart.invalidate();
 
             } else {
-               // lineChart.setNoDataText(getResources().getString(R.string.Chart_Message));
+                // lineChart.setNoDataText(getResources().getString(R.string.Chart_Message));
 
             }
 
@@ -438,35 +447,35 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     private void colorchange(LineDataSet lineDataSet, LineDataSet
             lineDataSet3, LineDataSet lineDataSet4, LineDataSet lineDataSet5) {
 
-        lineDataSet.setHighLightColor(Color.parseColor("#BEBEBE"));
-        lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-        lineDataSet.setValueTextColor(getResources().getColor(R.color.white));
-        lineDataSet.setValueTextSize(5f);
+        if (lineDataSet != null) {
+            lineDataSet.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet.setValueTextColor(getResources().getColor(R.color.white));
+            lineDataSet.setValueTextSize(5f);
+        }
 
 
-      /*  lineDataSet2.setHighLightColor(Color.parseColor("#BEBEBE"));
-        lineDataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
-        lineDataSet2.setValueTextColor(getResources().getColor(R.color.white));
-        lineDataSet2.setValueTextSize(5f);*/
+        if (lineDataSet3 != null) {
 
+            lineDataSet3.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet3.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet3.setValueTextColor(getResources().getColor(R.color.white));
+            lineDataSet3.setValueTextSize(5f);
+        }
+        if (lineDataSet4 != null) {
 
-        lineDataSet3.setHighLightColor(Color.parseColor("#BEBEBE"));
-        lineDataSet3.setAxisDependency(YAxis.AxisDependency.LEFT);
-        lineDataSet3.setValueTextColor(getResources().getColor(R.color.white));
-        lineDataSet3.setValueTextSize(5f);
+            lineDataSet4.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet4.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet4.setValueTextColor(getResources().getColor(R.color.white));
+            lineDataSet4.setValueTextSize(5f);
+        }
+        if (lineDataSet5 != null) {
 
-
-        lineDataSet4.setHighLightColor(Color.parseColor("#BEBEBE"));
-        lineDataSet4.setAxisDependency(YAxis.AxisDependency.LEFT);
-        lineDataSet4.setValueTextColor(getResources().getColor(R.color.white));
-        lineDataSet4.setValueTextSize(5f);
-
-
-        lineDataSet5.setHighLightColor(Color.parseColor("#BEBEBE"));
-        lineDataSet5.setAxisDependency(YAxis.AxisDependency.LEFT);
-        lineDataSet5.setValueTextColor(getResources().getColor(R.color.white));
-        lineDataSet5.setValueTextSize(5f);
-
+            lineDataSet5.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet5.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet5.setValueTextColor(getResources().getColor(R.color.white));
+            lineDataSet5.setValueTextSize(5f);
+        }
     }
 
     private ArrayList<Entry> datavalue1(List<String> yAxis) {

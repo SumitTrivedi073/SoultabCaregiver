@@ -39,7 +39,6 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.soultabcaregiver.R;
 
 import java.io.ByteArrayOutputStream;
@@ -103,22 +102,6 @@ public class Utility {
 
     public final static SimpleDateFormat yyyy_mm_dd_hh_mm_aa = new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.ENGLISH);
     public final static SimpleDateFormat yyyy_mm_dd_hh_mm_ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-
-
-
-
-    public final static SimpleDateFormat EEE_dd_MMM_yyyy_hh_mm_aa =
-            new SimpleDateFormat("EEE, dd MMM yyyy HH:mm aa", Locale.ENGLISH);
-
-    public final static SimpleDateFormat EEEhh_mm_aa =
-            new SimpleDateFormat("EEE, MM/dd/yy, hh:mm aa", Locale.ENGLISH);
-
-    public final static SimpleDateFormat yyyy_mm_dd_hh_mm_aa =
-            new SimpleDateFormat("yyyy-MM-dd hh:mm aa", Locale.ENGLISH);
-
-    public final static SimpleDateFormat yyyy_mm_dd_hh_mm_ss =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-
 
     public static final String FCM_TOKEN = "FirebaseToken";
 
@@ -790,15 +773,6 @@ public class Utility {
         prefsEditor.apply();
     }
 
-    public List<String> GetAvailableDate(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                PREFERENCE, Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("availableDate", "");
-        Type type = new TypeToken<List<String>>() {
-        }.getType();
-        return gson.fromJson(json, type);
-    }
 
 
 
