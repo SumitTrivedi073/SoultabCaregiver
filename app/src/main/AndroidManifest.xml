@@ -95,18 +95,6 @@
         </service>
 
 
-        <receiver
-            android:name=".sendbird_calls.FinishIncomingCallFromNotification"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="alarm" />
-            </intent-filter>
-        </receiver>
-
     </application>
 
 </manifest>

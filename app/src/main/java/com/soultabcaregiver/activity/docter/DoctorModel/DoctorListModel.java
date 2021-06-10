@@ -121,6 +121,12 @@ public class DoctorListModel implements Serializable {
             @Expose
             private String faxNum;
 
+
+
+            @SerializedName("favorite")
+            @Expose
+            private String favorite;
+
             public String getId() {
                 return id;
             }
@@ -201,6 +207,13 @@ public class DoctorListModel implements Serializable {
                 this.faxNum = faxNum;
             }
 
+            public String getFavorite() {
+                return favorite;
+            }
+
+            public void setFavorite(String favorite) {
+                this.favorite = favorite;
+            }
         }
     }
 }

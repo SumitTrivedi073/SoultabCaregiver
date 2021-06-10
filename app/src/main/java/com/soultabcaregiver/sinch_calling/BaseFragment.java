@@ -142,8 +142,9 @@ public class BaseFragment extends Fragment {
 		OK_txt.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+
 				SendBirdAuthentication.deauthenticate(getContext(), isSuccess -> {
+
 					MainActivity.getInstance().stopButtonClicked();
 					Utility.clearSharedPreference(getActivity());
 					alertDialog.dismiss();

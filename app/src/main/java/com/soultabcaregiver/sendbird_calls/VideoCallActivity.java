@@ -38,7 +38,7 @@ public class VideoCallActivity extends CallActivity {
 	
 	private ImageView mImageViewCameraSwitch;
 	
-	private ImageView mImageViewVideoOff;
+	private ImageView mImageViewVideoOff,image_view_audio_off;
 	//- Views
 	
 	@Override
@@ -97,6 +97,7 @@ public class VideoCallActivity extends CallActivity {
 		mVideoViewSmall = findViewById(R.id.video_view_small);
 		mImageViewCameraSwitch = findViewById(R.id.image_view_camera_switch);
 		mImageViewVideoOff = findViewById(R.id.image_view_video_off);
+		image_view_audio_off = findViewById(R.id.image_view_audio_off);
 	}
 	
 	@Override
@@ -144,11 +145,13 @@ public class VideoCallActivity extends CallActivity {
 					mDirectCall.stopVideo();
 					mIsVideoEnabled = false;
 					mImageViewVideoOff.setSelected(true);
+					mImageViewVideoOff.setImageResource(R.drawable.icon_video_turn_off);
 				} else {
 					Log.i(TAG, "[VideoCallActivity] startVideo()");
 					mDirectCall.startVideo();
 					mIsVideoEnabled = true;
 					mImageViewVideoOff.setSelected(false);
+					mImageViewVideoOff.setImageResource(R.drawable.icon_video_call_turn_on);
 				}
 			}
 		});
@@ -168,6 +171,8 @@ public class VideoCallActivity extends CallActivity {
 				mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
 				mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
 				mImageViewCameraSwitch.setVisibility(View.GONE);
+				image_view_audio_off.setVisibility(View.GONE);
+				mImageViewVideoOff.setVisibility(View.GONE);
 				break;
 			}
 			
@@ -175,8 +180,9 @@ public class VideoCallActivity extends CallActivity {
 				mVideoViewFullScreen.setVisibility(View.VISIBLE);
 				mViewConnectingVideoViewFullScreenFg.setVisibility(View.VISIBLE);
 				mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
-				mImageViewCameraSwitch.setVisibility(View.VISIBLE);
-				mImageViewVideoOff.setVisibility(View.VISIBLE);
+				mImageViewCameraSwitch.setVisibility(View.GONE);
+				mImageViewVideoOff.setVisibility(View.GONE);
+				image_view_audio_off.setVisibility(View.GONE);
 				break;
 			}
 			
@@ -186,7 +192,7 @@ public class VideoCallActivity extends CallActivity {
 				mRelativeLayoutVideoViewSmall.setVisibility(View.VISIBLE);
 				mImageViewCameraSwitch.setVisibility(View.VISIBLE);
 				mImageViewVideoOff.setVisibility(View.VISIBLE);
-				
+				image_view_audio_off.setVisibility(View.VISIBLE);
 				mLinearLayoutInfo.setVisibility(View.GONE);
 				
 				if (call != null && call.getMyRole() == DirectCallUserRole.CALLER) {
@@ -203,6 +209,9 @@ public class VideoCallActivity extends CallActivity {
 				mVideoViewFullScreen.setVisibility(View.GONE);
 				mViewConnectingVideoViewFullScreenFg.setVisibility(View.GONE);
 				mRelativeLayoutVideoViewSmall.setVisibility(View.GONE);
+				image_view_audio_off.setVisibility(View.GONE);
+				mImageViewVideoOff.setVisibility(View.GONE);
+
 				mImageViewCameraSwitch.setVisibility(View.GONE);
 			}
 			break;

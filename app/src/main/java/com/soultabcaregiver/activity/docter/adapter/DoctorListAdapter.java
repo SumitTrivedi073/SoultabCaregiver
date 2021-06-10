@@ -9,14 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DocorDetailsActivity;
@@ -31,7 +28,7 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
     TextView tvNodata;
     private List<DoctorListModel.Response.DoctorDatum> arDoclist, arSearch;
     private AppointedDocSelectionListener docSelectionListener;
-
+    private AppointedDocSelectionListener docFavListener;
 
     public DoctorListAdapter(Activity mainActivity, List<DoctorListModel.Response.DoctorDatum> listdata, TextView tvNodata) {
         arDoclist = listdata;
@@ -54,7 +51,14 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         final DoctorListModel.Response.DoctorDatum DocListBean = arDoclist.get(position);
         holder.doctor_name.setText(DocListBean.getName());
-        
+
+        if (DocListBean.getFavorite().equalsIgnoreCase("1")) {
+            holder.iv_fav.setImageResource(R.drawable.heart);
+        } else {
+            holder.iv_fav.setImageResource(R.drawable.heart_black);
+        }
+
+
         holder.doctor_list_relative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +67,15 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
                 mINTENT.putExtra(APIS.DocListItem, DocListBean);
                 view.getContext().startActivity(mINTENT);
 
+            }
+        });
+
+        holder.rl_cust_fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (docSelectionListener != null) {
+                    docSelectionListener.DocFavListener(DocListBean, holder.getAdapterPosition());
+                }
             }
         });
     }
@@ -82,23 +95,35 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
         }
     }
 
+    public void DocFavSelection(AppointedDocSelectionListener actDocList) {
+        try {
+            docFavListener = actDocList;
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView doctor_name;
-        public RelativeLayout doctor_list_relative;
+        public RelativeLayout doctor_list_relative,rl_cust_fav;
+        public ImageView iv_fav;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.doctor_name = itemView.findViewById(R.id.doctor_name);
             doctor_list_relative = itemView.findViewById(R.id.doctor_list_relative);
+            rl_cust_fav = itemView.findViewById(R.id.rl_cust_fav);
+            iv_fav = itemView.findViewById(R.id.iv_fav);
         }
     }
 
     public interface AppointedDocSelectionListener {
         void DocSelectionListener(List<DoctorListModel.Response.DoctorDatum> DocBeanList, boolean isSearch);
 
-    }
+        void DocFavListener(DoctorListModel.Response.DoctorDatum DocBeanList, int isSearch);
 
+    }
     @Override
     public Filter getFilter() {
         return new Filter() {

@@ -31,6 +31,8 @@ public class APIS {
 
     public static final String GETDOCCATAPI = "Caregiver/doctorCategory_list";
     public static final String GETDOCLISTAPI = "Caregiver/doctor_list";
+    public static final String GETMYDOCLISTAPI ="Caregiver/my_doctor_list";
+    public static final String GETMYFAVDOCAPI = "Caregiver/addmy_doctor_list";
     public static final String DOC_APPOIN_API = "Caregiver/add_appointment";
     public static final String ALLAPPOINTED_DOC_API = "Caregiver/list_appointments";
     public static final String DOC_UPDATE_APPOIN_API = "Caregiver/update_appointment";

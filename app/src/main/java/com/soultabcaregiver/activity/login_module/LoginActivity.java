@@ -284,7 +284,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 													APIS.caregiver_id), null,
 											Utility.getSharedPreferences(mContext,
 													APIS.Caregiver_name), isSuccess -> {
-												hideProgressDialog();
 												if (isSuccess) {
 													ShowAlertResponse(loginModel.getMessage(),
 															"1");

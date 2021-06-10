@@ -109,14 +109,14 @@
                 android:layout_width="@dimen/_42sdp"
                 android:layout_height="@dimen/_42sdp"
                 android:layout_margin="@dimen/_8sdp"
-                android:src="@drawable/icon_video_turn_off" />
+                android:src="@drawable/icon_video_call_turn_on" />
 
             <ImageView
                 android:id="@+id/image_view_audio_off"
                 android:layout_width="@dimen/_42sdp"
                 android:layout_height="@dimen/_42sdp"
                 android:layout_margin="@dimen/_8sdp"
-                android:src="@drawable/icon_audio" />
+                android:src="@drawable/icon_audio_turn_on" />
 
 
         </LinearLayout>

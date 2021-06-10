@@ -2,14 +2,9 @@
     <string name="app_name">Soultab Caregiver</string>
     <string name="google_maps_key">AIzaSyAOlMGm-WyTmatPRhh7CkqVSzGIziU4evU</string>
     <string name="net_connection">Please check your internet connection</string>
-    <string name="sinch_applicationKey">bbc9fe1c-0017-4f8e-8228-3d14cd29e83d</string>
-    <string name="sinch_application_secreat">6Q3oGPpRb0eCk5j3aX+60Q==</string>
-    <string name="sinch_enviorement_host">clientapi.sinch.com</string>
-    <string name="sinch_user_id">160636</string>
     <string name="powered_by_soultab">Powered by SoulTab</string>
 
     <!--Login Activity-->
-    <string name="login_hint_email">Enter your user id or email</string>
     <string name="hint_pass">Enter your password</string>
     <string name="login">Login</string>
     <string name="remember_me">Remember Me</string>
@@ -48,9 +43,6 @@
     <string name="doctor_list">Doctor List</string>
     <string name="doctor_appointment_time">Please select doctor appointment time</string>
     <string name="doctor_appointment_date">Please select doctor appointment date</string>
-    <string name="connecting">connecting…</string>
-    <string name="ringing">Ringing</string>
-    <string name="connected">Connected</string>
     <string name="are_you_sure_cancel_appointment">Are you sure want to cancel appointment?</string>
     <string name="cancel_appointment_successfully">Appointmnet cancel successfully</string>
     <string name="select_country_code">Please select country code</string>
@@ -117,7 +109,6 @@
     <string name="three_month">3 Month</string>
     <string name="six_month">6 Month</string>
     <string name="twelve_month">12 Month</string>
-    <string name="Chart_Message">We are setting thing\'s up for you please wait...</string>
 
     <!--Act Calender-->
 
@@ -129,10 +120,6 @@
     <string name="OK">Ok</string>
     <string name="Alert_Send">Alert has been \nsent successfully</string>
     <string name="reminder_delete_successfully">Reminder deleted successfully</string>
-    <string name="clock">clock</string>
-    <string name="proceed_with_reminder">Proceed with reminder</string>
-    <string name="_3_hours_prior_to_actual_time">3 hours prior to actual time</string>
-    <string name="reschedule_appoi">Reschedule Appointment</string>
     <string name="Every_Day">Every Day</string>
     <string name="Once">Once</string>
     <string name="Every_Week">Every Week</string>
@@ -169,7 +156,6 @@
     <string name="Off">Off</string>
     <string name="Snooze">Snooze</string>
     <string name="Done">Done</string>
-    <string name="dismiss">Dismiss</string>
     <string name="no_reminder">No Reminder</string>
 
     <integer-array name="beforTime_value_reminder">
@@ -221,11 +207,9 @@
     <string name="account_verification_txt">A Verification Code has been sent to\n your registered Phone Number,\n Please Enter it below.</string>
     <string name="resend_otp">Resend OTP</string>
     <string name="otp_expire">Your OTP expires in :</string>
-    <string name="your_otp_expire">Your OTP has been expired!</string>
     <string name="need_help">Need Help?</string>
     <string name="verify">Verify</string>
     <string name="otp_send_successfully">OTP send successfully \nto your registered\n mobile number.</string>
-    <string name="otp_verified_successfully">OTP Verified Successfully.</string>
 
 
     <!--Change Password-->

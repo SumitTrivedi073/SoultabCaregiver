@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
+
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
@@ -126,11 +128,6 @@ public class IncomingCallActivity extends BaseActivity {
 	public static IncomingCallActivity getInstance() {
 		return instance;
 	}
-	public void finishCall(){
-		Log.e("Finish_Screen","True");
-		finish();
-		if (mDirectCall != null) {
-			mDirectCall.end();
-		}
-	}
+
+
 }

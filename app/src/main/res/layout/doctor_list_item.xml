@@ -36,16 +36,25 @@
             android:layout_toStartOf="@+id/btn_schedule"
             android:layout_toLeftOf="@+id/btn_schedule" />
 
-    <!--<RelativeLayout
+    <RelativeLayout
+        android:id="@+id/rl_cust_fav"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginRight="@dimen/_5sdp"
         android:layout_toStartOf="@+id/btn_schedule"
-        android:layout_toLeftOf="@+id/btn_schedule" >
+        android:layout_toLeftOf="@+id/btn_schedule">
+
+        <ImageView
+            android:id="@+id/iv_fav"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_centerInParent="true"
+           android:src="@drawable/heart_black" />
 
 
+    </RelativeLayout>
 
-
-    </RelativeLayout>-->
 
     <TextView
         android:id="@+id/btn_schedule"

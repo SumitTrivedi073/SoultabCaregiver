@@ -24,6 +24,7 @@ import com.sendbird.calls.DirectCallUser;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.utils.EndResultUtils;
 import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
 
@@ -33,6 +34,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public abstract class CallActivity extends AppCompatActivity {
 	
@@ -88,6 +90,8 @@ public abstract class CallActivity extends AppCompatActivity {
 	private boolean mDoEnd;
 	
 	private Timer mEndingTimer;
+
+	ImageView mImageViewBluetooth;
 	
 	//+ CallService
 	private SendbirdCallService mCallService;
@@ -235,6 +239,7 @@ public abstract class CallActivity extends AppCompatActivity {
 		
 		mLinearLayoutConnectingButtons = findViewById(R.id.linear_layout_connecting_buttons);
 		mImageViewAudioOff = findViewById(R.id.image_view_audio_off);
+		mImageViewBluetooth = findViewById(R.id.image_view_bluetooth);
 		mImageViewEnd = findViewById(R.id.image_view_end);
 	}
 	
@@ -250,8 +255,11 @@ public abstract class CallActivity extends AppCompatActivity {
 		}
 		if (mIsAudioEnabled) {
 			mImageViewAudioOff.setSelected(false);
+			mImageViewAudioOff.setImageResource(R.drawable.icon_audio_turn_on);
 		} else {
 			mImageViewAudioOff.setSelected(true);
+			mImageViewAudioOff.setImageResource(R.drawable.icon_audio_turn_off);
+
 		}
 		mImageViewAudioOff.setOnClickListener(view -> {
 			if (mDirectCall != null) {
@@ -260,11 +268,15 @@ public abstract class CallActivity extends AppCompatActivity {
 					mDirectCall.muteMicrophone();
 					mIsAudioEnabled = false;
 					mImageViewAudioOff.setSelected(true);
+					mImageViewAudioOff.setImageResource(R.drawable.icon_audio_turn_off);
+
 				} else {
 					Log.i(TAG, "[CallActivity] unmute()");
 					mDirectCall.unmuteMicrophone();
 					mIsAudioEnabled = true;
 					mImageViewAudioOff.setSelected(false);
+					mImageViewAudioOff.setImageResource(R.drawable.icon_audio_turn_on);
+
 				}
 			}
 		});
@@ -485,17 +497,6 @@ public abstract class CallActivity extends AppCompatActivity {
 			if (mDirectCall.isEnded()) {
 				setState(STATE.STATE_ENDED, mDirectCall);
 
-				AlarmManager mAlarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-				Calendar calendar = Calendar.getInstance();
-				Intent intent = new Intent(this, FinishIncomingCallFromNotification.class);
-				PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-					mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-				}else {
-					mAlarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-
-				}
-
 
 			} else {
 				setState(STATE.STATE_ENDING, mDirectCall);
@@ -517,6 +518,9 @@ public abstract class CallActivity extends AppCompatActivity {
 				public void run() {
 					runOnUiThread(() -> {
 						Log.i(TAG, "[CallActivity] finish()");
+						Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(intent);
 
 						finish();
 

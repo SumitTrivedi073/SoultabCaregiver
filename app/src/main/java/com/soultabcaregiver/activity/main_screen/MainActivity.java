@@ -443,6 +443,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	//to kill the current session of SinchService
 	public void stopButtonClicked() {
 		Intent intent = new Intent(mContext, LoginActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		startActivity(intent);
 		finish();
 	}
