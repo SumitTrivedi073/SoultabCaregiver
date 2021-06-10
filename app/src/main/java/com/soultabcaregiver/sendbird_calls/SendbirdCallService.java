@@ -143,24 +143,21 @@ public class SendbirdCallService extends Service {
 			switch (am.getRingerMode()) {
 				case AudioManager.RINGER_MODE_SILENT:
 				case AudioManager.RINGER_MODE_VIBRATE:
-					mRingtone.setStreamType(AudioManager.STREAM_ALARM);
-					am.setStreamVolume(AudioManager.STREAM_RING,
-							am.getStreamMaxVolume(AudioManager.STREAM_RING),
-							AudioManager.FLAG_SHOW_UI);
-					am.setStreamVolume(AudioManager.STREAM_MUSIC,
-							am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
-							AudioManager.FLAG_SHOW_UI);
-					am.setStreamVolume(AudioManager.STREAM_ALARM,
-							am.getStreamMaxVolume(AudioManager.STREAM_ALARM),
-							AudioManager.FLAG_SHOW_UI);
-					ringToneTimer = new Timer();
-					ringToneTimer.scheduleAtFixedRate(new TimerTask() {
-						public void run() {
-							if (!mRingtone.isPlaying()) {
-								mRingtone.play();
+					try {
+						mRingtone.setStreamType(AudioManager.STREAM_ALARM);
+						am.setStreamVolume(AudioManager.STREAM_ALARM,
+								am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+						ringToneTimer = new Timer();
+						ringToneTimer.scheduleAtFixedRate(new TimerTask() {
+							public void run() {
+								if (!mRingtone.isPlaying()) {
+									mRingtone.play();
+								}
 							}
-						}
-					}, 1000, 500);
+						}, 1000, 500);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					break;
 				default:
 					break;

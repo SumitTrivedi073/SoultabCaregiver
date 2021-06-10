@@ -64,9 +64,7 @@ public class IncomingCallActivity extends BaseActivity {
 		});
 		
 		findViewById(R.id.declineButton).setOnClickListener(v -> {
-			if (mDirectCall != null) {
-				mDirectCall.end();
-			}
+			SendBirdCall.getCall(mServiceData.callId).end();
 			finish();
 		});
 
