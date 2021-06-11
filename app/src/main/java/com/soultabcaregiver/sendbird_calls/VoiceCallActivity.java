@@ -15,6 +15,7 @@ import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sendbird_calls.utils.TimeUtils;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.Set;
 import java.util.Timer;
@@ -23,8 +24,8 @@ import java.util.TimerTask;
 import static com.soultabcaregiver.utils.Utility.ShowToast;
 
 public class VoiceCallActivity extends CallActivity {
+	private  final String TAG = "VoiceCallActivity";
 
-	private  final String TAG = getClass().getSimpleName();
 	private Timer mCallDurationTimer;
 
 	//+ Views
@@ -129,7 +130,7 @@ public class VoiceCallActivity extends CallActivity {
 				if (e != null) {
 					Log.i(TAG, "[VoiceCallActivity] dial() => e: " + e.getMessage());
 					if (e.getMessage() != null) {
-						ShowToast(mContext, e.getMessage());
+						Utility.ShowToast(mContext, e.getMessage());
 					}
 
 					finishWithEnding(e.getMessage());
@@ -153,27 +154,18 @@ public class VoiceCallActivity extends CallActivity {
 
 		switch (mState) {
 			case STATE_ACCEPTING:
-				mImageViewBluetooth.setVisibility(View.GONE);
-				mImageViewSpeakerphone.setVisibility(View.GONE);
-				mImageViewAudioOff.setVisibility(View.GONE);
 				cancelCallDurationTimer();
 				break;
 
 			case STATE_CONNECTED: {
 				setInfo(call, "");
 				mLinearLayoutInfo.setVisibility(View.VISIBLE);
-				mImageViewBluetooth.setVisibility(View.VISIBLE);
-				mImageViewSpeakerphone.setVisibility(View.VISIBLE);
-				mImageViewAudioOff.setVisibility(View.VISIBLE);
 				setCallDurationTimer(call);
 				break;
 			}
 
 			case STATE_ENDING:
 			case STATE_ENDED: {
-				mImageViewBluetooth.setVisibility(View.GONE);
-				mImageViewSpeakerphone.setVisibility(View.GONE);
-				mImageViewAudioOff.setVisibility(View.GONE);
 				cancelCallDurationTimer();
 				break;
 			}

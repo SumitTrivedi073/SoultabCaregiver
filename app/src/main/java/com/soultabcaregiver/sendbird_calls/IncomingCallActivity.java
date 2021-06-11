@@ -2,18 +2,11 @@ package com.soultabcaregiver.sendbird_calls;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
-import androidx.core.app.ActivityCompat;
-
-import com.sendbird.calls.DirectCall;
-import com.sendbird.calls.SendBirdCall;
-import com.sendbird.calls.handler.DirectCallListener;
 import com.soultabcaregiver.R;
+import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
-
-import org.jetbrains.annotations.NotNull;
 
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALLEE_ID_TO_DIAL;
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALL_ID;
@@ -24,41 +17,19 @@ import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_DO_E
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_DO_LOCAL_VIDEO_START;
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_IS_VIDEO_CALL;
 
-
 public class IncomingCallActivity extends BaseActivity {
 	
 	private SendbirdCallService.ServiceData mServiceData;
-	
-	private DirectCall mDirectCall;
 	public static IncomingCallActivity instance;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_incoming_call_screen);
-		instance = IncomingCallActivity.this;
-
-		setServiceData();
 		
+		setServiceData();
+		instance = IncomingCallActivity.this;
 		TextView userName = findViewById(R.id.remoteUser);
 		userName.setText(mServiceData.remoteNicknameOrUserId);
-		
-		try {
-			mDirectCall = SendBirdCall.getCall(mServiceData.callId);
-			mDirectCall.setListener(new DirectCallListener() {
-				@Override
-				public void onConnected(@NotNull DirectCall directCall) {
-					finish();
-				}
-				
-				@Override
-				public void onEnded(@NotNull DirectCall directCall) {
-					finish();
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 		findViewById(R.id.answerButton).setOnClickListener(v -> {
 			finish();
@@ -66,20 +37,18 @@ public class IncomingCallActivity extends BaseActivity {
 		});
 		
 		findViewById(R.id.declineButton).setOnClickListener(v -> {
-			SendBirdCall.getCall(mServiceData.callId).end();
+			try {
+				SendBirdCall.getCall(mServiceData.callId).end();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			finish();
 		});
-
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
 		if (getIntent().getBooleanExtra("callEnded", false)) {
 			finish();
 		}
 	}
-
+	
 	private void setServiceData() {
 		mServiceData = new SendbirdCallService.ServiceData();
 		mServiceData.isHeadsUpNotification = true;
@@ -128,6 +97,5 @@ public class IncomingCallActivity extends BaseActivity {
 	public static IncomingCallActivity getInstance() {
 		return instance;
 	}
-
 
 }

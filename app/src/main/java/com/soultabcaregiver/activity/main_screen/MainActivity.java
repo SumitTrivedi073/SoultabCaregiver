@@ -33,6 +33,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.sendbird.calls.DirectCallLog;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
@@ -44,6 +45,7 @@ import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
+import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -99,7 +101,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	private GoogleApiClient googleApiClient;
 	
 	private String TAG = getClass().getSimpleName();
-	
+	private BroadcastReceiver mReceiver;
 	private Timer tmrStartEng;
 	
 	@Override
@@ -130,7 +132,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		badge = LayoutInflater.from(this).inflate(R.layout.homescreen_count,
 				bottomNavigationMenuView, false);
 		tv_badge = badge.findViewById(R.id.notification_badge);
-		
+		registerReceiver();
 		Alert_countAPI();
 		listner();
 	}
@@ -304,7 +306,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		receiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, final Intent intent) {
-				
+
 				String action = intent.getAction();
 				
 				if (action.matches(LocationManager.PROVIDERS_CHANGED_ACTION)) {
@@ -322,7 +324,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 				}
 			}
 		};
-		
+
 		// register events
 		getApplicationContext().registerReceiver(receiver,
 				new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
@@ -340,6 +342,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			Log.e("Timer", "Stop");
 			
 		}
+		unregisterReceiver();
 	}
 	
 	@Override
@@ -470,6 +473,41 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			} catch (IllegalAccessException e) {
 				Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
 			}
+		}
+	}
+
+
+	private void registerReceiver() {
+		Log.i(TAG, "[MainActivity] registerReceiver()");
+
+		if (mReceiver != null) {
+			return;
+		}
+
+		mReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.i(TAG, "[MainActivity] onReceive()");
+
+				DirectCallLog callLog = (DirectCallLog)intent.getSerializableExtra(BroadcastUtils.INTENT_EXTRA_CALL_LOG);
+				if (callLog != null) {
+					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter.getItem(1);
+					historyFragment.addLatestCallLog(callLog);*/
+				}
+			}
+		};
+
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
+		registerReceiver(mReceiver, intentFilter);
+	}
+
+	private void unregisterReceiver() {
+		Log.i(TAG, "[MainActivity] unregisterReceiver()");
+
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
 		}
 	}
 }

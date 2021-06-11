@@ -14,51 +14,68 @@
         android:layout_height="match_parent"
         android:background="@drawable/calls_connecting_video_view_fullscreen_fg" />
 
+    <RelativeLayout
+        android:id="@+id/relative_layout_video_view_small"
+        android:layout_width="96dp"
+        android:layout_height="160dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp">
+
+        <com.sendbird.calls.SendBirdVideoView
+            android:id="@+id/video_view_small"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/calls_frame" />
+
+    </RelativeLayout>
+
     <ImageView
         android:id="@+id/image_view_camera_switch"
-        android:layout_width="@dimen/_28sdp"
-        android:layout_height="@dimen/_28sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/_30sdp"
-        android:layout_marginRight="@dimen/_30sdp"
-        android:src="@drawable/icon_switch_camera" />
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="24dp"
+        android:background="@drawable/icon_switch_camera" />
 
     <LinearLayout
         android:id="@+id/linear_layout_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
+        android:orientation="vertical"
         android:layout_marginTop="64dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:gravity="center_horizontal">
 
         <ImageView
             android:id="@+id/image_view_profile"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/icon_avatar" />
+            android:background="@drawable/icon_avatar" />
 
         <TextView
             android:id="@+id/text_view_user_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:fontFamily="sans-serif-medium"
-            android:gravity="center_horizontal"
+            android:textSize="24sp"
             android:textColor="#e1ffffff"
-            android:textSize="24sp" />
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:id="@+id/text_view_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:lineSpacingExtra="6sp"
+            android:textSize="14sp"
             android:textColor="#e1ffffff"
-            android:textSize="14sp" />
+            android:lineSpacingExtra="6sp"
+            android:gravity="center_horizontal" />
 
     </LinearLayout>
 
@@ -66,9 +83,9 @@
         android:id="@+id/linear_layout_remote_mute"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_centerInParent="true"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
@@ -81,61 +98,10 @@
             android:id="@+id/text_view_remote_mute"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:lineSpacingExtra="6sp"
+            android:textSize="14sp"
             android:textColor="#e1ffffff"
-            android:textSize="14sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_layout_connecting_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="60dp"
-        android:layout_marginRight="60dp"
-        android:layout_marginBottom="40dp"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/image_view_video_off"
-                android:layout_width="@dimen/_42sdp"
-                android:layout_height="@dimen/_42sdp"
-                android:layout_margin="@dimen/_8sdp"
-                android:src="@drawable/icon_video_call_turn_on" />
-
-            <ImageView
-                android:id="@+id/image_view_audio_off"
-                android:layout_width="@dimen/_42sdp"
-                android:layout_height="@dimen/_42sdp"
-                android:layout_margin="@dimen/_8sdp"
-                android:src="@drawable/icon_audio_turn_on" />
-
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/image_view_end"
-                android:layout_width="@dimen/_42sdp"
-                android:layout_height="@dimen/_42sdp"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/_8sdp"
-                android:background="@drawable/circle_red"
-                android:padding="@dimen/_10sdp"
-                android:src="@drawable/icon_call_hang_up" />
-
-        </RelativeLayout>
+            android:lineSpacingExtra="6sp"
+            android:gravity="center_horizontal" />
 
     </LinearLayout>
 
@@ -150,33 +116,64 @@
 
         <ImageView
             android:id="@+id/image_view_decline"
-            android:layout_width="@dimen/_42sdp"
-            android:layout_height="@dimen/_42sdp"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/_8sdp"
-            android:background="@drawable/circle_red"
-            android:padding="@dimen/_10sdp"
-            android:src="@drawable/icon_call_hang_up" />
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/call_hangup"
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relative_layout_video_view_small"
-        android:layout_width="96dp"
-        android:layout_height="160dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp">
+    <LinearLayout
+        android:id="@+id/linear_layout_connecting_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginBottom="40dp">
 
-        <com.sendbird.calls.SendBirdVideoView
-            android:id="@+id/video_view_small"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/calls_frame" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/image_view_audio_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_audio_turn_on"
+                android:layout_alignParentLeft="true" />
 
+            <ImageView
+                android:id="@+id/image_view_video_off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_video_call_turn_on"
+                android:layout_centerHorizontal="true" />
+
+            <ImageView
+                android:id="@+id/image_view_bluetooth"
+                android:layout_width="@dimen/_42sdp"
+                android:layout_height="@dimen/_42sdp"
+                android:background="@drawable/selector_bluetooth_image_view"
+                android:layout_alignParentRight="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image_view_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/call_hangup"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

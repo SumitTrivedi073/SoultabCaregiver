@@ -22,12 +22,12 @@ import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.utils.Utility;
 
-import org.json.JSONObject;
-
 import java.util.List;
 import java.util.Objects;
 
 import androidx.core.app.NotificationCompat;
+
+import org.json.JSONObject;
 
 public class CustomFireBaseMessasing extends FirebaseMessagingService {
 	
@@ -42,8 +42,19 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
 	MainActivity mainActivity;
 	
 	boolean AppInBackground;
-	
-	
+
+	@Override
+	public void onNewToken(String token) {
+		super.onNewToken(token);
+		Log.e("onNewToken", token);
+
+			SendBirdAuthentication.registerPushToken(getApplicationContext(), token, e -> {
+				if (e != null) {
+					Log.i(TAG, "[MyFirebaseMessagingService] registerPushTokenForCurrentUser() => e: " + e.getMessage());
+				}
+			});
+
+	}
 	@Override
 	public void onMessageReceived(RemoteMessage remoteMessage) {
 		super.onMessageReceived(remoteMessage);
@@ -133,39 +144,26 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
 			e.printStackTrace();
 			Log.e("FCM_Error_Msg", e.getMessage());
 		}
+
+		if (SendBirdCall.handleFirebaseMessageData(remoteMessage.getData())) {
+			Log.i(TAG, "[MyFirebaseMessagingService] onMessageReceived() => " + remoteMessage.getData().toString());
+		}
 		
 	}
 	
-	@Override
-	public void onNewToken(String s) {
-		super.onNewToken(s);
-		Log.e("onNewToken", s);
-		SendBirdAuthentication.registerPushToken(this, s);
-	}
-	
-	private boolean isAppIsInBackground(Context context) {
-		boolean isInBackground = true;
-		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-			List<ActivityManager.RunningAppProcessInfo> runningProcesses =
-					am.getRunningAppProcesses();
-			for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-				if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-					for (String activeProcess : processInfo.pkgList) {
-						if (activeProcess.equals(context.getPackageName())) {
-							isInBackground = false;
-						}
-					}
-				}
-			}
-		} else {
-			List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-			ComponentName componentInfo = taskInfo.get(0).topActivity;
-			if (componentInfo.getPackageName().equals(context.getPackageName())) {
-				isInBackground = false;
-			}
+
+	private void createNotificationChannel() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			CharSequence name = getString(R.string.app_name);
+			String description = getString(R.string.app_name);
+			int importance = NotificationManager.IMPORTANCE_DEFAULT;
+			NotificationChannel channel = new NotificationChannel(MyNoti, name, importance);
+			channel.setDescription(description);
+			channel.canShowBadge();
+			NotificationManager notificationManager = getSystemService(NotificationManager.class);
+			notificationManager.createNotificationChannel(channel);
+
 		}
-		return isInBackground;
 	}
 	
 	private void getNotifaction(String title, String body) {
@@ -207,19 +205,31 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
 		}
 		
 	}
-	
-	private void createNotificationChannel() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			CharSequence name = getString(R.string.app_name);
-			String description = getString(R.string.app_name);
-			int importance = NotificationManager.IMPORTANCE_DEFAULT;
-			NotificationChannel channel = new NotificationChannel(MyNoti, name, importance);
-			channel.setDescription(description);
-			channel.canShowBadge();
-			NotificationManager notificationManager = getSystemService(NotificationManager.class);
-			notificationManager.createNotificationChannel(channel);
-			
+
+	private boolean isAppIsInBackground(Context context) {
+		boolean isInBackground = true;
+		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+			List<ActivityManager.RunningAppProcessInfo> runningProcesses =
+					am.getRunningAppProcesses();
+			for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+				if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+					for (String activeProcess : processInfo.pkgList) {
+						if (activeProcess.equals(context.getPackageName())) {
+							isInBackground = false;
+						}
+					}
+				}
+			}
+		} else {
+			List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+			ComponentName componentInfo = taskInfo.get(0).topActivity;
+			if (componentInfo.getPackageName().equals(context.getPackageName())) {
+				isInBackground = false;
+			}
 		}
+		return isInBackground;
 	}
-	
+
+
 }
