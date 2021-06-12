@@ -109,17 +109,19 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		mContext = this;
+		buildGoogleApiClient();
+
+		instance = MainActivity.this;
+
+
 		SendBirdAuthentication.autoAuthenticate(this, userId -> {
 			if (userId == null) {
-				ShowToast(mContext, "Sendbird Auth Failed");
+				Utility.ShowToast(mContext, "Sendbird Auth Failed");
 				return;
 			}
 		});
 
-		mContext = this;
-		buildGoogleApiClient();
-		
-		instance = MainActivity.this;
 		navigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 		video_call = findViewById(R.id.video_call);
 		BottomNavigationViewHelper.removeShiftMode(navigationView);
@@ -132,6 +134,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		badge = LayoutInflater.from(this).inflate(R.layout.homescreen_count,
 				bottomNavigationMenuView, false);
 		tv_badge = badge.findViewById(R.id.notification_badge);
+
 		registerReceiver();
 		Alert_countAPI();
 		listner();
@@ -356,7 +359,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			Log.e("Timer", "Destroy");
 			
 		}
-		
+		unregisterReceiver();
 	}
 	
 	@RequiresApi (api = Build.VERSION_CODES.GINGERBREAD)

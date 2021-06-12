@@ -520,22 +520,20 @@ public abstract class CallActivity extends AppCompatActivity {
     }
 
     protected void updateCallService() {
-        if (mCallService != null) {
-            Log.i(TAG, "[CallActivity] updateCallService()");
+        Log.i(TAG, "[CallActivity] updateCallService()");
 
-            SendbirdCallService.ServiceData serviceData = new SendbirdCallService.ServiceData();
-            serviceData.isHeadsUpNotification = false;
-            serviceData.remoteNicknameOrUserId = getRemoteNicknameOrUserId(mDirectCall);
-            serviceData.callState = mState;
-            serviceData.callId = (mDirectCall != null ? mDirectCall.getCallId() : mCallId);
-            serviceData.isVideoCall = mIsVideoCall;
-            serviceData.calleeIdToDial = mCalleeIdToDial;
-            serviceData.doDial = mDoDial;
-            serviceData.doAccept = mDoAccept;
-            serviceData.doLocalVideoStart = mDoLocalVideoStart;
+        SendbirdCallService.ServiceData serviceData = new SendbirdCallService.ServiceData();
+        serviceData.isHeadsUpNotification = false;
+        serviceData.remoteNicknameOrUserId = getRemoteNicknameOrUserId(mDirectCall);
+        serviceData.callState = mState;
+        serviceData.callId = (mDirectCall != null ? mDirectCall.getCallId() : mCallId);
+        serviceData.isVideoCall = mIsVideoCall;
+        serviceData.calleeIdToDial = mCalleeIdToDial;
+        serviceData.doDial = mDoDial;
+        serviceData.doAccept = mDoAccept;
+        serviceData.doLocalVideoStart = mDoLocalVideoStart;
 
-            mCallService.updateNotification(serviceData);
-        }
+        mCallService.updateNotification(serviceData);
     }
     //- SendbirdCallService
 }

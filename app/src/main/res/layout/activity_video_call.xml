@@ -135,27 +135,27 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_40sdp"
             android:layout_marginBottom="24dp">
 
             <ImageView
                 android:id="@+id/image_view_audio_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:background="@drawable/icon_audio_turn_on"
                 android:layout_alignParentLeft="true" />
 
             <ImageView
                 android:id="@+id/image_view_video_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:background="@drawable/icon_video_call_turn_on"
                 android:layout_centerHorizontal="true" />
 
             <ImageView
                 android:id="@+id/image_view_bluetooth"
-                android:layout_width="@dimen/_42sdp"
-                android:layout_height="@dimen/_42sdp"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:background="@drawable/selector_bluetooth_image_view"
                 android:layout_alignParentRight="true" />
 

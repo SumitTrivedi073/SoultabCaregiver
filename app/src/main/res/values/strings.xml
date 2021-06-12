@@ -255,9 +255,9 @@
     <string name="calls_notification_decline">Decline</string>
     <string name="calls_notification_end">End</string>
 
-    <string name="calls_notification_voice_calling_content_from">Voice call from %s</string>
+    <string name="calls_notification_voice_calling_content_from">Incoming Voice call from %s</string>
     <string name="calls_notification_voice_calling_content_to">Voice call to %s</string>
-    <string name="calls_notification_video_calling_content_from">Video call from %s</string>
+    <string name="calls_notification_video_calling_content_from">Incoming Video call from %s</string>
     <string name="calls_notification_video_calling_content_to">Video call to %s</string>
     <!--  Added By AJay  -->
 
