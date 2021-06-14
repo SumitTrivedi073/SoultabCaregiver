@@ -7,24 +7,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.soultabcaregiver.R;
+import com.soultabcaregiver.sendbird_calls.utils.TimeUtils;
 import com.sendbird.calls.AcceptParams;
 import com.sendbird.calls.AudioDevice;
 import com.sendbird.calls.CallOptions;
 import com.sendbird.calls.DialParams;
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
-import com.soultabcaregiver.R;
-import com.soultabcaregiver.sendbird_calls.utils.TimeUtils;
 import com.soultabcaregiver.utils.Utility;
 
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.soultabcaregiver.utils.Utility.ShowToast;
+
 
 public class VoiceCallActivity extends CallActivity {
-	private  final String TAG = "VoiceCallActivity";
+	private final String TAG = "VoiceCallActivity";
 
 	private Timer mCallDurationTimer;
 
@@ -148,7 +148,7 @@ public class VoiceCallActivity extends CallActivity {
 	@TargetApi(18)
 	@Override
 	protected boolean setState(STATE state, DirectCall call) {
-		if (!super.setState(state,call)) {
+		if (!super.setState(state, call)) {
 			return false;
 		}
 

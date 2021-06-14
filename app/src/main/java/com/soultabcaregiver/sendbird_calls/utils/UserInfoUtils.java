@@ -5,8 +5,8 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sendbird.calls.User;
 import com.soultabcaregiver.R;
+import com.sendbird.calls.User;
 
 
 public class UserInfoUtils {

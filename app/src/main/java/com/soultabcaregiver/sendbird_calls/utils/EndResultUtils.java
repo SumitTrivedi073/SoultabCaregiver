@@ -2,11 +2,11 @@ package com.soultabcaregiver.sendbird_calls.utils;
 
 import android.content.Context;
 
-import com.sendbird.calls.DirectCallEndResult;
 import com.soultabcaregiver.R;
+import com.sendbird.calls.DirectCallEndResult;
 
 public class EndResultUtils {
-    
+
     public static String getEndResultString(Context context, DirectCallEndResult endResult) {
         String endResultString = "";
         switch (endResult) {

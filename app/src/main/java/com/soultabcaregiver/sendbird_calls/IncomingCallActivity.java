@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.soultabcaregiver.R;
-import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.sendbird.calls.SendBirdCall;
 
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALLEE_ID_TO_DIAL;
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALL_ID;
@@ -18,37 +18,13 @@ import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_DO_L
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_IS_VIDEO_CALL;
 
 public class IncomingCallActivity extends BaseActivity {
-	
+
 	private SendbirdCallService.ServiceData mServiceData;
 	public static IncomingCallActivity instance;
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_incoming_call_screen);
-		
-		setServiceData();
-		instance = IncomingCallActivity.this;
-		TextView userName = findViewById(R.id.remoteUser);
-		userName.setText(mServiceData.remoteNicknameOrUserId);
-		
-		findViewById(R.id.answerButton).setOnClickListener(v -> {
-			finish();
-			startActivity(getCallActivityIntent());
-		});
-		
-		findViewById(R.id.declineButton).setOnClickListener(v -> {
-			try {
-				SendBirdCall.getCall(mServiceData.callId).end();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			finish();
-		});
-		if (getIntent().getBooleanExtra("callEnded", false)) {
-			finish();
-		}
+	public static IncomingCallActivity getInstance() {
+		return instance;
 	}
-	
+
 	private void setServiceData() {
 		mServiceData = new SendbirdCallService.ServiceData();
 		mServiceData.isHeadsUpNotification = true;
@@ -85,7 +61,7 @@ public class IncomingCallActivity extends BaseActivity {
 				Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 		return intent;
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -94,8 +70,33 @@ public class IncomingCallActivity extends BaseActivity {
 			finish();
 		}
 	}
-	public static IncomingCallActivity getInstance() {
-		return instance;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_incoming_call_screen);
+
+		setServiceData();
+		instance = IncomingCallActivity.this;
+		TextView userName = findViewById(R.id.remoteUser);
+		userName.setText(mServiceData.remoteNicknameOrUserId);
+
+		findViewById(R.id.answerButton).setOnClickListener(v -> {
+			finish();
+			startActivity(getCallActivityIntent());
+		});
+
+		findViewById(R.id.declineButton).setOnClickListener(v -> {
+			try {
+				SendBirdCall.getCall(mServiceData.callId).end();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finish();
+		});
+		if (getIntent().getBooleanExtra("callEnded", false)) {
+			finish();
+		}
 	}
 
 }

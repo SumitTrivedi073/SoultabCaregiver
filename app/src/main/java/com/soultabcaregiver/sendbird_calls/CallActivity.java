@@ -18,16 +18,15 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.soultabcaregiver.R;
+import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.sendbird_calls.utils.EndResultUtils;
+import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
 import com.sendbird.calls.AudioDevice;
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.DirectCallUser;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
-import com.soultabcaregiver.R;
-import com.soultabcaregiver.activity.main_screen.MainActivity;
-import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
-import com.soultabcaregiver.sendbird_calls.utils.EndResultUtils;
-import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
 
 import java.util.Set;
 import java.util.Timer;
@@ -35,63 +34,80 @@ import java.util.TimerTask;
 
 public abstract class CallActivity extends AppCompatActivity {
 
-    private  final String TAG = "CallActivity";
-
     static final int ENDING_TIME_MS = 1000;
-
-    public enum STATE {
-        STATE_ACCEPTING,
-        STATE_OUTGOING,
-        STATE_CONNECTED,
-        STATE_ENDING,
-        STATE_ENDED
-    }
-
+    private final String TAG = "CallActivity";
+    protected boolean mDoLocalVideoStart;
     Context mContext;
 
     STATE mState;
-    private String mCallId,mCallToUserName;
     boolean mIsVideoCall;
     String mCalleeIdToDial;
-    private boolean mDoDial;
-    private boolean mDoAccept;
-    protected boolean mDoLocalVideoStart;
-
-    private boolean mDoEnd;
-
     DirectCall mDirectCall;
     boolean mIsAudioEnabled;
-    private Timer mEndingTimer;
-
     //+ Views
     LinearLayout mLinearLayoutInfo;
     ImageView mImageViewProfile;
     TextView mTextViewUserId;
     TextView mTextViewStatus;
-
     LinearLayout mLinearLayoutRemoteMute;
     TextView mTextViewRemoteMute;
-
     RelativeLayout mRelativeLayoutRingingButtons;
     ImageView mImageViewDecline;
-
     LinearLayout mLinearLayoutConnectingButtons;
     ImageView mImageViewAudioOff;
     ImageView mImageViewBluetooth;
     ImageView mImageViewEnd;
+    private String mCallId, mCallToUserName;
+    private boolean mDoDial;
+    private boolean mDoAccept;
+    private boolean mDoEnd;
+    private Timer mEndingTimer;
+    //+ CallService
+    private SendbirdCallService mCallService;
     //- Views
+    //+ CallService
+    IncomingCallActivity incomingCallActivity;
+
+
+    private final ServiceConnection mCallServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.i(TAG, "[CallActivity] onServiceConnected()");
+
+            SendbirdCallService.CallBinder callBinder = (SendbirdCallService.CallBinder) iBinder;
+            mCallService = callBinder.getService();
+            mBound = true;
+
+            updateCallService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.i(TAG, "[CallActivity] onServiceDisconnected()");
+
+            mBound = false;
+        }
+    };
+
+    @TargetApi(19)
+    private static int getSystemUiVisibility() {
+        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            flags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        return flags;
+    }
 
     //+ abstract methods
     protected abstract int getLayoutResourceId();
-    protected abstract void setAudioDevice(AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices);
-    protected abstract void startCall(boolean amICallee);
     //- abstract methods
 
-    //+ CallService
-    private SendbirdCallService mCallService;
+    protected abstract void setAudioDevice(AudioDevice currentAudioDevice, Set<AudioDevice> availableAudioDevices);
+
     private boolean mBound = false;
     //- CallService
 
+    protected abstract void startCall(boolean amICallee);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +121,7 @@ public abstract class CallActivity extends AppCompatActivity {
         setContentView(getLayoutResourceId());
 
         mContext = this;
+        incomingCallActivity = IncomingCallActivity.instance;
 
         bindCallService();
 
@@ -176,6 +193,7 @@ public abstract class CallActivity extends AppCompatActivity {
         mImageViewAudioOff = findViewById(R.id.image_view_audio_off);
         mImageViewBluetooth = findViewById(R.id.image_view_bluetooth);
         mImageViewEnd = findViewById(R.id.image_view_end);
+
     }
 
     protected void setViews() {
@@ -276,17 +294,8 @@ public abstract class CallActivity extends AppCompatActivity {
         }
     }
 
-    @TargetApi(19)
-    private static int getSystemUiVisibility() {
-        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            flags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        }
-        return flags;
-    }
-
     private void checkAuthentication() {
-        if (SendBirdCall.getCurrentUser() == null)  {
+        if (SendBirdCall.getCurrentUser() == null) {
             SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
                 if (userId == null) {
                     finishWithEnding("autoAuthenticate() failed.");
@@ -378,9 +387,9 @@ public abstract class CallActivity extends AppCompatActivity {
                 mLinearLayoutRemoteMute.setVisibility(View.GONE);
                 mRelativeLayoutRingingButtons.setVisibility(View.GONE);
                 mLinearLayoutConnectingButtons.setVisibility(View.GONE);
-
-                IncomingCallActivity.getInstance().finish();
-
+                if (incomingCallActivity!=null) {
+                    IncomingCallActivity.getInstance().finish();
+                }
                 String status = "";
                 if (call != null) {
                     status = EndResultUtils.getEndResultString(mContext, call.getEndResult());
@@ -458,7 +467,6 @@ public abstract class CallActivity extends AppCompatActivity {
                 public void run() {
                     runOnUiThread(() -> {
                         Log.i(TAG, "[CallActivity] finish()");
-
                         finish();
 
                         unbindCallService();
@@ -476,27 +484,6 @@ public abstract class CallActivity extends AppCompatActivity {
 
         unbindCallService();
     }
-
-    //+ CallService
-    private ServiceConnection mCallServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            Log.i(TAG, "[CallActivity] onServiceConnected()");
-
-            SendbirdCallService.CallBinder callBinder = (SendbirdCallService.CallBinder) iBinder;
-            mCallService = callBinder.getService();
-            mBound = true;
-
-            updateCallService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            Log.i(TAG, "[CallActivity] onServiceDisconnected()");
-
-            mBound = false;
-        }
-    };
 
     private void bindCallService() {
         Log.i(TAG, "[CallActivity] bindCallService()");
@@ -520,20 +507,30 @@ public abstract class CallActivity extends AppCompatActivity {
     }
 
     protected void updateCallService() {
-        Log.i(TAG, "[CallActivity] updateCallService()");
+        if (mCallService != null) {
+            Log.i(TAG, "[CallActivity] updateCallService()");
 
-        SendbirdCallService.ServiceData serviceData = new SendbirdCallService.ServiceData();
-        serviceData.isHeadsUpNotification = false;
-        serviceData.remoteNicknameOrUserId = getRemoteNicknameOrUserId(mDirectCall);
-        serviceData.callState = mState;
-        serviceData.callId = (mDirectCall != null ? mDirectCall.getCallId() : mCallId);
-        serviceData.isVideoCall = mIsVideoCall;
-        serviceData.calleeIdToDial = mCalleeIdToDial;
-        serviceData.doDial = mDoDial;
-        serviceData.doAccept = mDoAccept;
-        serviceData.doLocalVideoStart = mDoLocalVideoStart;
+            SendbirdCallService.ServiceData serviceData = new SendbirdCallService.ServiceData();
+            serviceData.isHeadsUpNotification = false;
+            serviceData.remoteNicknameOrUserId = getRemoteNicknameOrUserId(mDirectCall);
+            serviceData.callState = mState;
+            serviceData.callId = (mDirectCall != null ? mDirectCall.getCallId() : mCallId);
+            serviceData.isVideoCall = mIsVideoCall;
+            serviceData.calleeIdToDial = mCalleeIdToDial;
+            serviceData.doDial = mDoDial;
+            serviceData.doAccept = mDoAccept;
+            serviceData.doLocalVideoStart = mDoLocalVideoStart;
 
-        mCallService.updateNotification(serviceData);
+            mCallService.updateNotification(serviceData);
+        }
+    }
+
+    public enum STATE {
+        STATE_ACCEPTING,
+        STATE_OUTGOING,
+        STATE_CONNECTED,
+        STATE_ENDING,
+        STATE_ENDED
     }
     //- SendbirdCallService
 }

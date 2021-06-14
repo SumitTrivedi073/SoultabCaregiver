@@ -1,20 +1,20 @@
 package com.soultabcaregiver.sendbird_calls;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.sendbird.android.SendBird;
 import com.sendbird.calls.AuthenticateParams;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.SendBirdException;
-import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.utils.Utility;
 
+
 public class SendBirdAuthentication {
-	
+
 	private static final String TAG = "SendBirdAuthentication";
 
 	public static void registerPushToken(Context context, String pushToken, PushTokenHandler handler) {
@@ -40,13 +40,9 @@ public class SendBirdAuthentication {
 		});
 	}
 
-	public interface PushTokenHandler {
-		void onResult(SendBirdException e);
-	}
-	
 	public static void autoAuthenticate(Context context, AutoAuthenticateHandler handler) {
 		Log.i(TAG, "[AuthenticationUtils] autoAuthenticate()");
-		
+
 		if (SendBirdCall.getCurrentUser() != null) {
 			Log.i(TAG,
 					"[AuthenticationUtils] autoAuthenticate(userId: " + SendBirdCall.getCurrentUser().getUserId() + ") => OK (SendBirdCall.getCurrentUser() != null)");
@@ -55,11 +51,11 @@ public class SendBirdAuthentication {
 			}
 			return;
 		}
-		
-		String userId = Utility.getSharedPreferences(context, APIS.caregiver_id);
+
+		String userId =  Utility.getSharedPreferences(context, APIS.caregiver_id);
 		String userName = Utility.getSharedPreferences(context, APIS.Caregiver_name);
 		String fcmToken = Utility.getSharedPreferences(context, Utility.FCM_TOKEN);
-		
+
 		if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(fcmToken)) {
 			Log.i(TAG,
 					"[AuthenticationUtils] autoAuthenticate() => authenticate(userId: " + userId + ")");
@@ -68,13 +64,13 @@ public class SendBirdAuthentication {
 						if (e != null) {
 							Log.i(TAG,
 									"[AuthenticationUtils] autoAuthenticate() => authenticate() " + "=>" + " Failed (e: " + e.getMessage() + ")");
-							
+
 							if (handler != null) {
 								handler.onResult(null);
 							}
 							return;
 						}
-						
+
 						Log.i(TAG,
 								"[AuthenticationUtils] autoAuthenticate() => registerPushToken" +
 										"(pushToken: " + fcmToken + ")");
@@ -83,21 +79,21 @@ public class SendBirdAuthentication {
 								Log.i(TAG,
 										"[AuthenticationUtils] autoAuthenticate() => " +
 												"registerPushToken() => Failed (e1: " + e1.getMessage() + ")");
-								
-								
+
+
 								if (handler != null) {
 									handler.onResult(null);
 								}
 								return;
 							}
-							
+
 							Log.i(TAG,
 									"[AuthenticationUtils] autoAuthenticate() => authenticate() " + "=>" + " OK (Authenticated)");
 							if (handler != null) {
 								SendBird.connect(userId, (user1, e2) -> {
 									SendBird.updateCurrentUserInfo(userName, "",
 											e3 -> handler.onResult(userId));
-									
+
 								});
 							}
 						});
@@ -111,20 +107,20 @@ public class SendBirdAuthentication {
 			}
 		}
 	}
-	
+
 	public static void authenticate(Context context, String userId, String accessToken,
-	                                String userName, AuthenticateHandler handler) {
+									String userName, AuthenticateHandler handler) {
 		if (userId == null) {
 			if (handler != null) {
 				handler.onResult(false);
 			}
 			return;
 		}
-		
+
 		String fcmToken = Utility.getSharedPreferences(context, Utility.FCM_TOKEN);
-		
+
 		deauthenticate(context, isSuccess -> {
-			
+
 			SendBirdCall.authenticate(new AuthenticateParams(userId).setAccessToken(accessToken),
 					(user, e1) -> {
 						if (e1 != null) {
@@ -134,7 +130,7 @@ public class SendBirdAuthentication {
 							}
 							return;
 						}
-						
+
 						Log.i(TAG,
 								"[AuthenticationUtils] authenticate() => registerPushToken" +
 										"(pushToken: " + fcmToken + ")");
@@ -146,7 +142,6 @@ public class SendBirdAuthentication {
 								}
 								return;
 							}
-							
 							if (handler != null) {
 								if (SendBird.getConnectionState() != SendBird.ConnectionState.OPEN) {
 									SendBird.connect(userId, (user1, e3) -> {
@@ -180,6 +175,7 @@ public class SendBirdAuthentication {
 					});
 		});
 	}
+
 	public static void deauthenticate(Context context, DeauthenticateHandler handler) {
 		if (SendBirdCall.getCurrentUser() == null) {
 			if (handler != null) {
@@ -223,17 +219,21 @@ public class SendBirdAuthentication {
 		});
 	}
 
+	public interface PushTokenHandler {
+		void onResult(SendBirdException e);
+	}
+
 	public interface AutoAuthenticateHandler {
 		void onResult(String userId);
 	}
 
 	public interface AuthenticateHandler {
-		
+
 		void onResult(boolean isSuccess);
 	}
-	
+
 	public interface DeauthenticateHandler {
-		
+
 		void onResult(boolean isSuccess);
 	}
 }

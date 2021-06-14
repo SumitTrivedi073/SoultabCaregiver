@@ -10,11 +10,11 @@ public class PrefUtils {
 
     private static final String PREF_NAME = "sendbird_calls";
 
-    private static final String PREF_KEY_APP_ID         = "app_id";
-    private static final String PREF_KEY_USER_ID        = "user_id";
-    private static final String PREF_KEY_ACCESS_TOKEN   = "access_token";
-    private static final String PREF_KEY_CALLEE_ID      = "callee_id";
-    private static final String PREF_KEY_PUSH_TOKEN     = "push_token";
+    private static final String PREF_KEY_APP_ID = "app_id";
+    private static final String PREF_KEY_USER_ID = "user_id";
+    private static final String PREF_KEY_ACCESS_TOKEN = "access_token";
+    private static final String PREF_KEY_CALLEE_ID = "callee_id";
+    private static final String PREF_KEY_PUSH_TOKEN = "push_token";
 
     private static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

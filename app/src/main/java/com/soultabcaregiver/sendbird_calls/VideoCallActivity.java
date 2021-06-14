@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.soultabcaregiver.R;
 import com.sendbird.calls.AcceptParams;
 import com.sendbird.calls.AudioDevice;
 import com.sendbird.calls.CallOptions;
@@ -15,15 +16,15 @@ import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.DirectCallUserRole;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.SendBirdVideoView;
-import com.soultabcaregiver.R;
 import com.soultabcaregiver.utils.Utility;
 
 import org.webrtc.RendererCommon;
 
 import java.util.Set;
 
+
 public class VideoCallActivity extends CallActivity {
-	
+
 	private static final String TAG = "VideoCallActivity";
 
 	private boolean mIsVideoEnabled;
@@ -192,7 +193,7 @@ public class VideoCallActivity extends CallActivity {
 	@TargetApi(18)
 	@Override
 	protected boolean setState(STATE state, DirectCall call) {
-		if (!super.setState(state,call)) {
+		if (!super.setState(state, call)) {
 			return false;
 		}
 
@@ -278,6 +279,6 @@ public class VideoCallActivity extends CallActivity {
 			updateCallService();
 		}
 	}
-	
+
 
 }
