@@ -5,6 +5,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.multidex.MultiDex;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -19,8 +21,6 @@ import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 
 import java.util.UUID;
-
-import androidx.multidex.MultiDex;
 
 public class AppController extends Application {
 	
@@ -86,6 +86,7 @@ public class AppController extends Application {
 						public void onEnded(DirectCall call) {
 							int ongoingCallCount = SendBirdCall.getOngoingCallCount();
 							Log.i(TAG, "[BaseApplication] onEnded() => callId: " + call.getCallId() + ", getOngoingCallCount(): " + ongoingCallCount);
+
 
 							BroadcastUtils.sendCallLogBroadcast(context, call.getCallLog());
 

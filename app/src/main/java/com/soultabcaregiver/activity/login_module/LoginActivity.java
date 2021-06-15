@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -25,6 +27,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
@@ -42,8 +45,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 import static com.soultabcaregiver.utils.Utility.ShowToast;
 
@@ -86,14 +87,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		tbRemPass = findViewById(R.id.tb_rem);
 		view_pwd1 = findViewById(R.id.view_pwd1);
 		tv_rem_pass = findViewById(R.id.tv_rem_pass);
-		
+
+
+		FirebaseApp.initializeApp(this);
 		if (Utility.getSharedPreferences2(mContext, APIS.save_email) != null) {
 			if (Utility.getSharedPreferences2(mContext, APIS.save_email).equals("true")) {
 				etEmail.setText(Utility.getSharedPreferences2(mContext, APIS.Caregiver_email));
 				tbRemPass.setChecked(true);
 			} else {
 				tbRemPass.setChecked(false);
-				
+
 			}
 		}
 		
@@ -147,20 +150,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 		switch (v.getId()) {
 			case R.id.tv_rem_pass:
-				if (tbRemPass.isChecked()) {
-					tbRemPass.setChecked(false);
-				} else {
-					tbRemPass.setChecked(true);
-				}
+				tbRemPass.setChecked(!tbRemPass.isChecked());
 				break;
 			case R.id.tv_forgot_pass:
 				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
 				break;
-			
+
 			case R.id.tv_login:
 				Login();
 				break;
-			
+
 		}
 		
 	}
@@ -168,28 +167,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	private void Login() {
 		if (Utility.isNetworkConnected(LoginActivity.this)) {
 			if (etEmail.getText().toString().trim().isEmpty()) {
-				
-				ShowToast(mContext, getResources().getString(R.string.valid_email));
-				
-				
+
+				Utility.ShowToast(mContext, getResources().getString(R.string.valid_email));
+
+
 			} else if (etPass.getText().toString().trim().isEmpty()) {
-				
-				ShowToast(mContext, getResources().getString(R.string.valid_pass));
-				
+
+				Utility.ShowToast(mContext, getResources().getString(R.string.valid_pass));
+
 			} else if (!Utility.isvalidatePassword(etPass.getText().toString().trim())) {
-				ShowToast(mContext, getResources().getString(R.string.password_not_valid));
-				
+				Utility.ShowToast(mContext, getResources().getString(R.string.password_not_valid));
+
 			} else if (etPass.getText().toString().trim().length() < 8) {
-				ShowToast(mContext, getResources().getString(R.string.password_notvalid));
-				
+				Utility.ShowToast(mContext, getResources().getString(R.string.password_notvalid));
+
 			} else {
 				GetLogin();
 			}
 		} else {
-			
-			ShowToast(mContext, getResources().getString(R.string.net_connection));
-			
-			
+
+			Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+
+
 		}
 	}
 	
@@ -249,10 +248,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									//                            .getId().getBytes(), Base64
 									//                            .DEFAULT);
 									Log.d("ENCODE_DECODE",
-											"encodeValue = " + new String(encodeValue));
-									
+											"encodeValue = " + encodeValue);
+
 									Utility.setSharedPreference(mContext, APIS.EncodeUser_id,
-											new String(encodeValue));
+											encodeValue);
 									
 									Utility.setSharedPreference(mContext, APIS.user_id,
 											loginModel.getResponse().getId());

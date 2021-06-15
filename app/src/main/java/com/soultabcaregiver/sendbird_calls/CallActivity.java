@@ -18,15 +18,15 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.soultabcaregiver.R;
-import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
-import com.soultabcaregiver.sendbird_calls.utils.EndResultUtils;
-import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
 import com.sendbird.calls.AudioDevice;
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.DirectCallUser;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
+import com.soultabcaregiver.R;
+import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.sendbird_calls.utils.EndResultUtils;
+import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
 
 import java.util.Set;
 import java.util.Timer;
@@ -387,7 +387,7 @@ public abstract class CallActivity extends AppCompatActivity {
                 mLinearLayoutRemoteMute.setVisibility(View.GONE);
                 mRelativeLayoutRingingButtons.setVisibility(View.GONE);
                 mLinearLayoutConnectingButtons.setVisibility(View.GONE);
-                if (incomingCallActivity!=null) {
+                if (IncomingCallActivity.getInstance() != null) {
                     IncomingCallActivity.getInstance().finish();
                 }
                 String status = "";
@@ -468,7 +468,9 @@ public abstract class CallActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Log.i(TAG, "[CallActivity] finish()");
                         finish();
-
+                        if (IncomingCallActivity.getInstance() != null) {
+                            IncomingCallActivity.getInstance().finish();
+                        }
                         unbindCallService();
                         stopCallService();
                     });

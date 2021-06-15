@@ -20,11 +20,10 @@ import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_IS_V
 
 public class IncomingCallActivity extends BaseActivity {
 
-	private SendbirdCallService.ServiceData mServiceData;
-
 	public static IncomingCallActivity instance;
-
+	private SendbirdCallService.ServiceData mServiceData;
 	private DirectCall mDirectCall;
+
 
 	public static IncomingCallActivity getInstance() {
 		return instance;
@@ -41,19 +40,19 @@ public class IncomingCallActivity extends BaseActivity {
 		mServiceData.doDial = false;
 		mServiceData.doAccept = false;
 		mServiceData.doLocalVideoStart = false;
-		
-		
+
+
 	}
-	
+
 	private Intent getCallActivityIntent() {
 		final Intent intent;
-		
+
 		if (mServiceData.isVideoCall) {
 			intent = new Intent(this, VideoCallActivity.class);
 		} else {
 			intent = new Intent(this, VoiceCallActivity.class);
 		}
-		
+
 		intent.putExtra(EXTRA_CALL_STATE, mServiceData.callState);
 		intent.putExtra(EXTRA_CALL_ID, mServiceData.callId);
 		intent.putExtra(EXTRA_IS_VIDEO_CALL, mServiceData.isVideoCall);
@@ -66,6 +65,7 @@ public class IncomingCallActivity extends BaseActivity {
 				Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 		return intent;
 	}
+
 
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -81,29 +81,9 @@ public class IncomingCallActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_incoming_call_screen);
 
-
-		checkAuthentication();
-	}
-
-	private void checkAuthentication() {
-		if (SendBirdCall.getCurrentUser() == null) {
-			SendBirdAuthentication.autoAuthenticate(this, userId -> {
-				if (userId == null) {
-					finish();
-					return;
-				}
-				ready();
-			});
-		} else {
-			ready();
-		}
-	}
-
-	private void ready() {
-		setContentView(R.layout.activity_incoming_call_screen);
+		instance = IncomingCallActivity.this;
 
 		setServiceData();
-		instance = IncomingCallActivity.this;
 		TextView userName = findViewById(R.id.remoteUser);
 		userName.setText(mServiceData.remoteNicknameOrUserId);
 		if (getIntent().getBooleanExtra("callEnded", false)) {
@@ -115,19 +95,22 @@ public class IncomingCallActivity extends BaseActivity {
 			startActivity(getCallActivityIntent());
 		});
 
-		if (mServiceData.callId != null) {
-			mDirectCall = SendBirdCall.getCall(mServiceData.callId);
-		}
 
 		findViewById(R.id.declineButton).setOnClickListener(v -> {
+
 			try {
-				if (mDirectCall != null) {
-					mDirectCall.end();
-				}
+				SendBirdCall.getCall(mServiceData.callId).end();
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
 			finish();
 		});
+
 	}
+
+
 }
+
+

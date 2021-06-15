@@ -37,6 +37,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.soultabcaregiver.R;
@@ -46,7 +51,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -61,11 +65,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 
 public class Utility {
 
@@ -75,9 +74,9 @@ public class Utility {
 
     static AlertDialog alertDialog;
 
-    private static String PREFERENCE = "Soultab Caregiver";
+    private static final String PREFERENCE = "Soultab Caregiver";
 
-    private static int MAX_IMAGE_DIMENSION = 720;
+    private static final int MAX_IMAGE_DIMENSION = 720;
 
     public static final String SinchServiceConnected = "SinchServiceConnected";
     public final static SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
@@ -663,7 +662,6 @@ public class Utility {
     public static void ShowToast(Context mContext, String msg) {
         Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
         ViewGroup group = (ViewGroup) toast.getView();
-        TextView messageTextView = (TextView) group.getChildAt(0);
         toast.getView().setBackground(mContext.getResources().getDrawable(R.drawable.theme_btn_bg));
         TextView text = toast.getView().findViewById(android.R.id.message);
         toast.setGravity(Gravity.CENTER, 0, 0);

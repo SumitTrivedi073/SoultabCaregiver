@@ -138,8 +138,10 @@ public class SendbirdCallService extends Service {
 		if (context != null) {
 			Intent intent = new Intent(context, SendbirdCallService.class);
 			context.stopService(intent);
+
 		}
 	}
+
 
 	@Nullable
 	@Override

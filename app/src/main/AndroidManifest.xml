@@ -79,10 +79,12 @@
             android:name=".activity.reminder.AddSnoozeTime"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".sendbird_calls.IncomingCallActivity"
+        <activity
+            android:name=".sendbird_calls.IncomingCallActivity"
             android:theme="@style/CallTheme"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
             android:screenOrientation="portrait"
+            android:autoRemoveFromRecents="true"
             tools:ignore="LockedOrientationActivity" />
 
 
