@@ -1,18 +1,20 @@
 package com.soultabcaregiver.WebService;
 
-import android.util.Base64;
-
-import com.soultabcaregiver.utils.Utility;
-
 public class APIS {
+
     //Live Server Base URL
-    public static final String BASEURL1 = "https://mysoultab.com/api/";
+    public static final String BASEURL = "https://mysoultab.com/api/";
+    public static final String CaregiverImageURL = "https://mysoultab.com/uploads/profile_images/";
+
 
     //  Development Server Base URL
-    public static final String BASEURL = "https://dev.mysoultab.com/api/";
+    public static final String BASEURL1 = "https://dev.mysoultab.com/api/";
+    public static final String CaregiverImageURL1 = "https://dev.mysoultab.com/uploads/profile_images/";
+
 
     //Streaging ke liye Base URL
     public static final String BASEURL2 = "https://stage.mysoultab.com/api/";
+    public static final String CaregiverImageURL2 = "https://stage.mysoultab.com/uploads/profile_images/";
 
 
     public static final String HEADERKEY = "soultab";
@@ -73,8 +75,6 @@ public class APIS {
     public static final String Caregiver_mobile = "mobile";
     public static final String profile_image = "profile_image";
     public static final String save_email = "save_email";
-
-    public static final String CaregiverImageURL = "https://mysoultab.com/uploads/profile_images/";
 
 
     //Key's

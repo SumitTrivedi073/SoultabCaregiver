@@ -4,9 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.sendbird.calls.DirectCall;
+import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
-import com.sendbird.calls.SendBirdCall;
 
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALLEE_ID_TO_DIAL;
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALL_ID;
@@ -20,7 +21,11 @@ import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_IS_V
 public class IncomingCallActivity extends BaseActivity {
 
 	private SendbirdCallService.ServiceData mServiceData;
+
 	public static IncomingCallActivity instance;
+
+	private DirectCall mDirectCall;
+
 	public static IncomingCallActivity getInstance() {
 		return instance;
 	}
@@ -76,27 +81,53 @@ public class IncomingCallActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_incoming_call_screen);
 
+
+		checkAuthentication();
+	}
+
+	private void checkAuthentication() {
+		if (SendBirdCall.getCurrentUser() == null) {
+			SendBirdAuthentication.autoAuthenticate(this, userId -> {
+				if (userId == null) {
+					finish();
+					return;
+				}
+				ready();
+			});
+		} else {
+			ready();
+		}
+	}
+
+	private void ready() {
+		setContentView(R.layout.activity_incoming_call_screen);
+
 		setServiceData();
 		instance = IncomingCallActivity.this;
 		TextView userName = findViewById(R.id.remoteUser);
 		userName.setText(mServiceData.remoteNicknameOrUserId);
+		if (getIntent().getBooleanExtra("callEnded", false)) {
+			finish();
+		}
 
 		findViewById(R.id.answerButton).setOnClickListener(v -> {
 			finish();
 			startActivity(getCallActivityIntent());
 		});
 
+		if (mServiceData.callId != null) {
+			mDirectCall = SendBirdCall.getCall(mServiceData.callId);
+		}
+
 		findViewById(R.id.declineButton).setOnClickListener(v -> {
 			try {
-				SendBirdCall.getCall(mServiceData.callId).end();
+				if (mDirectCall != null) {
+					mDirectCall.end();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			finish();
 		});
-		if (getIntent().getBooleanExtra("callEnded", false)) {
-			finish();
-		}
 	}
-
 }

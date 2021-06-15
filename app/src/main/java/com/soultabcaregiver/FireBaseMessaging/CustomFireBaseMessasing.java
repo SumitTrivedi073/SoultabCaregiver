@@ -11,6 +11,8 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sendbird.calls.SendBirdCall;
@@ -22,12 +24,10 @@ import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.utils.Utility;
 
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.Objects;
-
-import androidx.core.app.NotificationCompat;
-
-import org.json.JSONObject;
 
 public class CustomFireBaseMessasing extends FirebaseMessagingService {
 	
@@ -180,15 +180,13 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
 		String channelId = "Default";
 		NotificationCompat.Builder builder =
 				new NotificationCompat.Builder(this, MyNoti).setSmallIcon(
-						R.drawable.main_logo).setContentTitle(title).setContentText(
+						R.drawable.notification_icon).setContentTitle(title).setContentText(
 						body).setAutoCancel(true).setContentIntent(pendingIntent);
-		;
 		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			NotificationChannel channel = new NotificationChannel(MyNoti, "Default channel",
 					NotificationManager.IMPORTANCE_DEFAULT);
 			manager.createNotificationChannel(channel);
-			;
 		}
 		manager.notify(0, builder.build());
 		

@@ -471,22 +471,22 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
         if (TextUtils.isEmpty(txt_Portal.getText().toString())) {
             Portal.setVisibility(View.GONE);
-
-            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+            Call_btn.setVisibility(View.GONE);
+          /*  RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             Call_btn.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            sendFax_btn.setLayoutParams(params);
+            sendFax_btn.setLayoutParams(params);*/
         }
 
         if (TextUtils.isEmpty(txt_fax.getText().toString())) {
             sendFax_btn.setVisibility(View.GONE);
-
-            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+            Call_btn.setVisibility(View.GONE);
+           /* RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Call_btn.setLayoutParams(params1);
+            Call_btn.setLayoutParams(params1);*/
 
             RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -496,16 +496,32 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
         if (!TextUtils.isEmpty(txt_Portal.getText().toString()) && !TextUtils.isEmpty(txt_fax.getText().toString())) {
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+           /* RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Call_btn.setLayoutParams(params);
+            Call_btn.setLayoutParams(params);*/
+            Call_btn.setVisibility(View.GONE);
+
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            Portal.setLayoutParams(params1);
+
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            sendFax_btn.setLayoutParams(params);
         }
 
         if (!TextUtils.isEmpty(txt_fax.getText().toString()) && !TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
-
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            Call_btn.setVisibility(View.GONE);
+           /* RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            Portal.setLayoutParams(params);
+            Portal.setLayoutParams(params);*/
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            Portal.setLayoutParams(params1);
+
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            sendFax_btn.setLayoutParams(params);
         }
 
         Call_btn.setOnClickListener(new View.OnClickListener() {

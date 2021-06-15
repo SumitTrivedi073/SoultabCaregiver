@@ -257,7 +257,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                            }else if (String.valueOf(code).equals("403")) {
+                            } else if (code.equals("403")) {
                                 logout_app(response.getString("message"));
                             } else {
 
@@ -705,24 +705,25 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             Portal.setLayoutParams(params2);
         }
 
+
         if (TextUtils.isEmpty(txt_Portal.getText().toString())) {
             Portal.setVisibility(View.GONE);
-
-            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+            Call_btn.setVisibility(View.GONE);
+          /*  RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             Call_btn.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            sendFax_btn.setLayoutParams(params);
+            sendFax_btn.setLayoutParams(params);*/
         }
 
         if (TextUtils.isEmpty(txt_fax.getText().toString())) {
             sendFax_btn.setVisibility(View.GONE);
-
-            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+            Call_btn.setVisibility(View.GONE);
+           /* RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Call_btn.setLayoutParams(params1);
+            Call_btn.setLayoutParams(params1);*/
 
             RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -732,16 +733,32 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
 
         if (!TextUtils.isEmpty(txt_Portal.getText().toString()) && !TextUtils.isEmpty(txt_fax.getText().toString())) {
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+           /* RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Call_btn.setLayoutParams(params);
+            Call_btn.setLayoutParams(params);*/
+            Call_btn.setVisibility(View.GONE);
+
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            Portal.setLayoutParams(params1);
+
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            sendFax_btn.setLayoutParams(params);
         }
 
         if (!TextUtils.isEmpty(txt_fax.getText().toString()) && !TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
-
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            Call_btn.setVisibility(View.GONE);
+           /* RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            Portal.setLayoutParams(params);
+            Portal.setLayoutParams(params);*/
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
+            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            Portal.setLayoutParams(params1);
+
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            sendFax_btn.setLayoutParams(params);
         }
 
         Call_btn.setOnClickListener(new View.OnClickListener() {
