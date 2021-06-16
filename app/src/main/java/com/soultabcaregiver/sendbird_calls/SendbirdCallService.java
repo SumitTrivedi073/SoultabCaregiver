@@ -143,8 +143,8 @@ public class SendbirdCallService extends Service {
 	}
 
 
-	@Nullable
-	@Override
+    @Nullable
+    @Override
 	public IBinder onBind(Intent intent) {
 		Log.i(TAG, "[CallService] onBind()");
 		return mBinder;

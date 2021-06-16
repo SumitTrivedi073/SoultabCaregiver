@@ -2,7 +2,6 @@ package com.soultabcaregiver.activity.docter;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,15 +18,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mukesh.countrypicker.Country;
 import com.mukesh.countrypicker.listeners.OnCountryPickerListener;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.login_module.ForgotPasswordActivity;
-import com.soultabcaregiver.activity.login_module.OTPVarificationActivity;
-import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONException;
@@ -44,11 +40,11 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
     RelativeLayout back_btn;
     EditText txt_doctor_name, txt_Address, txt_mobile_number, txt_email, txt_fax, txt_portal;
     TextView tv_add_doctor;
-    TextView countryCodeTv;
-    LinearLayout countryLL;
+    private final int sortBy = com.mukesh.countrypicker.CountryPicker.SORT_BY_NONE;
+    TextView countryCodeTv, countryCodefax;
     private com.mukesh.countrypicker.CountryPicker countryPicker;
-    private int sortBy = com.mukesh.countrypicker.CountryPicker.SORT_BY_NONE;
-    private String filedata = "",CountryCode;
+    LinearLayout countryLL, countryfax;
+    private String country_code_Value, CountryCode, CountryCodeFax;
     AlertDialog alertDialog;
 
     @Override
@@ -74,6 +70,8 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
         tv_add_doctor = findViewById(R.id.btn_add_doctor);
         countryCodeTv = findViewById(R.id.countryCodeTv);
         countryLL = findViewById(R.id.countryLL);
+        countryCodefax = findViewById(R.id.countryCodefax);
+        countryfax = findViewById(R.id.countryfax);
 
         tv_add_doctor.setOnClickListener(this);
         //  Doctor_img.setOnClickListener(this);
@@ -83,6 +81,16 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
 
+                country_code_Value = "1";
+
+                showPicker();
+            }
+        });
+
+        countryfax.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                country_code_Value = "2";
                 showPicker();
             }
         });
@@ -125,7 +133,7 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
         } else if (TextUtils.isEmpty(txt_Address.getText().toString())) {
             Utility.ShowToast(mContext, getResources().getString(R.string.address));
         }else if (TextUtils.isEmpty(countryCodeTv.getText().toString().trim())){
-            Utility.ShowToast(mContext, getResources().getString(R.string.select_country_code));
+            Utility.ShowToast(mContext, getResources().getString(R.string.select_country_code_for_mobile));
 
         }else if (TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
             Utility.ShowToast(mContext, getResources().getString(R.string.enter_mobile_number));
@@ -137,6 +145,8 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
 
         } else if (!Utility.isValidEmail(txt_email.getText().toString())) {
             Utility.ShowToast(mContext, getResources().getString(R.string.valid_email));
+        } else if (TextUtils.isEmpty(countryCodeTv.getText().toString().trim())) {
+            Utility.ShowToast(mContext, getResources().getString(R.string.select_country_code_for_fax));
         } else if (TextUtils.isEmpty(txt_fax.getText().toString())) {
             Utility.ShowToast(mContext, getResources().getString(R.string.enter_Fax));
         } else if (TextUtils.isEmpty(txt_portal.getText().toString())) {
@@ -157,8 +167,8 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
             mainObject.put("doctor_name", txt_doctor_name.getText().toString());
             mainObject.put("doctor_email", txt_email.getText().toString());
             mainObject.put("doctor_address", txt_Address.getText().toString());
-            mainObject.put("doctor_mob_no", countryCodeTv.getText().toString()+txt_mobile_number.getText().toString());
-            mainObject.put("fax_num", txt_fax.getText().toString());
+            mainObject.put("doctor_mob_no", countryCodeTv.getText().toString() + txt_mobile_number.getText().toString());
+            mainObject.put("fax_num", countryCodefax.getText().toString() + txt_fax.getText().toString());
             mainObject.put("website", txt_portal.getText().toString());
 
             Log.e("mainObject", String.valueOf(mainObject));
@@ -177,12 +187,12 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
                         hideProgressDialog();
                         try {
                             String code = response.getString("status_code");
-                            if (String.valueOf(code).equals("200")) {
+                            if (code.equals("200")) {
 
-                               ShowAlertResponse(response.getString("message"));
-                            }else if (String.valueOf(code).equals("403")) {
+                                ShowAlertResponse(response.getString("message"));
+                            } else if (code.equals("403")) {
                                 logout_app(response.getString("message"));
-                            }else {
+                            } else {
                                 ShowAlertResponse(response.getString("message"));
 
                             }
@@ -257,7 +267,12 @@ public class AddDoctorActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onSelectCountry(Country country) {
-        countryCodeTv.setText(country.getDialCode());
-        CountryCode = country.getDialCode();
+        if (country_code_Value.equals("1")) {
+            countryCodeTv.setText(country.getDialCode());
+            CountryCode = country.getDialCode();
+        } else if (country_code_Value.equals("2")) {
+            countryCodefax.setText(country.getDialCode());
+            CountryCodeFax = country.getDialCode();
+        }
     }
 }

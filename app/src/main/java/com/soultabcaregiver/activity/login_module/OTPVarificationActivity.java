@@ -79,8 +79,8 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
         otp_verify_btn = findViewById(R.id.otp_verify_btn);
 
         email = getIntent().getStringExtra("email");
-        Log.e("email",email);
 
+        need_help_relative.setVisibility(View.GONE);
         countdownFunction();
         listner();
         
@@ -385,7 +385,7 @@ public class OTPVarificationActivity extends BaseActivity implements View.OnClic
 
     private class GenericTextWatcher implements TextWatcher {
 
-        private View view;
+        private final View view;
 
         private GenericTextWatcher(View view) {
             this.view = view;

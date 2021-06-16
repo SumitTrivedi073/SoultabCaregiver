@@ -46,6 +46,9 @@
     <string name="are_you_sure_cancel_appointment">Are you sure want to cancel appointment?</string>
     <string name="cancel_appointment_successfully">Appointmnet cancel successfully</string>
     <string name="select_country_code">Please select country code</string>
+    <string name="select_country_code_for_mobile">Please select country code for Mobile</string>
+    <string name="select_country_code_for_fax">Please select country code for Fax</string>
+
     <string name="mobile_unavailable">Mobile number not available</string>
     <string name="Fax_unavailable">Fax number not available</string>
     <string name="cancel_appointment">Cancel appointment</string>

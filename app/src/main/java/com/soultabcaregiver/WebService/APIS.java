@@ -3,13 +3,13 @@ package com.soultabcaregiver.WebService;
 public class APIS {
 
     //Live Server Base URL
-    public static final String BASEURL1 = "https://mysoultab.com/api/";
-    public static final String CaregiverImageURL1 = "https://mysoultab.com/uploads/profile_images/";
+    public static final String BASEURL = "https://mysoultab.com/api/";
+    public static final String CaregiverImageURL = "https://mysoultab.com/uploads/profile_images/";
 
 
     //  Development Server Base URL
-    public static final String BASEURL = "https://dev.mysoultab.com/api/";
-    public static final String CaregiverImageURL = "https://dev.mysoultab.com/uploads/profile_images/";
+    public static final String BASEURL1 = "https://dev.mysoultab.com/api/";
+    public static final String CaregiverImageURL1 = "https://dev.mysoultab.com/uploads/profile_images/";
 
 
     //Streaging ke liye Base URL
