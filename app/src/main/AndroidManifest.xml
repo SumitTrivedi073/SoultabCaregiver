@@ -15,8 +15,6 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-
-
     <application
         android:name=".utils.AppController"
         android:allowBackup="false"
@@ -105,10 +103,10 @@
             android:name=".sendbird_calls.SendbirdCallService"
             android:stopWithTask="false" />
 
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

@@ -357,7 +357,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         try {
 
             mainObject.put("doctor_id", id);
-            mainObject.put("time_id", sSelTimeId);
             mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
             mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
             mainObject.put("date_id", sSelDateId);

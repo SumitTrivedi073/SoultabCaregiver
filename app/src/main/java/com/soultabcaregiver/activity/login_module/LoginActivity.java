@@ -290,8 +290,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 													ShowToast(mContext, "Sendbird Auth Failed");
 												}
 											});
-									ShowAlertResponse(loginModel.getMessage(),
-											"1");
 
 								} else {
 									ShowAlertResponse(loginModel.getMessage(), "0");
