@@ -1,7 +1,5 @@
 package com.soultabcaregiver.activity.docter;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -14,8 +12,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.soultabcaregiver.R;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
@@ -39,8 +38,9 @@ public class SocialActivity extends AppCompatActivity {
         back_btn = findViewById(R.id.back_btn);
         wv_webview = findViewById(R.id.social_Web);
 
-        urlString = getIntent().getStringExtra("webUrl");
 
+        urlString = getIntent().getStringExtra("webUrl");
+        Log.e("webUrl2", urlString);
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

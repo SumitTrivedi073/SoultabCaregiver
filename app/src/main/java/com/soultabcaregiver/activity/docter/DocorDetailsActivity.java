@@ -564,6 +564,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
                     Intent intent = new Intent(mContext, SocialActivity.class);
                     intent.putExtra("webUrl", docListBean.getPortal());
+                    Log.e("webUrl", docListBean.getPortal());
                     startActivity(intent);
                     finish();
                 } else {
@@ -612,7 +613,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
                         AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
 
-                        Utility.ShowToast(mContext, requestModel.getMessage());
+                        Utility.ShowToast(mContext, getResources().getString(R.string.fax_Send_success));
                         onBackPressed();
                         finish();
 

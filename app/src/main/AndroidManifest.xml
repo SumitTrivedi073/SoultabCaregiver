@@ -23,6 +23,7 @@
         android:roundIcon="@drawable/main_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">
         <activity android:name=".activity.docter.SocialActivity"/>
 

@@ -81,6 +81,7 @@
     <string name="appointment">Appointment</string>
     <string name="no_activity_scheduled">No activities scheduled at</string>
     <string name="select_future_time">Please Select Future Time</string>
+    <string name="fax_Send_success">Fax was sent successfully</string>
 
 
     <!--Location Permission-->

@@ -850,7 +850,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
 
                         AppointmentRequestModel requestModel = new Gson().fromJson(response.toString(), AppointmentRequestModel.class);
 
-                        Utility.ShowToast(mContext, requestModel.getMessage());
+                        Utility.ShowToast(mContext, getResources().getString(R.string.fax_Send_success));
                         onBackPressed();
                         finish();
 

@@ -3,6 +3,7 @@ package com.soultabcaregiver.WebService;
 public class APIS {
 
     //Live Server Base URL
+
     public static final String BASEURL1 = "https://mysoultab.com/api/";
     public static final String CaregiverImageURL1 = "https://mysoultab.com/uploads/profile_images/";
 
