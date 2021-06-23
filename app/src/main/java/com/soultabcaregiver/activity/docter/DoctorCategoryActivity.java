@@ -2,7 +2,6 @@ package com.soultabcaregiver.activity.docter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,15 +21,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorCategoryModel;
 import com.soultabcaregiver.utils.AppController;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONObject;
@@ -160,8 +158,8 @@ public class DoctorCategoryActivity extends BaseActivity implements View.OnClick
 
     public class CustomGridAdapter extends BaseAdapter {
         Context context;
-        private List<DoctorCategoryModel.Response.CategoryDatum> arDocCatIn;
-        private LayoutInflater inflater;
+        private final List<DoctorCategoryModel.Response.CategoryDatum> arDocCatIn;
+        private final LayoutInflater inflater;
 
         CustomGridAdapter(Context context_, List<DoctorCategoryModel.Response.CategoryDatum> arPhoto_) {
             arDocCatIn = arPhoto_;

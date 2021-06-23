@@ -11,7 +11,10 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -22,7 +25,14 @@ import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.twillovoicecall.Constants;
+import com.soultabcaregiver.twillovoicecall.IncomingCallNotificationService;
 import com.soultabcaregiver.utils.Utility;
+import com.twilio.voice.CallException;
+import com.twilio.voice.CallInvite;
+import com.twilio.voice.CancelledCallInvite;
+import com.twilio.voice.MessageListener;
+import com.twilio.voice.Voice;
 
 import org.json.JSONObject;
 
@@ -51,7 +61,8 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
                 Log.i(TAG, "[MyFirebaseMessagingService] registerPushTokenForCurrentUser() => e: " + e.getMessage());
             }
         });
-
+        Intent intent = new Intent(Constants.ACTION_FCM_TOKEN);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override
@@ -112,8 +123,41 @@ public class CustomFireBaseMessasing extends FirebaseMessagingService {
             e.printStackTrace();
             Log.e("FCM_Error_Msg", e.getMessage());
         }
+        boolean valid = Voice.handleMessage(this, remoteMessage.getData(), new MessageListener() {
+            @Override
+            public void onCallInvite(@NonNull CallInvite callInvite) {
+                final int notificationId = (int) System.currentTimeMillis();
+                handleInvite(callInvite, notificationId);
+            }
 
+            @Override
+            public void onCancelledCallInvite(@NonNull CancelledCallInvite cancelledCallInvite, @Nullable CallException callException) {
+                handleCanceledCallInvite(cancelledCallInvite);
+            }
+        });
 
+        if (!valid) {
+            Log.e(TAG, "The message was not a valid Twilio Voice SDK payload: " +
+                    remoteMessage.getData());
+        }
+
+    }
+
+    private void handleInvite(CallInvite callInvite, int notificationId) {
+        Intent intent = new Intent(this, IncomingCallNotificationService.class);
+        intent.setAction(Constants.ACTION_INCOMING_CALL);
+        intent.putExtra(Constants.INCOMING_CALL_NOTIFICATION_ID, notificationId);
+        intent.putExtra(Constants.INCOMING_CALL_INVITE, callInvite);
+
+        startService(intent);
+    }
+
+    private void handleCanceledCallInvite(CancelledCallInvite cancelledCallInvite) {
+        Intent intent = new Intent(this, IncomingCallNotificationService.class);
+        intent.setAction(Constants.ACTION_CANCEL_CALL);
+        intent.putExtra(Constants.CANCELLED_CALL_INVITE, cancelledCallInvite);
+
+        startService(intent);
     }
 
     private void checkAuthentication(RemoteMessage remoteMessage) {

@@ -23,9 +23,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 

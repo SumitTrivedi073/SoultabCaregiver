@@ -1,11 +1,10 @@
-package com.soultabcaregiver.activity.calender.CalenderModel;
+package com.soultabcaregiver.Model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
+public class TwilioTokenModel {
 
-public class CommonResponseModel implements Serializable {
     @SerializedName("status_code")
     @Expose
     private Integer statusCode;
@@ -15,6 +14,10 @@ public class CommonResponseModel implements Serializable {
     @SerializedName("message")
     @Expose
     private String message;
+
+    @SerializedName("response")
+    @Expose
+    private String response;
 
 
     public Integer getStatusCode() {
@@ -41,5 +44,13 @@ public class CommonResponseModel implements Serializable {
         this.message = message;
     }
 
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
 
 }

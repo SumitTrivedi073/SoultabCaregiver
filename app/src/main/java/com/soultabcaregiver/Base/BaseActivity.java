@@ -1,4 +1,4 @@
-package com.soultabcaregiver.sinch_calling;
+package com.soultabcaregiver.Base;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,13 +11,13 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 
 public abstract class BaseActivity extends AppCompatActivity {

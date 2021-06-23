@@ -18,6 +18,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.activity.CaregiverListActivity;
@@ -25,7 +26,6 @@ import com.soultabcaregiver.activity.alert.adapter.AlertAdapter;
 import com.soultabcaregiver.activity.alert.model.AlertModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 

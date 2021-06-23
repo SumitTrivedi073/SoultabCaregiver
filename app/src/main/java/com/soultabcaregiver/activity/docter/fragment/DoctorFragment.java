@@ -17,9 +17,9 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.docter.AddDoctorActivity;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.NonSwipeableViewPager;
 
 import java.util.ArrayList;

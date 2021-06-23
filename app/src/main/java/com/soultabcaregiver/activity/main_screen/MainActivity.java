@@ -20,6 +20,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
@@ -34,6 +40,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.sendbird.calls.DirectCallLog;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
@@ -46,7 +53,6 @@ import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -58,14 +64,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import static com.soultabcaregiver.utils.Utility.ShowToast;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
                                                           GoogleApiClient.OnConnectionFailedListener {
@@ -89,21 +87,21 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	BottomNavigationView navigationView;
 	
 	BottomNavigationItemView itemView;
-	
+
 	View badge;
-	
+
 	TextView tv_badge;
-	
+
 	private BroadcastReceiver receiver;
-	
+
 	private String CityZipCode;
-	
+
 	private GoogleApiClient googleApiClient;
-	
-	private String TAG = getClass().getSimpleName();
+
+	private final String TAG = getClass().getSimpleName();
 	private BroadcastReceiver mReceiver;
 	private Timer tmrStartEng;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -122,15 +120,15 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			}
 		});
 
-		navigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+		navigationView = findViewById(R.id.bottom_navigation);
 		video_call = findViewById(R.id.video_call);
 		BottomNavigationViewHelper.removeShiftMode(navigationView);
-		
+
 		BottomNavigationMenuView bottomNavigationMenuView =
 				(BottomNavigationMenuView) navigationView.getChildAt(0);
 		View v = bottomNavigationMenuView.getChildAt(3);
 		itemView = (BottomNavigationItemView) v;
-		
+
 		badge = LayoutInflater.from(this).inflate(R.layout.homescreen_count,
 				bottomNavigationMenuView, false);
 		tv_badge = badge.findViewById(R.id.notification_badge);

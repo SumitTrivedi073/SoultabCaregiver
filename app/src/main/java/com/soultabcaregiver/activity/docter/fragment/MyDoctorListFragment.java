@@ -1,15 +1,7 @@
 package com.soultabcaregiver.activity.docter.fragment;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -20,6 +12,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -27,13 +24,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorCategoryModel;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
-import com.soultabcaregiver.activity.docter.adapter.DoctorListAdapter;
 import com.soultabcaregiver.activity.docter.adapter.MyDoctorListAdapter;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 

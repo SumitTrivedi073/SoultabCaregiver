@@ -1,7 +1,5 @@
 package com.soultabcaregiver.activity.login_module;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -21,9 +18,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 

@@ -31,12 +31,12 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.Model.LoginModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 

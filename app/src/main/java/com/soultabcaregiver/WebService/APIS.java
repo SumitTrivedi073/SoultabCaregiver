@@ -51,7 +51,7 @@ public class APIS {
     public static final String QuickAlery = "Users/quik_alert";
     public static final String AlertCount = "Users/get_unread_alert_count";
     public static final String AlertCountUpdate = "Users/update_unread_alert";
-    public static final String VideoCallNotificationAPI = "Users/notifyUser";
+    public static final String TwilioAccessToken = "Users/generate_twillio_accessToken";
 
 
 
@@ -87,23 +87,6 @@ public class APIS {
 
 
 
-    // public static final String LineChartAPI = "caregiver/lineChart";
 
-
-    /*public static final String Add_Doctor_API = "Users/add_doctor";
-    public static final String EVENTLIST = "Users/activity_details";
-    public static final String DELETEREMINDERAPI = "Users/reminderdelete";
-    public static final String QuickAlery = "Users/quik_alert";
-    public static final String AlertCount = "Users/get_unread_alert_count";
-    public static final String AlertCountUpdate = "Users/update_unread_alert";
-
-
-
-
-    ///////Need to develop for caregiver
-    public static final String UPDATEREMINDERAPI = "Users/updatereminder";
-    public static final String ADDREMINDERAPI = "Users/reminder_add";
-    public static final String DoctorSendFaxAPI = "Users_milan/sendFax";
-*/
 
 }
