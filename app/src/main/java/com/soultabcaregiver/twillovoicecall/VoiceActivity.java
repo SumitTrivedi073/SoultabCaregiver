@@ -327,6 +327,12 @@ public class VoiceActivity extends BaseActivity {
         holdActionFab.hide();
         holdActionFab.setBackgroundTintList(ColorStateList
                 .valueOf(ContextCompat.getColor(this, R.color.white)));
+        muteActionFab.setBackgroundTintList(ColorStateList
+                .valueOf(ContextCompat.getColor(this, R.color.white)));
+
+        hangupActionFab.setBackgroundTintList(ColorStateList
+                .valueOf(ContextCompat.getColor(this, R.color.white)));
+
         muteActionFab.hide();
         hangupActionFab.hide();
         chronometer.setVisibility(View.INVISIBLE);

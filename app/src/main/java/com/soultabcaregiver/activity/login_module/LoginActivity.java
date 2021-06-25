@@ -341,16 +341,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		OK_txt.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+				alertDialog.dismiss();
+
 				if (value.equals("1")) {
-					
+
 					Intent intent = new Intent(mContext, MainActivity.class);
 					startActivity(intent);
 					finish();
 				}
-				
-				alertDialog.dismiss();
-				
+
+
 			}
 		});
 		

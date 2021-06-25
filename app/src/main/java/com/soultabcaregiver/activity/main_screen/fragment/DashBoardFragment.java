@@ -188,7 +188,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         three_month_chart.setChecked(true);
                         six_month_chart.setChecked(false);
                         twelve_month_chart.setChecked(false);
-                        chart_value_data = "3month";
+                        chart_value_data = "month";
 
                         ChartAPI(chart_value_data);
                     }
@@ -358,21 +358,21 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             if (lineDataSet != null) {
                 lineDataSet.setLineWidth(3f);
                 dataSets.add(lineDataSet);
-                lineDataSet.setColor(Color.parseColor("#800080"));
+                lineDataSet.setColor(Color.GREEN);
 
             }
 
             if (lineDataSet3 != null) {
                 lineDataSet3.setLineWidth(3f);
                 dataSets.add(lineDataSet3);
-                lineDataSet3.setColor(Color.BLUE);
+                lineDataSet3.setColor(Color.parseColor("#800080"));
 
             }
 
             if (lineDataSet4 != null) {
                 lineDataSet4.setLineWidth(3f);
                 dataSets.add(lineDataSet4);
-                lineDataSet4.setColor(Color.YELLOW);
+                lineDataSet4.setColor(Color.RED);
 
             }
 
@@ -380,7 +380,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             if (lineDataSet5 != null) {
                 lineDataSet5.setLineWidth(3f);
                 dataSets.add(lineDataSet5);
-                lineDataSet5.setColor(Color.RED);
+                lineDataSet5.setColor(Color.BLUE);
 
             }
             //  dataSets.add(lineDataSet2);

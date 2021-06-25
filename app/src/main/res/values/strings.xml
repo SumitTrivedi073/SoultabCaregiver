@@ -110,6 +110,7 @@
     <string name="compliance">Compliance</string>
     <string name="user_activity">User Activity</string>
     <string name="week">Week</string>
+    <string name="month">Month</string>
     <string name="three_month">3 Month</string>
     <string name="six_month">6 Month</string>
     <string name="twelve_month">12 Month</string>
