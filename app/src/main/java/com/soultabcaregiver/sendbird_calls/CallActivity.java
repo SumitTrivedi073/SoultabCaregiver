@@ -16,8 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.sendbird.calls.AudioDevice;
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.DirectCallUser;
@@ -32,6 +30,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public abstract class CallActivity extends AppCompatActivity {
 
     static final int ENDING_TIME_MS = 1000;
@@ -42,6 +42,8 @@ public abstract class CallActivity extends AppCompatActivity {
     STATE mState;
     boolean mIsVideoCall;
     String mCalleeIdToDial;
+    boolean isCallingFromChat;
+    String mChannelUrl;
     DirectCall mDirectCall;
     boolean mIsAudioEnabled;
     //+ Views
@@ -66,7 +68,6 @@ public abstract class CallActivity extends AppCompatActivity {
     private SendbirdCallService mCallService;
     //- Views
     //+ CallService
-    IncomingCallActivity incomingCallActivity;
 
 
     private final ServiceConnection mCallServiceConnection = new ServiceConnection() {
@@ -121,7 +122,6 @@ public abstract class CallActivity extends AppCompatActivity {
         setContentView(getLayoutResourceId());
 
         mContext = this;
-        incomingCallActivity = IncomingCallActivity.instance;
 
         bindCallService();
 
@@ -149,6 +149,8 @@ public abstract class CallActivity extends AppCompatActivity {
 
         mIsVideoCall = intent.getBooleanExtra(SendbirdCallService.EXTRA_IS_VIDEO_CALL, false);
         mCalleeIdToDial = intent.getStringExtra(SendbirdCallService.EXTRA_CALLEE_ID_TO_DIAL);
+        mChannelUrl = intent.getStringExtra(SendbirdCallService.EXTRA_CALL_TO_CHANNEL);
+        isCallingFromChat = intent.getBooleanExtra(SendbirdCallService.EXTRA_CALLING_FROM_CHAT,false);
         mDoDial = intent.getBooleanExtra(SendbirdCallService.EXTRA_DO_DIAL, false);
         mDoAccept = intent.getBooleanExtra(SendbirdCallService.EXTRA_DO_ACCEPT, false);
         mDoLocalVideoStart = intent.getBooleanExtra(SendbirdCallService.EXTRA_DO_LOCAL_VIDEO_START, false);
@@ -468,9 +470,6 @@ public abstract class CallActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Log.i(TAG, "[CallActivity] finish()");
                         finish();
-                        if (IncomingCallActivity.getInstance() != null) {
-                            IncomingCallActivity.getInstance().finish();
-                        }
                         unbindCallService();
                         stopCallService();
                     });

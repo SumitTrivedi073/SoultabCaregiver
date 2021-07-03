@@ -12,6 +12,11 @@
 
     </style>
 
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textColorPrimary">#ffffff</item>
+    </style>
+
+
     <style name="CustomAlertDialogStyle" parent="android:Theme.Holo.Light.Dialog">
         <item name="android:background">@color/transparent</item>
         <item name="android:windowBackground">@color/transparent</item>
@@ -29,9 +34,15 @@
         <item name="colorPrimary">@color/themecolor</item>
         <item name="colorPrimaryDark">@color/themecolor</item>
         <item name="colorAccent">@color/themecolor</item>
-        <item name="android:buttonBarPositiveButtonStyle" tools:targetApi="lollipop">@style/DialogButtonStyled</item>
-        <item name="android:buttonBarNegativeButtonStyle" tools:targetApi="lollipop">@style/DialogButtonStyled</item>
-        <item name="android:buttonBarNeutralButtonStyle" tools:targetApi="lollipop">@style/DialogButtonStyled</item>
+        <item name="android:buttonBarPositiveButtonStyle" tools:targetApi="lollipop">
+            @style/DialogButtonStyled
+        </item>
+        <item name="android:buttonBarNegativeButtonStyle" tools:targetApi="lollipop">
+            @style/DialogButtonStyled
+        </item>
+        <item name="android:buttonBarNeutralButtonStyle" tools:targetApi="lollipop">
+            @style/DialogButtonStyled
+        </item>
 
 
     </style>
@@ -53,6 +64,7 @@
     <style name="Widget.BottomNavigationView" parent="Widget.Design.BottomNavigationView">
         <item name="fontFamily">@font/muli_bold</item>
     </style>
+
     <style name="BottomNavigationView" parent="@style/TextAppearance.AppCompat.Caption">
         <item name="android:textSize">@dimen/_8sdp</item>
     </style>

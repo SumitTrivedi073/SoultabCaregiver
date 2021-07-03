@@ -5,8 +5,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.multidex.MultiDex;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -22,6 +20,8 @@ import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 
 import java.util.UUID;
 
+import androidx.multidex.MultiDex;
+
 public class AppController extends Application {
 	
 	private static AppController mInstance;
@@ -29,9 +29,10 @@ public class AppController extends Application {
 	private static Context mContext;
 
 	public static final String VERSION = "1.4.0";
-
-
-	public static final String SENDBIRD_APP_ID = "CE94DB4D-1530-433A-B0F2-1216153A37A3";
+	
+	public static final String SENDBIRD_APP_ID = "3198C7B9-21D6-4C7B-8D2B-2567600213D4"; //dev
+//		public static final String SENDBIRD_APP_ID = "5209BF7E-7EF1-4EE9-856E-649708FF1AC7"; //staging
+//		public static final String SENDBIRD_APP_ID = "CE94DB4D-1530-433A-B0F2-1216153A37A3"; //prod
 	
 	public static final String TAG = AppController.class.getSimpleName();
 	

@@ -44,8 +44,9 @@ import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
-import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.sendbird_chat.ChatHelper;
+import com.soultabcaregiver.sendbird_chat.ConversationActivity;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -54,6 +55,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +67,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import static com.soultabcaregiver.utils.Utility.ShowToast;
+import static com.soultabcaregiver.sendbird_chat.ConversationActivity.EXTRA_GROUP_CHANNEL_URL;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
                                                           GoogleApiClient.OnConnectionFailedListener {
@@ -101,27 +103,29 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	private GoogleApiClient googleApiClient;
 	
 	private String TAG = getClass().getSimpleName();
+	
 	private BroadcastReceiver mReceiver;
+	
 	private Timer tmrStartEng;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		mContext = this;
 		buildGoogleApiClient();
-
+		
 		instance = MainActivity.this;
-
-
+		
+		
 		SendBirdAuthentication.autoAuthenticate(this, userId -> {
 			if (userId == null) {
 				Utility.ShowToast(mContext, "Sendbird Auth Failed");
 				return;
 			}
 		});
-
+		
 		navigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 		video_call = findViewById(R.id.video_call);
 		BottomNavigationViewHelper.removeShiftMode(navigationView);
@@ -134,7 +138,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		badge = LayoutInflater.from(this).inflate(R.layout.homescreen_count,
 				bottomNavigationMenuView, false);
 		tv_badge = badge.findViewById(R.id.notification_badge);
-
+		
 		registerReceiver();
 		Alert_countAPI();
 		listner();
@@ -297,10 +301,31 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
-	private void openPlaceCallActivity() {
+	private void registerReceiver() {
+		Log.i(TAG, "[MainActivity] registerReceiver()");
 		
-		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
-				Utility.getSharedPreferences(this, APIS.user_name), true);
+		if (mReceiver != null) {
+			return;
+		}
+		
+		mReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.i(TAG, "[MainActivity] onReceive()");
+				
+				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
+						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
+				if (callLog != null) {
+					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
+					.getItem(1);
+					historyFragment.addLatestCallLog(callLog);*/
+				}
+			}
+		};
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
+		registerReceiver(mReceiver, intentFilter);
 	}
 	
 	@Override
@@ -309,7 +334,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		receiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, final Intent intent) {
-
+				
 				String action = intent.getAction();
 				
 				if (action.matches(LocationManager.PROVIDERS_CHANGED_ACTION)) {
@@ -327,7 +352,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 				}
 			}
 		};
-
+		
 		// register events
 		getApplicationContext().registerReceiver(receiver,
 				new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
@@ -478,36 +503,24 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			}
 		}
 	}
-
-
-	private void registerReceiver() {
-		Log.i(TAG, "[MainActivity] registerReceiver()");
-
-		if (mReceiver != null) {
-			return;
-		}
-
-		mReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Log.i(TAG, "[MainActivity] onReceive()");
-
-				DirectCallLog callLog = (DirectCallLog)intent.getSerializableExtra(BroadcastUtils.INTENT_EXTRA_CALL_LOG);
-				if (callLog != null) {
-					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter.getItem(1);
-					historyFragment.addLatestCallLog(callLog);*/
-				}
-			}
-		};
-
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
-		registerReceiver(mReceiver, intentFilter);
+	
+	private void openPlaceCallActivity() {
+		ArrayList<String> ids = new ArrayList<>();
+		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
+		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
+		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+			Log.e("channel", "" + groupChannel.getUrl());
+			Intent intent = new Intent(this, ConversationActivity.class);
+			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
+			startActivity(intent);
+		});
+		//		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
+		//				Utility.getSharedPreferences(this, APIS.user_name), true);
 	}
-
+	
 	private void unregisterReceiver() {
 		Log.i(TAG, "[MainActivity] unregisterReceiver()");
-
+		
 		if (mReceiver != null) {
 			unregisterReceiver(mReceiver);
 			mReceiver = null;
