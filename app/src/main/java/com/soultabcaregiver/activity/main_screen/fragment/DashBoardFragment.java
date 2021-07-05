@@ -48,7 +48,6 @@ import java.util.Map;
 
 public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
 
-
     private final String TAG = getClass().getSimpleName();
     View view;
     Context mContext;

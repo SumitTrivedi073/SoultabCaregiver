@@ -66,7 +66,7 @@ public abstract class CallActivity extends AppCompatActivity {
     private SendbirdCallService mCallService;
     //- Views
     //+ CallService
-    IncomingCallActivity incomingCallActivity;
+    com.soultabcaregiver.sendbird_calls.IncomingCallActivity incomingCallActivity;
 
 
     private final ServiceConnection mCallServiceConnection = new ServiceConnection() {

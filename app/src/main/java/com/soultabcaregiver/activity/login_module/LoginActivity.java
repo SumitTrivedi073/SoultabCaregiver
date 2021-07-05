@@ -278,6 +278,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									Utility.setSharedPreference(mContext, Utility.FCM_TOKEN,
 											FirebaseToken);
 									showProgressDialog(getResources().getString(R.string.Loading));
+
 									SendBirdAuthentication.authenticate(mContext,
 											Utility.getSharedPreferences(mContext,
 													APIS.caregiver_id), null,
