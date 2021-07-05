@@ -2,6 +2,7 @@ package com.soultabcaregiver.sendbird_calls;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.sendbird.android.SendBird;
 import com.sendbird.calls.AuthenticateParams;
@@ -17,13 +18,6 @@ public class SendBirdAuthentication {
 	private static final String TAG = "SendBirdAuthentication";
 	
 	public static void autoAuthenticate(Context context, AutoAuthenticateHandler handler) {
-		if (SendBirdCall.getCurrentUser() != null) {
-			if (handler != null) {
-				handler.onResult(SendBirdCall.getCurrentUser().getUserId());
-			}
-			return;
-		}
-		
 		String userId = Utility.getSharedPreferences(context, APIS.caregiver_id);
 		String userName = Utility.getSharedPreferences(context, APIS.Caregiver_name);
 		String fcmToken = Utility.getSharedPreferences(context, Utility.FCM_TOKEN);
@@ -31,18 +25,33 @@ public class SendBirdAuthentication {
 		if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(fcmToken)) {
 			SendBird.connect(userId, (user, e) -> {
 				if (e != null) {
+					Log.e(TAG, "AutoAuthenticate Connect Failed " + e.getMessage());
 					handler.onResult(null);
+					return;
 				}
 				SendBirdCall.authenticate(new AuthenticateParams(userId), (user1, e1) -> {
 					if (e1 != null) {
+						Log.e(TAG, "AutoAuthenticate Auth Failed " + e1.getMessage());
 						if (handler != null) {
 							handler.onResult(null);
 						}
 						return;
 					}
-					SendBird.updateCurrentUserInfo(userName, "", e2 -> {
-						handler.onResult(userId);
+					registerPushToken(PrefUtils.getPushToken(), e2 -> {
+						if (e2 != null) {
+							Log.e(TAG, "AutoAuthenticate registerPush Failed " + e2.getMessage());
+							
+						}
+						SendBird.updateCurrentUserInfo(userName, "", e3 -> {
+							if (e3 != null) {
+								Log.e(TAG,
+										"AutoAuthenticate UpdateCurrentUser Failed " + e3.getMessage());
+							}
+							
+							handler.onResult(userId);
+						});
 					});
+					
 				});
 			});
 		} else {
@@ -52,8 +61,29 @@ public class SendBirdAuthentication {
 		}
 	}
 	
-	public static void authenticate(Context context, String userId, String accessToken,
-	                                String userName, AuthenticateHandler handler) {
+	public static void registerPushToken(String pushToken,
+	                                     SendBirdAuthentication.CompletionHandler handler) {
+		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus, e) -> {
+			if (e != null) {
+				handler.onCompleted(e);
+				return;
+			}
+			SendBirdCall.registerPushToken(pushToken, false, handler :: onCompleted);
+		});
+	}
+	
+	public static void deAuthenticate(Context context, DeAuthenticateHandler handler) {
+		if (SendBirdCall.getCurrentUser() == null) {
+			if (handler != null) {
+				handler.onResult(false);
+			}
+			return;
+		}
+		doDeAuthenticate(context, handler);
+	}
+	
+	public static void authenticate(Context context, String userId, String userName,
+	                                String pushToken, AuthenticateHandler handler) {
 		if (userId == null) {
 			if (handler != null) {
 				handler.onResult(false);
@@ -71,48 +101,24 @@ public class SendBirdAuthentication {
 					return;
 				}
 				// this is for audio/video calls
-				SendBirdCall.authenticate(
-						new AuthenticateParams(userId).setAccessToken(accessToken),
-						(user1, e1) -> {
-							if (e1 != null) {
-								if (handler != null) {
-									handler.onResult(false);
-								}
-								return;
-							}
-							SendBird.updateCurrentUserInfo(userName, "", e2 -> {
-								PrefUtils.setAppId(context, SendBirdCall.getApplicationId());
-								PrefUtils.setUserId(context, userId);
-								PrefUtils.setAccessToken(context, accessToken);
-								handler.onResult(true);
-							});
+				SendBirdCall.authenticate(new AuthenticateParams(userId), (user1, e1) -> {
+					if (e1 != null) {
+						if (handler != null) {
+							handler.onResult(false);
+						}
+						return;
+					}
+					registerPushToken(pushToken, e2 -> {
+						SendBird.updateCurrentUserInfo(userName, "", e3 -> {
+							PrefUtils.setAppId(context, SendBirdCall.getApplicationId());
+							PrefUtils.setUserId(context, userId);
+							handler.onResult(true);
 						});
+					});
+				});
 			});
 			
 			
-		});
-	}
-	
-	public static void deAuthenticate(Context context, DeAuthenticateHandler handler) {
-		if (SendBirdCall.getCurrentUser() == null) {
-			if (handler != null) {
-				handler.onResult(false);
-			}
-			return;
-		}
-		doDeAuthenticate(context, handler);
-	}
-	
-	private static void doDeAuthenticate(Context context, DeAuthenticateHandler handler) {
-		SendBirdCall.deauthenticate(e -> {
-			PrefUtils.setUserId(context, null);
-			PrefUtils.setAccessToken(context, null);
-			PrefUtils.setCalleeId(context, null);
-			PrefUtils.setPushToken(context, null);
-			
-			if (handler != null) {
-				handler.onResult(e == null);
-			}
 		});
 	}
 	
@@ -132,6 +138,17 @@ public class SendBirdAuthentication {
 				return;
 			}
 			SendBirdCall.unregisterPushToken(pushToken, handler :: onCompleted);
+		});
+	}
+	
+	private static void doDeAuthenticate(Context context, DeAuthenticateHandler handler) {
+		SendBirdCall.deauthenticate(e -> {
+			PrefUtils.setUserId(context, null);
+			PrefUtils.setCalleeId(context, null);
+			PrefUtils.setPushToken(null);
+			if (handler != null) {
+				handler.onResult(e == null);
+			}
 		});
 	}
 	

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/_40sdp"
     android:background="@color/light_white"
     android:orientation="vertical"
     tools:context=".activity.main_screen.fragment.DashBoardFragment">

@@ -11,30 +11,28 @@ import java.util.List;
 
 public class TextUtils {
     public static String getGroupChannelTitle(GroupChannel channel) {
-        List<Member> members = channel.getMembers();
-
-        if (members.size() < 2 || SendBird.getCurrentUser() == null) {
-            return "No Members";
-        } else if (members.size() == 2) {
-            StringBuffer names = new StringBuffer();
-            for (Member member : members) {
-                if (member.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
-                    continue;
-                }
-
-                names.append(", " + member.getNickname());
-            }
-            return names.delete(0, 2).toString();
-        } else {
-            int count = 0;
-            StringBuffer names = new StringBuffer();
+	    List<Member> members = channel.getMembers();
+	
+	    if (members.size() == 2) {
+		    StringBuilder names = new StringBuilder();
+		    for (Member member : members) {
+			    if (member.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+				    continue;
+			    }
+			
+			    names.append(", ").append(member.getNickname());
+		    }
+		    return names.delete(0, 2).toString();
+	    } else {
+		    int count = 0;
+		    StringBuilder names = new StringBuilder();
             for (User member : members) {
                 if (member.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
                     continue;
                 }
-
-                count++;
-                names.append(", " + member.getNickname());
+	
+	            count++;
+	            names.append(", ").append(member.getNickname());
 
                 if(count >= 10) {
                     break;

@@ -28,6 +28,7 @@ import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONObject;
@@ -62,25 +63,16 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 		super.onNewToken(token);
 		if (!token.isEmpty()) {
 			Log.e("NEW_TOKEN", token);
-			registerPushToken(token, e -> {
+			SendBirdAuthentication.registerPushToken(token, e -> {
 				if (e == null) {
 					// save token here
+					PrefUtils.setPushToken(token);
 					pushToken.set(token);
 				}
 			});
 		}
 	}
 	
-	private void registerPushToken(String pushToken,
-	                               SendBirdAuthentication.CompletionHandler handler) {
-		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus, e) -> {
-			if (e != null) {
-				handler.onCompleted(e);
-				return;
-			}
-			SendBirdCall.registerPushToken(pushToken, false, handler :: onCompleted);
-		});
-	}
 	
 	@Override
 	protected void onMessageReceived(Context context, RemoteMessage remoteMessage) {

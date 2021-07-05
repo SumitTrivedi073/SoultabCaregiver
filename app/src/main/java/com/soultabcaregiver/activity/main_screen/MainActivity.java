@@ -36,18 +36,16 @@ import com.google.gson.Gson;
 import com.sendbird.calls.DirectCallLog;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
-import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
-import com.soultabcaregiver.sendbird_chat.ChatHelper;
-import com.soultabcaregiver.sendbird_chat.ConversationActivity;
 import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -55,7 +53,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +63,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import static com.soultabcaregiver.sendbird_chat.ConversationActivity.EXTRA_GROUP_CHANNEL_URL;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
                                                           GoogleApiClient.OnConnectionFailedListener {
@@ -102,7 +97,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	private GoogleApiClient googleApiClient;
 	
-	private String TAG = getClass().getSimpleName();
+	private final String TAG = getClass().getSimpleName();
 	
 	private BroadcastReceiver mReceiver;
 	
@@ -118,15 +113,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 		instance = MainActivity.this;
 		
-		
-		SendBirdAuthentication.autoAuthenticate(this, userId -> {
-			if (userId == null) {
-				Utility.ShowToast(mContext, "Sendbird Auth Failed");
-				return;
-			}
-		});
-		
-		navigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+		navigationView = findViewById(R.id.bottom_navigation);
 		video_call = findViewById(R.id.video_call);
 		BottomNavigationViewHelper.removeShiftMode(navigationView);
 		
@@ -235,8 +222,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 								
 								video_call.setVisibility(View.GONE);
 								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
-										false,
-										null);
+										false, null);
 								return true;
 							
 							case R.id.navigation_dailyroutine:
@@ -246,9 +232,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 										false, null);
 								
 								break;
-							case R.id.navigation_alert:
+							case R.id.navigation_talk:
 								video_call.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new AlertFragment(), false,
+								Utility.loadFragment(MainActivity.this, new TalkFragment(), false,
 										null);
 								
 								return true;
@@ -505,17 +491,19 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	}
 	
 	private void openPlaceCallActivity() {
-		ArrayList<String> ids = new ArrayList<>();
-		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
-		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
-		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
-			Log.e("channel", "" + groupChannel.getUrl());
-			Intent intent = new Intent(this, ConversationActivity.class);
-			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
-			startActivity(intent);
-		});
-		//		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
-		//				Utility.getSharedPreferences(this, APIS.user_name), true);
+		//		ArrayList<String> ids = new ArrayList<>();
+		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
+		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
+		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+		//			Log.e("channel", "" + groupChannel.getUrl());
+		//			Intent intent = new Intent(this, ConversationActivity.class);
+		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
+		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
+		//			.user_id));
+		//			startActivity(intent);
+		//		});
+		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
+				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
 	}
 	
 	private void unregisterReceiver() {

@@ -17,6 +17,7 @@ import com.sendbird.calls.handler.SendBirdCallListener;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 
 import java.util.UUID;
 
@@ -51,6 +52,7 @@ public class AppController extends Application {
 	public void onCreate() {
 		super.onCreate();
 		mInstance = this;
+		PrefUtils.init(this);
 		SendBird.init(SENDBIRD_APP_ID, getApplicationContext());
 		initSendBirdCall(SENDBIRD_APP_ID);
 		

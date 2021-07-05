@@ -24,6 +24,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import static com.soultabcaregiver.utils.Utility.ShowToast;
+
+
 public class SendbirdCallService extends Service {
 	
 	
@@ -62,34 +65,9 @@ public class SendbirdCallService extends Service {
 	private final ServiceData mServiceData = new ServiceData();
 	
 	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.i(TAG, "[CallService] onCreate()");
-		
-		mContext = this;
-	}
-	
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.i(TAG, "[CallService] onStartCommand()");
-		
-		mServiceData.isHeadsUpNotification =
-				intent.getBooleanExtra(EXTRA_IS_HEADS_UP_NOTIFICATION, false);
-		mServiceData.remoteNicknameOrUserId =
-				intent.getStringExtra(EXTRA_REMOTE_NICKNAME_OR_USER_ID);
-		mServiceData.callState =
-				(CallActivity.STATE) intent.getSerializableExtra(EXTRA_CALL_STATE);
-		mServiceData.callId = intent.getStringExtra(EXTRA_CALL_ID);
-		mServiceData.isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEO_CALL, false);
-		mServiceData.calleeIdToDial = intent.getStringExtra(EXTRA_CALLEE_ID_TO_DIAL);
-		mServiceData.channelUrl = intent.getStringExtra(EXTRA_CALL_TO_CHANNEL);
-		mServiceData.isCallingFromChat = intent.getBooleanExtra(EXTRA_CALLING_FROM_CHAT, false);
-		mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false);
-		mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false);
-		mServiceData.doLocalVideoStart = intent.getBooleanExtra(EXTRA_DO_LOCAL_VIDEO_START, false);
-		
-		updateNotification(mServiceData);
-		return super.onStartCommand(intent, flags, startId);
+	public void onDestroy() {
+		super.onDestroy();
+		Log.i(TAG, "[CallService] onDestroy()");
 	}
 	
 	@Nullable
@@ -99,102 +77,10 @@ public class SendbirdCallService extends Service {
 		return mBinder;
 	}
 	
-	@Override
-	public void onTaskRemoved(Intent rootIntent) {
-		super.onTaskRemoved(rootIntent);
-		Log.i(TAG, "[CallService] onTaskRemoved()");
-		
-		mServiceData.isHeadsUpNotification = true;
-		updateNotification(mServiceData);
-	}
-	
-	public void updateNotification(@NonNull ServiceData serviceData) {
-		Log.i(TAG,
-				"[CallService] updateNotification(isHeadsUpNotification: " + serviceData.isHeadsUpNotification + ", remoteNicknameOrUserId: " + serviceData.remoteNicknameOrUserId + ", callState: " + serviceData.callState + ", callId: " + serviceData.callId + ", isVideoCall: " + serviceData.isVideoCall + ", calleeIdToDial: " + serviceData.calleeIdToDial + ", doDial: " + serviceData.doDial + ", doAccept: " + serviceData.doAccept + ", doLocalVideoStart: " + serviceData.doLocalVideoStart + ")");
-		
-		mServiceData.set(serviceData);
-		startForeground(NOTIFICATION_ID, getNotification(mServiceData));
-	}
-	
-	private Notification getNotification(@NonNull ServiceData serviceData) {
-		final String content;
-		String currentUserId = Utility.getSharedPreferences(mContext, APIS.caregiver_id);
-		if (serviceData.isVideoCall) {
-			if (serviceData.calleeIdToDial != null && !serviceData.calleeIdToDial.equals(
-					currentUserId)) {
-				content = mContext.getString(R.string.calls_notification_video_calling_content_to,
-						serviceData.remoteNicknameOrUserId);
-			} else {
-				content =
-						mContext.getString(R.string.calls_notification_video_calling_content_from,
-						serviceData.remoteNicknameOrUserId);
-			}
-		} else {
-			if (serviceData.calleeIdToDial != null && !serviceData.calleeIdToDial.equals(
-					currentUserId)) {
-				content = mContext.getString(R.string.calls_notification_voice_calling_content_to,
-						serviceData.remoteNicknameOrUserId);
-			} else {
-				content =
-						mContext.getString(R.string.calls_notification_voice_calling_content_from,
-						serviceData.remoteNicknameOrUserId);
-			}
-		}
-		
-		
-		final int currentTime = (int) System.currentTimeMillis();
-		final String channelId = mContext.getPackageName() + currentTime;
-		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			String channelName = mContext.getString(R.string.app_name);
-			NotificationChannel channel = new NotificationChannel(channelId, channelName,
-					serviceData.isHeadsUpNotification ? NotificationManager.IMPORTANCE_HIGH :
-							NotificationManager.IMPORTANCE_LOW);
-			
-			NotificationManager notificationManager =
-					mContext.getSystemService(NotificationManager.class);
-			if (notificationManager != null) {
-				notificationManager.createNotificationChannel(channel);
-			}
-		}
-		
-		Intent callIntent = getCallActivityIntent(mContext, serviceData, false);
-		PendingIntent callPendingIntent =
-				PendingIntent.getActivity(mContext, (currentTime + 1), callIntent, 0);
-		
-		Intent endIntent = getCallActivityIntent(mContext, serviceData, true);
-		PendingIntent endPendingIntent =
-				PendingIntent.getActivity(mContext, (currentTime + 2), endIntent, 0);
-		
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId);
-		builder.setContentTitle(serviceData.remoteNicknameOrUserId).setContentText(
-				content).setSmallIcon(R.drawable.notification_icon).setLargeIcon(
-				BitmapFactory.decodeResource(mContext.getResources(),
-						R.drawable.notification_icon)).setPriority(
-				serviceData.isHeadsUpNotification ? NotificationCompat.PRIORITY_HIGH :
-						NotificationCompat.PRIORITY_LOW);
-		
-		if (SendBirdCall.getOngoingCallCount() > 0) {
-			if (serviceData.doAccept) {
-				builder.addAction(new NotificationCompat.Action(0,
-						mContext.getString(R.string.calls_notification_decline),
-						endPendingIntent));
-				builder.addAction(new NotificationCompat.Action(0,
-						mContext.getString(R.string.calls_notification_accept),
-						callPendingIntent));
-			} else {
-				builder.setContentIntent(callPendingIntent);
-				builder.addAction(new NotificationCompat.Action(0,
-						mContext.getString(R.string.calls_notification_end), endPendingIntent));
-			}
-		}
-		return builder.build();
-	}
-	
 	public static void dial(Context context, String doDialWithCalleeId, String name,
 	                        boolean isVideoCall, boolean isCallingFromChat, String channelUrl) {
 		if (SendBirdCall.getOngoingCallCount() > 0) {
-			Utility.ShowToast(context, "Ringing.");
+			ShowToast(context, "Ringing.");
 			Log.i(TAG,
 					"[CallService] dial() => SendBirdCall.getOngoingCallCount(): " + SendBirdCall.getOngoingCallCount());
 			return;
@@ -219,12 +105,6 @@ public class SendbirdCallService extends Service {
 		startService(context, serviceData);
 		
 		context.startActivity(getCallActivityIntent(context, serviceData, false));
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Log.i(TAG, "[CallService] onDestroy()");
 	}
 	
 	private static void startService(Context context, ServiceData serviceData) {
@@ -297,6 +177,14 @@ public class SendbirdCallService extends Service {
 		startService(context, serviceData);
 	}
 	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		Log.i(TAG, "[CallService] onCreate()");
+		
+		mContext = this;
+	}
+	
 	public static void stopService(Context context) {
 		Log.i(TAG, "[CallService] stopService()");
 		
@@ -304,6 +192,120 @@ public class SendbirdCallService extends Service {
 			Intent intent = new Intent(context, SendbirdCallService.class);
 			context.stopService(intent);
 		}
+	}
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.i(TAG, "[CallService] onStartCommand()");
+		
+		mServiceData.isHeadsUpNotification =
+				intent.getBooleanExtra(EXTRA_IS_HEADS_UP_NOTIFICATION, false);
+		mServiceData.remoteNicknameOrUserId =
+				intent.getStringExtra(EXTRA_REMOTE_NICKNAME_OR_USER_ID);
+		mServiceData.callState =
+				(CallActivity.STATE) intent.getSerializableExtra(EXTRA_CALL_STATE);
+		mServiceData.callId = intent.getStringExtra(EXTRA_CALL_ID);
+		mServiceData.isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEO_CALL, false);
+		mServiceData.calleeIdToDial = intent.getStringExtra(EXTRA_CALLEE_ID_TO_DIAL);
+		mServiceData.channelUrl = intent.getStringExtra(EXTRA_CALL_TO_CHANNEL);
+		mServiceData.isCallingFromChat = intent.getBooleanExtra(EXTRA_CALLING_FROM_CHAT, false);
+		mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false);
+		mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false);
+		mServiceData.doLocalVideoStart = intent.getBooleanExtra(EXTRA_DO_LOCAL_VIDEO_START, false);
+		
+		updateNotification(mServiceData);
+		return super.onStartCommand(intent, flags, startId);
+	}
+	
+	@Override
+	public void onTaskRemoved(Intent rootIntent) {
+		super.onTaskRemoved(rootIntent);
+		Log.i(TAG, "[CallService] onTaskRemoved()");
+		
+		mServiceData.isHeadsUpNotification = true;
+		updateNotification(mServiceData);
+	}
+	
+	private Notification getNotification(@NonNull ServiceData serviceData) {
+		final String content;
+		String currentUserId = Utility.getSharedPreferences(mContext, APIS.caregiver_id);
+		if (serviceData.isVideoCall) {
+			if (serviceData.calleeIdToDial != null && !serviceData.calleeIdToDial.equals(
+					currentUserId)) {
+				content = mContext.getString(R.string.calls_notification_video_calling_content_to,
+						serviceData.remoteNicknameOrUserId);
+			} else {
+				content =
+						mContext.getString(R.string.calls_notification_video_calling_content_from,
+						serviceData.remoteNicknameOrUserId);
+			}
+		} else {
+			if (serviceData.calleeIdToDial != null && !serviceData.calleeIdToDial.equals(
+					currentUserId)) {
+				content = mContext.getString(R.string.calls_notification_voice_calling_content_to,
+						serviceData.remoteNicknameOrUserId);
+			} else {
+				content =
+						mContext.getString(R.string.calls_notification_voice_calling_content_from,
+						serviceData.remoteNicknameOrUserId);
+			}
+		}
+		
+		
+		final int currentTime = (int) System.currentTimeMillis();
+		final String channelId = mContext.getPackageName() + currentTime;
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			String channelName = mContext.getString(R.string.app_name);
+			NotificationChannel channel = new NotificationChannel(channelId, channelName,
+					serviceData.isHeadsUpNotification ? NotificationManager.IMPORTANCE_HIGH :
+							NotificationManager.IMPORTANCE_LOW);
+			
+			NotificationManager notificationManager =
+					mContext.getSystemService(NotificationManager.class);
+			if (notificationManager != null) {
+				notificationManager.createNotificationChannel(channel);
+			}
+		}
+		
+		Intent callIntent = getCallActivityIntent(mContext, serviceData, false);
+		PendingIntent callPendingIntent =
+				PendingIntent.getActivity(mContext, (currentTime + 1), callIntent, 0);
+		
+		Intent endIntent = getCallActivityIntent(mContext, serviceData, true);
+		PendingIntent endPendingIntent =
+				PendingIntent.getActivity(mContext, (currentTime + 2), endIntent, 0);
+		
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId);
+		builder.setContentTitle(serviceData.remoteNicknameOrUserId).setContentText(
+				content).setSmallIcon(R.drawable.notification_icon).setLargeIcon(
+				BitmapFactory.decodeResource(mContext.getResources(),
+						R.drawable.notification_icon)).setPriority(
+				serviceData.isHeadsUpNotification ? NotificationCompat.PRIORITY_HIGH :
+						NotificationCompat.PRIORITY_LOW);
+		
+		if (SendBirdCall.getOngoingCallCount() > 0) {
+			if (serviceData.doAccept) {
+				builder.addAction(new NotificationCompat.Action(0,
+						mContext.getString(R.string.calls_notification_decline),
+						endPendingIntent));
+				builder.addAction(new NotificationCompat.Action(0,
+						mContext.getString(R.string.calls_notification_accept), callPendingIntent));
+			} else {
+				builder.setContentIntent(callPendingIntent);
+				builder.addAction(new NotificationCompat.Action(0,
+						mContext.getString(R.string.calls_notification_end), endPendingIntent));
+			}
+		}
+		return builder.build();
+	}
+	
+	public void updateNotification(@NonNull ServiceData serviceData) {
+		Log.i(TAG,
+				"[CallService] updateNotification(isHeadsUpNotification: " + serviceData.isHeadsUpNotification + ", remoteNicknameOrUserId: " + serviceData.remoteNicknameOrUserId + ", callState: " + serviceData.callState + ", callId: " + serviceData.callId + ", isVideoCall: " + serviceData.isVideoCall + ", calleeIdToDial: " + serviceData.calleeIdToDial + ", doDial: " + serviceData.doDial + ", doAccept: " + serviceData.doAccept + ", doLocalVideoStart: " + serviceData.doLocalVideoStart + ")");
+		
+		mServiceData.set(serviceData);
+		startForeground(NOTIFICATION_ID, getNotification(mServiceData));
 	}
 	
 	static class ServiceData {
@@ -353,5 +355,4 @@ public class SendbirdCallService extends Service {
 		}
 	}
 }
-
 
