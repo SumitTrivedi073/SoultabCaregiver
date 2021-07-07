@@ -3,6 +3,7 @@ package com.soultabcaregiver.activity.login_module;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
@@ -14,8 +15,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -45,6 +44,9 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import static com.soultabcaregiver.utils.Utility.ShowToast;
 
@@ -155,40 +157,41 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			case R.id.tv_forgot_pass:
 				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
 				break;
-
+			
 			case R.id.tv_login:
 				Login();
 				break;
-
+			
 		}
 		
 	}
 	
+	@RequiresApi (api = Build.VERSION_CODES.GINGERBREAD)
 	private void Login() {
 		if (Utility.isNetworkConnected(LoginActivity.this)) {
 			if (etEmail.getText().toString().trim().isEmpty()) {
-
+				
 				Utility.ShowToast(mContext, getResources().getString(R.string.valid_email));
-
-
+				
+				
 			} else if (etPass.getText().toString().trim().isEmpty()) {
-
+				
 				Utility.ShowToast(mContext, getResources().getString(R.string.valid_pass));
-
+				
 			} else if (!Utility.isvalidatePassword(etPass.getText().toString().trim())) {
 				Utility.ShowToast(mContext, getResources().getString(R.string.password_not_valid));
-
+				
 			} else if (etPass.getText().toString().trim().length() < 8) {
 				Utility.ShowToast(mContext, getResources().getString(R.string.password_notvalid));
-
+				
 			} else {
 				GetLogin();
 			}
 		} else {
-
+			
 			Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-
-
+			
+			
 		}
 	}
 	
@@ -219,7 +222,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 							public void onResponse(JSONObject response) {
 
 
-								hideProgressDialog();
 								
 								LoginModel loginModel =
 										new Gson().fromJson(response.toString(), LoginModel.class);
@@ -277,22 +279,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									
 									Utility.setSharedPreference(mContext, Utility.FCM_TOKEN,
 											FirebaseToken);
-									showProgressDialog(getResources().getString(R.string.Loading));
-
+									
 									SendBirdAuthentication.authenticate(mContext,
 											Utility.getSharedPreferences(mContext,
 													APIS.caregiver_id), null,
 											Utility.getSharedPreferences(mContext,
 													APIS.Caregiver_name), isSuccess -> {
 												if (isSuccess) {
+													hideProgressDialog();
+													
 													ShowAlertResponse(loginModel.getMessage(),
 															"1");
 												} else {
+													hideProgressDialog();
+													
 													ShowToast(mContext, "Sendbird Auth Failed");
 												}
 											});
 
 								} else {
+									hideProgressDialog();
+									
 									ShowAlertResponse(loginModel.getMessage(), "0");
 								}
 								
@@ -345,10 +352,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				alertDialog.dismiss();
 
 				if (value.equals("1")) {
-
+					
 					Intent intent = new Intent(mContext, MainActivity.class);
 					startActivity(intent);
-					finish();
+					finishAffinity();
 				}
 
 
