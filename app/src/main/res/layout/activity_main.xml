@@ -12,12 +12,12 @@
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_nav_relative" />
 
 
     <RelativeLayout
-        android:id="@+id/bootom_nav_relative"
+        android:id="@+id/bottom_nav_relative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -29,16 +29,16 @@
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:itemIconTint="@color/menu_text_color"
-            app:itemTextColor="@color/menu_text_color"
-            android:animateLayoutChanges="false"
-            app:itemBackground="@android:color/transparent"
             android:layout_gravity="start"
+            android:animateLayoutChanges="false"
             android:theme="@style/Widget.BottomNavigationView"
-            app:menu="@menu/navigation"
+            app:itemBackground="@android:color/transparent"
+            app:itemIconTint="@color/menu_text_color"
             app:itemTextAppearanceActive="@style/BottomNavigationView.Active"
             app:itemTextAppearanceInactive="@style/BottomNavigationView"
-            app:labelVisibilityMode="labeled"/>
+            app:itemTextColor="@color/menu_text_color"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/navigation" />
 
     </RelativeLayout>
 
@@ -46,16 +46,16 @@
         android:id="@+id/video_call"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_nav_relative"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginRight="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:layout_above="@+id/bootom_nav_relative"
+        android:src="@drawable/ic_baseline_videocam_24"
         app:backgroundTint="@color/orange_color"
         app:elevation="@dimen/_5sdp"
+        app:fabSize="auto"
         app:pressedTranslationZ="@dimen/_5sdp"
-        android:src="@drawable/ic_baseline_videocam_24"
-        app:tint="@android:color/white"
-        app:fabSize="auto"/>
+        app:tint="@android:color/white" />
 </RelativeLayout>

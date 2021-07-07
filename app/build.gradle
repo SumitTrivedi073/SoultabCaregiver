@@ -31,7 +31,7 @@ android {
         versionCode 5
         versionName "1.4"
         multiDexEnabled true
-
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -92,6 +92,8 @@ dependencies {
 
     // [Sendbird Chat]
     implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.165'
+    implementation 'org.jsoup:jsoup:1.11.2'
+
     
     // [Sendbird Calls]
     implementation 'com.sendbird.sdk:sendbird-calls:1.6.1'

@@ -3,7 +3,6 @@ package com.soultabcaregiver.activity.login_module;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
@@ -30,12 +29,13 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
-import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.Model.LoginModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
+import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import static com.soultabcaregiver.utils.Utility.ShowToast;
 
@@ -81,47 +80,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	}
 	
 	
-	private void init() {
-		tvLogin = findViewById(R.id.tv_login);
-		tvForgot = findViewById(R.id.tv_forgot_pass);
-		etEmail = findViewById(R.id.et_email);
-		etPass = findViewById(R.id.et_pass);
-		tbRemPass = findViewById(R.id.tb_rem);
-		view_pwd1 = findViewById(R.id.view_pwd1);
-		tv_rem_pass = findViewById(R.id.tv_rem_pass);
-
-
-		FirebaseApp.initializeApp(this);
-		if (Utility.getSharedPreferences2(mContext, APIS.save_email) != null) {
-			if (Utility.getSharedPreferences2(mContext, APIS.save_email).equals("true")) {
-				etEmail.setText(Utility.getSharedPreferences2(mContext, APIS.Caregiver_email));
-				tbRemPass.setChecked(true);
-			} else {
-				tbRemPass.setChecked(false);
-
-			}
-		}
+	@Override
+	public void onClick(View v) {
 		
-		
-		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-		if (resultCode == ConnectionResult.SUCCESS) {
+		switch (v.getId()) {
+			case R.id.tv_rem_pass:
+				tbRemPass.setChecked(!tbRemPass.isChecked());
+				break;
+			case R.id.tv_forgot_pass:
+				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+				break;
 			
-			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
-					new OnSuccessListener<InstanceIdResult>() {
-						@Override
-						public void onSuccess(InstanceIdResult instanceIdResult) {
-							// Get new Instance ID token
-							FirebaseToken = instanceIdResult.getToken();
-							Log.e("newToken", FirebaseToken);
-							
-						}
-					}).addOnFailureListener(new OnFailureListener() {
-				@Override
-				public void onFailure(@NonNull Exception e) {
-					e.printStackTrace();
-				}
-			});
+			case R.id.tv_login:
+				Login();
+				break;
+			
 		}
+		
 	}
 	
 	private void Listener() {
@@ -147,26 +122,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		});
 	}
 	
-	@Override
-	public void onClick(View v) {
-		
-		switch (v.getId()) {
-			case R.id.tv_rem_pass:
-				tbRemPass.setChecked(!tbRemPass.isChecked());
-				break;
-			case R.id.tv_forgot_pass:
-				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-				break;
-			
-			case R.id.tv_login:
-				Login();
-				break;
-			
-		}
-		
-	}
-	
-	@RequiresApi (api = Build.VERSION_CODES.GINGERBREAD)
 	private void Login() {
 		if (Utility.isNetworkConnected(LoginActivity.this)) {
 			if (etEmail.getText().toString().trim().isEmpty()) {
@@ -220,8 +175,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
-
-
+								
+								
+								hideProgressDialog();
 								
 								LoginModel loginModel =
 										new Gson().fromJson(response.toString(), LoginModel.class);
@@ -249,9 +205,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									//                            .encode(loginModel.getResponse()
 									//                            .getId().getBytes(), Base64
 									//                            .DEFAULT);
-									Log.d("ENCODE_DECODE",
-											"encodeValue = " + encodeValue);
-
+									Log.d("ENCODE_DECODE", "encodeValue = " + encodeValue);
+									
 									Utility.setSharedPreference(mContext, APIS.EncodeUser_id,
 											encodeValue);
 									
@@ -279,27 +234,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									
 									Utility.setSharedPreference(mContext, Utility.FCM_TOKEN,
 											FirebaseToken);
-									
+									showProgressDialog(getResources().getString(R.string.Loading));
 									SendBirdAuthentication.authenticate(mContext,
 											Utility.getSharedPreferences(mContext,
-													APIS.caregiver_id), null,
+													APIS.caregiver_id),
 											Utility.getSharedPreferences(mContext,
-													APIS.Caregiver_name), isSuccess -> {
+													APIS.Caregiver_name), FirebaseToken,
+											isSuccess -> {
 												if (isSuccess) {
-													hideProgressDialog();
-													
 													ShowAlertResponse(loginModel.getMessage(),
 															"1");
 												} else {
-													hideProgressDialog();
-													
 													ShowToast(mContext, "Sendbird Auth Failed");
 												}
 											});
-
-								} else {
-									hideProgressDialog();
 									
+								} else {
 									ShowAlertResponse(loginModel.getMessage(), "0");
 								}
 								
@@ -323,6 +273,50 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 					
 				};
 		AppController.getInstance().addToRequestQueue(jsonObjReq);
+	}
+	
+	private void init() {
+		tvLogin = findViewById(R.id.tv_login);
+		tvForgot = findViewById(R.id.tv_forgot_pass);
+		etEmail = findViewById(R.id.et_email);
+		etPass = findViewById(R.id.et_pass);
+		tbRemPass = findViewById(R.id.tb_rem);
+		view_pwd1 = findViewById(R.id.view_pwd1);
+		tv_rem_pass = findViewById(R.id.tv_rem_pass);
+		
+		
+		FirebaseApp.initializeApp(this);
+		if (Utility.getSharedPreferences2(mContext, APIS.save_email) != null) {
+			if (Utility.getSharedPreferences2(mContext, APIS.save_email).equals("true")) {
+				etEmail.setText(Utility.getSharedPreferences2(mContext, APIS.Caregiver_email));
+				tbRemPass.setChecked(true);
+			} else {
+				tbRemPass.setChecked(false);
+				
+			}
+		}
+		
+		
+		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+		if (resultCode == ConnectionResult.SUCCESS) {
+			
+			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
+					new OnSuccessListener<InstanceIdResult>() {
+						@Override
+						public void onSuccess(InstanceIdResult instanceIdResult) {
+							// Get new Instance ID token
+							FirebaseToken = instanceIdResult.getToken();
+							PrefUtils.setPushToken(FirebaseToken);
+							Log.e("newToken", FirebaseToken);
+							
+						}
+					}).addOnFailureListener(new OnFailureListener() {
+				@Override
+				public void onFailure(@NonNull Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
 	}
 	
 	private void ShowAlertResponse(String message, String value) {
@@ -349,16 +343,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		OK_txt.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				alertDialog.dismiss();
-
+				
 				if (value.equals("1")) {
 					
 					Intent intent = new Intent(mContext, MainActivity.class);
 					startActivity(intent);
-					finishAffinity();
+					finish();
 				}
-
-
+				
+				alertDialog.dismiss();
+				
 			}
 		});
 		

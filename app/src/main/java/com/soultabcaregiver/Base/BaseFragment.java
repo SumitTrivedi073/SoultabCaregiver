@@ -143,7 +143,7 @@ public class BaseFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
-				SendBirdAuthentication.deauthenticate(getContext(), isSuccess -> {
+				SendBirdAuthentication.deAuthenticate(getContext(), isSuccess -> {
 
 					MainActivity.getInstance().stopButtonClicked();
 					Utility.clearSharedPreference(getActivity());

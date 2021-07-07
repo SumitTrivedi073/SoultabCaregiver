@@ -264,6 +264,14 @@
     <string name="calls_notification_voice_calling_content_to">Voice call to %s</string>
     <string name="calls_notification_video_calling_content_from">Incoming Video call from %s</string>
     <string name="calls_notification_video_calling_content_to">Video call to %s</string>
+    <string name="download">Download</string>
+    <string name="video_call">Video Call</string>
+
+
+    <string name="talk">Talk</string>
+    <string name="chat">Chat</string>
+    <string name="calls">Calls</string>
+
     <!--  Added By AJay  -->
 
     <!--Twolio String-->

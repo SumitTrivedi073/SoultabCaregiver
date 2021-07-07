@@ -1,48 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/light_white"
-    android:layout_marginBottom="@dimen/_40sdp"
     tools:context=".activity.alert.fragment.AlertFragment">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginLeft="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_10sdp">
+        android:layout_marginRight="@dimen/_10sdp"
+        android:orientation="vertical">
 
-
-
-    <TextView
-        android:id="@+id/tv_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/muli_extrabold"
-        android:gravity="center"
-        android:text="@string/alert"
-        android:textColor="@color/blackish"
-        android:textSize="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_20sdp"/>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:fontFamily="@font/muli_bold"
-        android:gravity="center"
-        android:text="@string/myalert"
-        android:textColor="@color/blackish"
-        android:textSize="@dimen/_12sdp"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginLeft="@dimen/_10sdp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:fontFamily="@font/muli_bold"
+            android:gravity="center"
+            android:text="@string/myalert"
+            android:textColor="@color/blackish"
+            android:textSize="@dimen/_12sdp" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -52,35 +38,33 @@
             android:divider="@null"
             android:dividerHeight="0dp"
             android:fastScrollEnabled="true"
-            android:layout_marginBottom="@dimen/_10sdp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/blank_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardUseCompatPadding="true"
-            app:cardElevation="@dimen/_5sdp"
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/_10sdp"
-            android:visibility="gone"/>
+            app:cardElevation="@dimen/_5sdp"
+            app:cardUseCompatPadding="true" />
 
 
     </LinearLayout>
-
 
 
     <TextView
         android:id="@+id/no_data_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_marginTop="@dimen/_20sdp"
         android:fontFamily="@font/muli_bold"
         android:gravity="center"
-        android:layout_centerInParent="true"
         android:text="@string/no_data_found"
         android:textColor="@color/blackish"
         android:textSize="@dimen/_12sdp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

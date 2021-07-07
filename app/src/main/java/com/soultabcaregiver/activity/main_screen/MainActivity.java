@@ -20,12 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
@@ -40,19 +34,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.sendbird.calls.DirectCallLog;
-import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
-import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -64,6 +57,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
                                                           GoogleApiClient.OnConnectionFailedListener {
@@ -87,52 +86,46 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	BottomNavigationView navigationView;
 	
 	BottomNavigationItemView itemView;
-
+	
 	View badge;
-
+	
 	TextView tv_badge;
-
+	
 	private BroadcastReceiver receiver;
-
+	
 	private String CityZipCode;
-
+	
 	private GoogleApiClient googleApiClient;
-
+	
 	private final String TAG = getClass().getSimpleName();
+	
 	private BroadcastReceiver mReceiver;
+	
 	private Timer tmrStartEng;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		mContext = this;
 		buildGoogleApiClient();
-
+		
 		instance = MainActivity.this;
-
-
-		SendBirdAuthentication.autoAuthenticate(this, userId -> {
-			if (userId == null) {
-				Utility.ShowToast(mContext, "Sendbird Auth Failed");
-				return;
-			}
-		});
-
+		
 		navigationView = findViewById(R.id.bottom_navigation);
 		video_call = findViewById(R.id.video_call);
 		BottomNavigationViewHelper.removeShiftMode(navigationView);
-
+		
 		BottomNavigationMenuView bottomNavigationMenuView =
 				(BottomNavigationMenuView) navigationView.getChildAt(0);
 		View v = bottomNavigationMenuView.getChildAt(3);
 		itemView = (BottomNavigationItemView) v;
-
+		
 		badge = LayoutInflater.from(this).inflate(R.layout.homescreen_count,
 				bottomNavigationMenuView, false);
 		tv_badge = badge.findViewById(R.id.notification_badge);
-
+		
 		registerReceiver();
 		Alert_countAPI();
 		listner();
@@ -229,8 +222,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 								
 								video_call.setVisibility(View.GONE);
 								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
-										false,
-										null);
+										false, null);
 								return true;
 							
 							case R.id.navigation_dailyroutine:
@@ -240,9 +232,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 										false, null);
 								
 								break;
-							case R.id.navigation_alert:
+							case R.id.navigation_talk:
 								video_call.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new AlertFragment(), false,
+								Utility.loadFragment(MainActivity.this, new TalkFragment(), false,
 										null);
 								
 								return true;
@@ -295,10 +287,31 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
-	private void openPlaceCallActivity() {
+	private void registerReceiver() {
+		Log.i(TAG, "[MainActivity] registerReceiver()");
 		
-		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
-				Utility.getSharedPreferences(this, APIS.user_name), true);
+		if (mReceiver != null) {
+			return;
+		}
+		
+		mReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.i(TAG, "[MainActivity] onReceive()");
+				
+				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
+						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
+				if (callLog != null) {
+					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
+					.getItem(1);
+					historyFragment.addLatestCallLog(callLog);*/
+				}
+			}
+		};
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
+		registerReceiver(mReceiver, intentFilter);
 	}
 	
 	@Override
@@ -307,7 +320,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		receiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, final Intent intent) {
-
+				
 				String action = intent.getAction();
 				
 				if (action.matches(LocationManager.PROVIDERS_CHANGED_ACTION)) {
@@ -325,7 +338,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 				}
 			}
 		};
-
+		
 		// register events
 		getApplicationContext().registerReceiver(receiver,
 				new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
@@ -476,36 +489,26 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			}
 		}
 	}
-
-
-	private void registerReceiver() {
-		Log.i(TAG, "[MainActivity] registerReceiver()");
-
-		if (mReceiver != null) {
-			return;
-		}
-
-		mReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Log.i(TAG, "[MainActivity] onReceive()");
-
-				DirectCallLog callLog = (DirectCallLog)intent.getSerializableExtra(BroadcastUtils.INTENT_EXTRA_CALL_LOG);
-				if (callLog != null) {
-					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter.getItem(1);
-					historyFragment.addLatestCallLog(callLog);*/
-				}
-			}
-		};
-
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
-		registerReceiver(mReceiver, intentFilter);
+	
+	private void openPlaceCallActivity() {
+		//		ArrayList<String> ids = new ArrayList<>();
+		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
+		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
+		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+		//			Log.e("channel", "" + groupChannel.getUrl());
+		//			Intent intent = new Intent(this, ConversationActivity.class);
+		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
+		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
+		//			.user_id));
+		//			startActivity(intent);
+		//		});
+		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
+				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
 	}
-
+	
 	private void unregisterReceiver() {
 		Log.i(TAG, "[MainActivity] unregisterReceiver()");
-
+		
 		if (mReceiver != null) {
 			unregisterReceiver(mReceiver);
 			mReceiver = null;

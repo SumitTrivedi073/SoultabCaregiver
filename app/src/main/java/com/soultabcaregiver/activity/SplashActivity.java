@@ -12,16 +12,17 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-
-import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.Utility;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 
 public class SplashActivity extends BaseActivity {
 	
@@ -148,9 +149,15 @@ public class SplashActivity extends BaseActivity {
 					startActivity(intent);
 					finish();
 				} else {
-					Intent intent = new Intent(mContext, MainActivity.class);
-					startActivity(intent);
-					finish();
+					SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
+						if (userId == null) {
+							Utility.ShowToast(mContext, "Sendbird Auth Failed");
+						}
+						Intent intent = new Intent(mContext, MainActivity.class);
+						startActivity(intent);
+						finish();
+					});
+					
 				}
 			}
 			
