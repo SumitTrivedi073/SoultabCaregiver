@@ -6,11 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.sendbird_chat.CallListFragment;
 import com.soultabcaregiver.sendbird_chat.ChatFragment;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 
 import org.jetbrains.annotations.NotNull;
 

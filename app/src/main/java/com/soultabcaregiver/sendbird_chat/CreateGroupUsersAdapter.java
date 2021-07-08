@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUsersAdapter.SelectableUserHolder> {
@@ -103,11 +104,12 @@ public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUse
 		private void bind(final CareGiverListModel.Response user, boolean isSelected,
 		                  final OnItemCheckedChangeListener listener) {
 			nameText.setText(user.getName());
-			if (!user.getProfileImage().isEmpty()) {
+			if (user.getProfileImage().isEmpty()) {
+				profileImage.setImageDrawable(
+						ContextCompat.getDrawable(itemView.getContext(), R.drawable.icon_avatar));
+			} else {
 				ImageUtils.displayRoundImageFromUrl(itemView.getContext(),
 						APIS.CaregiverImageURL + user.getProfileImage(), profileImage);
-			} else {
-				ImageUtils.displayRoundImageFromUrl(itemView.getContext(), "", profileImage);
 			}
 			
 			checkbox.setChecked(isSelected);

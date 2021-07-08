@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 
 import org.jetbrains.annotations.NotNull;
 
