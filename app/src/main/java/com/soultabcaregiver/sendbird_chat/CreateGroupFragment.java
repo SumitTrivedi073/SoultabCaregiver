@@ -16,10 +16,10 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.model.CareGiverListModel;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
