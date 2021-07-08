@@ -20,12 +20,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.docter.UpdateDoctorAppointmentActivity;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
@@ -44,8 +44,8 @@ public class CustomEventAdapter extends
     TextView tvNodata;
     String FromDate2;
     AlertDialog alertDialog;
-    private List<ReminderBean> arRemindIn;
-    private Context context;
+    private final List<ReminderBean> arRemindIn;
+    private final Context context;
     private CustomProgressDialog progressDialog;
 
 
@@ -224,7 +224,7 @@ public class CustomEventAdapter extends
 
                                 }
 
-                            } else if (String.valueOf(code).equals("403")) {
+                            } else if (code.equals("403")) {
                                 BaseActivity.getInstance().logout_app(response.getString("message"));
                             }
 

@@ -130,7 +130,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/muli_regular"
-                        android:text="@string/three_month"
+                        android:text="@string/month"
                         android:textSize="@dimen/_12sdp" />
 
 
@@ -143,6 +143,7 @@
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10sdp"
+                    android:visibility="gone"
                     android:weightSum="2">
 
 

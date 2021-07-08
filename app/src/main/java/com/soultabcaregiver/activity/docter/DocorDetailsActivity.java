@@ -26,11 +26,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseActivity;
+import com.soultabcaregiver.Model.TwilioTokenModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DoctorModel.AppointmentRequestModel;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
+import com.soultabcaregiver.twillovoicecall.VoiceActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -52,7 +54,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
     private final String TAG = getClass().getSimpleName();
     Context mContext;
-    String id;
+    String id, TwilioAccessToken;
     DoctorListModel.Response.DoctorDatum docListBean;
     TextView tvDocNm, txt_doctor_address, txt_mobile_number, tvDate, txt_fax, txt_Portal, txt_doctor_email;
     Switch tbDocAppTog;
@@ -228,14 +230,16 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         close_window.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                alertDialog.dismiss();
                 finish();
-
             }
         });
 
         call_end_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                alertDialog.dismiss();
                 finish();
             }
 
@@ -244,6 +248,12 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         btn_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(mContext, VoiceActivity.class);
+                intent.putExtra("Contact", number);
+                intent.putExtra("TwilioAccessToken", TwilioAccessToken);
+                startActivity(intent);
+                alertDialog.dismiss();
+                finish();
             }
         });
 
@@ -335,7 +345,8 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         if (Utility.isNetworkConnected(this)) {
             switch (diff) {
                 case 2:
-                    MakeDocAppointment();
+
+                    GetAccessToken();
 
                     break;
             }
@@ -344,6 +355,69 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
             Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
         }
+
+    }
+
+
+    private void GetAccessToken() {
+
+        final String TAG = "MakeDocAppointment";
+        showProgressDialog(getResources().getString(R.string.Loading));
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                APIS.BASEURL + APIS.TwilioAccessToken, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "MakeDocAppointment response=" + response.toString());
+
+                        TwilioTokenModel requestModel = new Gson().fromJson(response.toString(), TwilioTokenModel.class);
+
+                        try {
+                            if (requestModel.getStatusCode() == 200) {
+                                TwilioAccessToken = requestModel.getResponse();
+                                MakeDocAppointment();
+
+                            } else if (String.valueOf(requestModel.getStatusCode()).equals("403")) {
+                                logout_app(requestModel.getMessage());
+                            } else {
+
+                                Utility.ShowToast(mContext, requestModel.getMessage());
+                                hideProgressDialog();
+                                finish();
+
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            hideProgressDialog();
+
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                hideProgressDialog();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+                return params;
+            }
+
+        };
+// Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq);
+        jsonObjReq.setShouldCache(false);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(
+                10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
     }
 
@@ -374,7 +448,6 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
             e.printStackTrace();
         }
         Log.e(TAG, "MAKE_APPOIN_API=  " + mainObject.toString());
-        showProgressDialog(getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DOC_APPOIN_API, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -470,22 +543,22 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
         if (TextUtils.isEmpty(txt_Portal.getText().toString())) {
             Portal.setVisibility(View.GONE);
-            Call_btn.setVisibility(View.GONE);
-          /*  RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             Call_btn.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            sendFax_btn.setLayoutParams(params);*/
+            sendFax_btn.setLayoutParams(params);
         }
 
         if (TextUtils.isEmpty(txt_fax.getText().toString())) {
             sendFax_btn.setVisibility(View.GONE);
-            Call_btn.setVisibility(View.GONE);
-           /* RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Call_btn.setLayoutParams(params1);*/
+            Call_btn.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -495,32 +568,19 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
         if (!TextUtils.isEmpty(txt_Portal.getText().toString()) && !TextUtils.isEmpty(txt_fax.getText().toString())) {
 
-           /* RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Call_btn.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Call_btn.setLayoutParams(params);*/
-            Call_btn.setVisibility(View.GONE);
+            Call_btn.setLayoutParams(params);
 
-            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
-            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Portal.setLayoutParams(params1);
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            sendFax_btn.setLayoutParams(params);
         }
 
         if (!TextUtils.isEmpty(txt_fax.getText().toString()) && !TextUtils.isEmpty(txt_mobile_number.getText().toString())) {
-            Call_btn.setVisibility(View.GONE);
-           /* RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            Portal.setLayoutParams(params);*/
-            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
-            params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            Portal.setLayoutParams(params1);
 
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) sendFax_btn.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) Portal.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            sendFax_btn.setLayoutParams(params);
+            Portal.setLayoutParams(params);
+
         }
 
         Call_btn.setOnClickListener(new View.OnClickListener() {

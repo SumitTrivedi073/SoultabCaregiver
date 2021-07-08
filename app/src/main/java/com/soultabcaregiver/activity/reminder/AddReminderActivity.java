@@ -21,6 +21,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -29,13 +32,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.reminder.adapter.CustomPopupAdapter;
 import com.soultabcaregiver.activity.reminder.model.BeforeTimeModel;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -51,9 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class AddReminderActivity extends BaseActivity implements View.OnClickListener {
     
@@ -562,19 +562,9 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         for (int i = 0; i < getResources().getStringArray(R.array.beforTime_reminder).length; i++) {
             BeforeTimeModel beforeTimeModel = new BeforeTimeModel();
             if (reminderModel == null) {
-                if (i == 0) {
-                    beforeTimeModel.setSelection(true);
-                } else {
-                    beforeTimeModel.setSelection(false);
-                }
+                beforeTimeModel.setSelection(i == 0);
             } else {
-                if (Integer.parseInt(reminderModel.getReminderBefore()) == getResources().getIntArray(R.array.beforTime_value_reminder)[i]) {
-                    beforeTimeModel.setSelection(true);
-
-                } else {
-                    beforeTimeModel.setSelection(false);
-
-                }
+                beforeTimeModel.setSelection(Integer.parseInt(reminderModel.getReminderBefore()) == getResources().getIntArray(R.array.beforTime_value_reminder)[i]);
             }
 
             beforeTimeModel.setTimeName(getResources().getStringArray(R.array.beforTime_reminder)[i]);
@@ -593,42 +583,22 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         for (int i = 0; i < getResources().getStringArray(R.array.repeat_reminder).length; i++) {
             BeforeTimeModel beforeTimeModel = new BeforeTimeModel();
             if (reminderModel == null) {
-                if (i == 0) {
-                    beforeTimeModel.setSelection(true);
-                } else {
-                    beforeTimeModel.setSelection(false);
-                }
+                beforeTimeModel.setSelection(i == 0);
             } else {
                 if (reminderModel.getRepeat().equals("Once")) {
-                    if (getResources().getString(R.string.Once).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i])) {
-                        beforeTimeModel.setSelection(true);
-                    } else {
-                        beforeTimeModel.setSelection(false);
-                    }
+                    beforeTimeModel.setSelection(getResources().getString(R.string.Once).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i]));
                     Log.e("Repeat_once======>", reminderModel.getRepeat() + "===============>" + getResources().getStringArray(R.array.repeat_reminder)[i]);
 
                 } else if (reminderModel.getRepeat().equals("Every Day")) {
-                    if (getResources().getString(R.string.Every_Day).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i])) {
-                        beforeTimeModel.setSelection(true);
-                    } else {
-                        beforeTimeModel.setSelection(false);
-                    }
+                    beforeTimeModel.setSelection(getResources().getString(R.string.Every_Day).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i]));
                     Log.e("RepeatEvery_Day======>", reminderModel.getRepeat() + "===============>" + getResources().getStringArray(R.array.repeat_reminder)[i]);
 
                 } else if (reminderModel.getRepeat().equals("Every Week")) {
-                    if (getResources().getString(R.string.Every_Week).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i])) {
-                        beforeTimeModel.setSelection(true);
-                    } else {
-                        beforeTimeModel.setSelection(false);
-                    }
+                    beforeTimeModel.setSelection(getResources().getString(R.string.Every_Week).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i]));
                     Log.e("RepeatEvery_Week======>", reminderModel.getRepeat() + "===============>" + getResources().getStringArray(R.array.repeat_reminder)[i]);
 
                 } else if (reminderModel.getRepeat().equals("Every Year")) {
-                    if (getResources().getString(R.string.Every_Year).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i])) {
-                        beforeTimeModel.setSelection(true);
-                    } else {
-                        beforeTimeModel.setSelection(false);
-                    }
+                    beforeTimeModel.setSelection(getResources().getString(R.string.Every_Year).equalsIgnoreCase(getResources().getStringArray(R.array.repeat_reminder)[i]));
                     Log.e("RepeatEvery_Year======>", reminderModel.getRepeat() + "===============>" + getResources().getStringArray(R.array.repeat_reminder)[i]);
 
                 }

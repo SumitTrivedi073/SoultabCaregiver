@@ -22,13 +22,13 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.AllEventModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.calender.adapter.CustomEventAdapter;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 

@@ -30,13 +30,13 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -48,6 +48,7 @@ import java.util.Map;
 
 public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
 
+    private final String TAG = getClass().getSimpleName();
     View view;
     Context mContext;
     RelativeLayout logout;
@@ -81,7 +82,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         view = inflater.inflate(R.layout.fragment_dash_board, container, false);
 
         mainActivity = MainActivity.instance;
-        lineChart = (LineChart) view.findViewById(R.id.lineChart);
+        lineChart = view.findViewById(R.id.lineChart);
         bar_chart_list = view.findViewById(R.id.bar_chart_list);
         compliance_name_txt = view.findViewById(R.id.compliance_name_txt);
         compliance_count_txt = view.findViewById(R.id.compliance_count_txt);
@@ -186,7 +187,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         three_month_chart.setChecked(true);
                         six_month_chart.setChecked(false);
                         twelve_month_chart.setChecked(false);
-                        chart_value_data = "3month";
+                        chart_value_data = "month";
 
                         ChartAPI(chart_value_data);
                     }
@@ -356,21 +357,21 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             if (lineDataSet != null) {
                 lineDataSet.setLineWidth(3f);
                 dataSets.add(lineDataSet);
-                lineDataSet.setColor(Color.parseColor("#800080"));
+                lineDataSet.setColor(Color.GREEN);
 
             }
 
             if (lineDataSet3 != null) {
                 lineDataSet3.setLineWidth(3f);
                 dataSets.add(lineDataSet3);
-                lineDataSet3.setColor(Color.BLUE);
+                lineDataSet3.setColor(Color.parseColor("#800080"));
 
             }
 
             if (lineDataSet4 != null) {
                 lineDataSet4.setLineWidth(3f);
                 dataSets.add(lineDataSet4);
-                lineDataSet4.setColor(Color.YELLOW);
+                lineDataSet4.setColor(Color.RED);
 
             }
 
@@ -378,7 +379,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             if (lineDataSet5 != null) {
                 lineDataSet5.setLineWidth(3f);
                 dataSets.add(lineDataSet5);
-                lineDataSet5.setColor(Color.RED);
+                lineDataSet5.setColor(Color.BLUE);
 
             }
             //  dataSets.add(lineDataSet2);

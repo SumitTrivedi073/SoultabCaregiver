@@ -23,10 +23,10 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.model.CareGiverListModel;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
@@ -275,9 +275,9 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
                             if (code.equals("200")) {
 
                                 ShowAlertResponse(mContext.getResources().getString(R.string.Alert_Send));
-                            }else if (String.valueOf(code).equals("403")) {
+                            } else if (code.equals("403")) {
                                 BaseActivity.getInstance().logout_app(response.getString("message"));
-                            }else {
+                            } else {
                                 ShowAlertResponse(response.getString("message"));
                             }
 

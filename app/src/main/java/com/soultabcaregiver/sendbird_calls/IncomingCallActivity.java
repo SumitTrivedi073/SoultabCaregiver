@@ -6,8 +6,8 @@ import android.widget.TextView;
 
 import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
-import com.soultabcaregiver.sinch_calling.BaseActivity;
 
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALLEE_ID_TO_DIAL;
 import static com.soultabcaregiver.sendbird_calls.SendbirdCallService.EXTRA_CALLING_FROM_CHAT;
