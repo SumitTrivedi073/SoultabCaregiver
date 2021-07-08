@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,10 +19,10 @@
         android:id="@+id/relative_layout_video_view_small"
         android:layout_width="96dp"
         android:layout_height="160dp"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp">
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp">
 
         <com.sendbird.calls.SendBirdVideoView
             android:id="@+id/video_view_small"
@@ -45,37 +46,37 @@
         android:id="@+id/linear_layout_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="64dp"
         android:layout_marginLeft="24dp"
+        android:layout_marginTop="64dp"
         android:layout_marginRight="24dp"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/image_view_profile"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginBottom="24dp"
-            android:background="@drawable/icon_avatar" />
+            android:src="@drawable/icon_avatar" />
 
         <TextView
             android:id="@+id/text_view_user_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:fontFamily="sans-serif-medium"
-            android:textSize="24sp"
-            android:textColor="#e1ffffff"
             android:gravity="center_horizontal"
-            android:layout_marginBottom="8dp" />
+            android:textColor="#e1ffffff"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/text_view_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#e1ffffff"
+            android:gravity="center_horizontal"
             android:lineSpacingExtra="6sp"
-            android:gravity="center_horizontal" />
+            android:textColor="#e1ffffff"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -83,9 +84,9 @@
         android:id="@+id/linear_layout_remote_mute"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_centerInParent="true"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
@@ -98,10 +99,10 @@
             android:id="@+id/text_view_remote_mute"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#e1ffffff"
+            android:gravity="center_horizontal"
             android:lineSpacingExtra="6sp"
-            android:gravity="center_horizontal" />
+            android:textColor="#e1ffffff"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -118,8 +119,8 @@
             android:id="@+id/image_view_decline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/call_hangup"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/call_hangup" />
 
     </RelativeLayout>
 
@@ -127,11 +128,11 @@
         android:id="@+id/linear_layout_connecting_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
-        android:layout_marginBottom="40dp">
+        android:layout_marginBottom="40dp"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -142,22 +143,22 @@
                 android:id="@+id/image_view_audio_off"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:background="@drawable/icon_audio_turn_on"
-                android:layout_alignParentLeft="true" />
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/icon_audio_turn_on" />
 
             <ImageView
                 android:id="@+id/image_view_video_off"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:background="@drawable/icon_video_call_turn_on"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/icon_video_call_turn_on" />
 
             <ImageView
                 android:id="@+id/image_view_bluetooth"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:background="@drawable/selector_bluetooth_image_view"
-                android:layout_alignParentRight="true" />
+                android:layout_alignParentRight="true"
+                android:background="@drawable/selector_bluetooth_image_view" />
 
         </RelativeLayout>
 
@@ -169,8 +170,8 @@
                 android:id="@+id/image_view_end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/call_hangup"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/call_hangup" />
 
         </RelativeLayout>
 

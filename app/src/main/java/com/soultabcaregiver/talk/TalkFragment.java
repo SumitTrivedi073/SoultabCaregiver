@@ -9,12 +9,16 @@ import com.google.android.material.tabs.TabLayout;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.sendbird_chat.CallListFragment;
-import com.soultabcaregiver.sendbird_chat.ChatListFragment;
+import com.soultabcaregiver.sendbird_chat.ChatFragment;
 import com.soultabcaregiver.sinch_calling.BaseFragment;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -33,9 +37,16 @@ public class TalkFragment extends BaseFragment {
 		return view;
 	}
 	
+	@Override
+	public void onViewCreated(@NonNull @NotNull View view,
+	                          @Nullable @org.jetbrains.annotations.Nullable
+			                          Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+	}
+	
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-		adapter.addFragment(new ChatListFragment(), getString(R.string.chat));
+		adapter.addFragment(new ChatFragment(), getString(R.string.chat));
 		adapter.addFragment(new AlertFragment(), getString(R.string.alert));
 		adapter.addFragment(new CallListFragment(), getString(R.string.calls));
 		viewPager.setAdapter(adapter);

@@ -18,6 +18,8 @@ import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -35,9 +37,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         instance = BaseActivity.this;
 
     }
-
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+	
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         boolean granted = grantResults.length > 0;
         for (int grantResult : grantResults) {
             granted &= grantResult == PackageManager.PERMISSION_GRANTED;
@@ -45,8 +47,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (granted) {
             //Toast.makeText(this, "You may now place a call", Toast.LENGTH_LONG).show();
         } else {
-
-            Utility.ShowToast(this,"This application needs permission to use your microphone and camera to function properly.");
+	
+	        Utility.ShowToast(this,
+			        "This application needs permission to use your microphone and camera to " +
+					        "function properly.");
         }
     }
 
@@ -101,26 +105,48 @@ public abstract class BaseActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
-
-    public void hideProgressDialog(){
-        if(progressDialog != null) progressDialog.dismiss();
-    }
-
-    public void HideSoftKeyboard(View view){
-        InputMethodManager imm =(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    public void logout_app(String message){
-        LayoutInflater inflater = (LayoutInflater) this
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.send_successfully_layout,
-                null);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
-
-        builder.setView(layout);
-        builder.setCancelable(false);
-        alertDialog = builder.create();
+	
+	public void hideProgressDialog() {
+		if (progressDialog != null)
+			progressDialog.dismiss();
+	}
+	
+	public void HideSoftKeyboard(View view) {
+		InputMethodManager imm =
+				(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// if there is a fragment and the back stack of this fragment is not empty,
+		// then emulate 'onBackPressed' behaviour, because in default, it is not working
+		FragmentManager fm = getSupportFragmentManager();
+		for (Fragment frag : fm.getFragments()) {
+			if (frag.isVisible()) {
+				FragmentManager childFm = frag.getChildFragmentManager();
+				if (childFm.getBackStackEntryCount() > 0) {
+					childFm.popBackStack();
+					return;
+				}
+			}
+		}
+		super.onBackPressed();
+	}
+	
+	public static BaseActivity getInstance() {
+		return instance;
+	}
+	
+	public void logout_app(String message) {
+		LayoutInflater inflater =
+				(LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.send_successfully_layout, null);
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
+		
+		builder.setView(layout);
+		builder.setCancelable(false);
+		alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         alertDialog.show();
@@ -141,17 +167,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Utility.clearSharedPreference(getApplicationContext());
 
                 alertDialog.dismiss();
-
+	
             }
         });
-
-
-
-    }
-    public static BaseActivity getInstance() {
-        return instance;
-    }
-
-
-
+		
+		
+	}
 }

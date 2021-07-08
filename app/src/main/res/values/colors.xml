@@ -41,6 +41,8 @@
 
     <color name="groupChannelUnreadCountBackground">#7d62df</color>
     <color name="groupChannelUnreadCountText">#ffffff</color>
+    <color name="grey">#F3F3F3</color>
+    <color name="channelTitleColor">#034D75</color>
     <!--  chat colors  -->
 
 

@@ -18,12 +18,9 @@ public class ConnectionManager {
 	}
 	
 	public static void logout(final SendBird.DisconnectHandler handler) {
-		SendBird.disconnect(new SendBird.DisconnectHandler() {
-			@Override
-			public void onDisconnected() {
-				if (handler != null) {
-					handler.onDisconnected();
-				}
+		SendBird.disconnect(() -> {
+			if (handler != null) {
+				handler.onDisconnected();
 			}
 		});
 	}
@@ -53,17 +50,13 @@ public class ConnectionManager {
 			}
 		} else if (SendBird.getConnectionState() == SendBird.ConnectionState.CLOSED) { // push
 			// notification or system kill
-			
-			SendBird.connect(userId, new SendBird.ConnectHandler() {
-				@Override
-				public void onConnected(User user, SendBirdException e) {
-					if (e != null) {
-						return;
-					}
-					
-					if (handler != null) {
-						handler.onConnected(false);
-					}
+			SendBird.connect(userId, (user, e) -> {
+				if (e != null) {
+					return;
+				}
+				
+				if (handler != null) {
+					handler.onConnected(false);
 				}
 			});
 		}

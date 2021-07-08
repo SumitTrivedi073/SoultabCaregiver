@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 		BottomNavigationMenuView bottomNavigationMenuView =
 				(BottomNavigationMenuView) navigationView.getChildAt(0);
-		View v = bottomNavigationMenuView.getChildAt(3);
+		View v = bottomNavigationMenuView.getChildAt(1);
 		itemView = (BottomNavigationItemView) v;
 		
 		badge = LayoutInflater.from(this).inflate(R.layout.homescreen_count,
@@ -222,7 +222,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 								
 								video_call.setVisibility(View.GONE);
 								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
-										false, null);
+										false,
+										null);
 								return true;
 							
 							case R.id.navigation_dailyroutine:
