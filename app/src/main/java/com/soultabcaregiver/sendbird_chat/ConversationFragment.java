@@ -12,15 +12,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -33,6 +34,7 @@ import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
@@ -43,6 +45,7 @@ import com.soultabcaregiver.sendbird_chat.utils.UrlPreviewInfo;
 import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
 import com.soultabcaregiver.utils.Utility;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.File;
@@ -50,16 +53,17 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ConversationActivity extends AppCompatActivity {
+public class ConversationFragment extends BaseFragment {
 	
 	private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
 	
@@ -83,7 +87,7 @@ public class ConversationActivity extends AppCompatActivity {
 	
 	private String mCalleeId;
 	
-	private RelativeLayout mRootLayout;
+	private ConstraintLayout mRootLayout;
 	
 	private RecyclerView mRecyclerView;
 	
@@ -93,9 +97,12 @@ public class ConversationActivity extends AppCompatActivity {
 	
 	private EditText mMessageEditText;
 	
-	private Button mMessageSendButton;
+	private ImageView mMessageSendButton;
 	
-	private ImageButton mUploadFileButton;
+	private TextView titleTextView;
+	
+	private RelativeLayout backButton;
+	//	private ImageButton mUploadFileButton;
 	
 	private boolean mIsTyping;
 	
@@ -117,31 +124,20 @@ public class ConversationActivity extends AppCompatActivity {
 	}
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_conversation);
+	public void onViewCreated(@NonNull @NotNull View view,
+	                          @Nullable @org.jetbrains.annotations.Nullable
+			                          Bundle savedInstanceState) {
 		
-		mIMM = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		
-		Toolbar toolbar = findViewById(R.id.toolbar_group_channel);
-		setSupportActionBar(toolbar);
-		if (getSupportActionBar() != null) {
-			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-			getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_arrow);
-		}
+		mIMM = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		// Get channel URL from GroupChannelListFragment.
-		mChannelUrl = getIntent().getStringExtra(EXTRA_GROUP_CHANNEL_URL);
+		mChannelUrl = getArguments().getString(EXTRA_GROUP_CHANNEL_URL);
 		
+		mCalleeId = getArguments().getString(EXTRA_CALLEE_ID);
 		
-		mCalleeId = getIntent().getStringExtra(EXTRA_CALLEE_ID);
-		
-		
-		mRootLayout = findViewById(R.id.layout_group_chat_root);
-		mRecyclerView = findViewById(R.id.recycler_group_chat);
-		mMessageEditText = findViewById(R.id.edittext_group_chat_message);
-		mMessageSendButton = findViewById(R.id.button_group_chat_send);
-		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
+		backButton.setOnClickListener(v -> {
+			getActivity().onBackPressed();
+		});
 		
 		mMessageEditText.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -177,15 +173,14 @@ public class ConversationActivity extends AppCompatActivity {
 			//				}
 		});
 		
+		//		mUploadFileButton.setOnClickListener(new View.OnClickListener() {
+		//			@Override
+		//			public void onClick(View v) {
+		//				requestMedia();
+		//			}
+		//		});
 		
-		mUploadFileButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				requestMedia();
-			}
-		});
-		
-		mChatAdapter = new GroupChatAdapter(this);
+		mChatAdapter = new GroupChatAdapter(getContext());
 		setUpChatListAdapter();
 		
 		// Load messages from cache.
@@ -194,249 +189,18 @@ public class ConversationActivity extends AppCompatActivity {
 		setUpRecyclerView();
 	}
 	
-	private void sendUserMessage(String text) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		List<String> urls = WebUtils.extractUrls(text);
-		if (urls.size() > 0) {
-			sendUserMessageWithUrl(text, urls.get(0));
-			return;
-		}
-		
-		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
-			if (e != null) {
-				// Error!
-				Toast.makeText(ConversationActivity.this,
-						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-						Toast.LENGTH_SHORT).show();
-				mChatAdapter.markMessageFailed(userMessage);
-				return;
-			}
-			
-			// Update a sent message to RecyclerView
-			mChatAdapter.markMessageSent(userMessage);
-		});
-		
-		// Display a user message to RecyclerView
-		mChatAdapter.addFirst(tempUserMessage);
-	}
-	
-	private void requestMedia() {
-		if (ContextCompat.checkSelfPermission(this,
-				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			// If storage permissions are not granted, request permissions at run-time,
-			// as per < API 23 guidelines.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				requestStoragePermissions();
-			}
-		} else {
-			Intent intent = new Intent();
-			
-			intent.setType("*/*");
-			
-			intent.setAction(Intent.ACTION_GET_CONTENT);
-			
-			// Always show the chooser (if there are multiple options available)
-			startActivityForResult(Intent.createChooser(intent, "Select Media"),
-					INTENT_REQUEST_CHOOSE_MEDIA);
-			
-			// Set this as false to maintain connection
-			// even when an external Activity is started.
-			SendBird.setAutoBackgroundDetection(false);
-		}
-	}
-	
-	private void setUpChatListAdapter() {
-		mChatAdapter.setItemClickListener(new GroupChatAdapter.OnItemClickListener() {
-			@Override
-			public void onUserMessageItemClick(UserMessage message) {
-				// Restore failed message and remove the failed message from list.
-				if (mChatAdapter.isFailedMessage(message)) {
-					//retryFailedMessage(message);
-					return;
-				}
-				
-				// Message is sending. Do nothing on click event.
-				if (mChatAdapter.isTempMessage(message)) {
-					return;
-				}
-				
-				
-				if (message.getCustomType().equals(GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE)) {
-					try {
-						UrlPreviewInfo info = new UrlPreviewInfo(message.getData());
-						Intent browserIntent =
-								new Intent(Intent.ACTION_VIEW, Uri.parse(info.getUrl()));
-						startActivity(browserIntent);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			@Override
-			public void onFileMessageItemClick(FileMessage message) {
-				// Load media chooser and remove the failed message from list.
-				if (mChatAdapter.isFailedMessage(message)) {
-					//					retryFailedMessage(message);
-					return;
-				}
-				
-				// Message is sending. Do nothing on click event.
-				if (mChatAdapter.isTempMessage(message)) {
-					return;
-				}
-				
-				
-				onFileMessageClicked(message);
-			}
-		});
-		
-		mChatAdapter.setItemLongClickListener(new GroupChatAdapter.OnItemLongClickListener() {
-			@Override
-			public void onUserMessageItemLongClick(UserMessage message, int position) {
-				//				if (message.getSender().getUserId().equals(PreferenceUtils
-				//				.getUserId())) {
-				//					showMessageOptionsDialog(message, position);
-				//				}
-			}
-			
-			@Override
-			public void onFileMessageItemLongClick(FileMessage message) {
-			}
-			
-			@Override
-			public void onAdminMessageItemLongClick(AdminMessage message) {
-			}
-		});
-	}
-	
-	private void setUpRecyclerView() {
-		mLayoutManager = new LinearLayoutManager(this);
-		mLayoutManager.setReverseLayout(true);
-		mRecyclerView.setLayoutManager(mLayoutManager);
-		mRecyclerView.setAdapter(mChatAdapter);
-		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-				if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-					mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
-				}
-			}
-		});
-	}
-	
-	@SuppressLint ("StaticFieldLeak")
-	private void sendUserMessageWithUrl(final String text, String url) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		new WebUtils.UrlPreviewAsyncTask() {
-			
-			@Override
-			protected void onPostExecute(UrlPreviewInfo info) {
-				if (mChannel == null) {
-					return;
-				}
-				
-				UserMessage tempUserMessage = null;
-				BaseChannel.SendUserMessageHandler handler =
-						new BaseChannel.SendUserMessageHandler() {
-							@Override
-							public void onSent(UserMessage userMessage, SendBirdException e) {
-								if (e != null) {
-									// Error!
-									
-									Toast.makeText(ConversationActivity.this,
-											"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-											Toast.LENGTH_SHORT).show();
-									
-									mChatAdapter.markMessageFailed(userMessage);
-									return;
-								}
-								
-								// Update a sent message to RecyclerView
-								mChatAdapter.markMessageSent(userMessage);
-							}
-						};
-				
-				try {
-					// Sending a message with URL preview information and custom type.
-					String jsonString = info.toJsonString();
-					tempUserMessage = mChannel.sendUserMessage(text, jsonString,
-							GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE, handler);
-				} catch (Exception e) {
-					// Sending a message without URL preview information.
-					tempUserMessage = mChannel.sendUserMessage(text, handler);
-				}
-				
-				
-				// Display a user message to RecyclerView
-				mChatAdapter.addFirst(tempUserMessage);
-			}
-		}.execute(url);
-	}
-	
-	@RequiresApi (api = Build.VERSION_CODES.M)
-	private void requestStoragePermissions() {
-		if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-			// Provide an additional rationale to the user if the permission was not granted
-			// and the user would benefit from additional context for the use of the permission.
-			// For example if the user has previously denied the permission.
-			Snackbar.make(mRootLayout,
-					"Storage access permissions are required to upload/download files.",
-					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View view) {
-					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-							PERMISSION_WRITE_EXTERNAL_STORAGE);
-				}
-			}).show();
-		} else {
-			// Permission has not been granted yet. Request it directly.
-			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-					PERMISSION_WRITE_EXTERNAL_STORAGE);
-		}
-	}
-	
-	private void onFileMessageClicked(FileMessage message) {
-		String type = message.getType().toLowerCase();
-		//		if (type.startsWith("image")) {
-		//			Intent i = new Intent(this, PhotoViewerActivity.class);
-		//			i.putExtra("url", message.getUrl());
-		//			i.putExtra("type", message.getType());
-		//			startActivity(i);
-		//		} else if (type.startsWith("video")) {
-		//			Intent intent = new Intent(this, MediaPlayerActivity.class);
-		//			intent.putExtra("url", message.getUrl());
-		//			startActivity(intent);
-		//		} else {
-		//			showDownloadConfirmDialog(message);
-		//		}
-	}
-	
-	@Override
-	public void onPause() {
-		setTypingStatus(false);
-		super.onPause();
-	}
-	
 	@Override
 	public void onResume() {
 		super.onResume();
+		getActivity().getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		ConnectionManager.addConnectionManagementHandler(
-				Utility.getSharedPreferences(this, APIS.caregiver_id), CONNECTION_HANDLER_ID,
-				reconnect -> refresh());
+				Utility.getSharedPreferences(getContext(), APIS.caregiver_id),
+				CONNECTION_HANDLER_ID, reconnect -> refresh());
 		
-		mChatAdapter.setContext(this);
+		mChatAdapter.setContext(getContext());
 		
 		// Gets channel from URL user requested
-		
 		
 		SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
 			@Override
@@ -490,6 +254,63 @@ public class ConversationActivity extends AppCompatActivity {
 				}
 			}
 		});
+	}
+	
+	@Override
+	public void onPause() {
+		setTypingStatus(false);
+		super.onPause();
+	}
+	
+	/**
+	 * Notify other users whether the current user is typing.
+	 *
+	 * @param typing Whether the user is currently typing.
+	 */
+	private void setTypingStatus(boolean typing) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		if (typing) {
+			mIsTyping = true;
+			mChannel.startTyping();
+		} else {
+			mIsTyping = false;
+			mChannel.endTyping();
+		}
+	}
+	
+	@Override
+	public void onDestroy() {
+		// Save messages to cache.
+		mChatAdapter.save();
+		ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+		SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
+		super.onDestroy();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.video_call) {
+			SendbirdCallService.dial(getContext(), mCalleeId, null, true, true, mChannelUrl);
+			//			RoomParams params = new RoomParams(RoomType.SMALL_ROOM_FOR_VIDEO);
+			//			SendBirdCall.createRoom(params, (room, e) -> {
+			//				if (room == null || e != null) {
+			//					return;
+			//				}
+			//				room.enter(new EnterParams().setAudioEnabled(true).setVideoEnabled
+			//				(true), e1 -> {
+			//
+			//				});
+			//			});
+			return true;
+		} else if (itemId == android.R.id.home) {
+			getActivity().onBackPressed();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	private void refresh() {
@@ -546,32 +367,210 @@ public class ConversationActivity extends AppCompatActivity {
 		}
 		
 		// Set action bar title to name of channel
-		setActionBarTitle(title);
+		titleTextView.setText(title);
 	}
 	
-	void setActionBarTitle(String title) {
-		if (getSupportActionBar() != null) {
-			getSupportActionBar().setTitle(title);
-		}
-	}
-	
-	/**
-	 * Notify other users whether the current user is typing.
-	 *
-	 * @param typing Whether the user is currently typing.
-	 */
-	private void setTypingStatus(boolean typing) {
+	private void sendUserMessage(String text) {
 		if (mChannel == null) {
 			return;
 		}
 		
-		if (typing) {
-			mIsTyping = true;
-			mChannel.startTyping();
-		} else {
-			mIsTyping = false;
-			mChannel.endTyping();
+		List<String> urls = WebUtils.extractUrls(text);
+		if (urls.size() > 0) {
+			sendUserMessageWithUrl(text, urls.get(0));
+			return;
 		}
+		
+		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
+			if (e != null) {
+				// Error!
+				Toast.makeText(getContext(),
+						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+						Toast.LENGTH_SHORT).show();
+				mChatAdapter.markMessageFailed(userMessage);
+				return;
+			}
+			
+			// Update a sent message to RecyclerView
+			mChatAdapter.markMessageSent(userMessage);
+		});
+		
+		// Display a user message to RecyclerView
+		mChatAdapter.addFirst(tempUserMessage);
+	}
+	
+	private void setUpChatListAdapter() {
+		mChatAdapter.setItemClickListener(new GroupChatAdapter.OnItemClickListener() {
+			@Override
+			public void onUserMessageItemClick(UserMessage message) {
+				// Restore failed message and remove the failed message from list.
+				if (mChatAdapter.isFailedMessage(message)) {
+					//retryFailedMessage(message);
+					return;
+				}
+				
+				// Message is sending. Do nothing on click event.
+				if (mChatAdapter.isTempMessage(message)) {
+					return;
+				}
+				
+				if (message.getCustomType().equals(GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE)) {
+					try {
+						UrlPreviewInfo info = new UrlPreviewInfo(message.getData());
+						Intent browserIntent =
+								new Intent(Intent.ACTION_VIEW, Uri.parse(info.getUrl()));
+						startActivity(browserIntent);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			@Override
+			public void onFileMessageItemClick(FileMessage message) {
+				// Load media chooser and remove the failed message from list.
+				if (mChatAdapter.isFailedMessage(message)) {
+					//					retryFailedMessage(message);
+					return;
+				}
+				
+				// Message is sending. Do nothing on click event.
+				if (mChatAdapter.isTempMessage(message)) {
+					return;
+				}
+				
+				onFileMessageClicked(message);
+			}
+		});
+		
+		mChatAdapter.setItemLongClickListener(new GroupChatAdapter.OnItemLongClickListener() {
+			@Override
+			public void onUserMessageItemLongClick(UserMessage message, int position) {
+				//				if (message.getSender().getUserId().equals(PreferenceUtils
+				//				.getUserId())) {
+				//					showMessageOptionsDialog(message, position);
+				//				}
+			}
+			
+			@Override
+			public void onFileMessageItemLongClick(FileMessage message) {
+			}
+			
+			@Override
+			public void onAdminMessageItemLongClick(AdminMessage message) {
+			}
+		});
+	}
+	
+	private void setUpRecyclerView() {
+		mLayoutManager = new LinearLayoutManager(getContext());
+		mLayoutManager.setReverseLayout(true);
+		mRecyclerView.setLayoutManager(mLayoutManager);
+		mRecyclerView.setAdapter(mChatAdapter);
+		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+				if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
+					mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
+				}
+			}
+		});
+	}
+	
+	@SuppressLint ("StaticFieldLeak")
+	private void sendUserMessageWithUrl(final String text, String url) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		new WebUtils.UrlPreviewAsyncTask() {
+			
+			@Override
+			protected void onPostExecute(UrlPreviewInfo info) {
+				if (mChannel == null) {
+					return;
+				}
+				
+				UserMessage tempUserMessage = null;
+				BaseChannel.SendUserMessageHandler handler =
+						new BaseChannel.SendUserMessageHandler() {
+							@Override
+							public void onSent(UserMessage userMessage, SendBirdException e) {
+								if (e != null) {
+									// Error!
+									
+									Toast.makeText(getContext(),
+											"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+											Toast.LENGTH_SHORT).show();
+									
+									mChatAdapter.markMessageFailed(userMessage);
+									return;
+								}
+								
+								// Update a sent message to RecyclerView
+								mChatAdapter.markMessageSent(userMessage);
+							}
+						};
+				
+				try {
+					// Sending a message with URL preview information and custom type.
+					String jsonString = info.toJsonString();
+					tempUserMessage = mChannel.sendUserMessage(text, jsonString,
+							GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE, handler);
+				} catch (Exception e) {
+					// Sending a message without URL preview information.
+					tempUserMessage = mChannel.sendUserMessage(text, handler);
+				}
+				
+				// Display a user message to RecyclerView
+				mChatAdapter.addFirst(tempUserMessage);
+			}
+		}.execute(url);
+	}
+	
+	private void onFileMessageClicked(FileMessage message) {
+		String type = message.getType().toLowerCase();
+		//		if (type.startsWith("image")) {
+		//			Intent i = new Intent(this, PhotoViewerActivity.class);
+		//			i.putExtra("url", message.getUrl());
+		//			i.putExtra("type", message.getType());
+		//			startActivity(i);
+		//		} else if (type.startsWith("video")) {
+		//			Intent intent = new Intent(this, MediaPlayerActivity.class);
+		//			intent.putExtra("url", message.getUrl());
+		//			startActivity(intent);
+		//		} else {
+		//			showDownloadConfirmDialog(message);
+		//		}
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.activity_conversation, container, false);
+		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
+		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
+		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
+		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
+		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
+		titleTextView = view.findViewById(R.id.chatTitle);
+		backButton = view.findViewById(R.id.back_btn);
+		return view;
+	}
+	
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		MenuInflater inflater = getMenuInflater();
+	//		inflater.inflate(R.menu.conversation_menu, menu);
+	//		return true;
+	//	}
+	
+	public static ConversationFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		ConversationFragment fragment = new ConversationFragment();
+		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		fragment.setArguments(args);
+		return fragment;
 	}
 	
 	/**
@@ -590,10 +589,11 @@ public class ConversationActivity extends AppCompatActivity {
 		thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
 		thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
 		
-		Hashtable<String, Object> info = FileUtils.getFileInfo(this, uri);
+		Hashtable<String, Object> info = FileUtils.getFileInfo(getContext(), uri);
 		
 		if (info == null || info.isEmpty()) {
-			Toast.makeText(this, "Extracting file information failed.", Toast.LENGTH_LONG).show();
+			Toast.makeText(getContext(), "Extracting file information failed.",
+					Toast.LENGTH_LONG).show();
 			return;
 		}
 		
@@ -609,15 +609,14 @@ public class ConversationActivity extends AppCompatActivity {
 		final int size = (Integer) info.get("size");
 		
 		if (path == null || path.equals("")) {
-			Toast.makeText(this, "File must be located in local storage.",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(getContext(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
 		} else {
 			BaseChannel.SendFileMessageHandler fileMessageHandler =
 					new BaseChannel.SendFileMessageHandler() {
 						@Override
 						public void onSent(FileMessage fileMessage, SendBirdException e) {
 							if (e != null) {
-								Toast.makeText(ConversationActivity.this,
+								Toast.makeText(getContext(),
 										"" + e.getCode() + ":" + e.getMessage(),
 										Toast.LENGTH_SHORT).show();
 								mChatAdapter.markMessageFailed(fileMessage);
@@ -638,40 +637,29 @@ public class ConversationActivity extends AppCompatActivity {
 		}
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.conversation_menu, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int itemId = item.getItemId();
-		if (itemId == R.id.video_call) {
-			SendbirdCallService.dial(this, mCalleeId, null, true, true, mChannelUrl);
-			//			RoomParams params = new RoomParams(RoomType.SMALL_ROOM_FOR_VIDEO);
-			//			SendBirdCall.createRoom(params, (room, e) -> {
-			//				if (room == null || e != null) {
-			//					return;
-			//				}
-			//				room.enter(new EnterParams().setAudioEnabled(true).setVideoEnabled
-			//				(true), e1 -> {
-			//
-			//				});
-			//			});
-			return true;
-		} else if (itemId == android.R.id.home) {
-			onBackPressed();
-			return true;
+	private void requestMedia() {
+		if (ContextCompat.checkSelfPermission(getContext(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			// If storage permissions are not granted, request permissions at run-time,
+			// as per < API 23 guidelines.
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				requestStoragePermissions();
+			}
+		} else {
+			Intent intent = new Intent();
+			
+			intent.setType("*/*");
+			
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			
+			// Always show the chooser (if there are multiple options available)
+			startActivityForResult(Intent.createChooser(intent, "Select Media"),
+					INTENT_REQUEST_CHOOSE_MEDIA);
+			
+			// Set this as false to maintain connection
+			// even when an external Activity is started.
+			SendBird.setAutoBackgroundDetection(false);
 		}
-		return super.onOptionsItemSelected(item);
-	}
-	
-	@Override
-	public void onBackPressed() {
-		mIMM.hideSoftInputFromWindow(mMessageEditText.getWindowToken(), 0);
-		super.onBackPressed();
 	}
 	
 	//	/**
@@ -702,17 +690,32 @@ public class ConversationActivity extends AppCompatActivity {
 	//		}
 	//	}
 	
-	@Override
-	public void onDestroy() {
-		// Save messages to cache.
-		mChatAdapter.save();
-		ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
-		SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-		super.onDestroy();
+	@RequiresApi (api = Build.VERSION_CODES.M)
+	private void requestStoragePermissions() {
+		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			// Provide an additional rationale to the user if the permission was not granted
+			// and the user would benefit from additional context for the use of the permission.
+			// For example if the user has previously denied the permission.
+			Snackbar.make(mRootLayout,
+					"Storage access permissions are required to upload/download files.",
+					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View view) {
+					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							PERMISSION_WRITE_EXTERNAL_STORAGE);
+				}
+			}).show();
+		} else {
+			// Permission has not been granted yet. Request it directly.
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+					PERMISSION_WRITE_EXTERNAL_STORAGE);
+		}
 	}
 	
 	private void showDownloadConfirmDialog(final FileMessage message) {
-		if (ContextCompat.checkSelfPermission(this,
+		if (ContextCompat.checkSelfPermission(getContext(),
 				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 			// If storage permissions are not granted, request permissions at run-time,
 			// as per < API 23 guidelines.
@@ -720,12 +723,12 @@ public class ConversationActivity extends AppCompatActivity {
 				requestStoragePermissions();
 			}
 		} else {
-			new AlertDialog.Builder(this).setMessage("Download file?").setPositiveButton(
+			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
 					R.string.download, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if (which == DialogInterface.BUTTON_POSITIVE) {
-								FileUtils.downloadFile(ConversationActivity.this, message.getUrl(),
+								FileUtils.downloadFile(getContext(), message.getUrl(),
 										message.getName());
 							}
 						}

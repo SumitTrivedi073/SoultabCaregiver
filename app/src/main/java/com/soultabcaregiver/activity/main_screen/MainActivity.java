@@ -45,7 +45,7 @@ import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
-import com.soultabcaregiver.talk.TalkFragment;
+import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -70,6 +70,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	private static final int REQUEST_CODE_PERMISSION = 2;
 	
 	public static MainActivity instance;
+	
+	private final String TAG = getClass().getSimpleName();
 	
 	Context mContext;
 	
@@ -96,8 +98,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	private String CityZipCode;
 	
 	private GoogleApiClient googleApiClient;
-	
-	private final String TAG = getClass().getSimpleName();
 	
 	private BroadcastReceiver mReceiver;
 	
@@ -136,6 +136,33 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(
 				this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
 		googleApiClient.connect();
+	}
+	
+	private void registerReceiver() {
+		Log.i(TAG, "[MainActivity] registerReceiver()");
+		
+		if (mReceiver != null) {
+			return;
+		}
+		
+		mReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.i(TAG, "[MainActivity] onReceive()");
+				
+				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
+						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
+				if (callLog != null) {
+					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
+					.getItem(1);
+					historyFragment.addLatestCallLog(callLog);*/
+				}
+			}
+		};
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
+		registerReceiver(mReceiver, intentFilter);
 	}
 	
 	public void Alert_countAPI() {
@@ -210,7 +237,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 						FragmentManager fm = getFragmentManager();
 						switch (item.getItemId()) {
 							
-							
 							case R.id.navigation_dashboard:
 								video_call.setVisibility(View.VISIBLE);
 								Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
@@ -235,8 +261,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 								break;
 							case R.id.navigation_talk:
 								video_call.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new TalkFragment(), false,
-										null);
+								Utility.loadFragment(MainActivity.this, new TalkHolderFragment(),
+										false, null);
 								
 								return true;
 							case R.id.navigation_calender:
@@ -288,31 +314,20 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
-	private void registerReceiver() {
-		Log.i(TAG, "[MainActivity] registerReceiver()");
-		
-		if (mReceiver != null) {
-			return;
-		}
-		
-		mReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Log.i(TAG, "[MainActivity] onReceive()");
-				
-				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
-						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
-				if (callLog != null) {
-					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
-					.getItem(1);
-					historyFragment.addLatestCallLog(callLog);*/
-				}
-			}
-		};
-		
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
-		registerReceiver(mReceiver, intentFilter);
+	private void openPlaceCallActivity() {
+		//		ArrayList<String> ids = new ArrayList<>();
+		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
+		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
+		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+		//			Log.e("channel", "" + groupChannel.getUrl());
+		//			Intent intent = new Intent(this, ConversationFragment.class);
+		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
+		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
+		//			.user_id));
+		//			startActivity(intent);
+		//		});
+		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
+				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
 	}
 	
 	@Override
@@ -372,6 +387,15 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			
 		}
 		unregisterReceiver();
+	}
+	
+	private void unregisterReceiver() {
+		Log.i(TAG, "[MainActivity] unregisterReceiver()");
+		
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
+		}
 	}
 	
 	@RequiresApi (api = Build.VERSION_CODES.GINGERBREAD)
@@ -488,31 +512,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			} catch (IllegalAccessException e) {
 				Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
 			}
-		}
-	}
-	
-	private void openPlaceCallActivity() {
-		//		ArrayList<String> ids = new ArrayList<>();
-		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
-		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
-		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
-		//			Log.e("channel", "" + groupChannel.getUrl());
-		//			Intent intent = new Intent(this, ConversationActivity.class);
-		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
-		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
-		//			.user_id));
-		//			startActivity(intent);
-		//		});
-		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
-				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
-	}
-	
-	private void unregisterReceiver() {
-		Log.i(TAG, "[MainActivity] unregisterReceiver()");
-		
-		if (mReceiver != null) {
-			unregisterReceiver(mReceiver);
-			mReceiver = null;
 		}
 	}
 }

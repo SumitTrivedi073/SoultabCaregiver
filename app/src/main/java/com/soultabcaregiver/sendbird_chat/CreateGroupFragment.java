@@ -116,9 +116,12 @@ public class CreateGroupFragment extends BaseFragment {
 				return;
 			}
 			
+			showProgressDialog(getContext(), getString(R.string.creating_group));
 			ChatHelper.createGroupChannel(mSelectedIds, true, groupChannel -> {
 				groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
 						(groupChannel1, e) -> {
+							hideProgressDialog();
+							getActivity().onBackPressed();
 							Log.e("tag", "channel created");
 						});
 			});

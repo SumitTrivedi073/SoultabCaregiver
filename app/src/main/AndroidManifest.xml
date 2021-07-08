@@ -102,7 +102,6 @@
             android:theme="@style/CallTheme"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".sendbird_chat.ConversationActivity" />
 
         <service
             android:name=".sendbird_calls.SendbirdCallService"

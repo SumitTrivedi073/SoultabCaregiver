@@ -37,13 +37,6 @@ public class TalkFragment extends BaseFragment {
 		return view;
 	}
 	
-	@Override
-	public void onViewCreated(@NonNull @NotNull View view,
-	                          @Nullable @org.jetbrains.annotations.Nullable
-			                          Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-	}
-	
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
 		adapter.addFragment(new ChatFragment(), getString(R.string.chat));
@@ -51,6 +44,21 @@ public class TalkFragment extends BaseFragment {
 		adapter.addFragment(new CallListFragment(), getString(R.string.calls));
 		viewPager.setAdapter(adapter);
 	}
+	
+	@Override
+	public void onViewCreated(@NonNull @NotNull View view,
+	                          @Nullable @org.jetbrains.annotations.Nullable
+			                          Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+	}
+	
+	public void navigateToConversationFragment(String url) {
+		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
+		if (talkHolderFragment != null) {
+			talkHolderFragment.navigateToConversationFragment(url);
+		}
+	}
+	
 }
 
 class ViewPagerAdapter extends FragmentPagerAdapter {
