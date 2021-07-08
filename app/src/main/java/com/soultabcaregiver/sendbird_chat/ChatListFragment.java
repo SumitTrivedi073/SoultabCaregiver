@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
-import com.soultabcaregiver.sinch_calling.BaseFragment;
 
 import org.jetbrains.annotations.NotNull;
 
