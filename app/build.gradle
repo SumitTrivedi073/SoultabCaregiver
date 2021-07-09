@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 
 ext.playCustomRingback = {
-    def playCustomRingback  = System.getenv("playCustomRingback")
+    def playCustomRingback = System.getenv("playCustomRingback")
 
     if (playCustomRingback == null) {
         logger.log(LogLevel.INFO, "Could not locate playCustomRingback environment variable. " +
@@ -94,7 +94,7 @@ dependencies {
     implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.165'
     implementation 'org.jsoup:jsoup:1.11.2'
 
-    
+
     // [Sendbird Calls]
     implementation 'com.sendbird.sdk:sendbird-calls:1.6.1'
 
@@ -129,6 +129,7 @@ dependencies {
     implementation "com.twilio:voice-android:5.8.0"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
 
+    implementation 'com.vanniktech:emoji-google:0.7.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

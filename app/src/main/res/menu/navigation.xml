@@ -12,7 +12,7 @@
     <item
         android:id="@+id/navigation_talk"
         android:enabled="true"
-        android:icon="@drawable/appointment"
+        android:icon="@drawable/ic_talk_bottom"
         android:title="@string/talk"
         />
 

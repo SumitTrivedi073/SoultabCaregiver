@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +43,8 @@ import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.sendbird_chat.utils.UrlPreviewInfo;
 import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
 import com.soultabcaregiver.utils.Utility;
+import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiPopup;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -95,7 +96,7 @@ public class ConversationFragment extends BaseFragment {
 	
 	private LinearLayoutManager mLayoutManager;
 	
-	private EditText mMessageEditText;
+	private EmojiEditText mMessageEditText;
 	
 	private ImageView mMessageSendButton;
 	
@@ -105,6 +106,10 @@ public class ConversationFragment extends BaseFragment {
 	//	private ImageButton mUploadFileButton;
 	
 	private boolean mIsTyping;
+	
+	private EmojiPopup emojiPopup;
+	
+	private ImageView smileyBtn, attachmentBtn, galleryBtn, cameraBtn, microPhoneBtn, alertBtn;
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, final Intent data) {
@@ -259,6 +264,8 @@ public class ConversationFragment extends BaseFragment {
 	@Override
 	public void onPause() {
 		setTypingStatus(false);
+		Utility.hideKeyboard(getContext());
+		emojiPopup.dismiss();
 		super.onPause();
 	}
 	
@@ -547,14 +554,8 @@ public class ConversationFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.activity_conversation, container, false);
-		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
-		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
-		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
-		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
-		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
-		titleTextView = view.findViewById(R.id.chatTitle);
-		backButton = view.findViewById(R.id.back_btn);
+		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+		setupControls(view);
 		return view;
 	}
 	
@@ -564,6 +565,34 @@ public class ConversationFragment extends BaseFragment {
 	//		inflater.inflate(R.menu.conversation_menu, menu);
 	//		return true;
 	//	}
+	
+	private void setupControls(View view) {
+		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
+		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
+		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
+		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
+		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
+		titleTextView = view.findViewById(R.id.chatTitle);
+		backButton = view.findViewById(R.id.back_btn);
+		
+		smileyBtn = view.findViewById(R.id.smileyBtn);
+		attachmentBtn = view.findViewById(R.id.attachmentBtn);
+		galleryBtn = view.findViewById(R.id.galleryBtn);
+		cameraBtn = view.findViewById(R.id.cameraBtn);
+		microPhoneBtn = view.findViewById(R.id.microPhoneBtn);
+		alertBtn = view.findViewById(R.id.alertBtn);
+		
+		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
+				keyBoardHeight -> {
+				
+				}).setOnSoftKeyboardCloseListener(() -> {
+			
+		}).build(mMessageEditText);
+		smileyBtn.setOnClickListener(v -> {
+			emojiPopup.toggle();
+		});
+		
+	}
 	
 	public static ConversationFragment newInstance(String channelUrl) {
 		Bundle args = new Bundle();
@@ -609,7 +638,8 @@ public class ConversationFragment extends BaseFragment {
 		final int size = (Integer) info.get("size");
 		
 		if (path == null || path.equals("")) {
-			Toast.makeText(getContext(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
+			Toast.makeText(getContext(), "File must be located in local storage.",
+					Toast.LENGTH_LONG).show();
 		} else {
 			BaseChannel.SendFileMessageHandler fileMessageHandler =
 					new BaseChannel.SendFileMessageHandler() {
@@ -634,6 +664,14 @@ public class ConversationFragment extends BaseFragment {
 			
 			mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
 			mChatAdapter.addFirst(tempFileMessage);
+		}
+	}
+	
+	public void showSoftKeyboard(View view) {
+		if (view.requestFocus()) {
+			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+					Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
 		}
 	}
 	

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sendbird_chat.ConversationFragment;
+import com.soultabcaregiver.sendbird_chat.CreateGroupFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +38,13 @@ public class TalkHolderFragment extends BaseFragment {
 		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
 		transaction.add(R.id.container, ConversationFragment.newInstance(url));
 		transaction.addToBackStack(ConversationFragment.class.getName());
+		transaction.commit();
+	}
+	
+	public void navigateToCreateGroupFragment() {
+		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+		transaction.add(R.id.container, CreateGroupFragment.newInstance());
+		transaction.addToBackStack(CreateGroupFragment.class.getName());
 		transaction.commit();
 	}
 	

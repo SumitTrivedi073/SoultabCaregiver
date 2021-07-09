@@ -59,6 +59,14 @@ public class TalkFragment extends BaseFragment {
 		}
 	}
 	
+	public void navigateToCreateGroupFragment() {
+		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
+		if (talkHolderFragment != null) {
+			talkHolderFragment.navigateToCreateGroupFragment();
+		}
+	}
+	
+	
 }
 
 class ViewPagerAdapter extends FragmentPagerAdapter {

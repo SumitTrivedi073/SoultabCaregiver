@@ -34,10 +34,10 @@ public class ChatFragment extends BaseFragment {
 	}
 	
 	public void navigateToCreateGroupFragment() {
-		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-		transaction.add(R.id.container, CreateGroupFragment.newInstance());
-		transaction.addToBackStack(CreateGroupFragment.class.getName());
-		transaction.commit();
+		TalkFragment talkFragment = (TalkFragment) getParentFragment();
+		if (talkFragment != null) {
+			talkFragment.navigateToCreateGroupFragment();
+		}
 	}
 	
 	public void navigateToConversationFragment(String url) {
