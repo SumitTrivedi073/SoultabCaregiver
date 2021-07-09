@@ -231,6 +231,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									Utility.setSharedPreference(mContext, APIS.profile_image,
 											loginModel.getResponse().getProfileImage());
 									
+									Utility.setSharedPreference(mContext, APIS.is_40plus_user,
+											loginModel.getResponse().getIs_40plus_user());
+									Utility.setSharedPreference(mContext, APIS.is_40plus_userID,
+											loginModel.getResponse().getPlus40_userId());
+									Utility.setSharedPreference(mContext,
+											APIS.Caregiver_countrycode,
+											loginModel.getResponse().getCountrycode());
+									Utility.setSharedPreference(mContext, APIS.Caregiver_username,
+											loginModel.getResponse().getCaregiver_username());
 									
 									Utility.setSharedPreference(mContext, Utility.FCM_TOKEN,
 											FirebaseToken);

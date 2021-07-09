@@ -856,10 +856,12 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
-                    Intent intent = new Intent(mContext, SocialActivity.class);
-                    intent.putExtra("webUrl", txt_Portal.getText().toString().trim());
-                    startActivity(intent);
-                    finish();
+	                Intent intent = new Intent(mContext, SocialActivity.class);
+	                intent.putExtra("webUrl", txt_Portal.getText().toString().trim());
+	                intent.putExtra("title", tvDocNm.getText().toString().trim());
+	
+	                startActivity(intent);
+	                finish();
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.Portal_unavailable));
                     finish();

@@ -43,6 +43,7 @@ import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
+import com.soultabcaregiver.activity.shopping.ShoppingCategoryActivity;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.talk.TalkFragment;
@@ -73,7 +74,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	Context mContext;
 	
-	FloatingActionButton video_call;
+	FloatingActionButton video_call, shopping_btn;
 	
 	Location mLastLocation;
 	
@@ -115,6 +116,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 		navigationView = findViewById(R.id.bottom_navigation);
 		video_call = findViewById(R.id.video_call);
+		shopping_btn = findViewById(R.id.shopping_btn);
 		BottomNavigationViewHelper.removeShiftMode(navigationView);
 		
 		BottomNavigationMenuView bottomNavigationMenuView =
@@ -283,6 +285,14 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 				} else {
 					Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
 				}
+			}
+		});
+		
+		shopping_btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
+				startActivity(intent);
 			}
 		});
 		
