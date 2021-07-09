@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -39,6 +40,8 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
 import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
+import com.soultabcaregiver.sendbird_chat.utils.MediaPlayerActivity;
+import com.soultabcaregiver.sendbird_chat.utils.PhotoViewerActivity;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.sendbird_chat.utils.UrlPreviewInfo;
 import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
@@ -79,8 +82,6 @@ public class ConversationFragment extends BaseFragment {
 	public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
 	
 	public static final String EXTRA_CALLEE_ID = "EXTRA_CALLEE_ID";
-	
-	private InputMethodManager mIMM;
 	
 	private GroupChannel mChannel;
 	
@@ -133,58 +134,10 @@ public class ConversationFragment extends BaseFragment {
 	                          @Nullable @org.jetbrains.annotations.Nullable
 			                          Bundle savedInstanceState) {
 		
-		mIMM = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-		
 		// Get channel URL from GroupChannelListFragment.
 		mChannelUrl = getArguments().getString(EXTRA_GROUP_CHANNEL_URL);
 		
 		mCalleeId = getArguments().getString(EXTRA_CALLEE_ID);
-		
-		backButton.setOnClickListener(v -> {
-			getActivity().onBackPressed();
-		});
-		
-		mMessageEditText.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				mMessageSendButton.setEnabled(s.length() > 0);
-			}
-		});
-		
-		mMessageSendButton.setEnabled(false);
-		mMessageSendButton.setOnClickListener(v -> {
-			//				if (mCurrentState == STATE_EDIT) {
-			//					String userInput = mMessageEditText.getText().toString();
-			//					if (userInput.length() > 0) {
-			//						if (mEditingMessage != null) {
-			//							editMessage(mEditingMessage, userInput);
-			//						}
-			//					}
-			//					setState(STATE_NORMAL, null, -1);
-			//				} else {
-			String userInput = mMessageEditText.getText().toString();
-			if (userInput.length() > 0) {
-				sendUserMessage(userInput);
-				mMessageEditText.setText("");
-			}
-			//				}
-		});
-		
-		//		mUploadFileButton.setOnClickListener(new View.OnClickListener() {
-		//			@Override
-		//			public void onClick(View v) {
-		//				requestMedia();
-		//			}
-		//		});
-		
 		mChatAdapter = new GroupChatAdapter(getContext());
 		setUpChatListAdapter();
 		
@@ -377,35 +330,6 @@ public class ConversationFragment extends BaseFragment {
 		titleTextView.setText(title);
 	}
 	
-	private void sendUserMessage(String text) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		List<String> urls = WebUtils.extractUrls(text);
-		if (urls.size() > 0) {
-			sendUserMessageWithUrl(text, urls.get(0));
-			return;
-		}
-		
-		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
-			if (e != null) {
-				// Error!
-				Toast.makeText(getContext(),
-						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-						Toast.LENGTH_SHORT).show();
-				mChatAdapter.markMessageFailed(userMessage);
-				return;
-			}
-			
-			// Update a sent message to RecyclerView
-			mChatAdapter.markMessageSent(userMessage);
-		});
-		
-		// Display a user message to RecyclerView
-		mChatAdapter.addFirst(tempUserMessage);
-	}
-	
 	private void setUpChatListAdapter() {
 		mChatAdapter.setItemClickListener(new GroupChatAdapter.OnItemClickListener() {
 			@Override
@@ -484,6 +408,168 @@ public class ConversationFragment extends BaseFragment {
 		});
 	}
 	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+		setupControls(view);
+		return view;
+	}
+	
+	private void setupControls(View view) {
+		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
+		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
+		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
+		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
+		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
+		titleTextView = view.findViewById(R.id.chatTitle);
+		backButton = view.findViewById(R.id.back_btn);
+		
+		smileyBtn = view.findViewById(R.id.smileyBtn);
+		attachmentBtn = view.findViewById(R.id.attachmentBtn);
+		galleryBtn = view.findViewById(R.id.galleryBtn);
+		cameraBtn = view.findViewById(R.id.cameraBtn);
+		microPhoneBtn = view.findViewById(R.id.microPhoneBtn);
+		alertBtn = view.findViewById(R.id.alertBtn);
+		
+		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
+				keyBoardHeight -> {
+				
+				}).setOnSoftKeyboardCloseListener(() -> {
+			
+		}).build(mMessageEditText);
+		
+		smileyBtn.setOnClickListener(v -> {
+			emojiPopup.toggle();
+		});
+		
+		galleryBtn.setOnClickListener(v -> {
+			String types = "image/* video/*";
+			String[] mimetypes = {"image/*", "video/*"};
+			requestMedia(types, mimetypes);
+		});
+		
+		attachmentBtn.setOnClickListener(v -> {
+			String types = "*/*";
+			String[] mimetypes = {"application/pdf", "application/msword"};
+			requestMedia(types, mimetypes);
+		});
+		
+		cameraBtn.setOnClickListener(v -> {
+			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+			Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+			Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+			contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+			contentSelectionIntent.setType("*/*");
+			Intent[] intentArray = new Intent[]{takePictureIntent, takeVideoIntent};
+			chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+			chooserIntent.putExtra(Intent.EXTRA_TITLE, "Choose an action");
+			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+			startActivityForResult(chooserIntent, INTENT_REQUEST_CHOOSE_MEDIA);
+		});
+		
+		backButton.setOnClickListener(v -> {
+			getActivity().onBackPressed();
+		});
+		
+		mMessageEditText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				mMessageSendButton.setEnabled(s.length() > 0);
+			}
+		});
+		
+		mMessageSendButton.setEnabled(false);
+		mMessageSendButton.setOnClickListener(v -> {
+			//				if (mCurrentState == STATE_EDIT) {
+			//					String userInput = mMessageEditText.getText().toString();
+			//					if (userInput.length() > 0) {
+			//						if (mEditingMessage != null) {
+			//							editMessage(mEditingMessage, userInput);
+			//						}
+			//					}
+			//					setState(STATE_NORMAL, null, -1);
+			//				} else {
+			String userInput = mMessageEditText.getText().toString();
+			if (userInput.length() > 0) {
+				sendUserMessage(userInput);
+				mMessageEditText.setText("");
+			}
+			//				}
+		});
+		
+	}
+	
+	private void requestMedia(String types, String[] mimetypes) {
+		if (ContextCompat.checkSelfPermission(getContext(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			// If storage permissions are not granted, request permissions at run-time,
+			// as per < API 23 guidelines.
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				requestStoragePermissions();
+			}
+		} else {
+			Intent intent = new Intent();
+			intent.setType(types);
+			//			String[] mimetypes = {"image/*", "video/*"};
+			intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			
+			// Always show the chooser (if there are multiple options available)
+			startActivityForResult(Intent.createChooser(intent, "Select Media"),
+					INTENT_REQUEST_CHOOSE_MEDIA);
+			
+			// Set this as false to maintain connection
+			// even when an external Activity is started.
+			SendBird.setAutoBackgroundDetection(false);
+		}
+	}
+	
+	private void sendUserMessage(String text) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		List<String> urls = WebUtils.extractUrls(text);
+		if (urls.size() > 0) {
+			sendUserMessageWithUrl(text, urls.get(0));
+			return;
+		}
+		
+		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
+			if (e != null) {
+				// Error!
+				Toast.makeText(getContext(),
+						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+						Toast.LENGTH_SHORT).show();
+				mChatAdapter.markMessageFailed(userMessage);
+				return;
+			}
+			
+			// Update a sent message to RecyclerView
+			mChatAdapter.markMessageSent(userMessage);
+		});
+		
+		// Display a user message to RecyclerView
+		mChatAdapter.addFirst(tempUserMessage);
+	}
+	
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		MenuInflater inflater = getMenuInflater();
+	//		inflater.inflate(R.menu.conversation_menu, menu);
+	//		return true;
+	//	}
+	
 	@SuppressLint ("StaticFieldLeak")
 	private void sendUserMessageWithUrl(final String text, String url) {
 		if (mChannel == null) {
@@ -535,65 +621,6 @@ public class ConversationFragment extends BaseFragment {
 		}.execute(url);
 	}
 	
-	private void onFileMessageClicked(FileMessage message) {
-		String type = message.getType().toLowerCase();
-		//		if (type.startsWith("image")) {
-		//			Intent i = new Intent(this, PhotoViewerActivity.class);
-		//			i.putExtra("url", message.getUrl());
-		//			i.putExtra("type", message.getType());
-		//			startActivity(i);
-		//		} else if (type.startsWith("video")) {
-		//			Intent intent = new Intent(this, MediaPlayerActivity.class);
-		//			intent.putExtra("url", message.getUrl());
-		//			startActivity(intent);
-		//		} else {
-		//			showDownloadConfirmDialog(message);
-		//		}
-	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
-		setupControls(view);
-		return view;
-	}
-	
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		MenuInflater inflater = getMenuInflater();
-	//		inflater.inflate(R.menu.conversation_menu, menu);
-	//		return true;
-	//	}
-	
-	private void setupControls(View view) {
-		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
-		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
-		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
-		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
-		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
-		titleTextView = view.findViewById(R.id.chatTitle);
-		backButton = view.findViewById(R.id.back_btn);
-		
-		smileyBtn = view.findViewById(R.id.smileyBtn);
-		attachmentBtn = view.findViewById(R.id.attachmentBtn);
-		galleryBtn = view.findViewById(R.id.galleryBtn);
-		cameraBtn = view.findViewById(R.id.cameraBtn);
-		microPhoneBtn = view.findViewById(R.id.microPhoneBtn);
-		alertBtn = view.findViewById(R.id.alertBtn);
-		
-		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
-				keyBoardHeight -> {
-				
-				}).setOnSoftKeyboardCloseListener(() -> {
-			
-		}).build(mMessageEditText);
-		smileyBtn.setOnClickListener(v -> {
-			emojiPopup.toggle();
-		});
-		
-	}
-	
 	public static ConversationFragment newInstance(String channelUrl) {
 		Bundle args = new Bundle();
 		ConversationFragment fragment = new ConversationFragment();
@@ -601,6 +628,94 @@ public class ConversationFragment extends BaseFragment {
 		fragment.setArguments(args);
 		return fragment;
 	}
+	
+	private void onFileMessageClicked(FileMessage message) {
+		String type = message.getType().toLowerCase();
+		if (type.startsWith("image")) {
+			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+			i.putExtra("url", message.getUrl());
+			i.putExtra("type", message.getType());
+			startActivity(i);
+		} else if (type.startsWith("video")) {
+			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+			intent.putExtra("url", message.getUrl());
+			startActivity(intent);
+		} else {
+			showDownloadConfirmDialog(message);
+		}
+	}
+	
+	private void showDownloadConfirmDialog(final FileMessage message) {
+		if (ContextCompat.checkSelfPermission(getContext(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			// If storage permissions are not granted, request permissions at run-time,
+			// as per < API 23 guidelines.
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				requestStoragePermissions();
+			}
+		} else {
+			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
+					R.string.download, (dialog, which) -> {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							FileUtils.downloadFile(getContext(), message.getUrl(),
+									message.getName());
+						}
+					}).setNegativeButton(R.string.cancel_text, null).show();
+		}
+		
+	}
+	
+	@RequiresApi (api = Build.VERSION_CODES.M)
+	private void requestStoragePermissions() {
+		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			// Provide an additional rationale to the user if the permission was not granted
+			// and the user would benefit from additional context for the use of the permission.
+			// For example if the user has previously denied the permission.
+			Snackbar.make(mRootLayout,
+					"Storage access permissions are required to upload/download files.",
+					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View view) {
+					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							PERMISSION_WRITE_EXTERNAL_STORAGE);
+				}
+			}).show();
+		} else {
+			// Permission has not been granted yet. Request it directly.
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+					PERMISSION_WRITE_EXTERNAL_STORAGE);
+		}
+	}
+	
+	//	/**
+	//	 * Display which users are typing.
+	//	 * If more than two users are currently typing, this will state that "multiple users" are
+	//	 typing.
+	//	 *
+	//	 * @param typingUsers The list of currently typing users.
+	//	 */
+	//	private void displayTyping(List<Member> typingUsers) {
+	//
+	//		if (typingUsers.size() > 0) {
+	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
+	//			String string;
+	//
+	//			if (typingUsers.size() == 1) {
+	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
+	//				.getNickname());
+	//			} else if (typingUsers.size() == 2) {
+	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
+	//				(0).getNickname(), typingUsers.get(1).getNickname());
+	//			} else {
+	//				string = getString(R.string.users_typing);
+	//			}
+	//			mCurrentEventText.setText(string);
+	//		} else {
+	//			mCurrentEventLayout.setVisibility(View.GONE);
+	//		}
+	//	}
 	
 	/**
 	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in
@@ -637,25 +752,20 @@ public class ConversationFragment extends BaseFragment {
 		final String mime = (String) info.get("mime");
 		final int size = (Integer) info.get("size");
 		
-		if (path == null || path.equals("")) {
+		if (path.equals("")) {
 			Toast.makeText(getContext(), "File must be located in local storage.",
 					Toast.LENGTH_LONG).show();
 		} else {
-			BaseChannel.SendFileMessageHandler fileMessageHandler =
-					new BaseChannel.SendFileMessageHandler() {
-						@Override
-						public void onSent(FileMessage fileMessage, SendBirdException e) {
-							if (e != null) {
-								Toast.makeText(getContext(),
-										"" + e.getCode() + ":" + e.getMessage(),
-										Toast.LENGTH_SHORT).show();
-								mChatAdapter.markMessageFailed(fileMessage);
-								return;
-							}
-							
-							mChatAdapter.markMessageSent(fileMessage);
-						}
-					};
+			BaseChannel.SendFileMessageHandler fileMessageHandler = (fileMessage, e) -> {
+				if (e != null) {
+					Toast.makeText(getContext(), "" + e.getCode() + ":" + e.getMessage(),
+							Toast.LENGTH_SHORT).show();
+					mChatAdapter.markMessageFailed(fileMessage);
+					return;
+				}
+				
+				mChatAdapter.markMessageSent(fileMessage);
+			};
 			
 			// Send image with thumbnails in the specified dimensions
 			FileMessage tempFileMessage =
@@ -673,106 +783,6 @@ public class ConversationFragment extends BaseFragment {
 					Context.INPUT_METHOD_SERVICE);
 			imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
 		}
-	}
-	
-	private void requestMedia() {
-		if (ContextCompat.checkSelfPermission(getContext(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			// If storage permissions are not granted, request permissions at run-time,
-			// as per < API 23 guidelines.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				requestStoragePermissions();
-			}
-		} else {
-			Intent intent = new Intent();
-			
-			intent.setType("*/*");
-			
-			intent.setAction(Intent.ACTION_GET_CONTENT);
-			
-			// Always show the chooser (if there are multiple options available)
-			startActivityForResult(Intent.createChooser(intent, "Select Media"),
-					INTENT_REQUEST_CHOOSE_MEDIA);
-			
-			// Set this as false to maintain connection
-			// even when an external Activity is started.
-			SendBird.setAutoBackgroundDetection(false);
-		}
-	}
-	
-	//	/**
-	//	 * Display which users are typing.
-	//	 * If more than two users are currently typing, this will state that "multiple users" are
-	//	 typing.
-	//	 *
-	//	 * @param typingUsers The list of currently typing users.
-	//	 */
-	//	private void displayTyping(List<Member> typingUsers) {
-	//
-	//		if (typingUsers.size() > 0) {
-	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
-	//			String string;
-	//
-	//			if (typingUsers.size() == 1) {
-	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
-	//				.getNickname());
-	//			} else if (typingUsers.size() == 2) {
-	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
-	//				(0).getNickname(), typingUsers.get(1).getNickname());
-	//			} else {
-	//				string = getString(R.string.users_typing);
-	//			}
-	//			mCurrentEventText.setText(string);
-	//		} else {
-	//			mCurrentEventLayout.setVisibility(View.GONE);
-	//		}
-	//	}
-	
-	@RequiresApi (api = Build.VERSION_CODES.M)
-	private void requestStoragePermissions() {
-		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-			// Provide an additional rationale to the user if the permission was not granted
-			// and the user would benefit from additional context for the use of the permission.
-			// For example if the user has previously denied the permission.
-			Snackbar.make(mRootLayout,
-					"Storage access permissions are required to upload/download files.",
-					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View view) {
-					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-							PERMISSION_WRITE_EXTERNAL_STORAGE);
-				}
-			}).show();
-		} else {
-			// Permission has not been granted yet. Request it directly.
-			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-					PERMISSION_WRITE_EXTERNAL_STORAGE);
-		}
-	}
-	
-	private void showDownloadConfirmDialog(final FileMessage message) {
-		if (ContextCompat.checkSelfPermission(getContext(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			// If storage permissions are not granted, request permissions at run-time,
-			// as per < API 23 guidelines.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				requestStoragePermissions();
-			}
-		} else {
-			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
-					R.string.download, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							if (which == DialogInterface.BUTTON_POSITIVE) {
-								FileUtils.downloadFile(getContext(), message.getUrl(),
-										message.getName());
-							}
-						}
-					}).setNegativeButton(R.string.cancel_text, null).show();
-		}
-		
 	}
 	
 }

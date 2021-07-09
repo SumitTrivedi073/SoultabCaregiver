@@ -104,16 +104,22 @@
 
         <service
             android:name=".sendbird_calls.SendbirdCallService"
-            android:stopWithTask="false" />
+            android:stopWithTask="false"
+            />
 
 
         <activity
             android:name=".twillovoicecall.VoiceActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme2" />
+            android:theme="@style/AppTheme2"
+            />
+        <activity android:name=".sendbird_chat.utils.PhotoViewerActivity" />
+        <activity android:name=".sendbird_chat.utils.MediaPlayerActivity" />
+
         <service
             android:name=".twillovoicecall.IncomingCallNotificationService"
-            android:enabled="true">
+            android:enabled="true"
+            >
             <intent-filter>
                 <action android:name="ACTION_ACCEPT" />
                 <action android:name="ACTION_REJECT" />
