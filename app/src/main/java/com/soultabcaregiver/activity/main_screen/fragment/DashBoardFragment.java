@@ -14,9 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -46,25 +43,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
+public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
+    
     private final String TAG = getClass().getSimpleName();
+    
     View view;
+    
     Context mContext;
+    
     RelativeLayout logout;
+    
     LineChart lineChart;
+    
     RecyclerView bar_chart_list;
+    
     ProgressDialog progressDialog;
+    
     LinearLayout name_event_linear;
+    
     CardView compliance_card;
-    LineDataSet lineDataSet, lineDataSet2, lineDataSet3, lineDataSet4, lineDataSet5;
+    
+    LineDataSet lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5;
+    
     LineData data;
+    
     CheckBox weekly_chart, three_month_chart, six_month_chart, twelve_month_chart;
+    
     TextView today_txt, lastweek_txt, lastmonth_txt, good_morning_txt, user_name_txt,
             compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt;
+    
     MainActivity mainActivity;
+    
     Calendar calendar;
+    
     ChartModel chartModel;
+    
     String chart_value_data = "week";
 
 

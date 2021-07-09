@@ -87,25 +87,29 @@ public class LoginModel {
         @SerializedName("user_verification")
         @Expose
         private String userVerification;
-        @SerializedName("token_verification")
-        @Expose
-        private String tokenVerification;
-        @SerializedName("profile_image")
-        @Expose
-        private String profileImage;
-
-        @SerializedName("parent_user")
-        @Expose
-        private String parent_user;
-
+    
+        @SerializedName ("token_verification") @Expose private String tokenVerification;
+    
+        @SerializedName ("profile_image") @Expose private String profileImage;
+    
+        @SerializedName ("parent_user") @Expose private String parent_user;
+    
+        @SerializedName ("is_40plus_user") @Expose private String is_40plus_user;
+    
+        @SerializedName ("40plus_userId") @Expose private String plus40_userId;
+    
+        @SerializedName ("countrycode") @Expose private String countrycode;
+    
+        @SerializedName ("username") @Expose private String caregiver_username;
+    
         public String getId() {
             return id;
         }
-
+    
         public void setId(String id) {
             this.id = id;
         }
-
+    
         public String getCaregiver_id() {
             return caregiver_id;
         }
@@ -202,14 +206,46 @@ public class LoginModel {
         public void setProfileImage(String profileImage) {
             this.profileImage = profileImage;
         }
-
+    
         public String getParent_user() {
             return parent_user;
         }
-
+    
         public void setParent_user(String parent_user) {
             this.parent_user = parent_user;
         }
-
+    
+        public String getIs_40plus_user() {
+            return is_40plus_user;
+        }
+    
+        public void setIs_40plus_user(String is_40plus_user) {
+            this.is_40plus_user = is_40plus_user;
+        }
+    
+        public String getPlus40_userId() {
+            return plus40_userId;
+        }
+    
+        public void setPlus40_userId(String plus40_userId) {
+            this.plus40_userId = plus40_userId;
+        }
+    
+        public String getCountrycode() {
+            return countrycode;
+        }
+    
+        public void setCountrycode(String countrycode) {
+            this.countrycode = countrycode;
+        }
+    
+        public String getCaregiver_username() {
+            return caregiver_username;
+        }
+    
+        public void setCaregiver_username(String caregiver_username) {
+            this.caregiver_username = caregiver_username;
+        }
+    
     }
 }
