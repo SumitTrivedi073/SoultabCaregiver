@@ -12,7 +12,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
@@ -36,7 +35,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 	
 	RecyclerView shopping_category_list;
 	
-	FloatingActionButton ly_back;
+	RelativeLayout ly_back;
 	
 	String TAG = ShoppingCategoryActivity.class.toString();
 	
@@ -63,7 +62,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 		shopping_category_list = findViewById(R.id.shopping_category_list);
 		NoDataFoundtxt = findViewById(R.id.NoDataFoundtxt);
 		tvNodata_relative = findViewById(R.id.tvNodata_relative);
-		ly_back = findViewById(R.id.lyBack_card);
+		ly_back = findViewById(R.id.back_btn);
 		
 		ly_back.setOnClickListener(this);
 		

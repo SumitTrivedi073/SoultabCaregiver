@@ -43,6 +43,7 @@ import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
+import com.soultabcaregiver.activity.shopping.ShoppingCategoryActivity;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.talk.TalkFragment;
@@ -283,6 +284,14 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 				} else {
 					Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
 				}
+			}
+		});
+		
+		shopping_btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
+				startActivity(intent);
 			}
 		});
 		
