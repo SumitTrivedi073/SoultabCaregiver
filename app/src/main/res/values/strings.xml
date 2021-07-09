@@ -272,6 +272,15 @@
     <string name="chat">Chat</string>
     <string name="calls">Calls</string>
 
+    <string name="group_channel_list_file_message_text">%1$s has uploaded a file.</string>
+    <string name="add_new_group">Add New Group</string>
+    <string name="name_of_group">Name of Group</string>
+    <string name="back">Back</string>
+    <string name="create">Create</string>
+    <string name="enter_group_name">Please enter Group name</string>
+    <string name="select_group_name">Please select Group Members</string>
+    <string name="no_other_caregivers">No Other Caregivers</string>
+
     <!--  Added By AJay  -->
 
     <!--Added by Sumit-->
