@@ -274,8 +274,29 @@
 
     <!--  Added By AJay  -->
 
-    <!--Twolio String-->
+    <!--Added by Sumit-->
     <string name="callee">client identity or phone number</string>
     <string name="select_device">Select Audio Device</string>
     <string name="audio_device">Audio Device</string>
+
+    <string name="hint_usr">Enter your first name</string>
+    <string name="hint_usr2">Enter your last name</string>
+    <string name="enter_user_name">Enter user name</string>
+    <string name="enter_your_email_address">Enter your Email Address</string>
+    <string name="hint_phone">Enter your phone number</string>
+    <string name="valid_phone1">Please enter your valid phone number</string>
+    <string name="valid_pass1">Password must contain at least one uppercase, lowercase, number, punctuation mark, and minimum of 8 characters.</string>
+    <string name="valid_confirm2">Confirm password does not match with  password.</string>
+    <string name="shopping_category">shopping category</string>
+    <string name="would_like_setup_plusmart_profile">Would you like to Setup \n40Plusmart.com profile \nusing following information?</string>
+    <string name="first_name">First Name</string>
+    <string name="LastName">Last Name</string>
+    <string name="user_name">User Name</string>
+    <string name="email_address">Email Address</string>
+    <string name="telephone">Telephone</string>
+    <string name="enter_your_telephone">Enter Your Telephone</string>
+    <string name="Password">Password</string>
+    <string name="plusmart">40PlusMart</string>
+    <!--Added by Sumit-->
+
 </resources>

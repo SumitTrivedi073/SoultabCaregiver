@@ -624,7 +624,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
                     Intent intent = new Intent(mContext, SocialActivity.class);
                     intent.putExtra("webUrl", docListBean.getPortal());
-                    Log.e("webUrl", docListBean.getPortal());
+                    intent.putExtra("title", docListBean.getName());
                     startActivity(intent);
                     finish();
                 } else {

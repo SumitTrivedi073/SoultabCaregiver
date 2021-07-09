@@ -12,20 +12,26 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
-public class SocialActivity extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
 
+public class SocialActivity extends AppCompatActivity {
+    
     Context mContext;
+    
     RelativeLayout back_btn;
+    
     WebView wv_webview;
+    
     String urlString;
+    
     Handler handler;
+    
     Runnable myRunnable;
+    
     private CustomProgressDialog progressDialog;
 
 
@@ -40,7 +46,7 @@ public class SocialActivity extends AppCompatActivity {
 
 
         urlString = getIntent().getStringExtra("webUrl");
-        Log.e("webUrl2", urlString);
+    
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

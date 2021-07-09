@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	Context mContext;
 	
-	FloatingActionButton video_call;
+	FloatingActionButton video_call, shopping_btn;
 	
 	Location mLastLocation;
 	
@@ -115,6 +115,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 		navigationView = findViewById(R.id.bottom_navigation);
 		video_call = findViewById(R.id.video_call);
+		shopping_btn = findViewById(R.id.shopping_btn);
 		BottomNavigationViewHelper.removeShiftMode(navigationView);
 		
 		BottomNavigationMenuView bottomNavigationMenuView =

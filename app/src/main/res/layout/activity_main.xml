@@ -42,6 +42,24 @@
 
     </RelativeLayout>
 
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/shopping_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/video_call"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:backgroundTint="@color/orange_color"
+        app:elevation="@dimen/_5sdp"
+        app:fabSize="auto"
+        app:pressedTranslationZ="@dimen/_5sdp"
+        app:srcCompat="@drawable/ic_baseline_shopping_cart_24"
+        app:tint="@android:color/white" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/video_call"
         android:layout_width="wrap_content"
@@ -52,7 +70,7 @@
         android:layout_marginEnd="@dimen/_16sdp"
         android:layout_marginRight="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:src="@drawable/ic_baseline_videocam_24"
+        app:srcCompat="@drawable/ic_baseline_videocam_24"
         app:backgroundTint="@color/orange_color"
         app:elevation="@dimen/_5sdp"
         app:fabSize="auto"
