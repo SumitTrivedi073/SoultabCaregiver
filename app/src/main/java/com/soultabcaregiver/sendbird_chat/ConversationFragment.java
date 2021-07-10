@@ -3,13 +3,14 @@ package com.soultabcaregiver.sendbird_chat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,12 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.sendbird.android.AdminMessage;
 import com.sendbird.android.BaseChannel;
@@ -53,7 +54,10 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -64,12 +68,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ConversationFragment extends BaseFragment {
 	
 	private static final int INTENT_REQUEST_CHOOSE_MEDIA = 301;
+	
+	private static final int INTENT_CAPTURE_PHOTO = 302;
 	
 	private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
 	
@@ -110,7 +117,7 @@ public class ConversationFragment extends BaseFragment {
 	
 	private EmojiPopup emojiPopup;
 	
-	private ImageView smileyBtn, attachmentBtn, galleryBtn, cameraBtn, microPhoneBtn, alertBtn;
+	private Uri requestedPhotoUri;
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, final Intent data) {
@@ -126,6 +133,13 @@ public class ConversationFragment extends BaseFragment {
 			}
 			
 			sendFileWithThumbnail(data.getData());
+		}
+		
+		if (requestCode == INTENT_CAPTURE_PHOTO && resultCode == Activity.RESULT_OK) {
+			if (data == null) {
+				return;
+			}
+			sendFileWithThumbnail(requestedPhotoUri);
 		}
 	}
 	
@@ -408,315 +422,6 @@ public class ConversationFragment extends BaseFragment {
 		});
 	}
 	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
-		setupControls(view);
-		return view;
-	}
-	
-	private void setupControls(View view) {
-		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
-		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
-		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
-		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
-		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
-		titleTextView = view.findViewById(R.id.chatTitle);
-		backButton = view.findViewById(R.id.back_btn);
-		
-		smileyBtn = view.findViewById(R.id.smileyBtn);
-		attachmentBtn = view.findViewById(R.id.attachmentBtn);
-		galleryBtn = view.findViewById(R.id.galleryBtn);
-		cameraBtn = view.findViewById(R.id.cameraBtn);
-		microPhoneBtn = view.findViewById(R.id.microPhoneBtn);
-		alertBtn = view.findViewById(R.id.alertBtn);
-		
-		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
-				keyBoardHeight -> {
-				
-				}).setOnSoftKeyboardCloseListener(() -> {
-			
-		}).build(mMessageEditText);
-		
-		smileyBtn.setOnClickListener(v -> {
-			emojiPopup.toggle();
-		});
-		
-		galleryBtn.setOnClickListener(v -> {
-			String types = "image/* video/*";
-			String[] mimetypes = {"image/*", "video/*"};
-			requestMedia(types, mimetypes);
-		});
-		
-		attachmentBtn.setOnClickListener(v -> {
-			String types = "*/*";
-			String[] mimetypes = {"application/pdf", "application/msword"};
-			requestMedia(types, mimetypes);
-		});
-		
-		cameraBtn.setOnClickListener(v -> {
-			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-			Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-			Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
-			contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-			contentSelectionIntent.setType("*/*");
-			Intent[] intentArray = new Intent[]{takePictureIntent, takeVideoIntent};
-			chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-			chooserIntent.putExtra(Intent.EXTRA_TITLE, "Choose an action");
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-			startActivityForResult(chooserIntent, INTENT_REQUEST_CHOOSE_MEDIA);
-		});
-		
-		backButton.setOnClickListener(v -> {
-			getActivity().onBackPressed();
-		});
-		
-		mMessageEditText.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				mMessageSendButton.setEnabled(s.length() > 0);
-			}
-		});
-		
-		mMessageSendButton.setEnabled(false);
-		mMessageSendButton.setOnClickListener(v -> {
-			//				if (mCurrentState == STATE_EDIT) {
-			//					String userInput = mMessageEditText.getText().toString();
-			//					if (userInput.length() > 0) {
-			//						if (mEditingMessage != null) {
-			//							editMessage(mEditingMessage, userInput);
-			//						}
-			//					}
-			//					setState(STATE_NORMAL, null, -1);
-			//				} else {
-			String userInput = mMessageEditText.getText().toString();
-			if (userInput.length() > 0) {
-				sendUserMessage(userInput);
-				mMessageEditText.setText("");
-			}
-			//				}
-		});
-		
-	}
-	
-	private void requestMedia(String types, String[] mimetypes) {
-		if (ContextCompat.checkSelfPermission(getContext(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			// If storage permissions are not granted, request permissions at run-time,
-			// as per < API 23 guidelines.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				requestStoragePermissions();
-			}
-		} else {
-			Intent intent = new Intent();
-			intent.setType(types);
-			//			String[] mimetypes = {"image/*", "video/*"};
-			intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
-			intent.setAction(Intent.ACTION_GET_CONTENT);
-			
-			// Always show the chooser (if there are multiple options available)
-			startActivityForResult(Intent.createChooser(intent, "Select Media"),
-					INTENT_REQUEST_CHOOSE_MEDIA);
-			
-			// Set this as false to maintain connection
-			// even when an external Activity is started.
-			SendBird.setAutoBackgroundDetection(false);
-		}
-	}
-	
-	private void sendUserMessage(String text) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		List<String> urls = WebUtils.extractUrls(text);
-		if (urls.size() > 0) {
-			sendUserMessageWithUrl(text, urls.get(0));
-			return;
-		}
-		
-		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
-			if (e != null) {
-				// Error!
-				Toast.makeText(getContext(),
-						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-						Toast.LENGTH_SHORT).show();
-				mChatAdapter.markMessageFailed(userMessage);
-				return;
-			}
-			
-			// Update a sent message to RecyclerView
-			mChatAdapter.markMessageSent(userMessage);
-		});
-		
-		// Display a user message to RecyclerView
-		mChatAdapter.addFirst(tempUserMessage);
-	}
-	
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		MenuInflater inflater = getMenuInflater();
-	//		inflater.inflate(R.menu.conversation_menu, menu);
-	//		return true;
-	//	}
-	
-	@SuppressLint ("StaticFieldLeak")
-	private void sendUserMessageWithUrl(final String text, String url) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		new WebUtils.UrlPreviewAsyncTask() {
-			
-			@Override
-			protected void onPostExecute(UrlPreviewInfo info) {
-				if (mChannel == null) {
-					return;
-				}
-				
-				UserMessage tempUserMessage = null;
-				BaseChannel.SendUserMessageHandler handler =
-						new BaseChannel.SendUserMessageHandler() {
-							@Override
-							public void onSent(UserMessage userMessage, SendBirdException e) {
-								if (e != null) {
-									// Error!
-									
-									Toast.makeText(getContext(),
-											"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-											Toast.LENGTH_SHORT).show();
-									
-									mChatAdapter.markMessageFailed(userMessage);
-									return;
-								}
-								
-								// Update a sent message to RecyclerView
-								mChatAdapter.markMessageSent(userMessage);
-							}
-						};
-				
-				try {
-					// Sending a message with URL preview information and custom type.
-					String jsonString = info.toJsonString();
-					tempUserMessage = mChannel.sendUserMessage(text, jsonString,
-							GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE, handler);
-				} catch (Exception e) {
-					// Sending a message without URL preview information.
-					tempUserMessage = mChannel.sendUserMessage(text, handler);
-				}
-				
-				// Display a user message to RecyclerView
-				mChatAdapter.addFirst(tempUserMessage);
-			}
-		}.execute(url);
-	}
-	
-	public static ConversationFragment newInstance(String channelUrl) {
-		Bundle args = new Bundle();
-		ConversationFragment fragment = new ConversationFragment();
-		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		fragment.setArguments(args);
-		return fragment;
-	}
-	
-	private void onFileMessageClicked(FileMessage message) {
-		String type = message.getType().toLowerCase();
-		if (type.startsWith("image")) {
-			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
-			i.putExtra("url", message.getUrl());
-			i.putExtra("type", message.getType());
-			startActivity(i);
-		} else if (type.startsWith("video")) {
-			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
-			intent.putExtra("url", message.getUrl());
-			startActivity(intent);
-		} else {
-			showDownloadConfirmDialog(message);
-		}
-	}
-	
-	private void showDownloadConfirmDialog(final FileMessage message) {
-		if (ContextCompat.checkSelfPermission(getContext(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			// If storage permissions are not granted, request permissions at run-time,
-			// as per < API 23 guidelines.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				requestStoragePermissions();
-			}
-		} else {
-			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
-					R.string.download, (dialog, which) -> {
-						if (which == DialogInterface.BUTTON_POSITIVE) {
-							FileUtils.downloadFile(getContext(), message.getUrl(),
-									message.getName());
-						}
-					}).setNegativeButton(R.string.cancel_text, null).show();
-		}
-		
-	}
-	
-	@RequiresApi (api = Build.VERSION_CODES.M)
-	private void requestStoragePermissions() {
-		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-			// Provide an additional rationale to the user if the permission was not granted
-			// and the user would benefit from additional context for the use of the permission.
-			// For example if the user has previously denied the permission.
-			Snackbar.make(mRootLayout,
-					"Storage access permissions are required to upload/download files.",
-					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View view) {
-					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-							PERMISSION_WRITE_EXTERNAL_STORAGE);
-				}
-			}).show();
-		} else {
-			// Permission has not been granted yet. Request it directly.
-			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-					PERMISSION_WRITE_EXTERNAL_STORAGE);
-		}
-	}
-	
-	//	/**
-	//	 * Display which users are typing.
-	//	 * If more than two users are currently typing, this will state that "multiple users" are
-	//	 typing.
-	//	 *
-	//	 * @param typingUsers The list of currently typing users.
-	//	 */
-	//	private void displayTyping(List<Member> typingUsers) {
-	//
-	//		if (typingUsers.size() > 0) {
-	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
-	//			String string;
-	//
-	//			if (typingUsers.size() == 1) {
-	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
-	//				.getNickname());
-	//			} else if (typingUsers.size() == 2) {
-	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
-	//				(0).getNickname(), typingUsers.get(1).getNickname());
-	//			} else {
-	//				string = getString(R.string.users_typing);
-	//			}
-	//			mCurrentEventText.setText(string);
-	//		} else {
-	//			mCurrentEventLayout.setVisibility(View.GONE);
-	//		}
-	//	}
-	
 	/**
 	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in
 	 * specified sizes.
@@ -777,12 +482,354 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	public void showSoftKeyboard(View view) {
-		if (view.requestFocus()) {
-			InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-					Context.INPUT_METHOD_SERVICE);
-			imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+	public static ConversationFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		ConversationFragment fragment = new ConversationFragment();
+		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
+	private void onFileMessageClicked(FileMessage message) {
+		String type = message.getType().toLowerCase();
+		if (type.startsWith("image")) {
+			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+			i.putExtra("url", message.getUrl());
+			i.putExtra("type", message.getType());
+			startActivity(i);
+		} else if (type.startsWith("video")) {
+			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+			intent.putExtra("url", message.getUrl());
+			startActivity(intent);
+		} else {
+			showDownloadConfirmDialog(message);
 		}
+	}
+	
+	private void showDownloadConfirmDialog(final FileMessage message) {
+		if (ContextCompat.checkSelfPermission(getContext(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			// If storage permissions are not granted, request permissions at run-time,
+			// as per < API 23 guidelines.
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				requestStoragePermissions();
+			}
+		} else {
+			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
+					R.string.download, (dialog, which) -> {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							FileUtils.downloadFile(getContext(), message.getUrl(),
+									message.getName());
+						}
+					}).setNegativeButton(R.string.cancel_text, null).show();
+		}
+		
+	}
+	
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		MenuInflater inflater = getMenuInflater();
+	//		inflater.inflate(R.menu.conversation_menu, menu);
+	//		return true;
+	//	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+		setupControls(view);
+		return view;
+	}
+	
+	@RequiresApi (api = Build.VERSION_CODES.M)
+	private void requestStoragePermissions() {
+		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			// Provide an additional rationale to the user if the permission was not granted
+			// and the user would benefit from additional context for the use of the permission.
+			// For example if the user has previously denied the permission.
+			Snackbar.make(mRootLayout,
+					"Storage access permissions are required to upload/download files.",
+					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View view) {
+					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							PERMISSION_WRITE_EXTERNAL_STORAGE);
+				}
+			}).show();
+		} else {
+			// Permission has not been granted yet. Request it directly.
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+					PERMISSION_WRITE_EXTERNAL_STORAGE);
+		}
+	}
+	
+	private void setupControls(View view) {
+		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
+		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
+		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
+		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
+		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
+		titleTextView = view.findViewById(R.id.chatTitle);
+		backButton = view.findViewById(R.id.back_btn);
+		
+		ImageView smileyBtn = view.findViewById(R.id.smileyBtn);
+		ImageView attachmentBtn = view.findViewById(R.id.attachmentBtn);
+		ImageView galleryBtn = view.findViewById(R.id.galleryBtn);
+		ImageView cameraBtn = view.findViewById(R.id.cameraBtn);
+		ImageView microPhoneBtn = view.findViewById(R.id.microPhoneBtn);
+		ImageView alertBtn = view.findViewById(R.id.alertBtn);
+		
+		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
+				keyBoardHeight -> {
+				
+				}).setOnSoftKeyboardCloseListener(() -> {
+			
+		}).build(mMessageEditText);
+		
+		smileyBtn.setOnClickListener(v -> {
+			emojiPopup.toggle();
+		});
+		
+		galleryBtn.setOnClickListener(v -> {
+			String types = "image/* video/*";
+			String[] mimetypes = {"image/*", "video/*"};
+			requestMedia(types, mimetypes);
+		});
+		
+		attachmentBtn.setOnClickListener(v -> {
+			String types = "*/*";
+			String[] mimetypes = {};
+			requestMedia(types, mimetypes);
+		});
+		
+		cameraBtn.setOnClickListener(v -> {
+			showBottomSheetDialog();
+		});
+		
+		backButton.setOnClickListener(v -> {
+			getActivity().onBackPressed();
+		});
+		
+		mMessageEditText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				mMessageSendButton.setEnabled(s.length() > 0);
+			}
+		});
+		
+		mMessageSendButton.setEnabled(false);
+		mMessageSendButton.setOnClickListener(v -> {
+			//				if (mCurrentState == STATE_EDIT) {
+			//					String userInput = mMessageEditText.getText().toString();
+			//					if (userInput.length() > 0) {
+			//						if (mEditingMessage != null) {
+			//							editMessage(mEditingMessage, userInput);
+			//						}
+			//					}
+			//					setState(STATE_NORMAL, null, -1);
+			//				} else {
+			String userInput = mMessageEditText.getText().toString();
+			if (userInput.length() > 0) {
+				sendUserMessage(userInput);
+				mMessageEditText.setText("");
+			}
+			//				}
+		});
+		
+	}
+	
+	private void requestMedia(String types, String[] mimetypes) {
+		if (ContextCompat.checkSelfPermission(getContext(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			// If storage permissions are not granted, request permissions at run-time,
+			// as per < API 23 guidelines.
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				requestStoragePermissions();
+			}
+		} else {
+			Intent intent = new Intent();
+			intent.setType(types);
+			//			String[] mimetypes = {"image/*", "video/*"};
+			if (mimetypes.length > 0) {
+				intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+			}
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			
+			// Always show the chooser (if there are multiple options available)
+			startActivityForResult(Intent.createChooser(intent, "Select Media"),
+					INTENT_REQUEST_CHOOSE_MEDIA);
+			
+			// Set this as false to maintain connection
+			// even when an external Activity is started.
+			SendBird.setAutoBackgroundDetection(false);
+		}
+	}
+	
+	private void sendUserMessage(String text) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		List<String> urls = WebUtils.extractUrls(text);
+		if (urls.size() > 0) {
+			sendUserMessageWithUrl(text, urls.get(0));
+			return;
+		}
+		
+		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
+			if (e != null) {
+				// Error!
+				Toast.makeText(getContext(),
+						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+						Toast.LENGTH_SHORT).show();
+				mChatAdapter.markMessageFailed(userMessage);
+				return;
+			}
+			
+			// Update a sent message to RecyclerView
+			mChatAdapter.markMessageSent(userMessage);
+		});
+		
+		// Display a user message to RecyclerView
+		mChatAdapter.addFirst(tempUserMessage);
+	}
+	
+	private void showBottomSheetDialog() {
+		final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+		bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog);
+		
+		bottomSheetDialog.findViewById(R.id.galleryLayout).setOnClickListener(v -> {
+			bottomSheetDialog.dismiss();
+			String types = "image/*";
+			String[] mimetypes = {"image/*"};
+			requestMedia(types, mimetypes);
+		});
+		
+		bottomSheetDialog.findViewById(R.id.cameraLayout).setOnClickListener(v -> {
+			bottomSheetDialog.dismiss();
+			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			try {
+				File photoFile = null;
+				try {
+					photoFile = createImageFile();
+				} catch (IOException ex) {
+					// Error occurred while creating the File
+				}
+				// Continue only if the File was successfully created
+				if (photoFile != null) {
+					Uri photoURI = FileProvider.getUriForFile(getContext(),
+							"com.example.android.fileprovider", photoFile);
+					requestedPhotoUri = photoURI;
+					takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+					startActivityForResult(takePictureIntent, INTENT_CAPTURE_PHOTO);
+				}
+			} catch (ActivityNotFoundException e) {
+				// display error state to the user
+			}
+		});
+		
+		bottomSheetDialog.show();
+	}
+	
+	@SuppressLint ("StaticFieldLeak")
+	private void sendUserMessageWithUrl(final String text, String url) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		new WebUtils.UrlPreviewAsyncTask() {
+			
+			@Override
+			protected void onPostExecute(UrlPreviewInfo info) {
+				if (mChannel == null) {
+					return;
+				}
+				
+				UserMessage tempUserMessage = null;
+				BaseChannel.SendUserMessageHandler handler =
+						new BaseChannel.SendUserMessageHandler() {
+							@Override
+							public void onSent(UserMessage userMessage, SendBirdException e) {
+								if (e != null) {
+									// Error!
+									
+									Toast.makeText(getContext(),
+											"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+											Toast.LENGTH_SHORT).show();
+									
+									mChatAdapter.markMessageFailed(userMessage);
+									return;
+								}
+								
+								// Update a sent message to RecyclerView
+								mChatAdapter.markMessageSent(userMessage);
+							}
+						};
+				
+				try {
+					// Sending a message with URL preview information and custom type.
+					String jsonString = info.toJsonString();
+					tempUserMessage = mChannel.sendUserMessage(text, jsonString,
+							GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE, handler);
+				} catch (Exception e) {
+					// Sending a message without URL preview information.
+					tempUserMessage = mChannel.sendUserMessage(text, handler);
+				}
+				
+				// Display a user message to RecyclerView
+				mChatAdapter.addFirst(tempUserMessage);
+			}
+		}.execute(url);
+	}
+	
+	//	/**
+	//	 * Display which users are typing.
+	//	 * If more than two users are currently typing, this will state that "multiple users" are
+	//	 typing.
+	//	 *
+	//	 * @param typingUsers The list of currently typing users.
+	//	 */
+	//	private void displayTyping(List<Member> typingUsers) {
+	//
+	//		if (typingUsers.size() > 0) {
+	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
+	//			String string;
+	//
+	//			if (typingUsers.size() == 1) {
+	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
+	//				.getNickname());
+	//			} else if (typingUsers.size() == 2) {
+	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
+	//				(0).getNickname(), typingUsers.get(1).getNickname());
+	//			} else {
+	//				string = getString(R.string.users_typing);
+	//			}
+	//			mCurrentEventText.setText(string);
+	//		} else {
+	//			mCurrentEventLayout.setVisibility(View.GONE);
+	//		}
+	//	}
+	
+	private File createImageFile() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+		File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+		
+		// Save a file: path for use with ACTION_VIEW intents
+		//		requestedCapturePhotoPath = image.getAbsolutePath();
+		return image;
 	}
 	
 }
