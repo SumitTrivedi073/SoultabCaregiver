@@ -212,9 +212,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 						FragmentManager fm = getFragmentManager();
 						switch (item.getItemId()) {
 							
-							
 							case R.id.navigation_dashboard:
 								video_call.setVisibility(View.VISIBLE);
+								shopping_btn.setVisibility(View.VISIBLE);
 								Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
 										false, null);
 								
@@ -223,6 +223,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							case R.id.navigation_appointment:
 								
 								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
 								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
 										false,
 										null);
@@ -231,12 +232,14 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							case R.id.navigation_dailyroutine:
 								
 								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
 								Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
 										false, null);
 								
 								break;
 							case R.id.navigation_talk:
 								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
 								Utility.loadFragment(MainActivity.this, new TalkFragment(), false,
 										null);
 								
@@ -244,6 +247,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							case R.id.navigation_calender:
 								
 								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
 								Utility.loadFragment(MainActivity.this, new CalenderFragment(),
 										false, null);
 								break;
