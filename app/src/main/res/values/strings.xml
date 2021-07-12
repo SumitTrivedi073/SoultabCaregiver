@@ -282,9 +282,9 @@
     <string name="no_other_caregivers">No Other Caregivers</string>
     <string name="creating_group">Creating Group</string>
     <string name="send_message">Send Message…</string>
-    <string name="choose_media_from">Choose Media from?</string>
-    <string name="camera">Camera</string>
-    <string name="gallery">Gallery</string>
+    <string name="open_camera_for">Open Camera for</string>
+    <string name="capture_a_photo">Capture a Photo</string>
+    <string name="record_a_video">Record a Video</string>
     <!--  Added By AJay  -->
 
     <!--Added by Sumit-->

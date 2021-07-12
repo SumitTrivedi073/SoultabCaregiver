@@ -4,20 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey"
     android:padding="@dimen/_8sdp">
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/choose_media_from"
+        android:text="@string/open_camera_for"
         android:textColor="@color/gray_color"
         android:textSize="@dimen/_16sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/cameraLayout"
+        android:id="@+id/photoLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
@@ -31,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/_6sdp"
-            android:text="@string/camera"
+            android:text="@string/capture_a_photo"
             android:textColor="@color/blackish"
             android:textSize="@dimen/_16sdp"
             app:drawableLeftCompat="@drawable/ic_camera"
@@ -39,7 +40,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/galleryLayout"
+        android:id="@+id/videoLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
@@ -47,17 +48,17 @@
         android:padding="@dimen/_8sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cameraLayout">
+        app:layout_constraintTop_toBottomOf="@id/photoLayout">
 
         <TextView
             android:id="@+id/galleryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/_6sdp"
-            android:text="@string/gallery"
+            android:text="@string/record_a_video"
             android:textColor="@color/blackish"
             android:textSize="@dimen/_16sdp"
-            app:drawableLeftCompat="@drawable/ic_gallery"
-            app:drawableStartCompat="@drawable/ic_gallery" />
+            app:drawableLeftCompat="@drawable/ic_video"
+            app:drawableStartCompat="@drawable/ic_video" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
