@@ -43,7 +43,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 	
 	ShoppingListAdapter shoppingListAdapter;
 	
-	RelativeLayout tvNodata_relative;
+	RelativeLayout tvNodata_relative, back_btn;
 	
 	TextView NoDataFoundtxt;
 	
@@ -62,9 +62,9 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 		shopping_category_list = findViewById(R.id.shopping_category_list);
 		NoDataFoundtxt = findViewById(R.id.NoDataFoundtxt);
 		tvNodata_relative = findViewById(R.id.tvNodata_relative);
-		ly_back = findViewById(R.id.back_btn);
+		back_btn = findViewById(R.id.back_btn);
 		
-		ly_back.setOnClickListener(this);
+		back_btn.setOnClickListener(this);
 		
 		GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 2);
 		shopping_category_list.setLayoutManager(gridLayoutManager);
@@ -136,7 +136,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.lyBack_card:
+			case R.id.back_btn:
 				finish();
 				break;
 		}
