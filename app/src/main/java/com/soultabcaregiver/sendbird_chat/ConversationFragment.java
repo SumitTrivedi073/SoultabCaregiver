@@ -7,6 +7,9 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,10 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.devlomi.record_view.OnRecordListener;
+import com.devlomi.record_view.RecordButton;
+import com.devlomi.record_view.RecordView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.sendbird.android.AdminMessage;
@@ -38,7 +45,6 @@ import com.sendbird.android.UserMessage;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
 import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 import com.soultabcaregiver.sendbird_chat.utils.MediaPlayerActivity;
@@ -80,6 +86,8 @@ public class ConversationFragment extends BaseFragment {
 	
 	private static final int INTENT_RECORD_VIDEO = 303;
 	
+	private static final int RECORD_PERMISSION_GRANTED = 304;
+	
 	private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 13;
 	
 	private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHAT";
@@ -120,6 +128,12 @@ public class ConversationFragment extends BaseFragment {
 	private EmojiPopup emojiPopup;
 	
 	private Uri requestedPhotoUri;
+	
+	private MediaRecorder mediaRecorder;
+	
+	private MediaPlayer mediaPlayer;
+	
+	private String audioFileName;
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, final Intent data) {
@@ -242,6 +256,16 @@ public class ConversationFragment extends BaseFragment {
 		setTypingStatus(false);
 		Utility.hideKeyboard(getContext());
 		emojiPopup.dismiss();
+		if (mediaRecorder != null) {
+			mediaRecorder.release();
+			mediaRecorder = null;
+		}
+		
+		if (mediaPlayer != null) {
+			mediaPlayer.release();
+			mediaPlayer = null;
+		}
+		
 		super.onPause();
 	}
 	
@@ -277,17 +301,20 @@ public class ConversationFragment extends BaseFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.video_call) {
-			SendbirdCallService.dial(getContext(), mCalleeId, null, true, true, mChannelUrl);
-			//			RoomParams params = new RoomParams(RoomType.SMALL_ROOM_FOR_VIDEO);
-			//			SendBirdCall.createRoom(params, (room, e) -> {
-			//				if (room == null || e != null) {
-			//					return;
-			//				}
-			//				room.enter(new EnterParams().setAudioEnabled(true).setVideoEnabled
-			//				(true), e1 -> {
-			//
-			//				});
-			//			});
+			//			SendbirdCallService.dial(getContext(), mCalleeId, null, true, true,
+			//			mChannelUrl);
+			//			//			RoomParams params = new RoomParams(RoomType
+			//			.SMALL_ROOM_FOR_VIDEO);
+			//			//			SendBirdCall.createRoom(params, (room, e) -> {
+			//			//				if (room == null || e != null) {
+			//			//					return;
+			//			//				}
+			//			//				room.enter(new EnterParams().setAudioEnabled(true)
+			//			.setVideoEnabled
+			//			//				(true), e1 -> {
+			//			//
+			//			//				});
+			//			//			});
 			return true;
 		} else if (itemId == android.R.id.home) {
 			getActivity().onBackPressed();
@@ -450,6 +477,8 @@ public class ConversationFragment extends BaseFragment {
 			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
 			intent.putExtra("url", message.getUrl());
 			startActivity(intent);
+		} else if (type.contains("audio")) {
+			playSelectedMessage(message);
 		} else {
 			showDownloadConfirmDialog(message);
 		}
@@ -475,63 +504,42 @@ public class ConversationFragment extends BaseFragment {
 		
 	}
 	
-	/**
-	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in
-	 * specified sizes.
-	 *
-	 * @param uri The URI of the image, which in this case is received through an Intent request.
-	 */
-	private void sendFileWithThumbnail(Uri uri) {
-		if (mChannel == null) {
-			return;
+	private void playSelectedMessage(FileMessage message) {
+		if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+			mediaPlayer.release();
 		}
-		
-		// Specify two dimensions of thumbnails to generate
-		List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
-		thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
-		thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
-		
-		Hashtable<String, Object> info = FileUtils.getFileInfo(getContext(), uri);
-		
-		if (info == null || info.isEmpty()) {
-			Toast.makeText(getContext(), "Extracting file information failed.",
-					Toast.LENGTH_LONG).show();
-			return;
+		mediaPlayer = new MediaPlayer();
+		try {
+			mediaPlayer.setDataSource(message.getUrl());
+			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+			mediaPlayer.prepareAsync();
+			mediaPlayer.setOnPreparedListener(mp -> mediaPlayer.start());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		final String name;
-		if (info.containsKey("name")) {
-			name = (String) info.get("name");
-		} else {
-			name = "Sendbird File";
-		}
-		final String path = (String) info.get("path");
-		final File file = new File(path);
-		final String mime = (String) info.get("mime");
-		final int size = (Integer) info.get("size");
-		
-		if (path.equals("")) {
-			Toast.makeText(getContext(), "File must be located in local storage.",
-					Toast.LENGTH_LONG).show();
-		} else {
-			BaseChannel.SendFileMessageHandler fileMessageHandler = (fileMessage, e) -> {
-				if (e != null) {
-					Toast.makeText(getContext(), "" + e.getCode() + ":" + e.getMessage(),
-							Toast.LENGTH_SHORT).show();
-					mChatAdapter.markMessageFailed(fileMessage);
-					return;
-				}
+	}
+	
+	@RequiresApi (api = Build.VERSION_CODES.M)
+	private void requestStoragePermissions() {
+		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			// Provide an additional rationale to the user if the permission was not granted
+			// and the user would benefit from additional context for the use of the permission.
+			// For example if the user has previously denied the permission.
+			Snackbar.make(mRootLayout,
+					"Storage access permissions are required to upload/download files.",
+					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
 				
-				mChatAdapter.markMessageSent(fileMessage);
-			};
-			
-			// Send image with thumbnails in the specified dimensions
-			FileMessage tempFileMessage =
-					mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes,
-							fileMessageHandler);
-			
-			mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
-			mChatAdapter.addFirst(tempFileMessage);
+				@Override
+				public void onClick(View view) {
+					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							PERMISSION_WRITE_EXTERNAL_STORAGE);
+				}
+			}).show();
+		} else {
+			// Permission has not been granted yet. Request it directly.
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+					PERMISSION_WRITE_EXTERNAL_STORAGE);
 		}
 	}
 	
@@ -563,8 +571,14 @@ public class ConversationFragment extends BaseFragment {
 		ImageView attachmentBtn = view.findViewById(R.id.attachmentBtn);
 		ImageView galleryBtn = view.findViewById(R.id.galleryBtn);
 		ImageView cameraBtn = view.findViewById(R.id.cameraBtn);
-		ImageView microPhoneBtn = view.findViewById(R.id.microPhoneBtn);
+		RecordButton recordButton = view.findViewById(R.id.recordButton);
+		RecordView recordView = view.findViewById(R.id.record_view);
+		
+		LinearLayout mediaButtons = view.findViewById(R.id.mediaButtonsLayout);
+		
 		ImageView alertBtn = view.findViewById(R.id.alertBtn);
+		
+		handleRecording(recordButton, recordView, mediaButtons);
 		
 		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
 				keyBoardHeight -> {
@@ -633,6 +647,83 @@ public class ConversationFragment extends BaseFragment {
 		
 	}
 	
+	private void handleRecording(RecordButton recordButton, RecordView recordView,
+	                             LinearLayout mediaButtons) {
+		recordButton.setRecordView(recordView);
+		
+		recordView.setRecordPermissionHandler(() -> {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+				return true;
+			}
+			
+			boolean recordPermissionAvailable = ContextCompat.checkSelfPermission(getActivity(),
+					Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+			if (recordPermissionAvailable) {
+				return true;
+			}
+			
+			ActivityCompat.
+					requestPermissions(getActivity(),
+							new String[]{Manifest.permission.RECORD_AUDIO},
+							RECORD_PERMISSION_GRANTED);
+			
+			return false;
+			
+		});
+		
+		//		recordButton.setListenForRecord(false);
+		//
+		//		//ListenForRecord must be false ,otherwise onClick will not be called
+		//		recordButton.setOnRecordClickListener(v -> {
+		//			Toast.makeText(getContext(), "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT)
+		//			.show();
+		//		});
+		
+		recordView.setRecordButtonGrowingAnimationEnabled(false);
+		recordView.setLessThanSecondAllowed(true);
+		
+		recordView.setOnRecordListener(new OnRecordListener() {
+			@Override
+			public void onStart() {
+				try {
+					audioFileName = createRecordingFileName();
+					startRecording(audioFileName);
+					recordView.setVisibility(View.VISIBLE);
+					mediaButtons.setVisibility(View.GONE);
+				} catch (IOException e) {
+					e.printStackTrace();
+					stopRecording();
+				}
+			}
+			
+			@Override
+			public void onCancel() {
+				stopRecording();
+			}
+			
+			@Override
+			public void onFinish(long recordTime, boolean limitReached) {
+				recordView.setVisibility(View.GONE);
+				mediaButtons.setVisibility(View.VISIBLE);
+				stopRecording();
+				sendAudioRecording();
+			}
+			
+			@Override
+			public void onLessThanSecond() {
+				stopRecording();
+				recordView.setVisibility(View.GONE);
+				mediaButtons.setVisibility(View.VISIBLE);
+			}
+		});
+		
+		recordView.setOnBasketAnimationEndListener(() -> {
+			recordView.setVisibility(View.GONE);
+			mediaButtons.setVisibility(View.VISIBLE);
+		});
+		
+	}
+	
 	private void requestMedia(String types, String[] mimetypes) {
 		if (ContextCompat.checkSelfPermission(getContext(),
 				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -657,30 +748,6 @@ public class ConversationFragment extends BaseFragment {
 			// Set this as false to maintain connection
 			// even when an external Activity is started.
 			SendBird.setAutoBackgroundDetection(false);
-		}
-	}
-	
-	@RequiresApi (api = Build.VERSION_CODES.M)
-	private void requestStoragePermissions() {
-		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-			// Provide an additional rationale to the user if the permission was not granted
-			// and the user would benefit from additional context for the use of the permission.
-			// For example if the user has previously denied the permission.
-			Snackbar.make(mRootLayout,
-					"Storage access permissions are required to upload/download files.",
-					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View view) {
-					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-							PERMISSION_WRITE_EXTERNAL_STORAGE);
-				}
-			}).show();
-		} else {
-			// Permission has not been granted yet. Request it directly.
-			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-					PERMISSION_WRITE_EXTERNAL_STORAGE);
 		}
 	}
 	
@@ -718,6 +785,75 @@ public class ConversationFragment extends BaseFragment {
 		});
 		
 		bottomSheetDialog.show();
+	}
+	
+	private void sendUserMessage(String text) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		List<String> urls = WebUtils.extractUrls(text);
+		if (urls.size() > 0) {
+			sendUserMessageWithUrl(text, urls.get(0));
+			return;
+		}
+		
+		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
+			if (e != null) {
+				// Error!
+				Toast.makeText(getContext(),
+						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+						Toast.LENGTH_SHORT).show();
+				mChatAdapter.markMessageFailed(userMessage);
+				return;
+			}
+			
+			// Update a sent message to RecyclerView
+			mChatAdapter.markMessageSent(userMessage);
+		});
+		
+		// Display a user message to RecyclerView
+		mChatAdapter.addFirst(tempUserMessage);
+	}
+	
+	private String createRecordingFileName() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String audioFileName = "AUD_" + timeStamp + "_";
+		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+		File file = File.createTempFile(audioFileName, ".mp3", storageDir);
+		return file.getAbsolutePath();
+	}
+	
+	private void startRecording(String fileName) {
+		mediaRecorder = new MediaRecorder();
+		mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+		mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+		mediaRecorder.setOutputFile(fileName);
+		
+		try {
+			mediaRecorder.prepare();
+			mediaRecorder.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void stopRecording() {
+		mediaRecorder.stop();
+		mediaRecorder.release();
+		mediaRecorder = null;
+	}
+	
+	private void sendAudioRecording() {
+		if (!audioFileName.isEmpty()) {
+			Uri audioUri =
+					FileProvider.getUriForFile(getContext(), "com.example.android.fileprovider",
+							new File(audioFileName));
+			audioFileName = "";
+			sendFileWithThumbnail(audioUri);
+		}
 	}
 	
 	private File createImageFile() throws IOException {
@@ -759,35 +895,6 @@ public class ConversationFragment extends BaseFragment {
 	//			mCurrentEventLayout.setVisibility(View.GONE);
 	//		}
 	//	}
-	
-	private void sendUserMessage(String text) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		List<String> urls = WebUtils.extractUrls(text);
-		if (urls.size() > 0) {
-			sendUserMessageWithUrl(text, urls.get(0));
-			return;
-		}
-		
-		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
-			if (e != null) {
-				// Error!
-				Toast.makeText(getContext(),
-						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-						Toast.LENGTH_SHORT).show();
-				mChatAdapter.markMessageFailed(userMessage);
-				return;
-			}
-			
-			// Update a sent message to RecyclerView
-			mChatAdapter.markMessageSent(userMessage);
-		});
-		
-		// Display a user message to RecyclerView
-		mChatAdapter.addFirst(tempUserMessage);
-	}
 	
 	@SuppressLint ("StaticFieldLeak")
 	private void sendUserMessageWithUrl(final String text, String url) {
@@ -838,6 +945,78 @@ public class ConversationFragment extends BaseFragment {
 				mChatAdapter.addFirst(tempUserMessage);
 			}
 		}.execute(url);
+	}
+	
+	/**
+	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in
+	 * specified sizes.
+	 *
+	 * @param uri The URI of the image, which in this case is received through an Intent request.
+	 */
+	private void sendFileWithThumbnail(Uri uri) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		// Specify two dimensions of thumbnails to generate
+		List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
+		thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
+		thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
+		
+		Hashtable<String, Object> info = FileUtils.getFileInfo(getContext(), uri);
+		
+		if (info == null || info.isEmpty()) {
+			Toast.makeText(getContext(), "Extracting file information failed.",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
+		
+		final String name;
+		if (info.containsKey("name")) {
+			name = (String) info.get("name");
+		} else {
+			name = "Sendbird File";
+		}
+		final String path = (String) info.get("path");
+		final File file = new File(path);
+		final String mime = (String) info.get("mime");
+		final int size = (Integer) info.get("size");
+		
+		if (path.equals("")) {
+			Toast.makeText(getContext(), "File must be located in local storage.",
+					Toast.LENGTH_LONG).show();
+		} else {
+			BaseChannel.SendFileMessageWithProgressHandler fileMessageHandler =
+					new BaseChannel.SendFileMessageWithProgressHandler() {
+						
+						@Override
+						public void onProgress(int bytesSent, int totalBytesSent,
+						                       int totalBytesToSend) {
+							//here to display the progress
+						}
+						
+						@Override
+						public void onSent(FileMessage fileMessage, SendBirdException e) {
+							if (e != null) {
+								Toast.makeText(ConversationFragment.this.getContext(),
+										"" + e.getCode() + ":" + e.getMessage(),
+										Toast.LENGTH_SHORT).show();
+								mChatAdapter.markMessageFailed(fileMessage);
+								return;
+							}
+							
+							mChatAdapter.markMessageSent(fileMessage);
+						}
+					};
+			
+			// Send image with thumbnails in the specified dimensions
+			FileMessage tempFileMessage =
+					mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes,
+							fileMessageHandler);
+			
+			mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
+			mChatAdapter.addFirst(tempFileMessage);
+		}
 	}
 	
 }

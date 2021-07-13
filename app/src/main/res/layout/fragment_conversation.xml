@@ -125,61 +125,95 @@
                 app:srcCompat="@drawable/ic_send" />
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="6">
+            android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/smileyBtn"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/recordLayout"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_weight="1"
-                android:padding="@dimen/_1sdp"
-                app:srcCompat="@drawable/ic_chat_smiley" />
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/_2sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:weightSum="6">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/attachmentBtn"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_weight="1"
-                android:padding="@dimen/_1sdp"
-                app:srcCompat="@drawable/ic_chat_attachment" />
+                <com.devlomi.record_view.RecordView
+                    android:id="@+id/record_view"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:visibility="gone"
+                    app:counter_time_color="#ff0000"
+                    app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+                    app:slide_to_cancel_arrow_color="#000000"
+                    app:slide_to_cancel_bounds="8dp"
+                    app:slide_to_cancel_margin_right="10dp"
+                    app:slide_to_cancel_text="Slide To Cancel" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/galleryBtn"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_weight="1"
-                android:padding="@dimen/_1sdp"
-                app:srcCompat="@drawable/ic_chat_gallery" />
+                <com.devlomi.record_view.RecordButton
+                    android:id="@+id/recordButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_chat_microphone" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/cameraBtn"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_weight="1"
-                android:padding="@dimen/_1sdp"
-                app:srcCompat="@drawable/ic_chat_camera" />
+            </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/microPhoneBtn"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_weight="1"
-                android:padding="@dimen/_1sdp"
-                app:srcCompat="@drawable/ic_chat_microphone" />
+            <LinearLayout
+                android:id="@+id/mediaButtonsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="6">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/alertBtn"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_weight="1"
-                android:padding="@dimen/_1sdp"
-                app:srcCompat="@drawable/ic_chat_alert" />
-        </LinearLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/smileyBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/_1sdp"
+                    app:srcCompat="@drawable/ic_chat_smiley" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/attachmentBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/_1sdp"
+                    app:srcCompat="@drawable/ic_chat_attachment" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/galleryBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/_1sdp"
+                    app:srcCompat="@drawable/ic_chat_gallery" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/cameraBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/_1sdp"
+                    app:srcCompat="@drawable/ic_chat_camera" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/alertBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_weight="1"
+                    android:padding="@dimen/_1sdp"
+                    app:srcCompat="@drawable/ic_chat_alert" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

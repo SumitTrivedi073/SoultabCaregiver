@@ -167,7 +167,7 @@
         android:layout_marginBottom="4dp"
         android:layout_toRightOf="@id/card_group_chat_message"
         android:text="21:27"
-        android:textColor="#8e8e8e"
-        android:textSize="10dp" />
+        android:textColor="@color/blackish"
+        android:textSize="@dimen/_10sdp" />
 
 </RelativeLayout>
