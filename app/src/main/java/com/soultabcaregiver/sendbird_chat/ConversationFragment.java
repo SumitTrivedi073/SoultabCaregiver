@@ -3,10 +3,12 @@ package com.soultabcaregiver.sendbird_chat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -14,9 +16,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -380,6 +385,45 @@ public class ConversationFragment extends BaseFragment {
 		titleTextView.setText(title);
 	}
 	
+	public static ConversationFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		ConversationFragment fragment = new ConversationFragment();
+		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
+	private void setUpRecyclerView() {
+		mLayoutManager = new LinearLayoutManager(getContext());
+		mLayoutManager.setReverseLayout(true);
+		mRecyclerView.setLayoutManager(mLayoutManager);
+		mRecyclerView.setAdapter(mChatAdapter);
+		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+				if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
+					mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
+				}
+			}
+		});
+	}
+	
+	private void onFileMessageClicked(FileMessage message) {
+		String type = message.getType().toLowerCase();
+		if (type.startsWith("image")) {
+			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+			i.putExtra("url", message.getUrl());
+			i.putExtra("type", message.getType());
+			startActivity(i);
+		} else if (type.startsWith("video")) {
+			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+			intent.putExtra("url", message.getUrl());
+			startActivity(intent);
+		} else {
+			showDownloadConfirmDialog(message);
+		}
+	}
+	
 	private void setUpChatListAdapter() {
 		mChatAdapter.setItemClickListener(new GroupChatAdapter.OnItemClickListener() {
 			@Override
@@ -422,6 +466,11 @@ public class ConversationFragment extends BaseFragment {
 				
 				onFileMessageClicked(message);
 			}
+			
+			@Override
+			public void onAudioMessageItemClick(FileMessage message) {
+				showMediaPlayerDialog(message);
+			}
 		});
 		
 		mChatAdapter.setItemLongClickListener(new GroupChatAdapter.OnItemLongClickListener() {
@@ -443,47 +492,6 @@ public class ConversationFragment extends BaseFragment {
 		});
 	}
 	
-	private void setUpRecyclerView() {
-		mLayoutManager = new LinearLayoutManager(getContext());
-		mLayoutManager.setReverseLayout(true);
-		mRecyclerView.setLayoutManager(mLayoutManager);
-		mRecyclerView.setAdapter(mChatAdapter);
-		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-				if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-					mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
-				}
-			}
-		});
-	}
-	
-	public static ConversationFragment newInstance(String channelUrl) {
-		Bundle args = new Bundle();
-		ConversationFragment fragment = new ConversationFragment();
-		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		fragment.setArguments(args);
-		return fragment;
-	}
-	
-	private void onFileMessageClicked(FileMessage message) {
-		String type = message.getType().toLowerCase();
-		if (type.startsWith("image")) {
-			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
-			i.putExtra("url", message.getUrl());
-			i.putExtra("type", message.getType());
-			startActivity(i);
-		} else if (type.startsWith("video")) {
-			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
-			intent.putExtra("url", message.getUrl());
-			startActivity(intent);
-		} else if (type.contains("audio")) {
-			playSelectedMessage(message);
-		} else {
-			showDownloadConfirmDialog(message);
-		}
-	}
-	
 	private void showDownloadConfirmDialog(final FileMessage message) {
 		if (ContextCompat.checkSelfPermission(getContext(),
 				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -502,21 +510,6 @@ public class ConversationFragment extends BaseFragment {
 					}).setNegativeButton(R.string.cancel_text, null).show();
 		}
 		
-	}
-	
-	private void playSelectedMessage(FileMessage message) {
-		if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-			mediaPlayer.release();
-		}
-		mediaPlayer = new MediaPlayer();
-		try {
-			mediaPlayer.setDataSource(message.getUrl());
-			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-			mediaPlayer.prepareAsync();
-			mediaPlayer.setOnPreparedListener(mp -> mediaPlayer.start());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	@RequiresApi (api = Build.VERSION_CODES.M)
@@ -543,12 +536,78 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		MenuInflater inflater = getMenuInflater();
-	//		inflater.inflate(R.menu.conversation_menu, menu);
-	//		return true;
-	//	}
+	private void showMediaPlayerDialog(FileMessage message) {
+		
+		Drawable playButton = ContextCompat.getDrawable(getContext(), R.drawable.ic_play_black);
+		Drawable pauseButton = ContextCompat.getDrawable(getContext(), R.drawable.ic_pause_black);
+		
+		final Dialog dialog = new Dialog(getContext());
+		dialog.setContentView(R.layout.dialog_audio_play);
+		
+		ImageView buttonPlayPause = dialog.findViewById(R.id.playButton);
+		ProgressBar progressBar = dialog.findViewById(R.id.progressBar);
+		
+		progressBar.setProgress(0);
+		
+		buttonPlayPause.setOnClickListener(v -> {
+			if (mediaPlayer.isPlaying()) {
+				mediaPlayer.pause();
+				buttonPlayPause.setImageDrawable(playButton);
+			} else {
+				mediaPlayer.start();
+				buttonPlayPause.setImageDrawable(pauseButton);
+			}
+		});
+		
+		if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+			mediaPlayer.stop();
+			mediaPlayer.release();
+		}
+		
+		mediaPlayer = new MediaPlayer();
+		try {
+			mediaPlayer.setDataSource(message.getUrl());
+			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+			mediaPlayer.prepareAsync();
+			mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+				@Override
+				public void onPrepared(MediaPlayer mp) {
+					buttonPlayPause.setImageDrawable(pauseButton);
+					mediaPlayer.start();
+					progressBar.setMax(mediaPlayer.getDuration() / 1000);
+					final Handler mHandler = new Handler();
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (mediaPlayer != null) {
+								int mCurrentPosition = mediaPlayer.getCurrentPosition() / 1000;
+								progressBar.setProgress(mCurrentPosition);
+								Log.e("progress", "" + mCurrentPosition);
+							}
+							if (progressBar.getProgress() == progressBar.getMax()) {
+								mHandler.removeCallbacks(this);
+							}
+							mHandler.postDelayed(this, 1000);
+						}
+					});
+				}
+			});
+			
+			mediaPlayer.setOnCompletionListener(mp -> {
+				buttonPlayPause.setImageDrawable(playButton);
+				mediaPlayer.stop();
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		dialog.setOnDismissListener(dialog1 -> {
+			mediaPlayer.release();
+			mediaPlayer = null;
+		});
+		
+		dialog.show();
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -557,6 +616,13 @@ public class ConversationFragment extends BaseFragment {
 		setupControls(view);
 		return view;
 	}
+	
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		MenuInflater inflater = getMenuInflater();
+	//		inflater.inflate(R.menu.conversation_menu, menu);
+	//		return true;
+	//	}
 	
 	private void setupControls(View view) {
 		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
@@ -868,34 +934,6 @@ public class ConversationFragment extends BaseFragment {
 		return image;
 	}
 	
-	//	/**
-	//	 * Display which users are typing.
-	//	 * If more than two users are currently typing, this will state that "multiple users" are
-	//	 typing.
-	//	 *
-	//	 * @param typingUsers The list of currently typing users.
-	//	 */
-	//	private void displayTyping(List<Member> typingUsers) {
-	//
-	//		if (typingUsers.size() > 0) {
-	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
-	//			String string;
-	//
-	//			if (typingUsers.size() == 1) {
-	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
-	//				.getNickname());
-	//			} else if (typingUsers.size() == 2) {
-	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
-	//				(0).getNickname(), typingUsers.get(1).getNickname());
-	//			} else {
-	//				string = getString(R.string.users_typing);
-	//			}
-	//			mCurrentEventText.setText(string);
-	//		} else {
-	//			mCurrentEventLayout.setVisibility(View.GONE);
-	//		}
-	//	}
-	
 	@SuppressLint ("StaticFieldLeak")
 	private void sendUserMessageWithUrl(final String text, String url) {
 		if (mChannel == null) {
@@ -946,6 +984,34 @@ public class ConversationFragment extends BaseFragment {
 			}
 		}.execute(url);
 	}
+	
+	//	/**
+	//	 * Display which users are typing.
+	//	 * If more than two users are currently typing, this will state that "multiple users" are
+	//	 typing.
+	//	 *
+	//	 * @param typingUsers The list of currently typing users.
+	//	 */
+	//	private void displayTyping(List<Member> typingUsers) {
+	//
+	//		if (typingUsers.size() > 0) {
+	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
+	//			String string;
+	//
+	//			if (typingUsers.size() == 1) {
+	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
+	//				.getNickname());
+	//			} else if (typingUsers.size() == 2) {
+	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
+	//				(0).getNickname(), typingUsers.get(1).getNickname());
+	//			} else {
+	//				string = getString(R.string.users_typing);
+	//			}
+	//			mCurrentEventText.setText(string);
+	//		} else {
+	//			mCurrentEventLayout.setVisibility(View.GONE);
+	//		}
+	//	}
 	
 	/**
 	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in

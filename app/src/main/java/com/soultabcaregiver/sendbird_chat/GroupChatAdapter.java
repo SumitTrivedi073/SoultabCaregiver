@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sendbird.android.AdminMessage;
@@ -210,6 +211,14 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 				((OtherVideoFileMessageHolder) holder).bind(mContext, (FileMessage) message,
 						mChannel, isNewDay, isContinuous, mItemClickListener);
 				break;
+			case VIEW_TYPE_FILE_MESSAGE_AUDIO_ME:
+				((MyAudioFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel,
+						isNewDay, isTempMessage, tempFileMessageUri, mItemClickListener);
+				break;
+			case VIEW_TYPE_FILE_MESSAGE_AUDIO_OTHER:
+				((OtherAudioFileMessageHolder) holder).bind(mContext, (FileMessage) message,
+						mChannel, isNewDay, isContinuous, mItemClickListener);
+				break;
 			default:
 				break;
 		}
@@ -313,6 +322,10 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		
 	}
 	
+	public boolean isTempMessage(BaseMessage message) {
+		return message.getMessageId() == 0;
+	}
+	
 	public Uri getTempFileMessageUri(BaseMessage message) {
 		if (!isTempMessage(message)) {
 			return null;
@@ -323,10 +336,6 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		}
 		
 		return mTempFileMessageUriTable.get(message.getRequestId());
-	}
-	
-	public boolean isTempMessage(BaseMessage message) {
-		return message.getMessageId() == 0;
 	}
 	
 	void setContext(Context context) {
@@ -624,6 +633,8 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		void onUserMessageItemClick(UserMessage message);
 		
 		void onFileMessageItemClick(FileMessage message);
+		
+		void onAudioMessageItemClick(FileMessage message);
 	}
 	
 	private class AdminMessageHolder extends RecyclerView.ViewHolder {
@@ -1108,6 +1119,10 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		
 		TextView timeText, dateText;
 		
+		ImageView playButton;
+		
+		ProgressBar progressBar;
+		
 		MessageStatusView messageStatusView;
 		
 		public MyAudioFileMessageHolder(@NonNull @NotNull View itemView) {
@@ -1115,6 +1130,8 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			timeText = itemView.findViewById(R.id.text_group_chat_time);
 			dateText = itemView.findViewById(R.id.text_group_chat_date);
 			messageStatusView = itemView.findViewById(R.id.message_status_group_chat);
+			playButton = itemView.findViewById(R.id.playButton);
+			progressBar = itemView.findViewById(R.id.progressBar);
 		}
 		
 		void bind(Context context, final FileMessage message, GroupChannel channel,
@@ -1131,7 +1148,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			}
 			
 			if (listener != null) {
-				itemView.setOnClickListener(v -> listener.onFileMessageItemClick(message));
+				playButton.setOnClickListener(v -> listener.onAudioMessageItemClick(message));
 			}
 			
 			messageStatusView.drawMessageStatus(channel, message);

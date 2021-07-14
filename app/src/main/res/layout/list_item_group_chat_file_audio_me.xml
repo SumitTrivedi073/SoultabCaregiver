@@ -26,42 +26,54 @@
         android:textColor="@color/groupChatDateText"
         android:textSize="14sp" />
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/layout_group_chat_file_message"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_140sdp"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_group_chat_date"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/group_chat_file_background"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:padding="@dimen/_4sdp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_6sdp"
+        app:cardUseCompatPadding="true">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            app:srcCompat="@drawable/ic_play_black" />
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:max="100"
-            android:progress="10"
-            android:progressTint="@color/colorPrimary"
-            android:secondaryProgressTint="@color/blackish" />
+            android:background="@drawable/group_chat_file_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/playButton"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:padding="@dimen/_4sdp"
+                app:srcCompat="@drawable/ic_play_black" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:max="100"
+                android:progressTint="@color/colorPrimary"
+                android:secondaryProgressTint="@color/blackish" />
+
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/text_group_chat_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/layout_group_chat_file_message"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_10sdp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="@dimen/_4sdp"
         android:layout_toLeftOf="@id/layout_group_chat_file_message"
         android:text="21:27"
         android:textColor="@color/blackish"

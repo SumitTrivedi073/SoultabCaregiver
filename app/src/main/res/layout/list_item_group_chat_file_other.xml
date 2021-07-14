@@ -99,6 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/layout_group_chat_file_message"
+        android:layout_margin="@dimen/_4sdp"
         android:layout_toEndOf="@id/layout_group_chat_file_message"
         android:layout_toRightOf="@id/layout_group_chat_file_message"
         android:text="21:27"

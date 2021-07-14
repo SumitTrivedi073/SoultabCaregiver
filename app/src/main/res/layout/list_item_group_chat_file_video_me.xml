@@ -41,8 +41,8 @@
 
         <ImageView
             android:id="@+id/image_group_chat_file_thumbnail"
-            android:layout_width="228dp"
-            android:layout_height="148dp"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_136sdp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop" />
 
@@ -61,6 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/card_group_chat_message"
+        android:layout_margin="@dimen/_4sdp"
         android:layout_marginBottom="8dp"
         android:layout_toLeftOf="@id/card_group_chat_message"
         android:text="21:27"
