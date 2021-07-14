@@ -21,9 +21,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -50,10 +47,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class AddReminderActivity extends BaseActivity implements View.OnClickListener {
     
@@ -283,7 +284,25 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
             case R.id.btn_submit_reminder:
                 if (validFields()) {
                     if (Utility.isNetworkConnected(AddReminderActivity.this)) {
-                        SetAlarmVal();
+    
+                        Calendar now = Calendar.getInstance();
+                        try {
+                            now.setTime(
+                                    Utility.yyyy_mm_dd_hh_mm_aa.parse(sWhenDate + " " + sWhenTime));
+        
+                            String completeDate = Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                            if (compareDateTime(completeDate)) {
+            
+                                SetAlarmVal();
+                            } else {
+                                Utility.ShowToast(mContext,
+                                        getResources().getString(R.string.select_future_time));
+            
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+    
                     } else {
 
                         Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
@@ -476,9 +495,21 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay,
                                               int minute) {
-                            myCalendar.set(myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                            myCalendar.set(myCalendar.get(Calendar.YEAR),
+                                    myCalendar.get(Calendar.MONTH),
                                     myCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                            tvWhenTime.setText(Utility.hh_mm_aa.format(myCalendar.getTime()));
+    
+                            if (myCalendar.before(GregorianCalendar.getInstance())) {
+                                Utility.ShowToast(mContext,
+                                        getResources().getString(R.string.select_future_time));
+                            } else {
+                                Calendar datetime = Calendar.getInstance();
+                                datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                datetime.set(Calendar.MINUTE, minute);
+        
+                                tvWhenTime.setText(Utility.hh_mm_aa.format(myCalendar.getTime()));
+        
+                            }
                         }
                     }, myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), false);
             timePickerDialog.show();
@@ -720,10 +751,42 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         });
         dialog.show();
     }
-
+    
     @Override
     public void onBackPressed() {
         finish();
         super.onBackPressed();
     }
+    
+    private boolean compareDateTime(String date) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            boolean graterThanDate;
+            String todayDate = Utility.yyyy_mm_dd_hh_mm_ss.format(calendar.getTime());
+            String selectDate =
+                    Utility.yyyy_mm_dd_hh_mm_ss.format(Utility.yyyy_mm_dd_hh_mm_aa.parse(date));
+            
+            Date selectDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(selectDate);
+            Date todayDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(todayDate);
+            
+            Log.e("selectDateDate", String.valueOf(selectDateDate));
+            Log.e("todayDateDate", String.valueOf(todayDateDate));
+            
+            if (String.valueOf(selectDateDate).equals(String.valueOf(todayDateDate))) {
+                graterThanDate = true;  // If two dates are equal.
+            } else // If start date is after the end date.
+            {
+                assert selectDateDate != null;
+                graterThanDate = selectDateDate.after(todayDateDate);
+            }
+            
+            return graterThanDate;
+            
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+        
+    }
+    
 }

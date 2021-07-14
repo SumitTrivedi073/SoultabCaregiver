@@ -73,7 +73,7 @@
                     android:id="@+id/tabs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:tabBackground="@drawable/tab_background"
+                    app:tabBackground="@drawable/tab_background2"
                     app:tabIndicator="@color/muzli_color"
                     app:tabGravity="fill"
                     app:tabMode="fixed"
