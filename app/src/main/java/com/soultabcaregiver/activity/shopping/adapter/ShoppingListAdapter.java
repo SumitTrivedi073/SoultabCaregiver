@@ -369,6 +369,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 		try {
 			mainObject.put("user_id", Utility.getSharedPreferences(mcontext, APIS.caregiver_id));
 			mainObject.put("is_40plus_user", "1");
+			mainObject.put("40plus_userId",
+					Utility.getSharedPreferences(mcontext, APIS.is_40plus_userID));
 			
 			Log.e("Forgot_password", mainObject.toString());
 		} catch (JSONException e) {
