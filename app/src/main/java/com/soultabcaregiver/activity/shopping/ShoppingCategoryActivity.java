@@ -2,20 +2,25 @@ package com.soultabcaregiver.activity.shopping;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
@@ -26,9 +31,11 @@ import com.soultabcaregiver.activity.shopping.model.ShoppingCategoryModel;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +48,6 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 	public Context mContext;
 	
 	RecyclerView shopping_category_list;
-	
-	RelativeLayout ly_back;
 	
 	String TAG = ShoppingCategoryActivity.class.toString();
 	
@@ -144,42 +149,36 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 	}
 	
 	private void is40plususer() {
-		
-		showProgressDialog(mContext.getResources().getString(R.string.Loading));
-		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+		RequestQueue requestQueue = Volley.newRequestQueue(this);
+		JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
 				APIS.BASEURL40Plus + APIS.isplus40userexist + Utility.getSharedPreferences(mContext,
-						APIS.Caregiver_email), null, new Response.Listener<JSONObject>() {
+						APIS.Caregiver_email), null, new Response.Listener<JSONArray>() {
 			@Override
-			public void onResponse(JSONObject response) {
-				Log.e(TAG, "is40plususerresponse=" + response.toString());
+			public void onResponse(JSONArray response) {
 				hideProgressDialog();
+				JSONArray jsonArray = response;
+				System.out.println("response==========>" + response);
+				String id = "";
 				try {
-					if (response.getString("id") != null && !TextUtils.isEmpty(
-							response.getString("id"))) {
-						
-						Utility.setSharedPreference(mContext, APIS.is_40plus_user, "1");
-						Utility.setSharedPreference(mContext, APIS.is_40plus_userID,
-								response.getString("id"));
-						
-						
-					} else {
-						Utility.ShowToast(mContext, response.getString("message"));
-						hideProgressDialog();
+					for (int i = 0; i < jsonArray.length(); i++) {
+						JSONObject jsonObject = jsonArray.getJSONObject(i);
+						id = jsonObject.getString("id");
 					}
+					Utility.setSharedPreference(mContext, APIS.is_40plus_user, "1");
+					Utility.setSharedPreference(mContext, APIS.is_40plus_userID, id);
 					
-				} catch (JSONException e) {
-					e.printStackTrace();
+				} catch (Exception w) {
+					Toast.makeText(ShoppingCategoryActivity.this, w.getMessage(),
+							Toast.LENGTH_LONG).show();
+					System.out.println("Error==========>" + w.getMessage());
 				}
-				
 			}
 		}, new Response.ErrorListener() {
-			
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				VolleyLog.d(TAG, "Error: " + error.getMessage());
-				error.printStackTrace();
 				hideProgressDialog();
-				
+				Toast.makeText(ShoppingCategoryActivity.this, error.getMessage(),
+						Toast.LENGTH_LONG).show();
 			}
 		}) {
 			@Override
@@ -193,11 +192,8 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 			
 			
 		};
-		// Adding request to request queue
-		AppController.getInstance().addToRequestQueue(jsonObjReq);
-		jsonObjReq.setShouldCache(false);
-		jsonObjReq.setRetryPolicy(
-				new DefaultRetryPolicy(10000, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		requestQueue.add(jsonArrayRequest);
+		
 	}
 	
 	@Override
@@ -206,6 +202,30 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 			case R.id.back_btn:
 				finish();
 				break;
+		}
+	}
+	
+	private class CustomJsonArrayRequest extends JsonRequest<JSONArray> {
+		
+		public CustomJsonArrayRequest(int method, String url, JSONObject jsonRequest,
+		                              Response.Listener<JSONArray> listener,
+		                              Response.ErrorListener errorListener) {
+			super(method, url, (jsonRequest == null) ? null : jsonRequest.toString(), listener,
+					errorListener);
+		}
+		
+		@Override
+		protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+			try {
+				String jsonString = new String(response.data,
+						HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+				return Response.success(new JSONArray(jsonString),
+						HttpHeaderParser.parseCacheHeaders(response));
+			} catch (UnsupportedEncodingException e) {
+				return Response.error(new ParseError(e));
+			} catch (JSONException je) {
+				return Response.error(new ParseError(je));
+			}
 		}
 	}
 }
