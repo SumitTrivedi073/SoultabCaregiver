@@ -37,7 +37,7 @@ public class SendBirdAuthentication {
 						}
 						return;
 					}
-					registerPushToken(PrefUtils.getPushToken(), e2 -> {
+					registerPushToken(e2 -> {
 						if (e2 != null) {
 							Log.e(TAG, "AutoAuthenticate registerPush Failed " + e2.getMessage());
 							
@@ -61,8 +61,7 @@ public class SendBirdAuthentication {
 		}
 	}
 	
-	public static void registerPushToken(String pushToken,
-	                                     SendBirdAuthentication.CompletionHandler handler) {
+	public static void registerPushToken(SendBirdAuthentication.CompletionHandler handler) {
 		PushUtils.registerPushHandler(new CustomFireBaseMessasing());
 		handler.onCompleted(null);
 		//		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus,
@@ -76,7 +75,7 @@ public class SendBirdAuthentication {
 	}
 	
 	public static void authenticate(Context context, String userId, String userName,
-	                                String pushToken, AuthenticateHandler handler) {
+	                                AuthenticateHandler handler) {
 		if (userId == null) {
 			if (handler != null) {
 				handler.onResult(false);
@@ -101,7 +100,7 @@ public class SendBirdAuthentication {
 						}
 						return;
 					}
-					registerPushToken(pushToken, e2 -> {
+					registerPushToken(e2 -> {
 						SendBird.updateCurrentUserInfo(userName, "", e3 -> {
 							PrefUtils.setAppId(context, SendBirdCall.getApplicationId());
 							PrefUtils.setUserId(context, userId);
@@ -129,7 +128,6 @@ public class SendBirdAuthentication {
 		SendBirdCall.deauthenticate(e -> {
 			PrefUtils.setUserId(context, null);
 			PrefUtils.setCalleeId(context, null);
-			PrefUtils.setPushToken(null);
 			if (handler != null) {
 				handler.onResult(e == null);
 			}

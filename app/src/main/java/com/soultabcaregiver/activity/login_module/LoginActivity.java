@@ -35,7 +35,6 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
-import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -79,7 +78,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 	}
 	
-	
 	@Override
 	public void onClick(View v) {
 		
@@ -120,6 +118,47 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				
 			}
 		});
+	}
+	
+	private void init() {
+		tvLogin = findViewById(R.id.tv_login);
+		tvForgot = findViewById(R.id.tv_forgot_pass);
+		etEmail = findViewById(R.id.et_email);
+		etPass = findViewById(R.id.et_pass);
+		tbRemPass = findViewById(R.id.tb_rem);
+		view_pwd1 = findViewById(R.id.view_pwd1);
+		tv_rem_pass = findViewById(R.id.tv_rem_pass);
+		
+		FirebaseApp.initializeApp(this);
+		if (Utility.getSharedPreferences2(mContext, APIS.save_email) != null) {
+			if (Utility.getSharedPreferences2(mContext, APIS.save_email).equals("true")) {
+				etEmail.setText(Utility.getSharedPreferences2(mContext, APIS.Caregiver_email));
+				tbRemPass.setChecked(true);
+			} else {
+				tbRemPass.setChecked(false);
+				
+			}
+		}
+		
+		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+		if (resultCode == ConnectionResult.SUCCESS) {
+			
+			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
+					new OnSuccessListener<InstanceIdResult>() {
+						@Override
+						public void onSuccess(InstanceIdResult instanceIdResult) {
+							// Get new Instance ID token
+							FirebaseToken = instanceIdResult.getToken();
+							Log.e("newToken", FirebaseToken);
+							
+						}
+					}).addOnFailureListener(new OnFailureListener() {
+				@Override
+				public void onFailure(@NonNull Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
 	}
 	
 	private void Login() {
@@ -166,7 +205,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			e.printStackTrace();
 		}
 		
-		
 		System.out.println(mainObject.toString());
 		showProgressDialog(getResources().getString(R.string.Loading));
 		JsonObjectRequest jsonObjReq =
@@ -175,7 +213,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
-								
 								
 								hideProgressDialog();
 								
@@ -248,8 +285,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											Utility.getSharedPreferences(mContext,
 													APIS.caregiver_id),
 											Utility.getSharedPreferences(mContext,
-													APIS.Caregiver_name), FirebaseToken,
-											isSuccess -> {
+													APIS.Caregiver_name), isSuccess -> {
 												if (isSuccess) {
 													ShowAlertResponse(loginModel.getMessage(),
 															"1");
@@ -284,50 +320,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		AppController.getInstance().addToRequestQueue(jsonObjReq);
 	}
 	
-	private void init() {
-		tvLogin = findViewById(R.id.tv_login);
-		tvForgot = findViewById(R.id.tv_forgot_pass);
-		etEmail = findViewById(R.id.et_email);
-		etPass = findViewById(R.id.et_pass);
-		tbRemPass = findViewById(R.id.tb_rem);
-		view_pwd1 = findViewById(R.id.view_pwd1);
-		tv_rem_pass = findViewById(R.id.tv_rem_pass);
-		
-		
-		FirebaseApp.initializeApp(this);
-		if (Utility.getSharedPreferences2(mContext, APIS.save_email) != null) {
-			if (Utility.getSharedPreferences2(mContext, APIS.save_email).equals("true")) {
-				etEmail.setText(Utility.getSharedPreferences2(mContext, APIS.Caregiver_email));
-				tbRemPass.setChecked(true);
-			} else {
-				tbRemPass.setChecked(false);
-				
-			}
-		}
-		
-		
-		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-		if (resultCode == ConnectionResult.SUCCESS) {
-			
-			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
-					new OnSuccessListener<InstanceIdResult>() {
-						@Override
-						public void onSuccess(InstanceIdResult instanceIdResult) {
-							// Get new Instance ID token
-							FirebaseToken = instanceIdResult.getToken();
-							PrefUtils.setPushToken(FirebaseToken);
-							Log.e("newToken", FirebaseToken);
-							
-						}
-					}).addOnFailureListener(new OnFailureListener() {
-				@Override
-				public void onFailure(@NonNull Exception e) {
-					e.printStackTrace();
-				}
-			});
-		}
-	}
-	
 	private void ShowAlertResponse(String message, String value) {
 		LayoutInflater inflater =
 				(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -342,12 +334,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 		alertDialog.show();
 		
-		
 		TextView OK_txt = layout.findViewById(R.id.OK_txt);
 		TextView title_txt = layout.findViewById(R.id.title_txt);
 		
 		title_txt.setText(message);
-		
 		
 		OK_txt.setOnClickListener(new View.OnClickListener() {
 			@Override

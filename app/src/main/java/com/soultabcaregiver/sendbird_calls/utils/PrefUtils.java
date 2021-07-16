@@ -64,12 +64,12 @@ public class PrefUtils {
 		return getSharedPreferences(context).getString(PREF_KEY_CALLEE_ID, "");
 	}
 	
-	public static String getPushToken() {
-		return instance.getString(PREF_KEY_PUSH_TOKEN, "");
-	}
-	
-	public static void setPushToken(String pushToken) {
-		SharedPreferences.Editor editor = instance.edit();
-		editor.putString(PREF_KEY_PUSH_TOKEN, pushToken).apply();
-	}
+	//	public static String getPushToken() {
+	//		return instance.getString(PREF_KEY_PUSH_TOKEN, "");
+	//	}
+	//
+	//	public static void setPushToken(String pushToken) {
+	//		SharedPreferences.Editor editor = instance.edit();
+	//		editor.putString(PREF_KEY_PUSH_TOKEN, pushToken).apply();
+	//	}
 }
