@@ -30,6 +30,8 @@ public class APIS {
 	//40 plus API
 	public static final String plus40Signup = "users";
 	
+	public static final String isplus40userexist = "users/?search=";
+	
 	public static final String ShoppingProductCateogry_list = "Users/ProductCateogry_list";
 	
 	public static final String HEADERKEY = "soultab";
