@@ -5,13 +5,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
@@ -22,6 +31,11 @@ import com.soultabcaregiver.activity.shopping.model.ShoppingCategoryModel;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,15 +49,13 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 	
 	RecyclerView shopping_category_list;
 	
-	RelativeLayout ly_back;
-	
 	String TAG = ShoppingCategoryActivity.class.toString();
 	
 	List<ShoppingCategoryModel.Response.ProductCategoryDatum> categoryDatumList;
 	
 	ShoppingListAdapter shoppingListAdapter;
 	
-	RelativeLayout tvNodata_relative;
+	RelativeLayout tvNodata_relative, back_btn;
 	
 	TextView NoDataFoundtxt;
 	
@@ -62,9 +74,9 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 		shopping_category_list = findViewById(R.id.shopping_category_list);
 		NoDataFoundtxt = findViewById(R.id.NoDataFoundtxt);
 		tvNodata_relative = findViewById(R.id.tvNodata_relative);
-		ly_back = findViewById(R.id.back_btn);
+		back_btn = findViewById(R.id.back_btn);
 		
-		ly_back.setOnClickListener(this);
+		back_btn.setOnClickListener(this);
 		
 		GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 2);
 		shopping_category_list.setLayoutManager(gridLayoutManager);
@@ -83,7 +95,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 				APIS.BASEURL + APIS.ShoppingProductCateogry_list, new Response.Listener<String>() {
 			@Override
 			public void onResponse(String response) {
-				hideProgressDialog();
+				
 				ShoppingCategoryModel articlesCategoryModel =
 						new Gson().fromJson(response, ShoppingCategoryModel.class);
 				if (String.valueOf(articlesCategoryModel.getStatusCode()).equals("200")) {
@@ -96,14 +108,17 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 						shoppingListAdapter = new ShoppingListAdapter(mContext, categoryDatumList);
 						shopping_category_list.setAdapter(shoppingListAdapter);
 						
-						
+						is40plususer();
 					} else {
+						hideProgressDialog();
 						NoDataFoundtxt.setText(getResources().getString(R.string.no_data_found));
 						tvNodata_relative.setVisibility(View.VISIBLE);
 						shopping_category_list.setVisibility(View.GONE);
 						
 					}
+					
 				} else {
+					hideProgressDialog();
 					NoDataFoundtxt.setText(getResources().getString(R.string.no_data_found));
 					tvNodata_relative.setVisibility(View.VISIBLE);
 					shopping_category_list.setVisibility(View.GONE);
@@ -133,12 +148,84 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 	}
 	
+	private void is40plususer() {
+		RequestQueue requestQueue = Volley.newRequestQueue(this);
+		JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
+				APIS.BASEURL40Plus + APIS.isplus40userexist + Utility.getSharedPreferences(mContext,
+						APIS.Caregiver_email), null, new Response.Listener<JSONArray>() {
+			@Override
+			public void onResponse(JSONArray response) {
+				hideProgressDialog();
+				JSONArray jsonArray = response;
+				System.out.println("response==========>" + response);
+				String id = "";
+				try {
+					for (int i = 0; i < jsonArray.length(); i++) {
+						JSONObject jsonObject = jsonArray.getJSONObject(i);
+						id = jsonObject.getString("id");
+					}
+					Utility.setSharedPreference(mContext, APIS.is_40plus_user, "1");
+					Utility.setSharedPreference(mContext, APIS.is_40plus_userID, id);
+					
+				} catch (Exception w) {
+					Toast.makeText(ShoppingCategoryActivity.this, w.getMessage(),
+							Toast.LENGTH_LONG).show();
+					System.out.println("Error==========>" + w.getMessage());
+				}
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				hideProgressDialog();
+				Toast.makeText(ShoppingCategoryActivity.this, error.getMessage(),
+						Toast.LENGTH_LONG).show();
+			}
+		}) {
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				Map<String, String> params = new HashMap<String, String>();
+				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				params.put("Authorization", "Basic YWRtaW46TW9iaXZAIzEyMw==");
+				
+				return params;
+			}
+			
+			
+		};
+		requestQueue.add(jsonArrayRequest);
+		
+	}
+	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.lyBack_card:
+			case R.id.back_btn:
 				finish();
 				break;
+		}
+	}
+	
+	private class CustomJsonArrayRequest extends JsonRequest<JSONArray> {
+		
+		public CustomJsonArrayRequest(int method, String url, JSONObject jsonRequest,
+		                              Response.Listener<JSONArray> listener,
+		                              Response.ErrorListener errorListener) {
+			super(method, url, (jsonRequest == null) ? null : jsonRequest.toString(), listener,
+					errorListener);
+		}
+		
+		@Override
+		protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+			try {
+				String jsonString = new String(response.data,
+						HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+				return Response.success(new JSONArray(jsonString),
+						HttpHeaderParser.parseCacheHeaders(response));
+			} catch (UnsupportedEncodingException e) {
+				return Response.error(new ParseError(e));
+			} catch (JSONException je) {
+				return Response.error(new ParseError(je));
+			}
 		}
 	}
 }

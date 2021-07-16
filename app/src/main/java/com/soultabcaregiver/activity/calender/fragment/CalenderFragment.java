@@ -3,6 +3,7 @@ package com.soultabcaregiver.activity.calender.fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,9 +13,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CalendarView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -36,12 +34,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CalenderFragment extends BaseFragment implements View.OnClickListener {
 
@@ -141,24 +145,24 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 daily.setBackgroundColor(getResources().getColor(R.color.muzli_color));
                 weekly.setBackgroundColor(getResources().getColor(R.color.white));
                 Monthly.setBackgroundColor(getResources().getColor(R.color.white));
-
+    
                 daily.setTextColor(getResources().getColor(R.color.white));
                 weekly.setTextColor(getResources().getColor(R.color.blackish));
                 Monthly.setTextColor(getResources().getColor(R.color.blackish));
-
-
+    
                 Daily_select = true;
                 Weekly_select = false;
                 Monthly_select = false;
-
+    
+                FromDate = Utility.yyyy_MM_dd.format(calendar.getTime());
                 TODate = Utility.yyyy_MM_dd.format(calendar.getTime());
-
-
+    
                 try {
-
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)) + " - "
-                            + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
-
+        
+                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
+                            FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
+                            Utility.yyyy_MM_dd.parse(TODate)));
+        
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -183,24 +187,52 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 Monthly_select = false;
 
 
-                try {
+              /*  try {
                     TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 7);
 
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)) + " - "
+                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse
+                    (FromDate)) + " - "
                             + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
 
                 } catch (ParseException e) {
                     e.printStackTrace();
+                }*/
+    
+                LocalDate today = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    today = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
+        
+                    // Go backward to get Monday
+                    LocalDate monday = today;
+                    while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
+                        monday = monday.minusDays(1);
+                    }
+        
+                    // Go forward to get Sunday
+                    LocalDate sunday = today;
+                    while (sunday.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                        sunday = sunday.plusDays(1);
+                    }
+        
+                    FromDate = monday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    TODate = sunday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        
+                    try {
+                        curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
+                                FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
+                                Utility.yyyy_MM_dd.parse(TODate)));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+        
                 }
-
-                Log.e("TODate", TODate);
-
+    
                 GetAllEventAPI(FromDate, TODate);
-
+    
                 break;
-
+    
             case R.id.Monthly:
-
+        
                 daily.setBackgroundColor(getResources().getColor(R.color.white));
                 weekly.setBackgroundColor(getResources().getColor(R.color.white));
                 Monthly.setBackgroundColor(getResources().getColor(R.color.muzli_color));
@@ -215,11 +247,26 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 Monthly_select = true;
 
                 try {
-                    TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 30);
-
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)) + " - "
-                            + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
-
+                    // TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 30);
+    
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        
+                        LocalDate today1 = LocalDate.now();
+        
+                        LocalDate firstdayofmonth = today1.withDayOfMonth(1);
+                        System.out.println("First day: " + firstdayofmonth);
+        
+                        LocalDate lastdayofmonth = today1.withDayOfMonth(today1.lengthOfMonth());
+                        System.out.println("Last day: " + lastdayofmonth);
+                        FromDate =
+                                firstdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        TODate = lastdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        
+                    }
+                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
+                            FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
+                            Utility.yyyy_MM_dd.parse(TODate)));
+    
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -281,29 +328,74 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month,
                                             int dayOfMonth) {
-
+    
                 calendar1 = new GregorianCalendar(year, month, dayOfMonth);
                 FromDate2 = Utility.MM_dd_yyyy.format(calendar1.getTime());
                 FromDate = Utility.yyyy_MM_dd.format(calendar1.getTime());
-
-
+    
                 if (Daily_select) {
-
+        
                     TODate = Utility.yyyy_MM_dd.format(calendar1.getTime());
-                }
-                if (Weekly_select) {
+        
                     try {
-                        TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 7);
+                        curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
+                                FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
+                                Utility.yyyy_MM_dd.parse(TODate)));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+        
+                }
+                if (Weekly_select) {
+                    /*try {
+                        TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 7);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }*/
+        
+                    LocalDate today = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        today = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
+            
+                        // Go backward to get Monday
+                        LocalDate monday = today;
+                        while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
+                            monday = monday.minusDays(1);
+                        }
+            
+                        // Go forward to get Sunday
+                        LocalDate sunday = today;
+                        while (sunday.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                            sunday = sunday.plusDays(1);
+                        }
+            
+                        FromDate = monday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        TODate = sunday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            
+            
+                    }
                 }
                 if (Monthly_select) {
-                    try {
+                   /* try {
                         TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 30);
 
                     } catch (ParseException e) {
                         e.printStackTrace();
+                    }*/
+    
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        
+                        LocalDate today1 = LocalDate.now();
+        
+                        LocalDate firstdayofmonth = today1.withDayOfMonth(1);
+                        System.out.println("First day: " + firstdayofmonth);
+        
+                        LocalDate lastdayofmonth = today1.withDayOfMonth(today1.lengthOfMonth());
+                        System.out.println("Last day: " + lastdayofmonth);
+                        FromDate =
+                                firstdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                        TODate = lastdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        
                     }
                 }
 
