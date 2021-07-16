@@ -1161,6 +1161,8 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		
 		ImageView profileImage;
 		
+		ImageView playButton;
+		
 		public OtherAudioFileMessageHolder(View itemView) {
 			super(itemView);
 			
@@ -1168,6 +1170,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			nicknameText = itemView.findViewById(R.id.text_group_chat_nickname);
 			profileImage = itemView.findViewById(R.id.image_group_chat_profile);
 			dateText = itemView.findViewById(R.id.text_group_chat_date);
+			playButton = itemView.findViewById(R.id.playButton);
 		}
 		
 		void bind(Context context, final FileMessage message, GroupChannel channel,
@@ -1197,12 +1200,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			}
 			
 			if (listener != null) {
-				itemView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						listener.onFileMessageItemClick(message);
-					}
-				});
+				playButton.setOnClickListener(v -> listener.onAudioMessageItemClick(message));
 			}
 		}
 	}
