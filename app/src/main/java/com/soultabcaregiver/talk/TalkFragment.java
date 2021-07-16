@@ -26,12 +26,14 @@ import androidx.viewpager.widget.ViewPager;
 
 public class TalkFragment extends BaseFragment {
 	
+	private ViewPager viewPager;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_talk, container, false);
 		TabLayout tabs = view.findViewById(R.id.tabs);
-		ViewPager viewPager = view.findViewById(R.id.viewpager);
+		viewPager = view.findViewById(R.id.viewpager);
 		tabs.setupWithViewPager(viewPager);
 		setupViewPager(viewPager);
 		return view;
@@ -64,6 +66,10 @@ public class TalkFragment extends BaseFragment {
 		if (talkHolderFragment != null) {
 			talkHolderFragment.navigateToCreateGroupFragment();
 		}
+	}
+	
+	public int getCurrentPageIndex() {
+		return viewPager.getCurrentItem();
 	}
 	
 	

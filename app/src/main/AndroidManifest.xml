@@ -138,6 +138,13 @@
             />
         <activity android:name=".sendbird_chat.utils.PhotoViewerActivity" />
         <activity android:name=".sendbird_chat.utils.MediaPlayerActivity" />
+        <activity
+            android:name=".sendbird_chat.NewMessageActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="user"
+            android:theme="@style/DialogTheme"
+            />
 
         <service
             android:name=".twillovoicecall.IncomingCallNotificationService"

@@ -10,8 +10,8 @@ import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.FireBaseMessaging.CustomFireBaseMessasing;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
+import com.soultabcaregiver.sendbird_chat.utils.PushUtils;
 import com.soultabcaregiver.utils.Utility;
-
 
 public class SendBirdAuthentication {
 	
@@ -63,23 +63,16 @@ public class SendBirdAuthentication {
 	
 	public static void registerPushToken(String pushToken,
 	                                     SendBirdAuthentication.CompletionHandler handler) {
-		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus, e) -> {
-			if (e != null) {
-				handler.onCompleted(e);
-				return;
-			}
-			SendBirdCall.registerPushToken(pushToken, false, handler :: onCompleted);
-		});
-	}
-	
-	public static void deAuthenticate(Context context, DeAuthenticateHandler handler) {
-		if (SendBirdCall.getCurrentUser() == null) {
-			if (handler != null) {
-				handler.onResult(false);
-			}
-			return;
-		}
-		doDeAuthenticate(context, handler);
+		PushUtils.registerPushHandler(new CustomFireBaseMessasing());
+		handler.onCompleted(null);
+		//		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus,
+		//		e) -> {
+		//			if (e != null) {
+		//				handler.onCompleted(e);
+		//				return;
+		//			}
+		//			SendBirdCall.registerPushToken(pushToken, false, handler :: onCompleted);
+		//		});
 	}
 	
 	public static void authenticate(Context context, String userId, String userName,
@@ -122,6 +115,27 @@ public class SendBirdAuthentication {
 		});
 	}
 	
+	public static void deAuthenticate(Context context, DeAuthenticateHandler handler) {
+		if (SendBirdCall.getCurrentUser() == null) {
+			if (handler != null) {
+				handler.onResult(false);
+			}
+			return;
+		}
+		doDeAuthenticate(context, handler);
+	}
+	
+	private static void doDeAuthenticate(Context context, DeAuthenticateHandler handler) {
+		SendBirdCall.deauthenticate(e -> {
+			PrefUtils.setUserId(context, null);
+			PrefUtils.setCalleeId(context, null);
+			PrefUtils.setPushToken(null);
+			if (handler != null) {
+				handler.onResult(e == null);
+			}
+		});
+	}
+	
 	public static void logout(Context context, LogoutHandler handler) {
 		SendBird.disconnect(() -> deAuthenticate(context, isSuccess -> {
 			CustomFireBaseMessasing.getPushToken((pushToken, e) -> {
@@ -140,18 +154,6 @@ public class SendBirdAuthentication {
 			SendBirdCall.unregisterPushToken(pushToken, handler :: onCompleted);
 		});
 	}
-	
-	private static void doDeAuthenticate(Context context, DeAuthenticateHandler handler) {
-		SendBirdCall.deauthenticate(e -> {
-			PrefUtils.setUserId(context, null);
-			PrefUtils.setCalleeId(context, null);
-			PrefUtils.setPushToken(null);
-			if (handler != null) {
-				handler.onResult(e == null);
-			}
-		});
-	}
-	
 	
 	public interface LogoutHandler {
 		

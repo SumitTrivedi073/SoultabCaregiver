@@ -88,6 +88,9 @@ public class APIS {
 	
 	public static final String CaregiverListAPI = "Caregiver/getCaregiverDetailsforCaregiver";
 	
+	public static final String CaregiverListAPIForCreateGroup =
+			"Caregiver/getCaregiverDetailsforCaregiverwithUser";
+	
 	public static final String QuickAlery = "Users/quik_alert";
 	
 	public static final String AlertCount = "Users/get_unread_alert_count";

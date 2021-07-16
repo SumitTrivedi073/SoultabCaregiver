@@ -310,6 +310,8 @@
     <string name="enter_your_telephone">Enter Your Telephone</string>
     <string name="Password">Password</string>
     <string name="plusmart">40PlusMart</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="you_have_new_message_from">You have new message from</string>
     <!--Added by Sumit-->
 
 </resources>

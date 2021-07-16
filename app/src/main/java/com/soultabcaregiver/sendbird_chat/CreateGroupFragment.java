@@ -169,43 +169,40 @@ public class CreateGroupFragment extends BaseFragment {
 			
 		}
 		
-		JsonObjectRequest jsonObjReq =
-				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.CaregiverListAPI,
-						mainObject, response -> {
-					progressDialog.setVisibility(View.GONE);
-					
-					CareGiverListModel careGiverProfileModel =
-							new Gson().fromJson(response.toString(), CareGiverListModel.class);
-					
-					if (String.valueOf(careGiverProfileModel.getStatusCode()).equals("200")) {
-						
-						if (careGiverProfileModel.getResponse().size() > 0) {
-							adapter.setCaregiverList(careGiverProfileModel.getResponse());
-						} else {
-							//Empty View here
-							hideViews();
-						}
-					} else if (String.valueOf(careGiverProfileModel.getStatusCode()).equals(
-							"403")) {
-						logout_app(careGiverProfileModel.getMessage());
-					} else {
-						Utility.ShowToast(getContext(), careGiverProfileModel.getMessage());
-					}
-					
-				}, error -> {
-					progressDialog.setVisibility(View.GONE);
-				}) {
-					@Override
-					public Map<String, String> getHeaders() {
-						Map<String, String> params = new HashMap<>();
-						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-						params.put(APIS.HEADERKEY2,
-								Utility.getSharedPreferences(getContext(), APIS.EncodeUser_id));
-						return params;
-					}
-					
-				};
+		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+				APIS.BASEURL + APIS.CaregiverListAPIForCreateGroup, mainObject, response -> {
+			progressDialog.setVisibility(View.GONE);
+			CareGiverListModel careGiverProfileModel =
+					new Gson().fromJson(response.toString(), CareGiverListModel.class);
+			
+			if (String.valueOf(careGiverProfileModel.getStatusCode()).equals("200")) {
+				
+				if (careGiverProfileModel.getResponse().size() > 0) {
+					adapter.setCaregiverList(careGiverProfileModel.getResponse());
+				} else {
+					//Empty View here
+					hideViews();
+				}
+			} else if (String.valueOf(careGiverProfileModel.getStatusCode()).equals("403")) {
+				logout_app(careGiverProfileModel.getMessage());
+			} else {
+				Utility.ShowToast(getContext(), careGiverProfileModel.getMessage());
+			}
+			
+		}, error -> {
+			progressDialog.setVisibility(View.GONE);
+		}) {
+			@Override
+			public Map<String, String> getHeaders() {
+				Map<String, String> params = new HashMap<>();
+				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				params.put(APIS.HEADERKEY2,
+						Utility.getSharedPreferences(getContext(), APIS.EncodeUser_id));
+				return params;
+			}
+			
+		};
 		AppController.getInstance().addToRequestQueue(jsonObjReq);
 		jsonObjReq.setShouldCache(false);
 		jsonObjReq.setRetryPolicy(

@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <RelativeLayout
         android:id="@+id/topbar"
@@ -60,9 +61,7 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:paddingBottom="4dp"
-            android:scrollbars="vertical">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            android:scrollbars="vertical" />
 
         <LinearLayout
             android:id="@+id/layout_group_chat_current_event"
@@ -135,15 +134,13 @@
                 android:layout_height="@dimen/_40sdp"
                 android:gravity="end"
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/_2sdp"
-                android:paddingBottom="@dimen/_2sdp"
-                android:weightSum="6">
+                android:weightSum="5">
 
                 <com.devlomi.record_view.RecordView
                     android:id="@+id/record_view"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:visibility="gone"
                     app:counter_time_color="#ff0000"
                     app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
@@ -155,9 +152,9 @@
                 <com.devlomi.record_view.RecordButton
                     android:id="@+id/recordButton"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="@dimen/_40sdp"
                     android:layout_weight="1"
-                    android:background="@drawable/ic_chat_microphone" />
+                    app:srcCompat="@drawable/ic_chat_microphone" />
 
             </LinearLayout>
 
@@ -165,7 +162,7 @@
                 android:id="@+id/mediaButtonsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="6">
+                android:weightSum="5">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/smileyBtn"
@@ -200,13 +197,13 @@
                     app:srcCompat="@drawable/ic_chat_camera" />
 
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/alertBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_40sdp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/_1sdp"
-                    app:srcCompat="@drawable/ic_chat_alert" />
+                <!--                <androidx.appcompat.widget.AppCompatImageView-->
+                <!--                    android:id="@+id/alertBtn"-->
+                <!--                    android:layout_width="0dp"-->
+                <!--                    android:layout_height="@dimen/_40sdp"-->
+                <!--                    android:layout_weight="1"-->
+                <!--                    android:padding="@dimen/_1sdp"-->
+                <!--                    app:srcCompat="@drawable/ic_chat_alert" />-->
 
             </LinearLayout>
 

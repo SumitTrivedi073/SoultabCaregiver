@@ -385,45 +385,6 @@ public class ConversationFragment extends BaseFragment {
 		titleTextView.setText(title);
 	}
 	
-	public static ConversationFragment newInstance(String channelUrl) {
-		Bundle args = new Bundle();
-		ConversationFragment fragment = new ConversationFragment();
-		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		fragment.setArguments(args);
-		return fragment;
-	}
-	
-	private void setUpRecyclerView() {
-		mLayoutManager = new LinearLayoutManager(getContext());
-		mLayoutManager.setReverseLayout(true);
-		mRecyclerView.setLayoutManager(mLayoutManager);
-		mRecyclerView.setAdapter(mChatAdapter);
-		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			@Override
-			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-				if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
-					mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
-				}
-			}
-		});
-	}
-	
-	private void onFileMessageClicked(FileMessage message) {
-		String type = message.getType().toLowerCase();
-		if (type.startsWith("image")) {
-			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
-			i.putExtra("url", message.getUrl());
-			i.putExtra("type", message.getType());
-			startActivity(i);
-		} else if (type.startsWith("video")) {
-			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
-			intent.putExtra("url", message.getUrl());
-			startActivity(intent);
-		} else {
-			showDownloadConfirmDialog(message);
-		}
-	}
-	
 	private void setUpChatListAdapter() {
 		mChatAdapter.setItemClickListener(new GroupChatAdapter.OnItemClickListener() {
 			@Override
@@ -492,48 +453,27 @@ public class ConversationFragment extends BaseFragment {
 		});
 	}
 	
-	private void showDownloadConfirmDialog(final FileMessage message) {
-		if (ContextCompat.checkSelfPermission(getContext(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-			// If storage permissions are not granted, request permissions at run-time,
-			// as per < API 23 guidelines.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				requestStoragePermissions();
-			}
-		} else {
-			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
-					R.string.download, (dialog, which) -> {
-						if (which == DialogInterface.BUTTON_POSITIVE) {
-							FileUtils.downloadFile(getContext(), message.getUrl(),
-									message.getName());
-						}
-					}).setNegativeButton(R.string.cancel_text, null).show();
-		}
-		
+	public static ConversationFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		ConversationFragment fragment = new ConversationFragment();
+		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		fragment.setArguments(args);
+		return fragment;
 	}
 	
-	@RequiresApi (api = Build.VERSION_CODES.M)
-	private void requestStoragePermissions() {
-		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-			// Provide an additional rationale to the user if the permission was not granted
-			// and the user would benefit from additional context for the use of the permission.
-			// For example if the user has previously denied the permission.
-			Snackbar.make(mRootLayout,
-					"Storage access permissions are required to upload/download files.",
-					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View view) {
-					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-							PERMISSION_WRITE_EXTERNAL_STORAGE);
+	private void setUpRecyclerView() {
+		mLayoutManager = new LinearLayoutManager(getContext());
+		mLayoutManager.setReverseLayout(true);
+		mRecyclerView.setLayoutManager(mLayoutManager);
+		mRecyclerView.setAdapter(mChatAdapter);
+		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+				if (mLayoutManager.findLastVisibleItemPosition() == mChatAdapter.getItemCount() - 1) {
+					mChatAdapter.loadPreviousMessages(CHANNEL_LIST_LIMIT, null);
 				}
-			}).show();
-		} else {
-			// Permission has not been granted yet. Request it directly.
-			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-					PERMISSION_WRITE_EXTERNAL_STORAGE);
-		}
+			}
+		});
 	}
 	
 	private void showMediaPlayerDialog(FileMessage message) {
@@ -609,6 +549,66 @@ public class ConversationFragment extends BaseFragment {
 		dialog.show();
 	}
 	
+	private void onFileMessageClicked(FileMessage message) {
+		String type = message.getType().toLowerCase();
+		if (type.startsWith("image")) {
+			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+			i.putExtra("url", message.getUrl());
+			i.putExtra("type", message.getType());
+			startActivity(i);
+		} else if (type.startsWith("video")) {
+			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+			intent.putExtra("url", message.getUrl());
+			startActivity(intent);
+		} else {
+			showDownloadConfirmDialog(message);
+		}
+	}
+	
+	private void showDownloadConfirmDialog(final FileMessage message) {
+		if (ContextCompat.checkSelfPermission(getContext(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			// If storage permissions are not granted, request permissions at run-time,
+			// as per < API 23 guidelines.
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				requestStoragePermissions();
+			}
+		} else {
+			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
+					R.string.download, (dialog, which) -> {
+						if (which == DialogInterface.BUTTON_POSITIVE) {
+							FileUtils.downloadFile(getContext(), message.getUrl(),
+									message.getName());
+						}
+					}).setNegativeButton(R.string.cancel_text, null).show();
+		}
+		
+	}
+	
+	@RequiresApi (api = Build.VERSION_CODES.M)
+	private void requestStoragePermissions() {
+		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			// Provide an additional rationale to the user if the permission was not granted
+			// and the user would benefit from additional context for the use of the permission.
+			// For example if the user has previously denied the permission.
+			Snackbar.make(mRootLayout,
+					"Storage access permissions are required to upload/download files.",
+					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View view) {
+					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+							PERMISSION_WRITE_EXTERNAL_STORAGE);
+				}
+			}).show();
+		} else {
+			// Permission has not been granted yet. Request it directly.
+			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+					PERMISSION_WRITE_EXTERNAL_STORAGE);
+		}
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -624,93 +624,76 @@ public class ConversationFragment extends BaseFragment {
 	//		return true;
 	//	}
 	
-	private void setupControls(View view) {
-		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
-		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
-		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
-		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
-		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
-		titleTextView = view.findViewById(R.id.chatTitle);
-		backButton = view.findViewById(R.id.back_btn);
+	/**
+	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in
+	 * specified sizes.
+	 *
+	 * @param uri The URI of the image, which in this case is received through an Intent request.
+	 */
+	private void sendFileWithThumbnail(Uri uri) {
+		if (mChannel == null) {
+			return;
+		}
 		
-		ImageView smileyBtn = view.findViewById(R.id.smileyBtn);
-		ImageView attachmentBtn = view.findViewById(R.id.attachmentBtn);
-		ImageView galleryBtn = view.findViewById(R.id.galleryBtn);
-		ImageView cameraBtn = view.findViewById(R.id.cameraBtn);
-		RecordButton recordButton = view.findViewById(R.id.recordButton);
-		RecordView recordView = view.findViewById(R.id.record_view);
+		// Specify two dimensions of thumbnails to generate
+		List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
+		thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
+		thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
 		
-		LinearLayout mediaButtons = view.findViewById(R.id.mediaButtonsLayout);
+		Hashtable<String, Object> info = FileUtils.getFileInfo(getContext(), uri);
 		
-		ImageView alertBtn = view.findViewById(R.id.alertBtn);
+		if (info == null || info.isEmpty()) {
+			Toast.makeText(getContext(), "Extracting file information failed.",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
 		
-		handleRecording(recordButton, recordView, mediaButtons);
+		final String name;
+		if (info.containsKey("name")) {
+			name = (String) info.get("name");
+		} else {
+			name = "Sendbird File";
+		}
+		final String path = (String) info.get("path");
+		final File file = new File(path);
+		final String mime = (String) info.get("mime");
+		final int size = (Integer) info.get("size");
 		
-		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
-				keyBoardHeight -> {
-				
-				}).setOnSoftKeyboardCloseListener(() -> {
+		if (path.equals("")) {
+			Toast.makeText(getContext(), "File must be located in local storage.",
+					Toast.LENGTH_LONG).show();
+		} else {
+			BaseChannel.SendFileMessageWithProgressHandler fileMessageHandler =
+					new BaseChannel.SendFileMessageWithProgressHandler() {
+						
+						@Override
+						public void onProgress(int bytesSent, int totalBytesSent,
+						                       int totalBytesToSend) {
+							//here to display the progress
+						}
+						
+						@Override
+						public void onSent(FileMessage fileMessage, SendBirdException e) {
+							if (e != null) {
+								Toast.makeText(ConversationFragment.this.getContext(),
+										"" + e.getCode() + ":" + e.getMessage(),
+										Toast.LENGTH_SHORT).show();
+								mChatAdapter.markMessageFailed(fileMessage);
+								return;
+							}
+							
+							mChatAdapter.markMessageSent(fileMessage);
+						}
+					};
 			
-		}).build(mMessageEditText);
-		
-		smileyBtn.setOnClickListener(v -> {
-			emojiPopup.toggle();
-		});
-		
-		galleryBtn.setOnClickListener(v -> {
-			String types = "image/* video/*";
-			String[] mimetypes = {"image/*", "video/*"};
-			requestMedia(types, mimetypes);
-		});
-		
-		attachmentBtn.setOnClickListener(v -> {
-			String types = "*/*";
-			String[] mimetypes = {};
-			requestMedia(types, mimetypes);
-		});
-		
-		cameraBtn.setOnClickListener(v -> {
-			showBottomSheetDialog();
-		});
-		
-		backButton.setOnClickListener(v -> {
-			getActivity().onBackPressed();
-		});
-		
-		mMessageEditText.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			}
+			// Send image with thumbnails in the specified dimensions
+			FileMessage tempFileMessage =
+					mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes,
+							fileMessageHandler);
 			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				mMessageSendButton.setEnabled(s.length() > 0);
-			}
-		});
-		
-		mMessageSendButton.setEnabled(false);
-		mMessageSendButton.setOnClickListener(v -> {
-			//				if (mCurrentState == STATE_EDIT) {
-			//					String userInput = mMessageEditText.getText().toString();
-			//					if (userInput.length() > 0) {
-			//						if (mEditingMessage != null) {
-			//							editMessage(mEditingMessage, userInput);
-			//						}
-			//					}
-			//					setState(STATE_NORMAL, null, -1);
-			//				} else {
-			String userInput = mMessageEditText.getText().toString();
-			if (userInput.length() > 0) {
-				sendUserMessage(userInput);
-				mMessageEditText.setText("");
-			}
-			//				}
-		});
-		
+			mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
+			mChatAdapter.addFirst(tempFileMessage);
+		}
 	}
 	
 	private void handleRecording(RecordButton recordButton, RecordView recordView,
@@ -906,10 +889,93 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	private void stopRecording() {
-		mediaRecorder.stop();
-		mediaRecorder.release();
-		mediaRecorder = null;
+	private void setupControls(View view) {
+		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
+		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
+		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
+		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
+		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
+		titleTextView = view.findViewById(R.id.chatTitle);
+		backButton = view.findViewById(R.id.back_btn);
+		
+		ImageView smileyBtn = view.findViewById(R.id.smileyBtn);
+		ImageView attachmentBtn = view.findViewById(R.id.attachmentBtn);
+		ImageView galleryBtn = view.findViewById(R.id.galleryBtn);
+		ImageView cameraBtn = view.findViewById(R.id.cameraBtn);
+		RecordButton recordButton = view.findViewById(R.id.recordButton);
+		RecordView recordView = view.findViewById(R.id.record_view);
+		
+		LinearLayout mediaButtons = view.findViewById(R.id.mediaButtonsLayout);
+		
+		//ImageView alertBtn = view.findViewById(R.id.alertBtn);
+		
+		handleRecording(recordButton, recordView, mediaButtons);
+		
+		emojiPopup = EmojiPopup.Builder.fromRootView(mRootLayout).setOnSoftKeyboardOpenListener(
+				keyBoardHeight -> {
+				
+				}).setOnSoftKeyboardCloseListener(() -> {
+			
+		}).build(mMessageEditText);
+		
+		smileyBtn.setOnClickListener(v -> {
+			emojiPopup.toggle();
+		});
+		
+		galleryBtn.setOnClickListener(v -> {
+			String types = "image/* video/*";
+			String[] mimetypes = {"image/*", "video/*"};
+			requestMedia(types, mimetypes);
+		});
+		
+		attachmentBtn.setOnClickListener(v -> {
+			String types = "*/*";
+			String[] mimetypes = {};
+			requestMedia(types, mimetypes);
+		});
+		
+		cameraBtn.setOnClickListener(v -> {
+			showBottomSheetDialog();
+		});
+		
+		backButton.setOnClickListener(v -> {
+			getActivity().onBackPressed();
+		});
+		
+		mMessageEditText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				mMessageSendButton.setEnabled(s.length() > 0);
+			}
+		});
+		
+		mMessageSendButton.setEnabled(false);
+		mMessageSendButton.setOnClickListener(v -> {
+			//				if (mCurrentState == STATE_EDIT) {
+			//					String userInput = mMessageEditText.getText().toString();
+			//					if (userInput.length() > 0) {
+			//						if (mEditingMessage != null) {
+			//							editMessage(mEditingMessage, userInput);
+			//						}
+			//					}
+			//					setState(STATE_NORMAL, null, -1);
+			//				} else {
+			String userInput = mMessageEditText.getText().toString();
+			if (userInput.length() > 0) {
+				sendUserMessage(userInput);
+				mMessageEditText.setText("");
+			}
+			//				}
+		});
+		
 	}
 	
 	private void sendAudioRecording() {
@@ -1013,75 +1079,11 @@ public class ConversationFragment extends BaseFragment {
 	//		}
 	//	}
 	
-	/**
-	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in
-	 * specified sizes.
-	 *
-	 * @param uri The URI of the image, which in this case is received through an Intent request.
-	 */
-	private void sendFileWithThumbnail(Uri uri) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		// Specify two dimensions of thumbnails to generate
-		List<FileMessage.ThumbnailSize> thumbnailSizes = new ArrayList<>();
-		thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
-		thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
-		
-		Hashtable<String, Object> info = FileUtils.getFileInfo(getContext(), uri);
-		
-		if (info == null || info.isEmpty()) {
-			Toast.makeText(getContext(), "Extracting file information failed.",
-					Toast.LENGTH_LONG).show();
-			return;
-		}
-		
-		final String name;
-		if (info.containsKey("name")) {
-			name = (String) info.get("name");
-		} else {
-			name = "Sendbird File";
-		}
-		final String path = (String) info.get("path");
-		final File file = new File(path);
-		final String mime = (String) info.get("mime");
-		final int size = (Integer) info.get("size");
-		
-		if (path.equals("")) {
-			Toast.makeText(getContext(), "File must be located in local storage.",
-					Toast.LENGTH_LONG).show();
-		} else {
-			BaseChannel.SendFileMessageWithProgressHandler fileMessageHandler =
-					new BaseChannel.SendFileMessageWithProgressHandler() {
-						
-						@Override
-						public void onProgress(int bytesSent, int totalBytesSent,
-						                       int totalBytesToSend) {
-							//here to display the progress
-						}
-						
-						@Override
-						public void onSent(FileMessage fileMessage, SendBirdException e) {
-							if (e != null) {
-								Toast.makeText(ConversationFragment.this.getContext(),
-										"" + e.getCode() + ":" + e.getMessage(),
-										Toast.LENGTH_SHORT).show();
-								mChatAdapter.markMessageFailed(fileMessage);
-								return;
-							}
-							
-							mChatAdapter.markMessageSent(fileMessage);
-						}
-					};
-			
-			// Send image with thumbnails in the specified dimensions
-			FileMessage tempFileMessage =
-					mChannel.sendFileMessage(file, name, mime, size, "", null, thumbnailSizes,
-							fileMessageHandler);
-			
-			mChatAdapter.addTempFileMessageInfo(tempFileMessage, uri);
-			mChatAdapter.addFirst(tempFileMessage);
+	private void stopRecording() {
+		if (mediaRecorder != null) {
+			mediaRecorder.stop();
+			mediaRecorder.release();
+			mediaRecorder = null;
 		}
 	}
 	
