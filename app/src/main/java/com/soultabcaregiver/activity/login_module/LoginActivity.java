@@ -35,6 +35,7 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -97,29 +98,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 	}
 	
-	private void Listener() {
-		tvLogin.setOnClickListener(this);
-		tvForgot.setOnClickListener(this);
-		tv_rem_pass.setOnClickListener(this);
-		
-		view_pwd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (!isChecked) {
-					
-					etPass.setTransformationMethod(new PasswordTransformationMethod());
-					
-				} else {
-					
-					// hide password
-					etPass.setTransformationMethod(null);
-				}
-				
-			}
-		});
-	}
-	
 	private void init() {
 		tvLogin = findViewById(R.id.tv_login);
 		tvForgot = findViewById(R.id.tv_forgot_pass);
@@ -150,7 +128,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 							// Get new Instance ID token
 							FirebaseToken = instanceIdResult.getToken();
 							Log.e("newToken", FirebaseToken);
+							PrefUtils.setPushToken(FirebaseToken);
+							SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
 							
+							});
 						}
 					}).addOnFailureListener(new OnFailureListener() {
 				@Override
@@ -159,6 +140,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				}
 			});
 		}
+	}
+	
+	private void Listener() {
+		tvLogin.setOnClickListener(this);
+		tvForgot.setOnClickListener(this);
+		tv_rem_pass.setOnClickListener(this);
+		
+		view_pwd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (!isChecked) {
+					
+					etPass.setTransformationMethod(new PasswordTransformationMethod());
+					
+				} else {
+					
+					// hide password
+					etPass.setTransformationMethod(null);
+				}
+				
+			}
+		});
 	}
 	
 	private void Login() {
@@ -277,9 +281,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getCountrycode());
 									Utility.setSharedPreference(mContext, APIS.Caregiver_username,
 											loginModel.getResponse().getCaregiver_username());
-									
-									Utility.setSharedPreference(mContext, Utility.FCM_TOKEN,
-											FirebaseToken);
 									showProgressDialog(getResources().getString(R.string.Loading));
 									SendBirdAuthentication.authenticate(mContext,
 											Utility.getSharedPreferences(mContext,

@@ -29,6 +29,7 @@ import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONObject;
@@ -63,9 +64,10 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 		super.onNewToken(token);
 		if (!token.isEmpty()) {
 			Log.e("NEW_TOKEN", token);
-			SendBirdAuthentication.registerPushToken(e -> {
+			SendBirdAuthentication.registerPushToken(token, e -> {
 				if (e == null) {
 					// save token here
+					PrefUtils.setPushToken(token);
 					pushToken.set(token);
 				}
 			});
