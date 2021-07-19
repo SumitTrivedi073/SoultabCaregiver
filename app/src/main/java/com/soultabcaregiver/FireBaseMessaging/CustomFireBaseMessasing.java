@@ -98,20 +98,24 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 				}
 			} else if (SendBirdCall.handleFirebaseMessageData(remoteMessage.getData())) {
 				checkAuthentication(context, remoteMessage);
-			} else if (remoteMessage.getData().size() > 0) {
+			} else if (remoteMessage != null && remoteMessage.getNotification().getBody() != null) {
+				Log.d(TAG,
+						"Message Notification Body: " + remoteMessage.getNotification().getBody());
+				Log.d(TAG,
+						"Message Notification Title  : " + remoteMessage.getNotification().getTitle());
+				createNotificationChannel(context);
+				getNotification(context, remoteMessage.getNotification().getTitle(),
+						remoteMessage.getNotification().getBody());
+				
+			} else if (remoteMessage != null && remoteMessage.getData().size() > 0) {
+				
 				count = count + 1;
-				if (!String.valueOf(remoteMessage.getNotification().getTitle()).equals(
-						"SoulTab Caregiver")) {
-					createNotificationChannel(context);
-					getNotification(context, remoteMessage.getNotification().getTitle(),
-							remoteMessage.getNotification().getBody());
-				} else {
-					if (AppInBackground) {
-						getNotification(context, remoteMessage.getNotification().getTitle(),
-								remoteMessage.getNotification().getBody());
-					}
-				}
+				Log.e("remote_msg_size==", remoteMessage.getData().toString());
+				createNotificationChannel(context);
+				getNotification(context, remoteMessage.getNotification().getTitle(),
+						remoteMessage.getNotification().getBody());
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e("FCM_Error_Msg", e.getMessage());

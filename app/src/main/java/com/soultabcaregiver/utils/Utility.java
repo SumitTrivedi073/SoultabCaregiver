@@ -102,7 +102,7 @@ public class Utility {
 	public final static SimpleDateFormat MMM = new SimpleDateFormat("MMM", Locale.ENGLISH);
 	
 	public final static SimpleDateFormat EEE_dd_MMM_yyyy_hh_mm_aa =
-			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm aa", Locale.ENGLISH);
+			new SimpleDateFormat("EEE, MMM dd yyyy HH:mm aa", Locale.ENGLISH);
 	
 	public final static SimpleDateFormat EEEhh_mm_aa =
 			new SimpleDateFormat("EEE, MM-dd-yy, hh:mm aa", Locale.ENGLISH);

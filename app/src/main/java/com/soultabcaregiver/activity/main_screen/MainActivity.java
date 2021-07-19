@@ -25,18 +25,24 @@ import com.android.volley.Request;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.sendbird.calls.DirectCallLog;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
@@ -104,6 +110,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	private Timer tmrStartEng;
 	
+	AlertFragment alertFragment;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -131,6 +139,26 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		registerReceiver();
 		Alert_countAPI();
 		listner();
+		
+		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+		if (resultCode == ConnectionResult.SUCCESS) {
+			
+			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
+					new OnSuccessListener<InstanceIdResult>() {
+						@Override
+						public void onSuccess(InstanceIdResult instanceIdResult) {
+							// Get new Instance ID token
+							String FirebaseToken = instanceIdResult.getToken();
+							Log.e("newToken", FirebaseToken);
+							
+						}
+					}).addOnFailureListener(new OnFailureListener() {
+				@Override
+				public void onFailure(@NonNull Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
 	}
 	
 	private void buildGoogleApiClient() {
@@ -189,6 +217,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							new Gson().fromJson(response.toString(), AlertCountModel.class);
 					
 					if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
+						alertFragment = AlertFragment.instance;
+						if (alertFragment != null) {
+							alertFragment.GetAlertList(mContext);
+							
+						}
 						itemView.removeView(badge);
 						if (alertCountModel.getResponse().getUnreadCount() > 9) {
 							tv_badge.setText("9+");
@@ -200,6 +233,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 									String.valueOf(alertCountModel.getResponse().getUnreadCount()));
 							itemView.addView(badge);
 						}
+						
+						
 					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
 						logout_app(alertCountModel.getMessage());
 					} else {
