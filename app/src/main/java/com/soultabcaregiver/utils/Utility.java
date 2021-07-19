@@ -113,7 +113,7 @@ public class Utility {
 	public final static SimpleDateFormat yyyy_mm_dd_hh_mm_ss =
 			new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 	
-	public static final String FCM_TOKEN = "FirebaseToken";
+	//public static final String FCM_TOKEN = "FirebaseToken";
 	
 	public static Context mContext;
 	

@@ -20,7 +20,7 @@ public class SendBirdAuthentication {
 	public static void autoAuthenticate(Context context, AutoAuthenticateHandler handler) {
 		String userId = Utility.getSharedPreferences(context, APIS.caregiver_id);
 		String userName = Utility.getSharedPreferences(context, APIS.Caregiver_name);
-		String fcmToken = Utility.getSharedPreferences(context, Utility.FCM_TOKEN);
+		String fcmToken = PrefUtils.getPushToken();
 		
 		if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(fcmToken)) {
 			SendBird.connect(userId, (user, e) -> {
@@ -37,7 +37,7 @@ public class SendBirdAuthentication {
 						}
 						return;
 					}
-					registerPushToken(e2 -> {
+					registerPushToken(fcmToken, e2 -> {
 						if (e2 != null) {
 							Log.e(TAG, "AutoAuthenticate registerPush Failed " + e2.getMessage());
 							
@@ -61,21 +61,25 @@ public class SendBirdAuthentication {
 		}
 	}
 	
-	public static void registerPushToken(SendBirdAuthentication.CompletionHandler handler) {
+	public static void registerPushToken(String fcmToken,
+	                                     SendBirdAuthentication.CompletionHandler handler) {
 		PushUtils.registerPushHandler(new CustomFireBaseMessasing());
-		handler.onCompleted(null);
+		SendBirdCall.registerPushToken(fcmToken, false, handler :: onCompleted);
 		//		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus,
 		//		e) -> {
 		//			if (e != null) {
 		//				handler.onCompleted(e);
 		//				return;
 		//			}
-		//			SendBirdCall.registerPushToken(pushToken, false, handler :: onCompleted);
+		//
 		//		});
 	}
 	
 	public static void authenticate(Context context, String userId, String userName,
 	                                AuthenticateHandler handler) {
+		
+		String fcmToken = PrefUtils.getPushToken();
+		
 		if (userId == null) {
 			if (handler != null) {
 				handler.onResult(false);
@@ -100,7 +104,7 @@ public class SendBirdAuthentication {
 						}
 						return;
 					}
-					registerPushToken(e2 -> {
+					registerPushToken(fcmToken, e2 -> {
 						SendBird.updateCurrentUserInfo(userName, "", e3 -> {
 							PrefUtils.setAppId(context, SendBirdCall.getApplicationId());
 							PrefUtils.setUserId(context, userId);
