@@ -25,18 +25,24 @@ import com.android.volley.Request;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.sendbird.calls.DirectCallLog;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
@@ -46,7 +52,7 @@ import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.shopping.ShoppingCategoryActivity;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
-import com.soultabcaregiver.talk.TalkFragment;
+import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -71,6 +77,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	private static final int REQUEST_CODE_PERMISSION = 2;
 	
 	public static MainActivity instance;
+	
+	private final String TAG = getClass().getSimpleName();
 	
 	Context mContext;
 	
@@ -98,11 +106,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	private GoogleApiClient googleApiClient;
 	
-	private final String TAG = getClass().getSimpleName();
-	
 	private BroadcastReceiver mReceiver;
 	
 	private Timer tmrStartEng;
+	
+	AlertFragment alertFragment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +139,26 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		registerReceiver();
 		Alert_countAPI();
 		listner();
+		
+		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+		if (resultCode == ConnectionResult.SUCCESS) {
+			
+			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
+					new OnSuccessListener<InstanceIdResult>() {
+						@Override
+						public void onSuccess(InstanceIdResult instanceIdResult) {
+							// Get new Instance ID token
+							String FirebaseToken = instanceIdResult.getToken();
+							Log.e("newToken", FirebaseToken);
+							
+						}
+					}).addOnFailureListener(new OnFailureListener() {
+				@Override
+				public void onFailure(@NonNull Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
 	}
 	
 	private void buildGoogleApiClient() {
@@ -138,6 +166,33 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(
 				this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
 		googleApiClient.connect();
+	}
+	
+	private void registerReceiver() {
+		Log.i(TAG, "[MainActivity] registerReceiver()");
+		
+		if (mReceiver != null) {
+			return;
+		}
+		
+		mReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.i(TAG, "[MainActivity] onReceive()");
+				
+				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
+						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
+				if (callLog != null) {
+					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
+					.getItem(1);
+					historyFragment.addLatestCallLog(callLog);*/
+				}
+			}
+		};
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
+		registerReceiver(mReceiver, intentFilter);
 	}
 	
 	public void Alert_countAPI() {
@@ -162,6 +217,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							new Gson().fromJson(response.toString(), AlertCountModel.class);
 					
 					if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
+						alertFragment = AlertFragment.instance;
+						if (alertFragment != null) {
+							alertFragment.GetAlertList(mContext);
+							
+						}
 						itemView.removeView(badge);
 						if (alertCountModel.getResponse().getUnreadCount() > 9) {
 							tv_badge.setText("9+");
@@ -173,6 +233,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 									String.valueOf(alertCountModel.getResponse().getUnreadCount()));
 							itemView.addView(badge);
 						}
+						
+						
 					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
 						logout_app(alertCountModel.getMessage());
 					} else {
@@ -240,7 +302,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							case R.id.navigation_talk:
 								video_call.setVisibility(View.GONE);
 								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new TalkFragment(), false,
+								Utility.loadFragment(MainActivity.this, new TalkHolderFragment(), false,
 										null);
 								
 								return true;
@@ -302,31 +364,20 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
-	private void registerReceiver() {
-		Log.i(TAG, "[MainActivity] registerReceiver()");
-		
-		if (mReceiver != null) {
-			return;
-		}
-		
-		mReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Log.i(TAG, "[MainActivity] onReceive()");
-				
-				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
-						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
-				if (callLog != null) {
-					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
-					.getItem(1);
-					historyFragment.addLatestCallLog(callLog);*/
-				}
-			}
-		};
-		
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
-		registerReceiver(mReceiver, intentFilter);
+	private void openPlaceCallActivity() {
+		//		ArrayList<String> ids = new ArrayList<>();
+		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
+		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
+		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+		//			Log.e("channel", "" + groupChannel.getUrl());
+		//			Intent intent = new Intent(this, ConversationFragment.class);
+		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
+		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
+		//			.user_id));
+		//			startActivity(intent);
+		//		});
+		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
+				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
 	}
 	
 	@Override
@@ -386,6 +437,15 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			
 		}
 		unregisterReceiver();
+	}
+	
+	private void unregisterReceiver() {
+		Log.i(TAG, "[MainActivity] unregisterReceiver()");
+		
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
+		}
 	}
 	
 	@RequiresApi (api = Build.VERSION_CODES.GINGERBREAD)
@@ -502,31 +562,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			} catch (IllegalAccessException e) {
 				Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
 			}
-		}
-	}
-	
-	private void openPlaceCallActivity() {
-		//		ArrayList<String> ids = new ArrayList<>();
-		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
-		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
-		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
-		//			Log.e("channel", "" + groupChannel.getUrl());
-		//			Intent intent = new Intent(this, ConversationActivity.class);
-		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
-		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
-		//			.user_id));
-		//			startActivity(intent);
-		//		});
-		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
-				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
-	}
-	
-	private void unregisterReceiver() {
-		Log.i(TAG, "[MainActivity] unregisterReceiver()");
-		
-		if (mReceiver != null) {
-			unregisterReceiver(mReceiver);
-			mReceiver = null;
 		}
 	}
 }

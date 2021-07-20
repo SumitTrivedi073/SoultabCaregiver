@@ -1,7 +1,10 @@
 package com.soultabcaregiver.Base;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -11,11 +14,13 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.sendbird_chat.NewMessageActivity;
+import com.soultabcaregiver.talk.TalkFragment;
+import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
 
@@ -23,100 +28,107 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import static com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils.INTENT_EXTRA_CHAT_MESSAGE_BODY;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    
-    AlertDialog alertDialog;
-    
-    MainActivity mainActivity;
-    
-    public static BaseActivity instance;
-    
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mainActivity = MainActivity.instance;
-        instance = BaseActivity.this;
-
-    }
 	
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean granted = grantResults.length > 0;
-        for (int grantResult : grantResults) {
-            granted &= grantResult == PackageManager.PERMISSION_GRANTED;
-        }
-        if (granted) {
-            //Toast.makeText(this, "You may now place a call", Toast.LENGTH_LONG).show();
-        } else {
+	public static BaseActivity instance;
 	
-	        Utility.ShowToast(this,
-			        "This application needs permission to use your microphone and camera to " +
-					        "function properly.");
-        }
-    }
-
-    public DiloagBoxCommon Alertmessage(final Context context, String titleString, String descriptionString,
-                                        String negetiveText, String positiveText) {
-        DiloagBoxCommon diloagBoxCommon = new DiloagBoxCommon();
-
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.common_popup_layout,
-                null);
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyDialogTheme);
-
-        builder.setView(layout);
-        alertDialog = builder.create();
-        alertDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        alertDialog.setCancelable(false);
-        alertDialog.getWindow().setGravity(Gravity.CENTER);
-        alertDialog.show();
-        alertDialog.getWindow().setBackgroundDrawableResource(R.color.transparent_black);
-
-        TextView title_popup = layout.findViewById(R.id.title_popup);
-        TextView message_popup = layout.findViewById(R.id.message_popup);
-        TextView no_text_popup = layout.findViewById(R.id.no_text_popup);
-        TextView yes_text_popup = layout.findViewById(R.id.yes_text_popup);
-        title_popup.setText(titleString);
-        message_popup.setText(descriptionString);
-        no_text_popup.setText(negetiveText);
-        yes_text_popup.setText(positiveText);
-
-        no_text_popup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                alertDialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
-        diloagBoxCommon.setDialog(alertDialog);
-        diloagBoxCommon.setTextViewNew(no_text_popup);
-        diloagBoxCommon.setTextView(yes_text_popup);
-
-        return diloagBoxCommon;
-    }
-
-    private CustomProgressDialog progressDialog;
-
-    public void showProgressDialog(String message){
-        if(progressDialog == null) progressDialog = new CustomProgressDialog(this, message);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-    }
+	AlertDialog alertDialog;
 	
-	public void hideProgressDialog() {
-		if (progressDialog != null)
-			progressDialog.dismiss();
+	MainActivity mainActivity;
+	
+	private CustomProgressDialog progressDialog;
+	
+	private BroadcastReceiver mReceiver;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mainActivity = MainActivity.instance;
+		instance = BaseActivity.this;
 	}
 	
-	public void HideSoftKeyboard(View view) {
-		InputMethodManager imm =
-				(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+	public void onRequestPermissionsResult(int requestCode, String[] permissions,
+	                                       int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		boolean granted = grantResults.length > 0;
+		for (int grantResult : grantResults) {
+			granted &= grantResult == PackageManager.PERMISSION_GRANTED;
+		}
+		if (granted) {
+			//Toast.makeText(this, "You may now place a call", Toast.LENGTH_LONG).show();
+		} else {
+			
+			Utility.ShowToast(this,
+					"This application needs permission to use your microphone and camera to " +
+							"function properly.");
+		}
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		initBroadCastReceiver();
+		registerReceiver();
+	}
+	
+	private void initBroadCastReceiver() {
+		mReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				
+				String messageBody = intent.getStringExtra(INTENT_EXTRA_CHAT_MESSAGE_BODY);
+				
+				if (BaseActivity.this instanceof MainActivity) {
+					MainActivity mainActivity = (MainActivity) BaseActivity.this;
+					Fragment f1 = mainActivity.getSupportFragmentManager().findFragmentById(
+							R.id.fragment_container);
+					if (f1 instanceof TalkHolderFragment) {
+						TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
+						Fragment f2 =
+								talkHolderFragment.getChildFragmentManager().findFragmentById(
+								R.id.container);
+						if (f2 instanceof TalkFragment) {
+							TalkFragment talkFragment = (TalkFragment) f2;
+							if (talkFragment.getCurrentPageIndex() != 0) {
+								getPopupIntent(BaseActivity.this, messageBody);
+							}
+						}
+					} else {
+						getPopupIntent(BaseActivity.this, messageBody);
+					}
+				} else {
+					getPopupIntent(BaseActivity.this, messageBody);
+				}
+			}
+		};
+	}
+	
+	private void registerReceiver() {
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_NEW_CHAT_MESSAGE);
+		registerReceiver(mReceiver, intentFilter);
+	}
+	
+	public void getPopupIntent(Context context, String messageBody) {
+		Intent intent = new Intent(context, NewMessageActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+		intent.putExtra(INTENT_EXTRA_CHAT_MESSAGE_BODY, messageBody);
+		context.startActivity(intent);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		unregisterReceiver();
+	}
+	
+	private void unregisterReceiver() {
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
+		}
 	}
 	
 	@Override
@@ -140,6 +152,70 @@ public abstract class BaseActivity extends AppCompatActivity {
 		return instance;
 	}
 	
+	public DiloagBoxCommon Alertmessage(final Context context, String titleString,
+	                                    String descriptionString, String negetiveText,
+	                                    String positiveText) {
+		DiloagBoxCommon diloagBoxCommon = new DiloagBoxCommon();
+		
+		LayoutInflater inflater =
+				(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.common_popup_layout, null);
+		
+		final AlertDialog.Builder builder = new AlertDialog.Builder(context,
+				R.style.MyDialogTheme);
+		
+		builder.setView(layout);
+		alertDialog = builder.create();
+		alertDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
+				WindowManager.LayoutParams.WRAP_CONTENT);
+		alertDialog.setCancelable(false);
+		alertDialog.getWindow().setGravity(Gravity.CENTER);
+		alertDialog.show();
+		alertDialog.getWindow().setBackgroundDrawableResource(R.color.transparent_black);
+		
+		TextView title_popup = layout.findViewById(R.id.title_popup);
+		TextView message_popup = layout.findViewById(R.id.message_popup);
+		TextView no_text_popup = layout.findViewById(R.id.no_text_popup);
+		TextView yes_text_popup = layout.findViewById(R.id.yes_text_popup);
+		title_popup.setText(titleString);
+		message_popup.setText(descriptionString);
+		no_text_popup.setText(negetiveText);
+		yes_text_popup.setText(positiveText);
+		
+		no_text_popup.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				alertDialog.dismiss();
+			}
+		});
+		
+		alertDialog.show();
+		diloagBoxCommon.setDialog(alertDialog);
+		diloagBoxCommon.setTextViewNew(no_text_popup);
+		diloagBoxCommon.setTextView(yes_text_popup);
+		
+		return diloagBoxCommon;
+	}
+	
+	public void showProgressDialog(String message) {
+		if (progressDialog == null)
+			progressDialog = new CustomProgressDialog(this, message);
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+	}
+	
+	public void hideProgressDialog() {
+		if (progressDialog != null)
+			progressDialog.dismiss();
+	}
+	
+	public void HideSoftKeyboard(View view) {
+		InputMethodManager imm =
+				(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+	}
+	
 	public void logout_app(String message) {
 		LayoutInflater inflater =
 				(LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -149,30 +225,26 @@ public abstract class BaseActivity extends AppCompatActivity {
 		builder.setView(layout);
 		builder.setCancelable(false);
 		alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        alertDialog.show();
-
-
-        TextView OK_txt = layout.findViewById(R.id.OK_txt);
-        TextView title_txt = layout.findViewById(R.id.title_txt);
-
-        title_txt.setText(message);
-
-
-
-        OK_txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mainActivity.stopButtonClicked();
-                Utility.clearSharedPreference(getApplicationContext());
-
-                alertDialog.dismiss();
-	
-            }
-        });
+		alertDialog.setCanceledOnTouchOutside(false);
+		alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+		alertDialog.show();
 		
+		TextView OK_txt = layout.findViewById(R.id.OK_txt);
+		TextView title_txt = layout.findViewById(R.id.title_txt);
+		
+		title_txt.setText(message);
+		
+		OK_txt.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				mainActivity.stopButtonClicked();
+				Utility.clearSharedPreference(getApplicationContext());
+				
+				alertDialog.dismiss();
+				
+			}
+		});
 		
 	}
 }

@@ -1,4 +1,4 @@
-package com.soultabcaregiver.sendbird_chat;
+package com.soultabcaregiver.talk;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
-import com.soultabcaregiver.talk.TalkFragment;
+import com.soultabcaregiver.sendbird_chat.ConversationFragment;
+import com.soultabcaregiver.sendbird_chat.CreateGroupFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 
-public class ChatFragment extends BaseFragment {
+public class TalkHolderFragment extends BaseFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,21 +30,22 @@ public class ChatFragment extends BaseFragment {
 			                          Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-		transaction.add(R.id.container, new ChatListFragment());
+		transaction.add(R.id.container, new TalkFragment());
+		transaction.commit();
+	}
+	
+	public void navigateToConversationFragment(String url) {
+		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+		transaction.add(R.id.container, ConversationFragment.newInstance(url));
+		transaction.addToBackStack(ConversationFragment.class.getName());
 		transaction.commit();
 	}
 	
 	public void navigateToCreateGroupFragment() {
-		TalkFragment talkFragment = (TalkFragment) getParentFragment();
-		if (talkFragment != null) {
-			talkFragment.navigateToCreateGroupFragment();
-		}
+		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+		transaction.add(R.id.container, CreateGroupFragment.newInstance());
+		transaction.addToBackStack(CreateGroupFragment.class.getName());
+		transaction.commit();
 	}
 	
-	public void navigateToConversationFragment(String url) {
-		TalkFragment talkFragment = (TalkFragment) getParentFragment();
-		if (talkFragment != null) {
-			talkFragment.navigateToConversationFragment(url);
-		}
-	}
 }

@@ -28,6 +28,7 @@ import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.utils.Utility;
 
@@ -73,7 +74,6 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 		}
 	}
 	
-	
 	@Override
 	protected void onMessageReceived(Context context, RemoteMessage remoteMessage) {
 		
@@ -88,24 +88,34 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 				channelUrl = (String) channel.get("channel_url");
 				
 				SendBird.markAsDelivered(channelUrl);
-				sendNotification(context, remoteMessage.getData().get("message"), channelUrl,
-						calleeId);
+				
+				if (AppInBackground) {
+					sendNotification(context, remoteMessage.getData().get("message"), channelUrl,
+							calleeId);
+				} else {
+					BroadcastUtils.sendNewMessageBroadCast(context,
+							remoteMessage.getData().get("message"), channelUrl);
+				}
 			} else if (SendBirdCall.handleFirebaseMessageData(remoteMessage.getData())) {
 				checkAuthentication(context, remoteMessage);
-			} else if (remoteMessage.getData().size() > 0) {
+			} else if (remoteMessage != null && remoteMessage.getNotification().getBody() != null) {
+				Log.d(TAG,
+						"Message Notification Body: " + remoteMessage.getNotification().getBody());
+				Log.d(TAG,
+						"Message Notification Title  : " + remoteMessage.getNotification().getTitle());
+				createNotificationChannel(context);
+				getNotification(context, remoteMessage.getNotification().getTitle(),
+						remoteMessage.getNotification().getBody());
+				
+			} else if (remoteMessage != null && remoteMessage.getData().size() > 0) {
+				
 				count = count + 1;
-				if (!String.valueOf(remoteMessage.getNotification().getTitle()).equals(
-						"SoulTab Caregiver")) {
-					createNotificationChannel(context);
-					getNotification(context, remoteMessage.getNotification().getTitle(),
-							remoteMessage.getNotification().getBody());
-				} else {
-					if (AppInBackground) {
-						getNotification(context, remoteMessage.getNotification().getTitle(),
-								remoteMessage.getNotification().getBody());
-					}
-				}
+				Log.e("remote_msg_size==", remoteMessage.getData().toString());
+				createNotificationChannel(context);
+				getNotification(context, remoteMessage.getNotification().getTitle(),
+						remoteMessage.getNotification().getBody());
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e("FCM_Error_Msg", e.getMessage());
@@ -268,7 +278,6 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 						Objects.requireNonNull(callObj.optJSONObject("command")).optJSONObject(
 								"payload")).optBoolean("is_video_call");
 				if (!callObj.getJSONObject("command").getJSONObject("payload").has("ended_call")) {
-					
 					
 					String callId = Objects.requireNonNull(
 							Objects.requireNonNull(callObj.optJSONObject("command")).optJSONObject(

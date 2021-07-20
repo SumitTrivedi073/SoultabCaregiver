@@ -9,9 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
@@ -35,6 +32,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class AlertFragment extends BaseFragment {
 
     private final String TAG = getClass().getSimpleName();
@@ -44,8 +44,10 @@ public class AlertFragment extends BaseFragment {
     TextView no_data_txt;
     FloatingActionButton create_alert_btn;
     CardView blank_card;
+    
     MainActivity mainActivity;
-
+    
+    public static AlertFragment instance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,52 +61,52 @@ public class AlertFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_alert, container, false);
-
+    
         alert_list = view.findViewById(R.id.alert_list);
         no_data_txt = view.findViewById(R.id.no_data_txt);
         create_alert_btn = view.findViewById(R.id.create_alert_btn);
         blank_card = view.findViewById(R.id.blank_card);
-
+    
         mainActivity = MainActivity.instance;
-        AlertCountUpdate();
-
+        instance = AlertFragment.this;
+    
         create_alert_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            
                 Intent intent = new Intent(mContext, CaregiverListActivity.class);
                 startActivity(intent);
-
+            
             }
         });
-
-        if (Utility.isNetworkConnected(mContext)) {
-            GetAlertList();//for list data
-        } else {
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
-
+    
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (Utility.isNetworkConnected(mContext)) {
+            GetAlertList(mContext);//for list data
+            AlertCountUpdate();
+        } else {
+            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+        }
     }
-
-    private void GetAlertList() {
-
+    
+    public void GetAlertList(Context mContext) {
+        
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
-
+            
             Log.e(TAG, "Alert API========>" + mainObject.toString());
         } catch (JSONException e) {
             e.printStackTrace();
-
+            
         }
-
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+        
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.AlertListAPI, mainObject,
@@ -124,8 +126,8 @@ public class AlertFragment extends BaseFragment {
                             AlertAdapter alertAdapter = new AlertAdapter(mContext, alertModel.getData().getCaregiverData());
                             alert_list.setHasFixedSize(true);
                             alert_list.setAdapter(alertAdapter);
-
-
+    
+    
                         } else {
                             alert_list.setVisibility(View.GONE);
                             no_data_txt.setVisibility(View.VISIBLE);
@@ -164,17 +166,17 @@ public class AlertFragment extends BaseFragment {
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
     }
-
-    private void AlertCountUpdate() {
-
+    
+    public void AlertCountUpdate() {
+        
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
-
+            
             Log.e(TAG, "CaregiverList API========>" + mainObject.toString());
         } catch (JSONException e) {
             e.printStackTrace();
-
+            
         }
 
 
@@ -222,5 +224,5 @@ public class AlertFragment extends BaseFragment {
 
 
     }
-
+    
 }

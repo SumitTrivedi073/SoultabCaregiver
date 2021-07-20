@@ -26,22 +26,17 @@ import androidx.viewpager.widget.ViewPager;
 
 public class TalkFragment extends BaseFragment {
 	
+	private ViewPager viewPager;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_talk, container, false);
 		TabLayout tabs = view.findViewById(R.id.tabs);
-		ViewPager viewPager = view.findViewById(R.id.viewpager);
+		viewPager = view.findViewById(R.id.viewpager);
 		tabs.setupWithViewPager(viewPager);
 		setupViewPager(viewPager);
 		return view;
-	}
-	
-	@Override
-	public void onViewCreated(@NonNull @NotNull View view,
-	                          @Nullable @org.jetbrains.annotations.Nullable
-			                          Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
 	}
 	
 	private void setupViewPager(ViewPager viewPager) {
@@ -51,6 +46,33 @@ public class TalkFragment extends BaseFragment {
 		adapter.addFragment(new CallListFragment(), getString(R.string.calls));
 		viewPager.setAdapter(adapter);
 	}
+	
+	@Override
+	public void onViewCreated(@NonNull @NotNull View view,
+	                          @Nullable @org.jetbrains.annotations.Nullable
+			                          Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+	}
+	
+	public void navigateToConversationFragment(String url) {
+		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
+		if (talkHolderFragment != null) {
+			talkHolderFragment.navigateToConversationFragment(url);
+		}
+	}
+	
+	public void navigateToCreateGroupFragment() {
+		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
+		if (talkHolderFragment != null) {
+			talkHolderFragment.navigateToCreateGroupFragment();
+		}
+	}
+	
+	public int getCurrentPageIndex() {
+		return viewPager.getCurrentItem();
+	}
+	
+	
 }
 
 class ViewPagerAdapter extends FragmentPagerAdapter {

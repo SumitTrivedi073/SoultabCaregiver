@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
     android:paddingLeft="8dp"
     android:paddingRight="8dp">
 
@@ -40,30 +43,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/image_group_chat_profile"
+        android:layout_marginBottom="4dp"
         android:layout_toRightOf="@id/image_group_chat_profile"
         android:text="Daniel Silberschatz"
         android:textSize="16sp" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_group_chat_message"
-        android:layout_width="wrap_content"
+        android:id="@+id/layout_group_chat_file_message"
+        android:layout_width="@dimen/_140sdp"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_group_chat_nickname"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="4dp"
         android:layout_toRightOf="@id/image_group_chat_profile"
-        app:cardBackgroundColor="@color/cardview_light_background"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp"
-        app:cardPreventCornerOverlap="false"
+        android:padding="@dimen/_4sdp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_6sdp"
         app:cardUseCompatPadding="true">
 
-        <ImageView
-            android:id="@+id/image_group_chat_file_thumbnail"
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="@dimen/_136sdp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/group_chat_file_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/playButton"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:padding="@dimen/_4sdp"
+                app:srcCompat="@drawable/ic_play_black" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:max="100"
+                android:progressTint="@color/colorPrimary"
+                android:secondaryProgressTint="@color/blackish" />
+
+        </LinearLayout>
+
 
     </androidx.cardview.widget.CardView>
 
@@ -71,11 +93,13 @@
         android:id="@+id/text_group_chat_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/card_group_chat_message"
+        android:layout_alignBottom="@id/layout_group_chat_file_message"
         android:layout_margin="@dimen/_4sdp"
-        android:layout_toRightOf="@id/card_group_chat_message"
+        android:layout_toEndOf="@id/layout_group_chat_file_message"
+        android:layout_toRightOf="@id/layout_group_chat_file_message"
         android:text="21:27"
         android:textColor="@color/blackish"
         android:textSize="@dimen/_10sdp" />
+
 
 </RelativeLayout>

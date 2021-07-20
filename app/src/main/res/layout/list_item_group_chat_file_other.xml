@@ -2,6 +2,8 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -35,7 +37,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
-        android:src="@drawable/profile_placeholder"/>
+        android:src="@drawable/icon_avatar" />
 
     <TextView
         android:id="@+id/text_group_chat_nickname"
@@ -45,7 +47,7 @@
         android:layout_marginBottom="4dp"
         android:layout_toRightOf="@id/image_group_chat_profile"
         android:text="Daniel Silberschatz"
-        android:textSize="16sp"/>
+        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/layout_group_chat_file_message"
@@ -62,7 +64,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_file_message" />
+            app:srcCompat="@drawable/ic_file_message" />
 
         <TextView
             android:id="@+id/text_group_chat_file_name"
@@ -71,8 +73,9 @@
             android:layout_marginStart="12dp"
             android:layout_marginLeft="12dp"
             android:ellipsize="middle"
+            android:maxWidth="@dimen/_120sdp"
             android:singleLine="true"
-            android:text="File Name.xls" />
+            tools:text="This is fileName a huge fie name" />
 
         <View
             android:layout_width="2dp"
@@ -96,9 +99,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/layout_group_chat_file_message"
+        android:layout_margin="@dimen/_4sdp"
+        android:layout_toEndOf="@id/layout_group_chat_file_message"
         android:layout_toRightOf="@id/layout_group_chat_file_message"
         android:text="21:27"
-        android:textColor="#8e8e8e"
-        android:textSize="10dp" />
+        android:textColor="@color/blackish"
+        android:textSize="@dimen/_10sdp" />
 
 </RelativeLayout>

@@ -165,7 +165,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         today_txt.setTextColor(getResources().getColor(R.color.white));
         lastweek_txt.setTextColor(getResources().getColor(R.color.blackish));
         lastmonth_txt.setTextColor(getResources().getColor(R.color.blackish));
-
+    
     }
 
     private void listner() {

@@ -1,6 +1,5 @@
 package com.soultabcaregiver.sendbird_chat;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,8 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import static com.soultabcaregiver.sendbird_chat.ConversationActivity.EXTRA_GROUP_CHANNEL_URL;
 
 public class ChatListFragment extends BaseFragment {
 	
@@ -143,9 +140,10 @@ public class ChatListFragment extends BaseFragment {
 	}
 	
 	private void enterGroupChannel(GroupChannel channel) {
-		Intent intent = new Intent(getContext(), ConversationActivity.class);
-		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channel.getUrl());
-		startActivity(intent);
+		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
+		if (chatFragment != null) {
+			chatFragment.navigateToConversationFragment(channel.getUrl());
+		}
 	}
 	
 	@Override

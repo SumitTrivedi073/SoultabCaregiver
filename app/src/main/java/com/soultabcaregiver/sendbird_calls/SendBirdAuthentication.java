@@ -10,8 +10,8 @@ import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.FireBaseMessaging.CustomFireBaseMessasing;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
+import com.soultabcaregiver.sendbird_chat.utils.PushUtils;
 import com.soultabcaregiver.utils.Utility;
-
 
 public class SendBirdAuthentication {
 	
@@ -20,7 +20,7 @@ public class SendBirdAuthentication {
 	public static void autoAuthenticate(Context context, AutoAuthenticateHandler handler) {
 		String userId = Utility.getSharedPreferences(context, APIS.caregiver_id);
 		String userName = Utility.getSharedPreferences(context, APIS.Caregiver_name);
-		String fcmToken = Utility.getSharedPreferences(context, Utility.FCM_TOKEN);
+		String fcmToken = PrefUtils.getPushToken();
 		
 		if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(fcmToken)) {
 			SendBird.connect(userId, (user, e) -> {
@@ -37,7 +37,7 @@ public class SendBirdAuthentication {
 						}
 						return;
 					}
-					registerPushToken(PrefUtils.getPushToken(), e2 -> {
+					registerPushToken(fcmToken, e2 -> {
 						if (e2 != null) {
 							Log.e(TAG, "AutoAuthenticate registerPush Failed " + e2.getMessage());
 							
@@ -61,29 +61,25 @@ public class SendBirdAuthentication {
 		}
 	}
 	
-	public static void registerPushToken(String pushToken,
+	public static void registerPushToken(String fcmToken,
 	                                     SendBirdAuthentication.CompletionHandler handler) {
-		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus, e) -> {
-			if (e != null) {
-				handler.onCompleted(e);
-				return;
-			}
-			SendBirdCall.registerPushToken(pushToken, false, handler :: onCompleted);
-		});
-	}
-	
-	public static void deAuthenticate(Context context, DeAuthenticateHandler handler) {
-		if (SendBirdCall.getCurrentUser() == null) {
-			if (handler != null) {
-				handler.onResult(false);
-			}
-			return;
-		}
-		doDeAuthenticate(context, handler);
+		PushUtils.registerPushHandler(new CustomFireBaseMessasing());
+		SendBirdCall.registerPushToken(fcmToken, false, handler :: onCompleted);
+		//		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus,
+		//		e) -> {
+		//			if (e != null) {
+		//				handler.onCompleted(e);
+		//				return;
+		//			}
+		//
+		//		});
 	}
 	
 	public static void authenticate(Context context, String userId, String userName,
-	                                String pushToken, AuthenticateHandler handler) {
+	                                AuthenticateHandler handler) {
+		
+		String fcmToken = PrefUtils.getPushToken();
+		
 		if (userId == null) {
 			if (handler != null) {
 				handler.onResult(false);
@@ -108,7 +104,7 @@ public class SendBirdAuthentication {
 						}
 						return;
 					}
-					registerPushToken(pushToken, e2 -> {
+					registerPushToken(fcmToken, e2 -> {
 						SendBird.updateCurrentUserInfo(userName, "", e3 -> {
 							PrefUtils.setAppId(context, SendBirdCall.getApplicationId());
 							PrefUtils.setUserId(context, userId);
@@ -119,6 +115,26 @@ public class SendBirdAuthentication {
 			});
 			
 			
+		});
+	}
+	
+	public static void deAuthenticate(Context context, DeAuthenticateHandler handler) {
+		if (SendBirdCall.getCurrentUser() == null) {
+			if (handler != null) {
+				handler.onResult(false);
+			}
+			return;
+		}
+		doDeAuthenticate(context, handler);
+	}
+	
+	private static void doDeAuthenticate(Context context, DeAuthenticateHandler handler) {
+		SendBirdCall.deauthenticate(e -> {
+			PrefUtils.setUserId(context, null);
+			PrefUtils.setCalleeId(context, null);
+			if (handler != null) {
+				handler.onResult(e == null);
+			}
 		});
 	}
 	
@@ -140,18 +156,6 @@ public class SendBirdAuthentication {
 			SendBirdCall.unregisterPushToken(pushToken, handler :: onCompleted);
 		});
 	}
-	
-	private static void doDeAuthenticate(Context context, DeAuthenticateHandler handler) {
-		SendBirdCall.deauthenticate(e -> {
-			PrefUtils.setUserId(context, null);
-			PrefUtils.setCalleeId(context, null);
-			PrefUtils.setPushToken(null);
-			if (handler != null) {
-				handler.onResult(e == null);
-			}
-		});
-	}
-	
 	
 	public interface LogoutHandler {
 		
