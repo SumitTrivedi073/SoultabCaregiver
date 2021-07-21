@@ -21,6 +21,7 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdPushHandler;
 import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.calls.SendBirdCall;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.SplashActivity;
@@ -92,6 +93,7 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 				if (AppInBackground) {
 					sendNotification(context, remoteMessage.getData().get("message"), channelUrl,
 							calleeId);
+					BaseActivity.getPopupIntent(context, remoteMessage.getData().get("message"));
 				} else {
 					BroadcastUtils.sendNewMessageBroadCast(context,
 							remoteMessage.getData().get("message"), channelUrl);

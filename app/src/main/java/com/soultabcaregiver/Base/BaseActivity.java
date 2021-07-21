@@ -111,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		registerReceiver(mReceiver, intentFilter);
 	}
 	
-	public void getPopupIntent(Context context, String messageBody) {
+	public static void getPopupIntent(Context context, String messageBody) {
 		Intent intent = new Intent(context, NewMessageActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 		intent.putExtra(INTENT_EXTRA_CHAT_MESSAGE_BODY, messageBody);
