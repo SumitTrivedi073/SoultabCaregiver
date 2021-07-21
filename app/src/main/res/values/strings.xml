@@ -285,6 +285,12 @@
     <string name="open_camera_for">Open Camera for</string>
     <string name="capture_a_photo">Capture a Photo</string>
     <string name="record_a_video">Record a Video</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="new_messages">New Messages</string>
+    <string name="close">Close</string>
+    <string name="reply">Reply</string>
+    <string name="new_message_group_text">You have a new message in</string>
+    <string name="new_message_user_text">You have a new message from</string>
     <!--  Added By AJay  -->
 
     <!--Added by Sumit-->
@@ -310,8 +316,6 @@
     <string name="enter_your_telephone">Enter Your Telephone</string>
     <string name="Password">Password</string>
     <string name="plusmart">40PlusMart</string>
-    <string name="dismiss">Dismiss</string>
-    <string name="you_have_new_message_from">You have new message from</string>
     <!--Added by Sumit-->
 
 </resources>

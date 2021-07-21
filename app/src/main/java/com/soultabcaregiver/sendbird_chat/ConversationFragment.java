@@ -666,6 +666,21 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
+	public static ConversationFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		ConversationFragment fragment = new ConversationFragment();
+		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		MenuInflater inflater = getMenuInflater();
+	//		inflater.inflate(R.menu.conversation_menu, menu);
+	//		return true;
+	//	}
+	
 	private void setupControls(View view) {
 		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
 		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
@@ -753,49 +768,6 @@ public class ConversationFragment extends BaseFragment {
 			//				}
 		});
 		
-	}
-	
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		MenuInflater inflater = getMenuInflater();
-	//		inflater.inflate(R.menu.conversation_menu, menu);
-	//		return true;
-	//	}
-	
-	private void showBottomSheetDialog() {
-		final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-		bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog);
-		
-		bottomSheetDialog.findViewById(R.id.videoLayout).setOnClickListener(v -> {
-			bottomSheetDialog.dismiss();
-			Intent recordVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-			startActivityForResult(recordVideoIntent, INTENT_RECORD_VIDEO);
-		});
-		
-		bottomSheetDialog.findViewById(R.id.photoLayout).setOnClickListener(v -> {
-			bottomSheetDialog.dismiss();
-			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			try {
-				File photoFile = null;
-				try {
-					photoFile = createImageFile();
-				} catch (IOException ex) {
-					// Error occurred while creating the File
-				}
-				// Continue only if the File was successfully created
-				if (photoFile != null) {
-					Uri photoURI = FileProvider.getUriForFile(getContext(),
-							BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
-					requestedPhotoUri = photoURI;
-					takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-					startActivityForResult(takePictureIntent, INTENT_CAPTURE_PHOTO);
-				}
-			} catch (ActivityNotFoundException e) {
-				// display error state to the user
-			}
-		});
-		
-		bottomSheetDialog.show();
 	}
 	
 	private void handleRecording(RecordButton recordButton, RecordView recordView,
@@ -902,12 +874,20 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	public static ConversationFragment newInstance(String channelUrl) {
-		Bundle args = new Bundle();
-		ConversationFragment fragment = new ConversationFragment();
-		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		fragment.setArguments(args);
-		return fragment;
+	private void onFileMessageClicked(FileMessage message) {
+		String type = message.getType().toLowerCase();
+		if (type.startsWith("image")) {
+			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+			i.putExtra("url", message.getUrl());
+			i.putExtra("type", message.getType());
+			startActivity(i);
+		} else if (type.startsWith("video")) {
+			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+			intent.putExtra("url", message.getUrl());
+			startActivity(intent);
+		} else {
+			showDownloadConfirmDialog(message);
+		}
 	}
 	
 	private void sendUserMessage(String text) {
@@ -963,25 +943,49 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	private void onFileMessageClicked(FileMessage message) {
-		String type = message.getType().toLowerCase();
-		if (type.startsWith("image")) {
-			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
-			i.putExtra("url", message.getUrl());
-			i.putExtra("type", message.getType());
-			startActivity(i);
-		} else if (type.startsWith("video")) {
-			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
-			intent.putExtra("url", message.getUrl());
-			startActivity(intent);
-		} else {
-			showDownloadConfirmDialog(message);
-		}
+	private void showBottomSheetDialog() {
+		final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+		bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog);
+		
+		bottomSheetDialog.findViewById(R.id.videoLayout).setOnClickListener(v -> {
+			bottomSheetDialog.dismiss();
+			Intent recordVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+			startActivityForResult(recordVideoIntent, INTENT_RECORD_VIDEO);
+		});
+		
+		bottomSheetDialog.findViewById(R.id.photoLayout).setOnClickListener(v -> {
+			bottomSheetDialog.dismiss();
+			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			try {
+				File photoFile = null;
+				try {
+					photoFile = createImageFile();
+				} catch (IOException ex) {
+					// Error occurred while creating the File
+				}
+				// Continue only if the File was successfully created
+				if (photoFile != null) {
+					Uri photoURI = FileProvider.getUriForFile(getContext(),
+							BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
+					requestedPhotoUri = photoURI;
+					takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+					startActivityForResult(takePictureIntent, INTENT_CAPTURE_PHOTO);
+				}
+			} catch (ActivityNotFoundException e) {
+				// display error state to the user
+			}
+		});
+		
+		bottomSheetDialog.show();
 	}
 	
 	private void stopRecording() {
 		if (mediaRecorder != null) {
-			mediaRecorder.stop();
+			try {
+				mediaRecorder.stop();
+			} catch (Exception e) {
+				audioFileName = "";
+			}
 			mediaRecorder.release();
 			mediaRecorder = null;
 		}

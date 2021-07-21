@@ -18,7 +18,11 @@ public class BroadcastUtils {
 	
 	public static final String INTENT_EXTRA_CALL_LOG = "call_log";
 	
-	public static final String INTENT_EXTRA_CHAT_MESSAGE_BODY = "message_body";
+	public static final String INTENT_EXTRA_CHANNEL_NAME = "channel_name";
+	
+	public static final String INTENT_EXTRA_CHANNEL_AVATAR = "channel_avatar";
+	
+	public static final String INTENT_EXTRA_IS_GROUP = "is_group";
 	
 	public static final String INTENT_EXTRA_CHAT_CHANNEL_URL = "channel_url";
 	
@@ -32,11 +36,14 @@ public class BroadcastUtils {
 		}
 	}
 	
-	public static void sendNewMessageBroadCast(Context context, String messageBody,
+	public static void sendNewMessageBroadCast(Context context, String channelName,
+	                                           String channelAvatar, boolean isGroup,
 	                                           String channelUrl) {
 		Intent intent = new Intent(INTENT_ACTION_NEW_CHAT_MESSAGE);
-		intent.putExtra(INTENT_EXTRA_CHAT_MESSAGE_BODY, messageBody);
+		intent.putExtra(INTENT_EXTRA_CHANNEL_NAME, channelName);
+		intent.putExtra(INTENT_EXTRA_CHANNEL_AVATAR, channelAvatar);
 		intent.putExtra(INTENT_EXTRA_CHAT_CHANNEL_URL, channelUrl);
+		intent.putExtra(INTENT_EXTRA_IS_GROUP, isGroup);
 		context.sendBroadcast(intent);
 	}
 }
