@@ -69,6 +69,10 @@ public class CreateGroupFragment extends BaseFragment {
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_create_group, container, false);
 		onItemTapListener = (user, checked) -> {
+			if (user.getIsSendBirdUser().equals("0")) {
+				Utility.ShowToast(getContext(), getString(R.string.update_application_for_chat));
+				return;
+			}
 			if (isForGroupChat) {
 				if (checked) {
 					mSelectedIds.add(user.getId());

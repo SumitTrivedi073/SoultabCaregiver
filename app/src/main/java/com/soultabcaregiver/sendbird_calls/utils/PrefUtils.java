@@ -55,15 +55,6 @@ public class PrefUtils {
 	//        return getSharedPreferences(context).getString(PREF_KEY_ACCESS_TOKEN, "");
 	//    }
 	
-	public static void setCalleeId(Context context, String calleeId) {
-		SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-		editor.putString(PREF_KEY_CALLEE_ID, calleeId).apply();
-	}
-	
-	public static String getCalleeId(Context context) {
-		return getSharedPreferences(context).getString(PREF_KEY_CALLEE_ID, "");
-	}
-	
 	public static String getPushToken() {
 		return instance.getString(PREF_KEY_PUSH_TOKEN, "");
 	}

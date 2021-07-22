@@ -11,14 +11,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import androidx.fragment.app.Fragment;
-
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -133,7 +133,6 @@ public class BaseFragment extends Fragment {
 		alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 		alertDialog.show();
 		
-		
 		TextView OK_txt = layout.findViewById(R.id.OK_txt);
 		TextView title_txt = layout.findViewById(R.id.title_txt);
 		
@@ -142,9 +141,7 @@ public class BaseFragment extends Fragment {
 		OK_txt.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
-				SendBirdAuthentication.deAuthenticate(getContext(), isSuccess -> {
-
+				SendBirdAuthentication.logout(isSuccess -> {
 					MainActivity.getInstance().stopButtonClicked();
 					Utility.clearSharedPreference(getActivity());
 					alertDialog.dismiss();

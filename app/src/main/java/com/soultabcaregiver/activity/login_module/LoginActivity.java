@@ -348,7 +348,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	private void authenticateInSendBird(LoginModel loginModel) {
 		SendBirdAuthentication.authenticate(mContext,
 				Utility.getSharedPreferences(mContext, APIS.caregiver_id),
-				Utility.getSharedPreferences(mContext, APIS.Caregiver_name), isSuccess -> {
+				Utility.getSharedPreferences(mContext, APIS.Caregiver_name),
+				Utility.getSharedPreferences(mContext, APIS.profile_image), isSuccess -> {
 					if (isSuccess) {
 						ShowAlertResponse(loginModel.getMessage(), "1");
 					} else {
