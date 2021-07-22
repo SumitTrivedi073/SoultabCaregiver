@@ -22,17 +22,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUsersAdapter.SelectableUserHolder> {
 	
-	private static final List<String> mSelectedUserIds = new ArrayList<>();
+	private final List<String> mSelectedUserIds = new ArrayList<>();
 	
 	public List<CareGiverListModel.Response> caregiverList = new ArrayList<>();
 	
 	public List<CareGiverListModel.Response> filteredList = new ArrayList<>();
 	
 	// For the adapter to track which users have been selected
-	private OnItemCheckedChangeListener mCheckedChangeListener;
+	private OnItemTapListener onItemTapListener;
 	
-	public CreateGroupUsersAdapter(OnItemCheckedChangeListener checkedChangeListener) {
-		mCheckedChangeListener = checkedChangeListener;
+	private boolean isForGroupChat;
+	
+	public CreateGroupUsersAdapter(OnItemTapListener onItemTapListener, boolean isForGroupChat) {
+		this.onItemTapListener = onItemTapListener;
+		this.isForGroupChat = isForGroupChat;
 	}
 	
 	@Override
@@ -46,7 +49,7 @@ public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUse
 	@Override
 	public void onBindViewHolder(@NotNull SelectableUserHolder holder, int position) {
 		holder.bind(filteredList.get(position), isSelected(filteredList.get(position)),
-				mCheckedChangeListener);
+				onItemTapListener, isForGroupChat);
 	}
 	
 	private boolean isSelected(CareGiverListModel.Response user) {
@@ -78,9 +81,9 @@ public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUse
 		notifyDataSetChanged();
 	}
 	
-	public interface OnItemCheckedChangeListener {
+	public interface OnItemTapListener {
 		
-		void OnItemChecked(CareGiverListModel.Response user, boolean checked);
+		void onItemTapped(CareGiverListModel.Response user, boolean checked);
 	}
 	
 	public class SelectableUserHolder extends RecyclerView.ViewHolder {
@@ -102,7 +105,7 @@ public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUse
 		}
 		
 		private void bind(final CareGiverListModel.Response user, boolean isSelected,
-		                  final OnItemCheckedChangeListener listener) {
+		                  final OnItemTapListener listener, boolean isForGroupChat) {
 			nameText.setText(user.getName());
 			if (user.getProfileImage().isEmpty()) {
 				profileImage.setImageDrawable(
@@ -112,16 +115,21 @@ public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUse
 						APIS.CaregiverImageURL + user.getProfileImage(), profileImage);
 			}
 			
-			checkbox.setChecked(isSelected);
+			if (isForGroupChat) {
+				checkbox.setVisibility(View.VISIBLE);
+				checkbox.setChecked(isSelected);
+			} else {
+				checkbox.setVisibility(View.GONE);
+			}
 			
 			itemView.setOnClickListener(v -> checkbox.setChecked(!checkbox.isChecked()));
 			
 			checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-				listener.OnItemChecked(user, isChecked);
+				listener.onItemTapped(user, isChecked);
 				if (isChecked) {
 					mSelectedUserIds.add(user.getId());
 				} else {
-					mSelectedUserIds.remove(user.getUserId());
+					mSelectedUserIds.remove(user.getId());
 				}
 			});
 		}

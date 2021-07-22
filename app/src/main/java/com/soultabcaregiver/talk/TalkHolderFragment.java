@@ -41,9 +41,9 @@ public class TalkHolderFragment extends BaseFragment {
 		transaction.commit();
 	}
 	
-	public void navigateToCreateGroupFragment() {
+	public void navigateToCreateGroupFragment(boolean isForGroupChat) {
 		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-		transaction.add(R.id.container, CreateGroupFragment.newInstance());
+		transaction.add(R.id.container, CreateGroupFragment.newInstance(isForGroupChat));
 		transaction.addToBackStack(CreateGroupFragment.class.getName());
 		transaction.commit();
 	}

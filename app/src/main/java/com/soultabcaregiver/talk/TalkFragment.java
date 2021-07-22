@@ -61,10 +61,10 @@ public class TalkFragment extends BaseFragment {
 		}
 	}
 	
-	public void navigateToCreateGroupFragment() {
+	public void navigateToCreateGroupFragment(boolean isForGroupChat) {
 		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
 		if (talkHolderFragment != null) {
-			talkHolderFragment.navigateToCreateGroupFragment();
+			talkHolderFragment.navigateToCreateGroupFragment(isForGroupChat);
 		}
 	}
 	
