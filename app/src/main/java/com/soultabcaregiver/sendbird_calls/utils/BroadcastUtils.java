@@ -26,6 +26,8 @@ public class BroadcastUtils {
 	
 	public static final String INTENT_EXTRA_CHAT_CHANNEL_URL = "channel_url";
 	
+	public static final String INTENT_EXTRA_LAST_CHANNEL_MESSAGE = "last_channel_msg";
+	
 	public static void sendCallLogBroadcast(Context context, DirectCallLog callLog) {
 		if (context != null && callLog != null) {
 			Log.i(TAG, "[BroadcastUtils] sendCallLogBroadcast()");
@@ -38,11 +40,12 @@ public class BroadcastUtils {
 	
 	public static void sendNewMessageBroadCast(Context context, String channelName,
 	                                           String channelAvatar, boolean isGroup,
-	                                           String channelUrl) {
+	                                           String channelUrl, String lastMessage) {
 		Intent intent = new Intent(INTENT_ACTION_NEW_CHAT_MESSAGE);
 		intent.putExtra(INTENT_EXTRA_CHANNEL_NAME, channelName);
 		intent.putExtra(INTENT_EXTRA_CHANNEL_AVATAR, channelAvatar);
 		intent.putExtra(INTENT_EXTRA_CHAT_CHANNEL_URL, channelUrl);
+		intent.putExtra(INTENT_EXTRA_LAST_CHANNEL_MESSAGE, lastMessage);
 		intent.putExtra(INTENT_EXTRA_IS_GROUP, isGroup);
 		context.sendBroadcast(intent);
 	}

@@ -158,9 +158,6 @@ public class ConversationFragment extends BaseFragment {
 		}
 		
 		if (requestCode == INTENT_CAPTURE_PHOTO && resultCode == Activity.RESULT_OK) {
-			if (data == null) {
-				return;
-			}
 			sendFileWithThumbnail(requestedPhotoUri);
 		}
 		

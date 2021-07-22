@@ -44,6 +44,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
 public class CustomFireBaseMessasing extends SendBirdPushHandler {
 	
@@ -98,14 +99,14 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 						BaseActivity.getPopupIntent(context,
 								TextUtils.getGroupChannelTitle(groupChannel),
 								groupChannel.getCoverUrl(), groupChannel.getMemberCount() > 2,
-								channelUrl);
+								channelUrl, groupChannel.getLastMessage().getMessage());
 					});
 				} else {
 					GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
 						BroadcastUtils.sendNewMessageBroadCast(context,
 								TextUtils.getGroupChannelTitle(groupChannel),
 								groupChannel.getCoverUrl(), groupChannel.getMemberCount() > 2,
-								channelUrl);
+								channelUrl, groupChannel.getLastMessage().getMessage());
 					});
 				}
 			} else if (SendBirdCall.handleFirebaseMessageData(remoteMessage.getData())) {
@@ -184,8 +185,7 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 		}
 		
 		Intent intent = new Intent(context, SplashActivity.class);
-		intent.putExtra("groupChannelUrl", channelUrl);
-		intent.putExtra("calleeId", calleeId);
+		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, 0 /* Request code */, intent,

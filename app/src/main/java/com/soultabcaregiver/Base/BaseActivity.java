@@ -28,11 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import static com.soultabcaregiver.sendbird_chat.NewMessageActivity.CHANNEL_AVATAR;
-import static com.soultabcaregiver.sendbird_chat.NewMessageActivity.CHANNEL_URL;
-import static com.soultabcaregiver.sendbird_chat.NewMessageActivity.IS_GROUP;
-import static com.soultabcaregiver.sendbird_chat.NewMessageActivity.SENDER_NAME;
-
 public abstract class BaseActivity extends AppCompatActivity {
 	
 	public static BaseActivity instance;
@@ -83,6 +78,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 				
 				String name = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_NAME);
 				String avatar = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_AVATAR);
+				String lastMessage =
+						intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_LAST_CHANNEL_MESSAGE);
 				String channelUrl =
 						intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHAT_CHANNEL_URL);
 				boolean isGroup =
@@ -101,14 +98,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 							TalkFragment talkFragment = (TalkFragment) f2;
 							if (talkFragment.getCurrentPageIndex() != 0) {
 								getPopupIntent(BaseActivity.this, name, avatar, isGroup,
-										channelUrl);
+										channelUrl,
+										lastMessage);
 							}
 						}
 					} else {
-						getPopupIntent(BaseActivity.this, name, avatar, isGroup, channelUrl);
+						getPopupIntent(BaseActivity.this, name, avatar, isGroup, channelUrl,
+								lastMessage);
 					}
 				} else {
-					getPopupIntent(BaseActivity.this, name, avatar, isGroup, channelUrl);
+					getPopupIntent(BaseActivity.this, name, avatar, isGroup, channelUrl,
+							lastMessage);
 				}
 			}
 		};
@@ -121,13 +121,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 	}
 	
 	public static void getPopupIntent(Context context, String channelName, String channelAvatar,
-	                                  boolean isGroup, String channelUrl) {
+	                                  boolean isGroup, String channelUrl, String lastMessage) {
 		Intent intent = new Intent(context, NewMessageActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-		intent.putExtra(SENDER_NAME, channelName);
-		intent.putExtra(CHANNEL_AVATAR, channelAvatar);
-		intent.putExtra(IS_GROUP, isGroup);
-		intent.putExtra(CHANNEL_URL, channelUrl);
+		intent.putExtra(NewMessageActivity.EXTRA_SENDER_NAME, channelName);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_AVATAR, channelAvatar);
+		intent.putExtra(NewMessageActivity.EXTRA_IS_GROUP, isGroup);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_URL, channelUrl);
+		intent.putExtra(NewMessageActivity.EXTRA_LAST_MSG, lastMessage);
 		context.startActivity(intent);
 	}
 	
