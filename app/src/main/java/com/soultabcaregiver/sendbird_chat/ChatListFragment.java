@@ -34,7 +34,7 @@ public class ChatListFragment extends BaseFragment {
 	
 	private RecyclerView mRecyclerView;
 	
-	private FloatingActionButton newChatFabBtn;
+	private FloatingActionButton newChatFabBtn, newGroupChatBtn;
 	
 	private LinearLayoutManager mLayoutManager;
 	
@@ -48,19 +48,19 @@ public class ChatListFragment extends BaseFragment {
 		View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
 		mRecyclerView = view.findViewById(R.id.recycler);
 		newChatFabBtn = view.findViewById(R.id.newChatBtn);
+		newGroupChatBtn = view.findViewById(R.id.newGroupButton);
 		
-		newChatFabBtn.setOnClickListener(v -> {
-			addCreateGroupFragment();
-			//startActivity(new Intent(getContext(), CreateGroupFragment.class));
-		});
+		newChatFabBtn.setOnClickListener(v -> addCreateGroupFragment(false));
+		
+		newGroupChatBtn.setOnClickListener(v -> addCreateGroupFragment(true));
 		
 		return view;
 	}
 	
-	private void addCreateGroupFragment() {
+	private void addCreateGroupFragment(boolean isForGroupChat) {
 		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
 		if (chatFragment != null) {
-			chatFragment.navigateToCreateGroupFragment();
+			chatFragment.navigateToCreateGroupFragment(isForGroupChat);
 		}
 	}
 	

@@ -24,6 +24,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
+
 public class TalkFragment extends BaseFragment {
 	
 	private ViewPager viewPager;
@@ -52,6 +54,20 @@ public class TalkFragment extends BaseFragment {
 	                          @Nullable @org.jetbrains.annotations.Nullable
 			                          Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		if (getArguments() != null && getArguments().getString(EXTRA_GROUP_CHANNEL_URL) != null) {
+			viewPager.setCurrentItem(0);
+			navigateToConversationFragment(getArguments().getString(EXTRA_GROUP_CHANNEL_URL));
+		}
+	}
+	
+	public static TalkFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		TalkFragment fragment = new TalkFragment();
+		if (channelUrl != null) {
+			args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		}
+		fragment.setArguments(args);
+		return fragment;
 	}
 	
 	public void navigateToConversationFragment(String url) {
@@ -61,10 +77,10 @@ public class TalkFragment extends BaseFragment {
 		}
 	}
 	
-	public void navigateToCreateGroupFragment() {
+	public void navigateToCreateGroupFragment(boolean isForGroupChat) {
 		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
 		if (talkHolderFragment != null) {
-			talkHolderFragment.navigateToCreateGroupFragment();
+			talkHolderFragment.navigateToCreateGroupFragment(isForGroupChat);
 		}
 	}
 	

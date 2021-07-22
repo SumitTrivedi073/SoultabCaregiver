@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -39,11 +40,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CreateGroupFragment extends BaseFragment {
 	
+	private static final String EXTRA_IS_GROUP = "extra_is_group";
+	
+	private boolean isForGroupChat = false;
+	
 	private CreateGroupUsersAdapter adapter;
 	
 	private ProgressBar progressDialog;
 	
-	private CreateGroupUsersAdapter.OnItemCheckedChangeListener checkedChangeListener;
+	private CreateGroupUsersAdapter.OnItemTapListener onItemTapListener;
 	
 	private List<String> mSelectedIds = new ArrayList<>();
 	
@@ -63,16 +68,41 @@ public class CreateGroupFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_create_group, container, false);
-		checkedChangeListener = (user, checked) -> {
-			if (checked) {
-				mSelectedIds.add(user.getId());
+		onItemTapListener = (user, checked) -> {
+			if (user.getIsSendBirdUser().equals("0")) {
+				Utility.ShowToast(getContext(), getString(R.string.update_application_for_chat));
+				return;
+			}
+			if (isForGroupChat) {
+				if (checked) {
+					mSelectedIds.add(user.getId());
+				} else {
+					mSelectedIds.remove(user.getId());
+				}
 			} else {
-				mSelectedIds.remove(user.getId());
+				ArrayList<String> ids = new ArrayList<>();
+				ids.add(user.getId());
+				createChatChannel(ids);
 			}
 		};
-		adapter = new CreateGroupUsersAdapter(checkedChangeListener);
+		
+		isForGroupChat = getArguments().getBoolean(EXTRA_IS_GROUP, false);
+		
+		adapter = new CreateGroupUsersAdapter(onItemTapListener, isForGroupChat);
 		initUI(view);
 		return view;
+	}
+	
+	private void createChatChannel(List<String> ids) {
+		showProgressDialog(getContext(), getString(R.string.creating_group));
+		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+			groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
+					(groupChannel1, e) -> {
+						hideProgressDialog();
+						getActivity().onBackPressed();
+						Log.e("tag", "channel created");
+					});
+		});
 	}
 	
 	public void initUI(View view) {
@@ -85,6 +115,27 @@ public class CreateGroupFragment extends BaseFragment {
 		createGroupButton = view.findViewById(R.id.createButton);
 		searchEditText = view.findViewById(R.id.searchEditText);
 		groupNameEditText = view.findViewById(R.id.groupNameET);
+		
+		LinearLayout groupNameLayout = view.findViewById(R.id.groupNameLayout);
+		if (isForGroupChat) {
+			groupNameLayout.setVisibility(View.VISIBLE);
+		} else {
+			groupNameLayout.setVisibility(View.GONE);
+		}
+		
+		LinearLayout buttonLayout = view.findViewById(R.id.buttonLayout);
+		if (isForGroupChat) {
+			buttonLayout.setVisibility(View.VISIBLE);
+		} else {
+			buttonLayout.setVisibility(View.GONE);
+		}
+		
+		TextView titleText = view.findViewById(R.id.titleText);
+		if (isForGroupChat) {
+			titleText.setText(getString(R.string.add_new_group));
+		} else {
+			titleText.setText(getString(R.string.start_new_chat));
+		}
 		
 		searchEditText.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -116,15 +167,12 @@ public class CreateGroupFragment extends BaseFragment {
 				return;
 			}
 			
-			showProgressDialog(getContext(), getString(R.string.creating_group));
-			ChatHelper.createGroupChannel(mSelectedIds, true, groupChannel -> {
-				groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
-						(groupChannel1, e) -> {
-							hideProgressDialog();
-							getActivity().onBackPressed();
-							Log.e("tag", "channel created");
-						});
-			});
+			if (mSelectedIds.size() == 1) {
+				Utility.showSnackBar(getView(), getString(R.string.select_more_than_one_member));
+				return;
+			}
+			
+			createChatChannel(mSelectedIds);
 			
 		});
 		
@@ -215,8 +263,12 @@ public class CreateGroupFragment extends BaseFragment {
 		noDataLayout.setVisibility(View.VISIBLE);
 	}
 	
-	public static CreateGroupFragment newInstance() {
-		return new CreateGroupFragment();
+	public static CreateGroupFragment newInstance(boolean isForGroupChat) {
+		CreateGroupFragment groupFragment = new CreateGroupFragment();
+		Bundle bundle = new Bundle();
+		bundle.putBoolean(EXTRA_IS_GROUP, isForGroupChat);
+		groupFragment.setArguments(bundle);
+		return groupFragment;
 	}
 	
 	

@@ -12,15 +12,16 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
+import com.sendbird.android.GroupChannel;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdPushHandler;
 import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.calls.SendBirdCall;
+import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.SplashActivity;
@@ -30,6 +31,7 @@ import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
+import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONObject;
@@ -42,6 +44,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
 public class CustomFireBaseMessasing extends SendBirdPushHandler {
 	
@@ -92,9 +95,19 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 				if (AppInBackground) {
 					sendNotification(context, remoteMessage.getData().get("message"), channelUrl,
 							calleeId);
+					GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
+						BaseActivity.getPopupIntent(context,
+								TextUtils.getGroupChannelTitle(groupChannel),
+								groupChannel.getCoverUrl(), groupChannel.getMemberCount() > 2,
+								channelUrl, groupChannel.getLastMessage().getMessage());
+					});
 				} else {
-					BroadcastUtils.sendNewMessageBroadCast(context,
-							remoteMessage.getData().get("message"), channelUrl);
+					GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
+						BroadcastUtils.sendNewMessageBroadCast(context,
+								TextUtils.getGroupChannelTitle(groupChannel),
+								groupChannel.getCoverUrl(), groupChannel.getMemberCount() > 2,
+								channelUrl, groupChannel.getLastMessage().getMessage());
+					});
 				}
 			} else if (SendBirdCall.handleFirebaseMessageData(remoteMessage.getData())) {
 				checkAuthentication(context, remoteMessage);
@@ -172,8 +185,7 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 		}
 		
 		Intent intent = new Intent(context, SplashActivity.class);
-		intent.putExtra("groupChannelUrl", channelUrl);
-		intent.putExtra("calleeId", calleeId);
+		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, 0 /* Request code */, intent,

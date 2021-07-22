@@ -33,10 +33,10 @@ public class ChatFragment extends BaseFragment {
 		transaction.commit();
 	}
 	
-	public void navigateToCreateGroupFragment() {
+	public void navigateToCreateGroupFragment(boolean isForGroupChat) {
 		TalkFragment talkFragment = (TalkFragment) getParentFragment();
 		if (talkFragment != null) {
-			talkFragment.navigateToCreateGroupFragment();
+			talkFragment.navigateToCreateGroupFragment(isForGroupChat);
 		}
 	}
 	

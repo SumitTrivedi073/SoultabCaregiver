@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.calls.AuthenticateParams;
 import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.FireBaseMessaging.CustomFireBaseMessasing;
@@ -20,6 +22,7 @@ public class SendBirdAuthentication {
 	public static void autoAuthenticate(Context context, AutoAuthenticateHandler handler) {
 		String userId = Utility.getSharedPreferences(context, APIS.caregiver_id);
 		String userName = Utility.getSharedPreferences(context, APIS.Caregiver_name);
+		String profilePic = Utility.getSharedPreferences(context, APIS.profile_image);
 		String fcmToken = PrefUtils.getPushToken();
 		
 		if (!TextUtils.isEmpty(userId) && !TextUtils.isEmpty(fcmToken)) {
@@ -42,7 +45,7 @@ public class SendBirdAuthentication {
 							Log.e(TAG, "AutoAuthenticate registerPush Failed " + e2.getMessage());
 							
 						}
-						SendBird.updateCurrentUserInfo(userName, "", e3 -> {
+						SendBird.updateCurrentUserInfo(userName, profilePic, e3 -> {
 							if (e3 != null) {
 								Log.e(TAG,
 										"AutoAuthenticate UpdateCurrentUser Failed " + e3.getMessage());
@@ -76,7 +79,7 @@ public class SendBirdAuthentication {
 	}
 	
 	public static void authenticate(Context context, String userId, String userName,
-	                                AuthenticateHandler handler) {
+	                                String profileUrl, AuthenticateHandler handler) {
 		
 		String fcmToken = PrefUtils.getPushToken();
 		
@@ -87,7 +90,7 @@ public class SendBirdAuthentication {
 			return;
 		}
 		
-		deAuthenticate(context, isSuccess -> {
+		deAuthenticate(isSuccess -> {
 			//this is for chat
 			SendBird.connect(userId, (user, e) -> {
 				if (e != null) {
@@ -105,7 +108,7 @@ public class SendBirdAuthentication {
 						return;
 					}
 					registerPushToken(fcmToken, e2 -> {
-						SendBird.updateCurrentUserInfo(userName, "", e3 -> {
+						SendBird.updateCurrentUserInfo(userName, profileUrl, e3 -> {
 							PrefUtils.setAppId(context, SendBirdCall.getApplicationId());
 							PrefUtils.setUserId(context, userId);
 							handler.onResult(true);
@@ -118,42 +121,45 @@ public class SendBirdAuthentication {
 		});
 	}
 	
-	public static void deAuthenticate(Context context, DeAuthenticateHandler handler) {
+	private static void deAuthenticate(DeAuthenticateHandler handler) {
 		if (SendBirdCall.getCurrentUser() == null) {
 			if (handler != null) {
 				handler.onResult(false);
 			}
 			return;
 		}
-		doDeAuthenticate(context, handler);
+		doDeAuthenticate(handler);
 	}
 	
-	private static void doDeAuthenticate(Context context, DeAuthenticateHandler handler) {
+	private static void doDeAuthenticate(DeAuthenticateHandler handler) {
 		SendBirdCall.deauthenticate(e -> {
-			PrefUtils.setUserId(context, null);
-			PrefUtils.setCalleeId(context, null);
 			if (handler != null) {
 				handler.onResult(e == null);
 			}
 		});
 	}
 	
-	public static void logout(Context context, LogoutHandler handler) {
-		SendBird.disconnect(() -> deAuthenticate(context, isSuccess -> {
-			CustomFireBaseMessasing.getPushToken((pushToken, e) -> {
-				unregisterPushToken(pushToken, e1 -> {
-					handler.onResult(true);
+	public static void logout(LogoutHandler handler) {
+		CustomFireBaseMessasing.getPushToken((pushToken, e) -> {
+			unregisterPushToken(pushToken, e1 -> {
+				deAuthenticate(isSuccess -> {
+					SendBird.disconnect(() -> handler.onResult(true));
 				});
 			});
-		}));
+		});
 	}
 	
 	private static void unregisterPushToken(String pushToken, CompletionHandler handler) {
-		SendBird.unregisterPushTokenForCurrentUser(pushToken, e -> {
-			if (e != null) {
-				return;
+		PushUtils.unregisterPushHandler(new SendBirdPushHelper.OnPushRequestCompleteListener() {
+			@Override
+			public void onComplete(boolean b, String s) {
+				SendBirdCall.unregisterPushToken(pushToken, handler :: onCompleted);
 			}
-			SendBirdCall.unregisterPushToken(pushToken, handler :: onCompleted);
+			
+			@Override
+			public void onError(SendBirdException e) {
+				handler.onCompleted(e);
+			}
 		});
 	}
 	
