@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.soultabcaregiver">
 
@@ -18,18 +19,18 @@
     <application
         android:name=".utils.AppController"
         android:allowBackup="false"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/main_logo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/main_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:hardwareAccelerated="true"
         >
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.android.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true"
             >
@@ -69,6 +70,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.main_screen.MainActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             />
         <activity
@@ -104,25 +106,25 @@
 
         <activity
             android:name=".sendbird_calls.IncomingCallActivity"
-            android:theme="@style/CallTheme"
+            android:autoRemoveFromRecents="true"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
             android:screenOrientation="portrait"
-            android:autoRemoveFromRecents="true"
+            android:theme="@style/CallTheme"
             tools:ignore="LockedOrientationActivity" />
 
 
         <activity
             android:name=".sendbird_calls.VideoCallActivity"
-            android:theme="@style/CallTheme"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
             android:screenOrientation="portrait"
+            android:theme="@style/CallTheme"
             tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".sendbird_calls.VoiceCallActivity"
             android:configChanges="orientation|smallestScreenSize|screenSize|screenLayout"
-            android:theme="@style/CallTheme"
             android:screenOrientation="portrait"
+            android:theme="@style/CallTheme"
             tools:ignore="LockedOrientationActivity" />
 
         <service

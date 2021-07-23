@@ -16,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -76,25 +77,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 		init();
 		Listener();
-		
-	}
-	
-	@Override
-	public void onClick(View v) {
-		
-		switch (v.getId()) {
-			case R.id.tv_rem_pass:
-				tbRemPass.setChecked(!tbRemPass.isChecked());
-				break;
-			case R.id.tv_forgot_pass:
-				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-				break;
-			
-			case R.id.tv_login:
-				Login();
-				break;
-			
-		}
 		
 	}
 	
@@ -163,6 +145,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				
 			}
 		});
+	}
+	
+	@Override
+	public void onClick(View v) {
+		
+		switch (v.getId()) {
+			case R.id.tv_rem_pass:
+				tbRemPass.setChecked(!tbRemPass.isChecked());
+				break;
+			case R.id.tv_forgot_pass:
+				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+				break;
+			
+			case R.id.tv_login:
+				Login();
+				break;
+			
+		}
+		
 	}
 	
 	private void Login() {
@@ -281,20 +282,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getCountrycode());
 									Utility.setSharedPreference(mContext, APIS.Caregiver_username,
 											loginModel.getResponse().getCaregiver_username());
-									showProgressDialog(getResources().getString(R.string.Loading));
-									SendBirdAuthentication.authenticate(mContext,
-											Utility.getSharedPreferences(mContext,
-													APIS.caregiver_id),
-											Utility.getSharedPreferences(mContext,
-													APIS.Caregiver_name), isSuccess -> {
-												if (isSuccess) {
-													ShowAlertResponse(loginModel.getMessage(),
-															"1");
-												} else {
-													ShowToast(mContext, "Sendbird Auth Failed");
-												}
-											});
 									
+									showProgressDialog(getResources().getString(R.string.Loading));
+									if (loginModel.getResponse().getIsSendBirdUser().equals("0")) {
+										updateSendBirdFlag(loginModel);
+									} else {
+										authenticateInSendBird(loginModel);
+									}
 								} else {
 									ShowAlertResponse(loginModel.getMessage(), "0");
 								}
@@ -319,6 +313,49 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 					
 				};
 		AppController.getInstance().addToRequestQueue(jsonObjReq);
+	}
+	
+	private void updateSendBirdFlag(LoginModel loginModel) {
+		JSONObject mainObject = new JSONObject();
+		try {
+			mainObject.put("user_id", Utility.getSharedPreferences(this, APIS.caregiver_id));
+			mainObject.put("is_sendbird_user", "1");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+				APIS.BASEURL + APIS.update_caregiver_flags, mainObject, response -> {
+			authenticateInSendBird(loginModel);
+		}, error -> {
+			VolleyLog.d(TAG, "Error: " + error.getMessage());
+			hideProgressDialog();
+		}) {
+			@Override
+			public Map<String, String> getHeaders() {
+				Map<String, String> params = new HashMap<String, String>();
+				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				return params;
+			}
+			
+		};
+		AppController.getInstance().addToRequestQueue(jsonObjReq);
+		jsonObjReq.setShouldCache(false);
+		jsonObjReq.setRetryPolicy(
+				new DefaultRetryPolicy(10000, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+	}
+	
+	private void authenticateInSendBird(LoginModel loginModel) {
+		SendBirdAuthentication.authenticate(mContext,
+				Utility.getSharedPreferences(mContext, APIS.caregiver_id),
+				Utility.getSharedPreferences(mContext, APIS.Caregiver_name),
+				Utility.getSharedPreferences(mContext, APIS.profile_image), isSuccess -> {
+					if (isSuccess) {
+						ShowAlertResponse(loginModel.getMessage(), "1");
+					} else {
+						ShowToast(mContext, "Sendbird Auth " + "Failed");
+					}
+				});
 	}
 	
 	private void ShowAlertResponse(String message, String value) {

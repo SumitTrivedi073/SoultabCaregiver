@@ -69,7 +69,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
                                                           GoogleApiClient.OnConnectionFailedListener {
@@ -100,6 +103,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	TextView tv_badge;
 	
+	AlertFragment alertFragment;
+	
 	private BroadcastReceiver receiver;
 	
 	private String CityZipCode;
@@ -109,8 +114,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	private BroadcastReceiver mReceiver;
 	
 	private Timer tmrStartEng;
-	
-	AlertFragment alertFragment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -265,103 +268,26 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
-	private void listner() {
-		
-		navigationView.setOnNavigationItemSelectedListener(
-				new BottomNavigationView.OnNavigationItemSelectedListener() {
-					@Override
-					public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-						FragmentManager fm = getFragmentManager();
-						switch (item.getItemId()) {
-							
-							case R.id.navigation_dashboard:
-								video_call.setVisibility(View.VISIBLE);
-								shopping_btn.setVisibility(View.VISIBLE);
-								Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
-										false, null);
-								
-								return true;
-							
-							case R.id.navigation_appointment:
-								
-								video_call.setVisibility(View.GONE);
-								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
-										false,
-										null);
-								return true;
-							
-							case R.id.navigation_dailyroutine:
-								
-								video_call.setVisibility(View.GONE);
-								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
-										false, null);
-								
-								break;
-							case R.id.navigation_talk:
-								video_call.setVisibility(View.GONE);
-								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new TalkHolderFragment(), false,
-										null);
-								
-								return true;
-							case R.id.navigation_calender:
-								
-								video_call.setVisibility(View.GONE);
-								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new CalenderFragment(),
-										false, null);
-								break;
-						}
-						return true;
-					}
-					
-				});
-		
-		navigationView.setSelectedItemId(R.id.navigation_dashboard);
-		
-		video_call.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (Utility.isNetworkConnected(mContext)) {
-					if (!(ActivityCompat.checkSelfPermission(MainActivity.this,
-							Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-						ActivityCompat.requestPermissions(MainActivity.this,
-								new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-										Manifest.permission.ACCESS_COARSE_LOCATION,
-										Manifest.permission.CAMERA,
-										Manifest.permission.WRITE_EXTERNAL_STORAGE,
-										Manifest.permission.RECORD_AUDIO},
-								REQUEST_CODE_PERMISSION);
-						
-						
-					} else {
-						openPlaceCallActivity();
-					}
-					
-				} else {
-					Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-				}
-			}
-		});
-		
-		shopping_btn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
-				startActivity(intent);
-			}
-		});
-		
+	@Override
+	protected void onNewIntent(Intent intent) {
+		if (intent.hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
+			checkForCurrentScreen(intent.getStringExtra(EXTRA_GROUP_CHANNEL_URL));
+		} else {
+			super.onNewIntent(intent);
+		}
+	}
+	
+	private void checkForCurrentScreen(String channelUrl) {
+		//navigationView.setSelectedItemId(R.id.navigation_talk);
+		Fragment f1 = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+		if (f1 instanceof TalkHolderFragment) {
+			TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
+			Fragment f2 =
+					talkHolderFragment.getChildFragmentManager().findFragmentById(R.id.container);
+			talkHolderFragment.navigateToConversationFragment(channelUrl);
+		} else {
+			loadTalkHolderFragment(channelUrl);
+		}
 	}
 	
 	private void openPlaceCallActivity() {
@@ -425,6 +351,102 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		unregisterReceiver();
 	}
 	
+	private void listner() {
+		
+		navigationView.setOnNavigationItemSelectedListener(
+				new BottomNavigationView.OnNavigationItemSelectedListener() {
+					@Override
+					public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+						FragmentManager fm = getFragmentManager();
+						switch (item.getItemId()) {
+							
+							case R.id.navigation_dashboard:
+								video_call.setVisibility(View.VISIBLE);
+								shopping_btn.setVisibility(View.VISIBLE);
+								Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
+										false, null);
+								
+								return true;
+							
+							case R.id.navigation_appointment:
+								
+								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
+								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
+										false,
+										null);
+								return true;
+							
+							case R.id.navigation_dailyroutine:
+								
+								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
+								Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
+										false, null);
+								
+								break;
+							case R.id.navigation_talk:
+								loadTalkHolderFragment(null);
+								
+								return true;
+							case R.id.navigation_calender:
+								
+								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
+								Utility.loadFragment(MainActivity.this, new CalenderFragment(),
+										false, null);
+								break;
+						}
+						return true;
+					}
+					
+				});
+		
+		navigationView.setSelectedItemId(R.id.navigation_dashboard);
+		
+		video_call.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (Utility.isNetworkConnected(mContext)) {
+					if (!(ActivityCompat.checkSelfPermission(MainActivity.this,
+							Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+						ActivityCompat.requestPermissions(MainActivity.this,
+								new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+										Manifest.permission.ACCESS_COARSE_LOCATION,
+										Manifest.permission.CAMERA,
+										Manifest.permission.WRITE_EXTERNAL_STORAGE,
+										Manifest.permission.RECORD_AUDIO},
+								REQUEST_CODE_PERMISSION);
+						
+						
+					} else {
+						openPlaceCallActivity();
+					}
+					
+				} else {
+					Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+				}
+			}
+		});
+		
+		shopping_btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
+				startActivity(intent);
+			}
+		});
+		
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -437,15 +459,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			
 		}
 		unregisterReceiver();
-	}
-	
-	private void unregisterReceiver() {
-		Log.i(TAG, "[MainActivity] unregisterReceiver()");
-		
-		if (mReceiver != null) {
-			unregisterReceiver(mReceiver);
-			mReceiver = null;
-		}
 	}
 	
 	@RequiresApi (api = Build.VERSION_CODES.GINGERBREAD)
@@ -519,6 +532,22 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			
 		}
 		
+	}
+	
+	private void loadTalkHolderFragment(String channelUrl) {
+		video_call.setVisibility(View.GONE);
+		shopping_btn.setVisibility(View.GONE);
+		Utility.loadFragment(MainActivity.this, TalkHolderFragment.newInstance(channelUrl), false,
+				null);
+	}
+	
+	private void unregisterReceiver() {
+		Log.i(TAG, "[MainActivity] unregisterReceiver()");
+		
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
+		}
 	}
 	
 	@Override

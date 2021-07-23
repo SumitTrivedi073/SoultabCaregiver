@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentTransaction;
 
+import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
+
 public class TalkHolderFragment extends BaseFragment {
 	
 	@Override
@@ -29,9 +31,24 @@ public class TalkHolderFragment extends BaseFragment {
 	                          @Nullable @org.jetbrains.annotations.Nullable
 			                          Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		
+		String channelUrl = null;
+		if (getArguments() != null && getArguments().getString(EXTRA_GROUP_CHANNEL_URL) != null) {
+			channelUrl = getArguments().getString(EXTRA_GROUP_CHANNEL_URL);
+		}
 		FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-		transaction.add(R.id.container, new TalkFragment());
+		transaction.add(R.id.container, TalkFragment.newInstance(channelUrl));
 		transaction.commit();
+	}
+	
+	public static TalkHolderFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		TalkHolderFragment fragment = new TalkHolderFragment();
+		if (channelUrl != null) {
+			args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		}
+		fragment.setArguments(args);
+		return fragment;
 	}
 	
 	public void navigateToConversationFragment(String url) {
@@ -41,9 +58,9 @@ public class TalkHolderFragment extends BaseFragment {
 		transaction.commit();
 	}
 	
-	public void navigateToCreateGroupFragment() {
+	public void navigateToCreateGroupFragment(boolean isForGroupChat) {
 		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-		transaction.add(R.id.container, CreateGroupFragment.newInstance());
+		transaction.add(R.id.container, CreateGroupFragment.newInstance(isForGroupChat));
 		transaction.addToBackStack(CreateGroupFragment.class.getName());
 		transaction.commit();
 	}

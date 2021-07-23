@@ -28,8 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import static com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils.INTENT_EXTRA_CHAT_MESSAGE_BODY;
-
 public abstract class BaseActivity extends AppCompatActivity {
 	
 	public static BaseActivity instance;
@@ -78,7 +76,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				
-				String messageBody = intent.getStringExtra(INTENT_EXTRA_CHAT_MESSAGE_BODY);
+				String name = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_NAME);
+				String avatar = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_AVATAR);
+				String lastMessage =
+						intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_LAST_CHANNEL_MESSAGE);
+				String channelUrl =
+						intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHAT_CHANNEL_URL);
+				boolean isGroup =
+						intent.getBooleanExtra(BroadcastUtils.INTENT_EXTRA_IS_GROUP, false);
 				
 				if (BaseActivity.this instanceof MainActivity) {
 					MainActivity mainActivity = (MainActivity) BaseActivity.this;
@@ -92,14 +97,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 						if (f2 instanceof TalkFragment) {
 							TalkFragment talkFragment = (TalkFragment) f2;
 							if (talkFragment.getCurrentPageIndex() != 0) {
-								getPopupIntent(BaseActivity.this, messageBody);
+								getPopupIntent(BaseActivity.this, name, avatar, isGroup,
+										channelUrl,
+										lastMessage);
 							}
 						}
 					} else {
-						getPopupIntent(BaseActivity.this, messageBody);
+						getPopupIntent(BaseActivity.this, name, avatar, isGroup, channelUrl,
+								lastMessage);
 					}
 				} else {
-					getPopupIntent(BaseActivity.this, messageBody);
+					getPopupIntent(BaseActivity.this, name, avatar, isGroup, channelUrl,
+							lastMessage);
 				}
 			}
 		};
@@ -111,10 +120,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 		registerReceiver(mReceiver, intentFilter);
 	}
 	
-	public void getPopupIntent(Context context, String messageBody) {
+	public static void getPopupIntent(Context context, String channelName, String channelAvatar,
+	                                  boolean isGroup, String channelUrl, String lastMessage) {
 		Intent intent = new Intent(context, NewMessageActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-		intent.putExtra(INTENT_EXTRA_CHAT_MESSAGE_BODY, messageBody);
+		intent.putExtra(NewMessageActivity.EXTRA_SENDER_NAME, channelName);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_AVATAR, channelAvatar);
+		intent.putExtra(NewMessageActivity.EXTRA_IS_GROUP, isGroup);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_URL, channelUrl);
+		intent.putExtra(NewMessageActivity.EXTRA_LAST_MSG, lastMessage);
 		context.startActivity(intent);
 	}
 	

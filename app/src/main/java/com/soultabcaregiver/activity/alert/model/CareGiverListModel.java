@@ -177,29 +177,31 @@ public class CareGiverListModel implements Serializable {
         @SerializedName("call_me_alrt")
         @Expose
         private Object callMeAlrt;
-        @SerializedName("snt_daily_eml_daily_rutin_alrt")
-        @Expose
-        private String sntDailyEmlDailyRutinAlrt;
-        @SerializedName("snt_eml_no_activity_in_app_alrt")
-        @Expose
-        private String sntEmlNoActivityInAppAlrt;
-
-
-        @SerializedName("snt_eml_alrm_is_missed")
-        @Expose
-        private String snt_eml_alrm_is_missed;
-
-
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getCpUsersId() {
+        @SerializedName("snt_daily_eml_daily_rutin_alrt") @Expose private String
+		        sntDailyEmlDailyRutinAlrt;
+	
+	    @SerializedName ("snt_eml_no_activity_in_app_alrt") @Expose private String
+			    sntEmlNoActivityInAppAlrt;
+	
+	    @SerializedName ("snt_eml_alrm_is_missed") @Expose private String snt_eml_alrm_is_missed;
+	
+	    @SerializedName ("is_sendbird_user") @Expose private String isSendBirdUser;
+	
+	    public String getIsSendBirdUser() {return isSendBirdUser;}
+	
+	    public void setIsSendBirdUser(String isSendBirdUser) {
+		    this.isSendBirdUser = isSendBirdUser;
+	    }
+	
+	    public String getId() {
+		    return id;
+	    }
+	
+	    public void setId(String id) {
+		    this.id = id;
+	    }
+	
+	    public String getCpUsersId() {
             return cpUsersId;
         }
 
