@@ -122,14 +122,13 @@ public class CreateGroupUsersAdapter extends RecyclerView.Adapter<CreateGroupUse
 				checkbox.setVisibility(View.GONE);
 			}
 			
-			itemView.setOnClickListener(v -> checkbox.setChecked(!checkbox.isChecked()));
-			
-			checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-				listener.onItemTapped(user, isChecked);
+			itemView.setOnClickListener(v -> {
+				listener.onItemTapped(user, !checkbox.isChecked());
 				if (user.getIsSendBirdUser().equals("0")) {
 					return;
 				}
-				if (isChecked) {
+				checkbox.setChecked(!checkbox.isChecked());
+				if (checkbox.isChecked()) {
 					mSelectedUserIds.add(user.getId());
 				} else {
 					mSelectedUserIds.remove(user.getId());

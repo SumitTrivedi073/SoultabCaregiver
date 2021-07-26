@@ -99,14 +99,14 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 						BaseActivity.getPopupIntent(context,
 								TextUtils.getGroupChannelTitle(groupChannel),
 								groupChannel.getCoverUrl(), groupChannel.getMemberCount() > 2,
-								channelUrl, groupChannel.getLastMessage().getMessage());
+								channelUrl, remoteMessage.getData().get("message"));
 					});
 				} else {
 					GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
 						BroadcastUtils.sendNewMessageBroadCast(context,
 								TextUtils.getGroupChannelTitle(groupChannel),
 								groupChannel.getCoverUrl(), groupChannel.getMemberCount() > 2,
-								channelUrl, groupChannel.getLastMessage().getMessage());
+								channelUrl, remoteMessage.getData().get("message"));
 					});
 				}
 			} else if (SendBirdCall.handleFirebaseMessageData(remoteMessage.getData())) {
