@@ -95,7 +95,7 @@ public class CreateGroupFragment extends BaseFragment {
 	
 	private void createChatChannel(List<String> ids) {
 		showProgressDialog(getContext(), getString(R.string.creating_group));
-		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+		ChatHelper.createGroupChannel(ids, !isForGroupChat, groupChannel -> {
 			groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
 					(groupChannel1, e) -> {
 						hideProgressDialog();
