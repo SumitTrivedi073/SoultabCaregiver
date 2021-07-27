@@ -25,30 +25,25 @@
         android:roundIcon="@drawable/main_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        >
+        android:usesCleartextTraffic="true">
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"
-                />
+                android:resource="@xml/file_paths" />
         </provider>
 
         <activity
             android:name=".activity.shopping.ShoppingCategoryActivity"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.docter.SocialActivity"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
 
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
@@ -71,8 +66,7 @@
         <activity
             android:name=".activity.main_screen.MainActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.login_module.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
@@ -129,15 +123,13 @@
 
         <service
             android:name=".sendbird_calls.SendbirdCallService"
-            android:stopWithTask="false"
-            />
+            android:stopWithTask="false" />
 
 
         <activity
             android:name=".twillovoicecall.VoiceActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme2"
-            />
+            android:theme="@style/AppTheme2" />
         <activity android:name=".sendbird_chat.utils.PhotoViewerActivity" />
         <activity android:name=".sendbird_chat.utils.MediaPlayerActivity" />
         <activity
@@ -145,13 +137,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="user"
-            android:theme="@style/DialogTheme"
-            />
+            android:theme="@style/DialogTheme" />
 
         <service
             android:name=".twillovoicecall.IncomingCallNotificationService"
-            android:enabled="true"
-            >
+            android:enabled="true">
             <intent-filter>
                 <action android:name="ACTION_ACCEPT" />
                 <action android:name="ACTION_REJECT" />

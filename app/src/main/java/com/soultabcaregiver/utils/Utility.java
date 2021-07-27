@@ -61,6 +61,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -705,14 +706,15 @@ public class Utility {
 	public static void ShowToast(Context mContext, String msg) {
 		Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
 		ViewGroup group = (ViewGroup) toast.getView();
-		toast.getView().setBackground(mContext.getResources().getDrawable(R.drawable.theme_btn_bg));
+		toast.getView().setBackground(ContextCompat.getDrawable(mContext,
+				R.drawable.theme_btn_bg));
 		TextView text = toast.getView().findViewById(android.R.id.message);
 		toast.setGravity(Gravity.CENTER, 0, 0);
 		
 		//Shadow of the Of the Text Color
 		text.setShadowLayer(0, 0, 0, mContext.getResources().getColor(R.color.transparent_black));
 		text.setTextColor(Color.WHITE);
-		text.setTextSize(Integer.valueOf(18));
+		text.setTextSize(18);
 		text.setPadding(20, 20, 20, 20);
 		toast.show();
 	}
