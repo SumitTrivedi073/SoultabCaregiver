@@ -283,7 +283,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									Utility.setSharedPreference(mContext, APIS.Caregiver_username,
 											loginModel.getResponse().getCaregiver_username());
 									
-									showProgressDialog(getResources().getString(R.string.Loading));
 									if (loginModel.getResponse().getIsSendBirdUser().equals("0")) {
 										updateSendBirdFlag(loginModel);
 									} else {
