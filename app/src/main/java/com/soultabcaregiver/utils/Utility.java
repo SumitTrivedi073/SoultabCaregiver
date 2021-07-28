@@ -712,7 +712,7 @@ public class Utility {
 		toast.setGravity(Gravity.CENTER, 0, 0);
 		
 		//Shadow of the Of the Text Color
-		text.setShadowLayer(0, 0, 0, mContext.getResources().getColor(R.color.transparent_black));
+		text.setShadowLayer(0, 0, 0, ContextCompat.getColor(mContext, R.color.transparent_black));
 		text.setTextColor(Color.WHITE);
 		text.setTextSize(18);
 		text.setPadding(20, 20, 20, 20);
