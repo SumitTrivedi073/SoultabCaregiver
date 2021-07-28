@@ -3,6 +3,7 @@ package com.soultabcaregiver.activity.login_module;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
@@ -26,6 +27,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -67,6 +74,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	String FirebaseToken = "";
 	
 	AlertDialog alertDialog;
+	
+	private static final int IMMEDIATE_APP_UPDATE_REQ_CODE = 124;
+	
+	private AppUpdateManager appUpdateManager;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +132,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 					e.printStackTrace();
 				}
 			});
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
+			if (resultCode == RESULT_CANCELED) {
+				//	Toast.makeText(getApplicationContext(),"Update canceled by user! Result Code:
+				//	" + resultCode, Toast.LENGTH_LONG).show();
+				Utility.ShowToast(mContext, "please update and enjoy the app");
+			} else if (resultCode == RESULT_OK) {
+				Utility.ShowToast(mContext, "App update success");
+			} else {
+				//Toast.makeText(getApplicationContext(),"Update Failed! Result Code: " +
+				// resultCode, Toast.LENGTH_LONG).show();
+				checkUpdate();
+			}
+			//In app Update link
+			//https://www.section.io/engineering-education/android-application-in-app-update-using
+			// -android-studio/
 		}
 	}
 	
@@ -392,6 +424,36 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			}
 		});
 		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
+		checkUpdate();
+	}
+	
+	private void checkUpdate() {
+		
+		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+		
+		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+			if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
+					AppUpdateType.IMMEDIATE)) {
+				startUpdateFlow(appUpdateInfo);
+			} else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+				startUpdateFlow(appUpdateInfo);
+			}
+		});
+	}
+	
+	private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
+		try {
+			appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this,
+					IMMEDIATE_APP_UPDATE_REQ_CODE);
+		} catch (IntentSender.SendIntentException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

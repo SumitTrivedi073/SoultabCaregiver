@@ -126,13 +126,23 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 						ShowDetailPopup(categoryDatum.getWebUrl(), firstname, lastname, email,
 								telephone);
 					} else {
-						Intent intent = new Intent(mcontext, SocialActivity.class);
-						intent.putExtra("webUrl",
-								categoryDatum.getWebUrl() + "?userId=" + Utility.getSharedPreferences(
-										mcontext, APIS.is_40plus_userID));
-						intent.putExtra("title",
-								mcontext.getResources().getString(R.string.plusmart));
-						mcontext.startActivity(intent);
+						
+						if (Utility.getSharedPreferences(mcontext,
+								APIS.is_40plus_userID) != null && !TextUtils.isEmpty(
+								Utility.getSharedPreferences(mcontext, APIS.is_40plus_userID))) {
+							
+							Intent intent = new Intent(mcontext, SocialActivity.class);
+							intent.putExtra("webUrl",
+									categoryDatum.getWebUrl() + "?userId=" + Utility.getSharedPreferences(
+											mcontext, APIS.is_40plus_userID));
+							intent.putExtra("title",
+									mcontext.getResources().getString(R.string.plusmart));
+							mcontext.startActivity(intent);
+						} else {
+							ShowDetailPopup(categoryDatum.getWebUrl(), firstname, lastname, email,
+									telephone);
+							
+						}
 					}
 					
 				} else {

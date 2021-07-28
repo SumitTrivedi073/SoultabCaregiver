@@ -42,6 +42,7 @@
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
+                android:padding="@dimen/_5sdp"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -101,14 +102,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
+                android:padding="@dimen/_5sdp"
                 android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/pickup_medicine_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
                     android:gravity="center" />
 
                 <TextView
@@ -131,14 +131,13 @@
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
+                android:padding="@dimen/_5sdp"
                 android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/book_taxi_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
                     android:gravity="center" />
 
                 <TextView
@@ -160,6 +159,7 @@
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
+                android:padding="@dimen/_5sdp"
                 android:orientation="horizontal"
                 android:layout_marginBottom="@dimen/_10sdp">
 
@@ -167,8 +167,6 @@
                     android:id="@+id/book_doctor_checkbox"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_5sdp"
                     android:gravity="center"/>
 
                 <TextView
