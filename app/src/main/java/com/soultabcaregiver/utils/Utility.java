@@ -706,8 +706,8 @@ public class Utility {
 	public static void ShowToast(Context mContext, String msg) {
 		Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
 		ViewGroup group = (ViewGroup) toast.getView();
-		toast.getView().setBackground(ContextCompat.getDrawable(mContext,
-				R.drawable.theme_btn_bg));
+		
+		toast.getView().setBackgroundResource(R.drawable.orange_round_bg);
 		TextView text = toast.getView().findViewById(android.R.id.message);
 		toast.setGravity(Gravity.CENTER, 0, 0);
 		
