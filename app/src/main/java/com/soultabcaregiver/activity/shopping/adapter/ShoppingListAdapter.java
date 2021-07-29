@@ -127,8 +127,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 								telephone);
 					} else {
 						
-						if (Utility.getSharedPreferences(mcontext,
-								APIS.is_40plus_userID) != null && !TextUtils.isEmpty(
+						if (!Utility.getSharedPreferences(mcontext, APIS.is_40plus_userID).equals(
+								"null") && !TextUtils.isEmpty(
 								Utility.getSharedPreferences(mcontext, APIS.is_40plus_userID))) {
 							
 							Intent intent = new Intent(mcontext, SocialActivity.class);
@@ -326,7 +326,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 								
 								Utility.setSharedPreference(mcontext, APIS.is_40plus_userID,
 										response.getString("id"));
-								UpdateUserProfile(webUrl);
+								UpdateUserProfile(webUrl + "?userId=" + response.getString("id"));
 								
 							} else {
 								Utility.ShowToast(mcontext, response.getString("message"));
@@ -401,9 +401,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 								
 								Utility.setSharedPreference(mcontext, APIS.is_40plus_user, "1");
 								Intent intent = new Intent(mcontext, SocialActivity.class);
-								intent.putExtra("webUrl",
-										webUrl + "?userId=" + Utility.getSharedPreferences(mcontext,
-												APIS.is_40plus_userID));
+								intent.putExtra("webUrl", webUrl);
 								intent.putExtra("title",
 										mcontext.getResources().getString(R.string.plusmart));
 								mcontext.startActivity(intent);
