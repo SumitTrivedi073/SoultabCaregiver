@@ -321,7 +321,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 										authenticateInSendBird(loginModel);
 									}
 								} else {
-									ShowAlertResponse(loginModel.getMessage(), "0");
+									//	ShowAlertResponse(loginModel.getMessage(), "0");
 								}
 								
 							}
@@ -382,7 +382,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				Utility.getSharedPreferences(mContext, APIS.Caregiver_name),
 				Utility.getSharedPreferences(mContext, APIS.profile_image), isSuccess -> {
 					if (isSuccess) {
-						ShowAlertResponse(loginModel.getMessage(), "1");
+						Intent intent = new Intent(mContext, MainActivity.class);
+						startActivity(intent);
+						finishAffinity();
+						//	ShowAlertResponse(loginModel.getMessage(), "1");
 					} else {
 						ShowToast(mContext, "Sendbird Auth " + "Failed");
 					}
