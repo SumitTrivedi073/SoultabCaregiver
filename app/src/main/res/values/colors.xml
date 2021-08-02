@@ -43,6 +43,7 @@
     <color name="groupChannelUnreadCountText">#ffffff</color>
     <color name="grey">#F3F3F3</color>
     <color name="channelTitleColor">#034D75</color>
+    <color name="video_call_background">#161616</color>
     <!--  chat colors  -->
 
 

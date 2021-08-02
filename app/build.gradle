@@ -137,5 +137,8 @@ dependencies {
     //Google play update
     implementation 'com.google.android.play:core:1.8.3'
 
+    // FlexBox
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
 }
 apply plugin: 'com.google.gms.google-services'

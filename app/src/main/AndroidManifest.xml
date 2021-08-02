@@ -138,6 +138,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="user"
             android:theme="@style/DialogTheme" />
+        <activity android:name=".sendbird_group_call.GroupCallActivity" />
+        <activity
+            android:name=".sendbird_group_call.IncomingGroupCallActivity"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true" />
 
         <service
             android:name=".twillovoicecall.IncomingCallNotificationService"

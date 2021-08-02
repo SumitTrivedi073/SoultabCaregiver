@@ -47,10 +47,18 @@ import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.UserMessage;
+import com.sendbird.android.UserMessageParams;
+import com.sendbird.calls.EnterParams;
+import com.sendbird.calls.Room;
+import com.sendbird.calls.RoomParams;
+import com.sendbird.calls.RoomType;
+import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
 import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 import com.soultabcaregiver.sendbird_chat.utils.MediaPlayerActivity;
@@ -58,6 +66,9 @@ import com.soultabcaregiver.sendbird_chat.utils.PhotoViewerActivity;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.sendbird_chat.utils.UrlPreviewInfo;
 import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
+import com.soultabcaregiver.sendbird_group_call.GroupCallActivity;
+import com.soultabcaregiver.sendbird_group_call.GroupCallMessage;
+import com.soultabcaregiver.sendbird_group_call.GroupCallType;
 import com.soultabcaregiver.utils.Utility;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
@@ -83,6 +94,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
+import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
 
 public class ConversationFragment extends BaseFragment {
 	
@@ -112,11 +126,13 @@ public class ConversationFragment extends BaseFragment {
 	
 	private String mCalleeId;
 	
+	private ImageView videoCallBtn;
+	
 	private ConstraintLayout mRootLayout;
 	
 	private RecyclerView mRecyclerView;
 	
-	private GroupChatAdapter mChatAdapter;
+	private ChatWindowAdapter mChatAdapter;
 	
 	private LinearLayoutManager mLayoutManager;
 	
@@ -178,7 +194,7 @@ public class ConversationFragment extends BaseFragment {
 		mChannelUrl = getArguments().getString(EXTRA_GROUP_CHANNEL_URL);
 		
 		mCalleeId = getArguments().getString(EXTRA_CALLEE_ID);
-		mChatAdapter = new GroupChatAdapter(getContext());
+		mChatAdapter = new ChatWindowAdapter(getContext());
 		setUpChatListAdapter();
 		
 		// Load messages from cache.
@@ -384,7 +400,7 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	private void setUpChatListAdapter() {
-		mChatAdapter.setItemClickListener(new GroupChatAdapter.OnItemClickListener() {
+		mChatAdapter.setItemClickListener(new ChatWindowAdapter.OnItemClickListener() {
 			@Override
 			public void onUserMessageItemClick(UserMessage message) {
 				// Restore failed message and remove the failed message from list.
@@ -398,7 +414,7 @@ public class ConversationFragment extends BaseFragment {
 					return;
 				}
 				
-				if (message.getCustomType().equals(GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE)) {
+				if (message.getCustomType().equals(ChatWindowAdapter.URL_PREVIEW_CUSTOM_TYPE)) {
 					try {
 						UrlPreviewInfo info = new UrlPreviewInfo(message.getData());
 						Intent browserIntent =
@@ -432,7 +448,7 @@ public class ConversationFragment extends BaseFragment {
 			}
 		});
 		
-		mChatAdapter.setItemLongClickListener(new GroupChatAdapter.OnItemLongClickListener() {
+		mChatAdapter.setItemLongClickListener(new ChatWindowAdapter.OnItemLongClickListener() {
 			@Override
 			public void onUserMessageItemLongClick(UserMessage message, int position) {
 				//				if (message.getSender().getUserId().equals(PreferenceUtils
@@ -466,12 +482,20 @@ public class ConversationFragment extends BaseFragment {
 		});
 	}
 	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
-		setupControls(view);
-		return view;
+	private void onFileMessageClicked(FileMessage message) {
+		String type = message.getType().toLowerCase();
+		if (type.startsWith("image")) {
+			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+			i.putExtra("url", message.getUrl());
+			i.putExtra("type", message.getType());
+			startActivity(i);
+		} else if (type.startsWith("video")) {
+			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+			intent.putExtra("url", message.getUrl());
+			startActivity(intent);
+		} else {
+			showDownloadConfirmDialog(message);
+		}
 	}
 	
 	private void showMediaPlayerDialog(FileMessage message) {
@@ -663,12 +687,12 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	public static ConversationFragment newInstance(String channelUrl) {
-		Bundle args = new Bundle();
-		ConversationFragment fragment = new ConversationFragment();
-		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		fragment.setArguments(args);
-		return fragment;
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+		setupControls(view);
+		return view;
 	}
 	
 	//	@Override
@@ -680,12 +704,16 @@ public class ConversationFragment extends BaseFragment {
 	
 	private void setupControls(View view) {
 		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
+		videoCallBtn = view.findViewById(R.id.videoCall);
 		mRecyclerView = view.findViewById(R.id.recycler_group_chat);
+		
 		mMessageEditText = view.findViewById(R.id.edittext_group_chat_message);
 		mMessageSendButton = view.findViewById(R.id.button_group_chat_send);
 		//		mUploadFileButton = findViewById(R.id.button_group_chat_upload);
 		titleTextView = view.findViewById(R.id.chatTitle);
 		backButton = view.findViewById(R.id.back_btn);
+		
+		videoCallBtn.setOnClickListener(v -> startVideoCall());
 		
 		ImageView smileyBtn = view.findViewById(R.id.smileyBtn);
 		ImageView attachmentBtn = view.findViewById(R.id.attachmentBtn);
@@ -767,6 +795,47 @@ public class ConversationFragment extends BaseFragment {
 		
 	}
 	
+	private void startVideoCall() {
+		if (mChannel.getMemberCount() > 2) {
+			createAndEnterRoom(room -> {
+				if (room != null) {
+					
+					ArrayList<String> membersIds = new ArrayList<>();
+					
+					for (Member member : mChannel.getMembers()) {
+						if (!member.getUserId().equals(PrefUtils.getUserId(requireContext()))) {
+							membersIds.add(member.getUserId());
+						}
+					}
+					
+					Intent intent = new Intent(requireActivity(), GroupCallActivity.class);
+					intent.putExtra(EXTRA_ROOM_ID, room.getRoomId());
+					intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
+					startActivity(intent);
+					
+					String userIds = android.text.TextUtils.join(",", membersIds);
+					
+					UserMessageParams params = new UserMessageParams();
+					params.setCustomType(GroupCallType.GROUP_VIDEO.name());
+					
+					GroupCallMessage callMessage =
+							new GroupCallMessage(userIds, mChannelUrl, room.getRoomId());
+					Log.e("callMessage", callMessage.toString());
+					
+					params.setMessage(callMessage.toString());
+					mChannel.sendUserMessage(params, (userMessage, e) -> {
+					});
+				} else {
+					Utility.ShowToast(requireContext(), "Can't connect for Video Call");
+				}
+			});
+		} else {
+			SendbirdCallService.dial(requireContext(), TextUtils.getGroupOtherMemberId(mChannel),
+					TextUtils.getGroupChannelTitle(mChannel), true, false, mChannelUrl);
+		}
+		
+	}
+	
 	private void handleRecording(RecordButton recordButton, RecordView recordView,
 	                             LinearLayout mediaButtons) {
 		recordButton.setRecordView(recordView);
@@ -790,14 +859,6 @@ public class ConversationFragment extends BaseFragment {
 			return false;
 			
 		});
-		
-		//		recordButton.setListenForRecord(false);
-		//
-		//		//ListenForRecord must be false ,otherwise onClick will not be called
-		//		recordButton.setOnRecordClickListener(v -> {
-		//			Toast.makeText(getContext(), "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT)
-		//			.show();
-		//		});
 		
 		recordView.setRecordButtonGrowingAnimationEnabled(false);
 		recordView.setLessThanSecondAllowed(true);
@@ -871,75 +932,6 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	private void onFileMessageClicked(FileMessage message) {
-		String type = message.getType().toLowerCase();
-		if (type.startsWith("image")) {
-			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
-			i.putExtra("url", message.getUrl());
-			i.putExtra("type", message.getType());
-			startActivity(i);
-		} else if (type.startsWith("video")) {
-			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
-			intent.putExtra("url", message.getUrl());
-			startActivity(intent);
-		} else {
-			showDownloadConfirmDialog(message);
-		}
-	}
-	
-	private void sendUserMessage(String text) {
-		if (mChannel == null) {
-			return;
-		}
-		
-		List<String> urls = WebUtils.extractUrls(text);
-		if (urls.size() > 0) {
-			sendUserMessageWithUrl(text, urls.get(0));
-			return;
-		}
-		
-		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
-			if (e != null) {
-				// Error!
-				Toast.makeText(getContext(),
-						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-						Toast.LENGTH_SHORT).show();
-				mChatAdapter.markMessageFailed(userMessage);
-				return;
-			}
-			
-			// Update a sent message to RecyclerView
-			mChatAdapter.markMessageSent(userMessage);
-		});
-		
-		// Display a user message to RecyclerView
-		mChatAdapter.addFirst(tempUserMessage);
-	}
-	
-	private String createRecordingFileName() throws IOException {
-		// Create an image file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		String audioFileName = "AUD_" + timeStamp + "_";
-		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-		File file = File.createTempFile(audioFileName, ".mp3", storageDir);
-		return file.getAbsolutePath();
-	}
-	
-	private void startRecording(String fileName) {
-		mediaRecorder = new MediaRecorder();
-		mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-		mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-		mediaRecorder.setOutputFile(fileName);
-		
-		try {
-			mediaRecorder.prepare();
-			mediaRecorder.start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	private void showBottomSheetDialog() {
 		final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
 		bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog);
@@ -976,6 +968,83 @@ public class ConversationFragment extends BaseFragment {
 		bottomSheetDialog.show();
 	}
 	
+	private void sendUserMessage(String text) {
+		if (mChannel == null) {
+			return;
+		}
+		
+		List<String> urls = WebUtils.extractUrls(text);
+		if (urls.size() > 0) {
+			sendUserMessageWithUrl(text, urls.get(0));
+			return;
+		}
+		
+		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
+			if (e != null) {
+				// Error!
+				Toast.makeText(getContext(),
+						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+						Toast.LENGTH_SHORT).show();
+				mChatAdapter.markMessageFailed(userMessage);
+				return;
+			}
+			
+			// Update a sent message to RecyclerView
+			mChatAdapter.markMessageSent(userMessage);
+		});
+		
+		// Display a user message to RecyclerView
+		mChatAdapter.addFirst(tempUserMessage);
+	}
+	
+	private void createAndEnterRoom(RoomCreateAndEnterSuccess listener) {
+		RoomParams params = new RoomParams(RoomType.SMALL_ROOM_FOR_VIDEO);
+		SendBirdCall.createRoom(params, (room, e) -> {
+			if (e != null) {
+				listener.onRoomEntered(null);
+			} else {
+				EnterParams enterParams = new EnterParams();
+				enterParams.setAudioEnabled(true);
+				enterParams.setVideoEnabled(true);
+				if (room != null) {
+					room.enter(enterParams, e1 -> {
+						if (e1 != null) {
+							listener.onRoomEntered(null);
+						}
+						listener.onRoomEntered(room);
+					});
+				} else {
+					listener.onRoomEntered(null);
+				}
+				
+			}
+		});
+	}
+	
+	private String createRecordingFileName() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String audioFileName = "AUD_" + timeStamp + "_";
+		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+		File file = File.createTempFile(audioFileName, ".mp3", storageDir);
+		return file.getAbsolutePath();
+	}
+	
+	private void startRecording(String fileName) {
+		mediaRecorder = new MediaRecorder();
+		mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+		mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+		mediaRecorder.setOutputFile(fileName);
+		
+		try {
+			mediaRecorder.prepare();
+			mediaRecorder.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void stopRecording() {
 		if (mediaRecorder != null) {
 			try {
@@ -988,6 +1057,42 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
+	public static ConversationFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		ConversationFragment fragment = new ConversationFragment();
+		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
+	//	/**
+	//	 * Display which users are typing.
+	//	 * If more than two users are currently typing, this will state that "multiple users" are
+	//	 typing.
+	//	 *
+	//	 * @param typingUsers The list of currently typing users.
+	//	 */
+	//	private void displayTyping(List<Member> typingUsers) {
+	//
+	//		if (typingUsers.size() > 0) {
+	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
+	//			String string;
+	//
+	//			if (typingUsers.size() == 1) {
+	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
+	//				.getNickname());
+	//			} else if (typingUsers.size() == 2) {
+	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
+	//				(0).getNickname(), typingUsers.get(1).getNickname());
+	//			} else {
+	//				string = getString(R.string.users_typing);
+	//			}
+	//			mCurrentEventText.setText(string);
+	//		} else {
+	//			mCurrentEventLayout.setVisibility(View.GONE);
+	//		}
+	//	}
+	
 	private File createImageFile() throws IOException {
 		// Create an image file name
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -998,6 +1103,15 @@ public class ConversationFragment extends BaseFragment {
 		// Save a file: path for use with ACTION_VIEW intents
 		//		requestedCapturePhotoPath = image.getAbsolutePath();
 		return image;
+	}
+	
+	private void sendAudioRecording() {
+		if (!audioFileName.isEmpty()) {
+			Uri audioUri = FileProvider.getUriForFile(getContext(),
+					BuildConfig.APPLICATION_ID + ".fileprovider", new File(audioFileName));
+			audioFileName = "";
+			sendFileWithThumbnail(audioUri);
+		}
 	}
 	
 	@SuppressLint ("StaticFieldLeak")
@@ -1039,7 +1153,7 @@ public class ConversationFragment extends BaseFragment {
 					// Sending a message with URL preview information and custom type.
 					String jsonString = info.toJsonString();
 					tempUserMessage = mChannel.sendUserMessage(text, jsonString,
-							GroupChatAdapter.URL_PREVIEW_CUSTOM_TYPE, handler);
+							ChatWindowAdapter.URL_PREVIEW_CUSTOM_TYPE, handler);
 				} catch (Exception e) {
 					// Sending a message without URL preview information.
 					tempUserMessage = mChannel.sendUserMessage(text, handler);
@@ -1051,41 +1165,10 @@ public class ConversationFragment extends BaseFragment {
 		}.execute(url);
 	}
 	
-	//	/**
-	//	 * Display which users are typing.
-	//	 * If more than two users are currently typing, this will state that "multiple users" are
-	//	 typing.
-	//	 *
-	//	 * @param typingUsers The list of currently typing users.
-	//	 */
-	//	private void displayTyping(List<Member> typingUsers) {
-	//
-	//		if (typingUsers.size() > 0) {
-	//			mCurrentEventLayout.setVisibility(View.VISIBLE);
-	//			String string;
-	//
-	//			if (typingUsers.size() == 1) {
-	//				string = String.format(getString(R.string.user_typing), typingUsers.get(0)
-	//				.getNickname());
-	//			} else if (typingUsers.size() == 2) {
-	//				string = String.format(getString(R.string.two_users_typing), typingUsers.get
-	//				(0).getNickname(), typingUsers.get(1).getNickname());
-	//			} else {
-	//				string = getString(R.string.users_typing);
-	//			}
-	//			mCurrentEventText.setText(string);
-	//		} else {
-	//			mCurrentEventLayout.setVisibility(View.GONE);
-	//		}
-	//	}
-	
-	private void sendAudioRecording() {
-		if (!audioFileName.isEmpty()) {
-			Uri audioUri = FileProvider.getUriForFile(getContext(),
-					BuildConfig.APPLICATION_ID + ".fileprovider", new File(audioFileName));
-			audioFileName = "";
-			sendFileWithThumbnail(audioUri);
-		}
+	private interface RoomCreateAndEnterSuccess {
+		
+		void onRoomEntered(Room room);
 	}
+	
 	
 }

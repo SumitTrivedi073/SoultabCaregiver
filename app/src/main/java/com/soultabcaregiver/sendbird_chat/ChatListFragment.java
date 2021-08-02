@@ -114,10 +114,6 @@ public class ChatListFragment extends BaseFragment {
 				e.printStackTrace();
 				return;
 			}
-			//			ArrayList<GroupChannel> channels = new ArrayList<>();
-			//			channels.addAll(list);
-			//			channels.addAll(list);
-			//			channels.addAll(list);
 			mChannelListAdapter.setChannels(list);
 		});
 	}

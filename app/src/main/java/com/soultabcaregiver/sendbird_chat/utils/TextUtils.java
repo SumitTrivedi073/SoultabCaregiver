@@ -11,6 +11,21 @@ import java.util.List;
 
 public class TextUtils {
 	
+	public static String getGroupOtherMemberId(GroupChannel channel) {
+		String otherUserId = "";
+		if (channel.getMembers().size() == 2) {
+			for (Member member : channel.getMembers()) {
+				if (!member.getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+					otherUserId = member.getUserId();
+					break;
+				}
+			}
+			return otherUserId;
+		} else {
+			return "";
+		}
+	}
+	
 	public static String getGroupChannelTitle(GroupChannel channel) {
 		List<Member> members = channel.getMembers();
 		

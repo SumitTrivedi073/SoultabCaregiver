@@ -26,6 +26,7 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -839,6 +840,11 @@ public class Utility {
 	
 	public static void showSnackBar(View view, String message) {
 		Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+	}
+	
+	public static int dpToPixel(Context context, int dp) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+				context.getResources().getDisplayMetrics());
 	}
 	
 	public void removeFragments(FragmentActivity activty) {

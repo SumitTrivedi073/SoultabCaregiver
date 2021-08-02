@@ -38,7 +38,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	
 	private static final int VIEW_TYPE_USER_MESSAGE_ME = 10;
 	
@@ -78,7 +78,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	
 	private boolean mIsMessageListLoading;
 	
-	GroupChatAdapter(Context context) {
+	ChatWindowAdapter(Context context) {
 		mContext = context;
 		mMessageList = new ArrayList<>();
 	}
@@ -379,7 +379,7 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 				BaseMessage message = null;
 				for (int i = 0; i < Math.min(mMessageList.size(), 100); i++) {
 					message = mMessageList.get(i);
-					if (!isTempMessage(message)) {
+					if (!isTempMessage(message) && message.getCustomType().isEmpty()) {
 						sb.append("\n");
 						sb.append(Base64.encodeToString(message.serialize(),
 								Base64.DEFAULT | Base64.NO_WRAP));
@@ -539,7 +539,9 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 						}
 						
 						for (BaseMessage message : list) {
-							mMessageList.add(message);
+							if (message.getCustomType().isEmpty()) {
+								mMessageList.add(message);
+							}
 						}
 						
 						notifyDataSetChanged();
@@ -595,7 +597,9 @@ class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 						mMessageList.clear();
 						
 						for (BaseMessage message : list) {
-							mMessageList.add(message);
+							if (message.getCustomType().isEmpty()) {
+								mMessageList.add(message);
+							}
 						}
 						
 						notifyDataSetChanged();

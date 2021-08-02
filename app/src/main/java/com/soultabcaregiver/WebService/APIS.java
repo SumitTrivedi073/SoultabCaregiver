@@ -150,5 +150,5 @@ public class APIS {
 	
 	public static final String Send_alarmData = "Send_alarmData";
 	
-	
+	public static String notifyGroupCallApi = "Users/notifyGroupUser";
 }
