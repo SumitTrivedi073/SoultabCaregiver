@@ -69,6 +69,7 @@ import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
 import com.soultabcaregiver.sendbird_group_call.GroupCallActivity;
 import com.soultabcaregiver.sendbird_group_call.GroupCallMessage;
 import com.soultabcaregiver.sendbird_group_call.GroupCallType;
+import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.Utility;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
@@ -97,6 +98,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
+import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
 
 public class ConversationFragment extends BaseFragment {
 	
@@ -115,6 +117,12 @@ public class ConversationFragment extends BaseFragment {
 	private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_CHAT";
 	
 	private static final int CHANNEL_LIST_LIMIT = 30;
+	
+	public static final String REQUEST_KEY_FOR_GROUP_CALL_MEMBERS =
+			"request_key_for_group_call_members";
+	
+	public static final String EXTRA_LIST_FOR_GROUP_CALL_MEMBERS =
+			"extra_list_for_group_call_members";
 	
 	public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
 	
@@ -186,6 +194,22 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requireActivity().getSupportFragmentManager().setFragmentResultListener(
+				REQUEST_KEY_FOR_GROUP_CALL_MEMBERS, this, (requestKey, result) -> {
+					if (requestKey.equals(REQUEST_KEY_FOR_GROUP_CALL_MEMBERS)) {
+						List<String> members =
+								result.getStringArrayList(EXTRA_LIST_FOR_GROUP_CALL_MEMBERS);
+						if (members != null && members.size() > 0) {
+							String userIds = android.text.TextUtils.join(",", members);
+							createAndEnterGroupCall(userIds);
+						}
+					}
+				});
+	}
+	
+	@Override
 	public void onViewCreated(@NonNull @NotNull View view,
 	                          @Nullable @org.jetbrains.annotations.Nullable
 			                          Bundle savedInstanceState) {
@@ -194,7 +218,7 @@ public class ConversationFragment extends BaseFragment {
 		mChannelUrl = getArguments().getString(EXTRA_GROUP_CHANNEL_URL);
 		
 		mCalleeId = getArguments().getString(EXTRA_CALLEE_ID);
-		mChatAdapter = new ChatWindowAdapter(getContext());
+		mChatAdapter = new ChatWindowAdapter(requireContext());
 		setUpChatListAdapter();
 		
 		// Load messages from cache.
@@ -206,13 +230,13 @@ public class ConversationFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		getActivity().getWindow().setSoftInputMode(
+		requireActivity().getWindow().setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		ConnectionManager.addConnectionManagementHandler(
-				Utility.getSharedPreferences(getContext(), APIS.caregiver_id),
+				Utility.getSharedPreferences(requireContext(), APIS.caregiver_id),
 				CONNECTION_HANDLER_ID, reconnect -> refresh());
 		
-		mChatAdapter.setContext(getContext());
+		mChatAdapter.setContext(requireContext());
 		
 		// Gets channel from URL user requested
 		
@@ -273,7 +297,7 @@ public class ConversationFragment extends BaseFragment {
 	@Override
 	public void onPause() {
 		setTypingStatus(false);
-		Utility.hideKeyboard(getContext());
+		Utility.hideKeyboard(requireContext());
 		emojiPopup.dismiss();
 		if (mediaRecorder != null) {
 			mediaRecorder.release();
@@ -286,6 +310,57 @@ public class ConversationFragment extends BaseFragment {
 		}
 		
 		super.onPause();
+	}
+	
+	@Override
+	public void onDestroy() {
+		// Save messages to cache.
+		mChatAdapter.save();
+		ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+		SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
+		super.onDestroy();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int itemId = item.getItemId();
+		if (itemId == R.id.video_call) {
+			//			SendbirdCallService.dial(requireContext(), mCalleeId, null, true, true,
+			//			mChannelUrl);
+			//			//			RoomParams params = new RoomParams(RoomType
+			//			.SMALL_ROOM_FOR_VIDEO);
+			//			//			SendBirdCall.createRoom(params, (room, e) -> {
+			//			//				if (room == null || e != null) {
+			//			//					return;
+			//			//				}
+			//			//				room.enter(new EnterParams().setAudioEnabled(true)
+			//			.setVideoEnabled
+			//			//				(true), e1 -> {
+			//			//
+			//			//				});
+			//			//			});
+			return true;
+		} else if (itemId == android.R.id.home) {
+			requireActivity().onBackPressed();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	                         Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
+		setupControls(view);
+		return view;
+	}
+	
+	public static ConversationFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		ConversationFragment fragment = new ConversationFragment();
+		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		fragment.setArguments(args);
+		return fragment;
 	}
 	
 	/**
@@ -307,41 +382,6 @@ public class ConversationFragment extends BaseFragment {
 		}
 	}
 	
-	@Override
-	public void onDestroy() {
-		// Save messages to cache.
-		mChatAdapter.save();
-		ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
-		SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-		super.onDestroy();
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int itemId = item.getItemId();
-		if (itemId == R.id.video_call) {
-			//			SendbirdCallService.dial(getContext(), mCalleeId, null, true, true,
-			//			mChannelUrl);
-			//			//			RoomParams params = new RoomParams(RoomType
-			//			.SMALL_ROOM_FOR_VIDEO);
-			//			//			SendBirdCall.createRoom(params, (room, e) -> {
-			//			//				if (room == null || e != null) {
-			//			//					return;
-			//			//				}
-			//			//				room.enter(new EnterParams().setAudioEnabled(true)
-			//			.setVideoEnabled
-			//			//				(true), e1 -> {
-			//			//
-			//			//				});
-			//			//			});
-			return true;
-		} else if (itemId == android.R.id.home) {
-			getActivity().onBackPressed();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-	
 	private void refresh() {
 		if (mChannel == null) {
 			GroupChannel.getChannel(mChannelUrl, new GroupChannel.GroupChannelGetHandler() {
@@ -356,34 +396,21 @@ public class ConversationFragment extends BaseFragment {
 					mChannel = groupChannel;
 					mChatAdapter.setChannel(mChannel);
 					mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT,
-							new BaseChannel.GetMessagesHandler() {
-								@Override
-								public void onResult(List<BaseMessage> list, SendBirdException e) {
-									mChatAdapter.markAllMessagesAsRead();
-								}
-							});
+							(list, e12) -> mChatAdapter.markAllMessagesAsRead());
 					updateActionBarTitle();
 				}
 			});
 		} else {
-			mChannel.refresh(new GroupChannel.GroupChannelRefreshHandler() {
-				@Override
-				public void onResult(SendBirdException e) {
-					if (e != null) {
-						// Error!
-						e.printStackTrace();
-						return;
-					}
-					
-					mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT,
-							new BaseChannel.GetMessagesHandler() {
-								@Override
-								public void onResult(List<BaseMessage> list, SendBirdException e) {
-									mChatAdapter.markAllMessagesAsRead();
-								}
-							});
-					updateActionBarTitle();
+			mChannel.refresh(e -> {
+				if (e != null) {
+					// Error!
+					e.printStackTrace();
+					return;
 				}
+				
+				mChatAdapter.loadLatestMessages(CHANNEL_LIST_LIMIT,
+						(list, e1) -> mChatAdapter.markAllMessagesAsRead());
+				updateActionBarTitle();
 			});
 		}
 	}
@@ -468,7 +495,7 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	private void setUpRecyclerView() {
-		mLayoutManager = new LinearLayoutManager(getContext());
+		mLayoutManager = new LinearLayoutManager(requireContext());
 		mLayoutManager.setReverseLayout(true);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		mRecyclerView.setAdapter(mChatAdapter);
@@ -485,12 +512,12 @@ public class ConversationFragment extends BaseFragment {
 	private void onFileMessageClicked(FileMessage message) {
 		String type = message.getType().toLowerCase();
 		if (type.startsWith("image")) {
-			Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+			Intent i = new Intent(requireActivity(), PhotoViewerActivity.class);
 			i.putExtra("url", message.getUrl());
 			i.putExtra("type", message.getType());
 			startActivity(i);
 		} else if (type.startsWith("video")) {
-			Intent intent = new Intent(getActivity(), MediaPlayerActivity.class);
+			Intent intent = new Intent(requireActivity(), MediaPlayerActivity.class);
 			intent.putExtra("url", message.getUrl());
 			startActivity(intent);
 		} else {
@@ -500,10 +527,12 @@ public class ConversationFragment extends BaseFragment {
 	
 	private void showMediaPlayerDialog(FileMessage message) {
 		
-		Drawable playButton = ContextCompat.getDrawable(getContext(), R.drawable.ic_play_black);
-		Drawable pauseButton = ContextCompat.getDrawable(getContext(), R.drawable.ic_pause_black);
+		Drawable playButton = ContextCompat.getDrawable(requireContext(),
+				R.drawable.ic_play_black);
+		Drawable pauseButton =
+				ContextCompat.getDrawable(requireContext(), R.drawable.ic_pause_black);
 		
-		final Dialog dialog = new Dialog(getContext());
+		final Dialog dialog = new Dialog(requireContext());
 		dialog.setContentView(R.layout.dialog_audio_play);
 		
 		ImageView buttonPlayPause = dialog.findViewById(R.id.playButton);
@@ -538,7 +567,7 @@ public class ConversationFragment extends BaseFragment {
 					mediaPlayer.start();
 					progressBar.setMax(mediaPlayer.getDuration() / 1000);
 					final Handler mHandler = new Handler();
-					getActivity().runOnUiThread(new Runnable() {
+					requireActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							if (mediaPlayer != null) {
@@ -572,7 +601,7 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	private void showDownloadConfirmDialog(final FileMessage message) {
-		if (ContextCompat.checkSelfPermission(getContext(),
+		if (ContextCompat.checkSelfPermission(requireContext(),
 				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 			// If storage permissions are not granted, request permissions at run-time,
 			// as per < API 23 guidelines.
@@ -580,40 +609,41 @@ public class ConversationFragment extends BaseFragment {
 				requestStoragePermissions();
 			}
 		} else {
-			new AlertDialog.Builder(getContext()).setMessage("Download file?").setPositiveButton(
-					R.string.download, (dialog, which) -> {
-						if (which == DialogInterface.BUTTON_POSITIVE) {
-							FileUtils.downloadFile(getContext(), message.getUrl(),
-									message.getName());
-						}
-					}).setNegativeButton(R.string.cancel_text, null).show();
+			new AlertDialog.Builder(requireContext()).setMessage(
+					"Download file?").setPositiveButton(R.string.download, (dialog, which) -> {
+				if (which == DialogInterface.BUTTON_POSITIVE) {
+					FileUtils.downloadFile(requireContext(), message.getUrl(), message.getName());
+				}
+			}).setNegativeButton(R.string.cancel_text, null).show();
 		}
 		
 	}
 	
 	@RequiresApi (api = Build.VERSION_CODES.M)
 	private void requestStoragePermissions() {
-		if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+		if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
 				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			// Provide an additional rationale to the user if the permission was not granted
 			// and the user would benefit from additional context for the use of the permission.
 			// For example if the user has previously denied the permission.
 			Snackbar.make(mRootLayout,
 					"Storage access permissions are required to upload/download files.",
-					Snackbar.LENGTH_LONG).setAction("Okay", new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View view) {
-					requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-							PERMISSION_WRITE_EXTERNAL_STORAGE);
-				}
-			}).show();
+					Snackbar.LENGTH_LONG).setAction("Okay", view -> requestPermissions(
+					new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+					PERMISSION_WRITE_EXTERNAL_STORAGE)).show();
 		} else {
 			// Permission has not been granted yet. Request it directly.
 			requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
 					PERMISSION_WRITE_EXTERNAL_STORAGE);
 		}
 	}
+	
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		MenuInflater inflater = getMenuInflater();
+	//		inflater.inflate(R.menu.conversation_menu, menu);
+	//		return true;
+	//	}
 	
 	/**
 	 * Sends a File Message containing an image file. Also requests thumbnails to be generated in
@@ -631,10 +661,10 @@ public class ConversationFragment extends BaseFragment {
 		thumbnailSizes.add(new FileMessage.ThumbnailSize(240, 240));
 		thumbnailSizes.add(new FileMessage.ThumbnailSize(320, 320));
 		
-		Hashtable<String, Object> info = FileUtils.getFileInfo(getContext(), uri);
+		Hashtable<String, Object> info = FileUtils.getFileInfo(requireContext(), uri);
 		
 		if (info == null || info.isEmpty()) {
-			Toast.makeText(getContext(), "Extracting file information failed.",
+			Toast.makeText(requireContext(), "Extracting file information failed.",
 					Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -651,8 +681,7 @@ public class ConversationFragment extends BaseFragment {
 		final int size = (Integer) info.get("size");
 		
 		if (path.equals("")) {
-			Toast.makeText(getContext(), "File must be located in local storage.",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(requireContext(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
 		} else {
 			BaseChannel.SendFileMessageWithProgressHandler fileMessageHandler =
 					new BaseChannel.SendFileMessageWithProgressHandler() {
@@ -666,7 +695,7 @@ public class ConversationFragment extends BaseFragment {
 						@Override
 						public void onSent(FileMessage fileMessage, SendBirdException e) {
 							if (e != null) {
-								Toast.makeText(ConversationFragment.this.getContext(),
+								Toast.makeText(ConversationFragment.this.requireContext(),
 										"" + e.getCode() + ":" + e.getMessage(),
 										Toast.LENGTH_SHORT).show();
 								mChatAdapter.markMessageFailed(fileMessage);
@@ -686,21 +715,6 @@ public class ConversationFragment extends BaseFragment {
 			mChatAdapter.addFirst(tempFileMessage);
 		}
 	}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_conversation, container, false);
-		setupControls(view);
-		return view;
-	}
-	
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		MenuInflater inflater = getMenuInflater();
-	//		inflater.inflate(R.menu.conversation_menu, menu);
-	//		return true;
-	//	}
 	
 	private void setupControls(View view) {
 		mRootLayout = view.findViewById(R.id.layout_group_chat_root);
@@ -735,9 +749,7 @@ public class ConversationFragment extends BaseFragment {
 			
 		}).build(mMessageEditText);
 		
-		smileyBtn.setOnClickListener(v -> {
-			emojiPopup.toggle();
-		});
+		smileyBtn.setOnClickListener(v -> emojiPopup.toggle());
 		
 		galleryBtn.setOnClickListener(v -> {
 			String types = "image/* video/*";
@@ -751,13 +763,9 @@ public class ConversationFragment extends BaseFragment {
 			requestMedia(types, mimetypes);
 		});
 		
-		cameraBtn.setOnClickListener(v -> {
-			showBottomSheetDialog();
-		});
+		cameraBtn.setOnClickListener(v -> showBottomSheetDialog());
 		
-		backButton.setOnClickListener(v -> {
-			getActivity().onBackPressed();
-		});
+		backButton.setOnClickListener(v -> requireActivity().onBackPressed());
 		
 		mMessageEditText.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -797,43 +805,51 @@ public class ConversationFragment extends BaseFragment {
 	
 	private void startVideoCall() {
 		if (mChannel.getMemberCount() > 2) {
-			createAndEnterRoom(room -> {
-				if (room != null) {
-					
-					ArrayList<String> membersIds = new ArrayList<>();
-					
-					for (Member member : mChannel.getMembers()) {
-						if (!member.getUserId().equals(PrefUtils.getUserId(requireContext()))) {
-							membersIds.add(member.getUserId());
-						}
-					}
-					
-					Intent intent = new Intent(requireActivity(), GroupCallActivity.class);
-					intent.putExtra(EXTRA_ROOM_ID, room.getRoomId());
-					intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
-					startActivity(intent);
-					
-					String userIds = android.text.TextUtils.join(",", membersIds);
-					
-					UserMessageParams params = new UserMessageParams();
-					params.setCustomType(GroupCallType.GROUP_VIDEO.name());
-					
-					GroupCallMessage callMessage =
-							new GroupCallMessage(userIds, mChannelUrl, room.getRoomId());
-					Log.e("callMessage", callMessage.toString());
-					
-					params.setMessage(callMessage.toString());
-					mChannel.sendUserMessage(params, (userMessage, e) -> {
-					});
-				} else {
-					Utility.ShowToast(requireContext(), "Can't connect for Video Call");
+			if (mChannel.getMemberCount() > 6) {
+				if (getParentFragment() != null && getParentFragment() instanceof TalkHolderFragment) {
+					((TalkHolderFragment) getParentFragment()).navigateToSelectGroupMembersFragment(
+							mChannelUrl);
 				}
-			});
+			} else {
+				ArrayList<String> membersIds = new ArrayList<>();
+				for (Member member : mChannel.getMembers()) {
+					if (!member.getUserId().equals(PrefUtils.getUserId(requireContext()))) {
+						membersIds.add(member.getUserId());
+					}
+				}
+				String userIds = android.text.TextUtils.join(",", membersIds);
+				createAndEnterGroupCall(userIds);
+			}
 		} else {
 			SendbirdCallService.dial(requireContext(), TextUtils.getGroupOtherMemberId(mChannel),
 					TextUtils.getGroupChannelTitle(mChannel), true, false, mChannelUrl);
 		}
 		
+	}
+	
+	private void createAndEnterGroupCall(String userIds) {
+		createAndEnterRoom(room -> {
+			if (room != null) {
+				Intent intent = new Intent(requireActivity(), GroupCallActivity.class);
+				intent.putExtra(EXTRA_ROOM_ID, room.getRoomId());
+				intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
+				intent.putExtra(EXTRA_USERS_IDS, userIds);
+				startActivity(intent);
+				
+				UserMessageParams params = new UserMessageParams();
+				params.setCustomType(GroupCallType.START_GROUP_VIDEO.name());
+				
+				GroupCallMessage callMessage =
+						new GroupCallMessage(userIds, mChannelUrl, room.getRoomId());
+				Log.e("callMessage", callMessage.toString());
+				
+				params.setMessage(callMessage.toString());
+				mChannel.sendUserMessage(params, (userMessage, e) -> {
+				});
+			} else {
+				Utility.ShowToast(requireContext(), "Can't connect for Video Call");
+			}
+		});
 	}
 	
 	private void handleRecording(RecordButton recordButton, RecordView recordView,
@@ -845,14 +861,15 @@ public class ConversationFragment extends BaseFragment {
 				return true;
 			}
 			
-			boolean recordPermissionAvailable = ContextCompat.checkSelfPermission(getActivity(),
+			boolean recordPermissionAvailable =
+					ContextCompat.checkSelfPermission(requireActivity(),
 					Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 			if (recordPermissionAvailable) {
 				return true;
 			}
 			
 			ActivityCompat.
-					requestPermissions(getActivity(),
+					requestPermissions(requireActivity(),
 							new String[]{Manifest.permission.RECORD_AUDIO},
 							RECORD_PERMISSION_GRANTED);
 			
@@ -906,7 +923,7 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	private void requestMedia(String types, String[] mimetypes) {
-		if (ContextCompat.checkSelfPermission(getContext(),
+		if (ContextCompat.checkSelfPermission(requireContext(),
 				Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 			// If storage permissions are not granted, request permissions at run-time,
 			// as per < API 23 guidelines.
@@ -933,7 +950,7 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	private void showBottomSheetDialog() {
-		final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+		final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
 		bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog);
 		
 		bottomSheetDialog.findViewById(R.id.videoLayout).setOnClickListener(v -> {
@@ -954,7 +971,7 @@ public class ConversationFragment extends BaseFragment {
 				}
 				// Continue only if the File was successfully created
 				if (photoFile != null) {
-					Uri photoURI = FileProvider.getUriForFile(getContext(),
+					Uri photoURI = FileProvider.getUriForFile(requireContext(),
 							BuildConfig.APPLICATION_ID + ".fileprovider", photoFile);
 					requestedPhotoUri = photoURI;
 					takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -982,7 +999,7 @@ public class ConversationFragment extends BaseFragment {
 		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
 			if (e != null) {
 				// Error!
-				Toast.makeText(getContext(),
+				Toast.makeText(requireContext(),
 						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
 						Toast.LENGTH_SHORT).show();
 				mChatAdapter.markMessageFailed(userMessage);
@@ -1025,7 +1042,7 @@ public class ConversationFragment extends BaseFragment {
 		// Create an image file name
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String audioFileName = "AUD_" + timeStamp + "_";
-		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+		File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_MUSIC);
 		File file = File.createTempFile(audioFileName, ".mp3", storageDir);
 		return file.getAbsolutePath();
 	}
@@ -1055,14 +1072,6 @@ public class ConversationFragment extends BaseFragment {
 			mediaRecorder.release();
 			mediaRecorder = null;
 		}
-	}
-	
-	public static ConversationFragment newInstance(String channelUrl) {
-		Bundle args = new Bundle();
-		ConversationFragment fragment = new ConversationFragment();
-		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		fragment.setArguments(args);
-		return fragment;
 	}
 	
 	//	/**
@@ -1097,7 +1106,7 @@ public class ConversationFragment extends BaseFragment {
 		// Create an image file name
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String imageFileName = "JPEG_" + timeStamp + "_";
-		File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+		File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 		File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 		
 		// Save a file: path for use with ACTION_VIEW intents
@@ -1107,7 +1116,7 @@ public class ConversationFragment extends BaseFragment {
 	
 	private void sendAudioRecording() {
 		if (!audioFileName.isEmpty()) {
-			Uri audioUri = FileProvider.getUriForFile(getContext(),
+			Uri audioUri = FileProvider.getUriForFile(requireContext(),
 					BuildConfig.APPLICATION_ID + ".fileprovider", new File(audioFileName));
 			audioFileName = "";
 			sendFileWithThumbnail(audioUri);
@@ -1128,26 +1137,22 @@ public class ConversationFragment extends BaseFragment {
 					return;
 				}
 				
-				UserMessage tempUserMessage = null;
-				BaseChannel.SendUserMessageHandler handler =
-						new BaseChannel.SendUserMessageHandler() {
-							@Override
-							public void onSent(UserMessage userMessage, SendBirdException e) {
-								if (e != null) {
-									// Error!
-									
-									Toast.makeText(getContext(),
-											"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-											Toast.LENGTH_SHORT).show();
-									
-									mChatAdapter.markMessageFailed(userMessage);
-									return;
-								}
-								
-								// Update a sent message to RecyclerView
-								mChatAdapter.markMessageSent(userMessage);
-							}
-						};
+				UserMessage tempUserMessage;
+				BaseChannel.SendUserMessageHandler handler = (userMessage, e) -> {
+					if (e != null) {
+						// Error!
+						
+						Toast.makeText(requireContext(),
+								"Send failed with error " + e.getCode() + ": " + e.getMessage(),
+								Toast.LENGTH_SHORT).show();
+						
+						mChatAdapter.markMessageFailed(userMessage);
+						return;
+					}
+					
+					// Update a sent message to RecyclerView
+					mChatAdapter.markMessageSent(userMessage);
+				};
 				
 				try {
 					// Sending a message with URL preview information and custom type.

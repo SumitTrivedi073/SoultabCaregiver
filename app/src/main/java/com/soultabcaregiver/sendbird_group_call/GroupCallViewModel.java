@@ -73,6 +73,7 @@ class GroupCallViewModel extends ViewModel {
 		if (room != null) {
 			try {
 				room.exit();
+				_callState.setValue(false);
 			} catch (SendBirdException e) {
 				e.printStackTrace();
 			}
@@ -165,7 +166,6 @@ class GroupCallViewModel extends ViewModel {
 				_participants.setValue(getSortedParticipant());
 				if (getSortedParticipant().size() == 1) {
 					endCall();
-					_callState.setValue(false);
 				}
 			}
 		}

@@ -141,6 +141,7 @@
         <activity android:name=".sendbird_group_call.GroupCallActivity" />
         <activity
             android:name=".sendbird_group_call.IncomingGroupCallActivity"
+            android:launchMode="singleTask"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
 
@@ -162,7 +163,7 @@
             android:value="@string/google_maps_key" />
 
 
-        <!--        <service android:name=".FireBaseMessaging.CustomFireBaseMessasing">-->
+        <!--        <service android:name=".FireBaseMessaging.CustomFireBaseMessaging">-->
         <!--            <intent-filter>-->
         <!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
         <!--            </intent-filter>-->

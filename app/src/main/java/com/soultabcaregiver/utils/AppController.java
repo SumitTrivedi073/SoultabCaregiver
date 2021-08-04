@@ -13,7 +13,7 @@ import com.sendbird.calls.DirectCall;
 import com.sendbird.calls.SendBirdCall;
 import com.sendbird.calls.handler.DirectCallListener;
 import com.sendbird.calls.handler.SendBirdCallListener;
-import com.soultabcaregiver.FireBaseMessaging.CustomFireBaseMessasing;
+import com.soultabcaregiver.FireBaseMessaging.CustomFireBaseMessaging;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
@@ -62,7 +62,7 @@ public class AppController extends MultiDexApplication {
 		EmojiManager.install(new GoogleEmojiProvider());
 		SendBird.init(SENDBIRD_APP_ID, getApplicationContext());
 		initSendBirdCall(SENDBIRD_APP_ID);
-		PushUtils.registerPushHandler(new CustomFireBaseMessasing());
+		PushUtils.registerPushHandler(new CustomFireBaseMessaging());
 	}
 
 

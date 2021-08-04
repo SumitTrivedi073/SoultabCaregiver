@@ -9,6 +9,7 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.sendbird_chat.CreateGroupFragment;
+import com.soultabcaregiver.sendbird_group_call.SelectGroupCallMemberFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,9 +53,16 @@ public class TalkHolderFragment extends BaseFragment {
 	}
 	
 	public void navigateToConversationFragment(String url) {
-		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+		FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
 		transaction.add(R.id.container, ConversationFragment.newInstance(url));
 		transaction.addToBackStack(ConversationFragment.class.getName());
+		transaction.commit();
+	}
+	
+	public void navigateToSelectGroupMembersFragment(String url) {
+		FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+		transaction.add(R.id.container, SelectGroupCallMemberFragment.newInstance(url));
+		transaction.addToBackStack(SelectGroupCallMemberFragment.class.getName());
 		transaction.commit();
 	}
 	

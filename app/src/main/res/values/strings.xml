@@ -298,6 +298,10 @@
     <string name="group_call_select_audio_device_dialog_title">Audio device</string>
     <string name="incoming_call">Incoming call</string>
     <string name="incoming_group_call">Incoming Group call</string>
+    <string name="select_members_to_call">Select Members to Call</string>
+    <string name="start_call">Start Call</string>
+    <string name="please_select_members_for_call">Please select members for Call</string>
+    <string name="maximum_five_members_allowed">For video call maximum five members are allowed</string>
     <!--  Added By AJay  -->
 
     <!--Added by Sumit-->

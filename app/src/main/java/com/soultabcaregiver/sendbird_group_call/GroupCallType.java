@@ -1,5 +1,5 @@
 package com.soultabcaregiver.sendbird_group_call;
 
 public enum GroupCallType {
-	GROUP_VOICE, GROUP_VIDEO
+	START_GROUP_VOICE, START_GROUP_VIDEO, END_GROUP_VIDEO, END_GROUP_VOICE
 }

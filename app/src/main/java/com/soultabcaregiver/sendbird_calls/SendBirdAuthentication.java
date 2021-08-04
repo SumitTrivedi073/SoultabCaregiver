@@ -9,7 +9,7 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.calls.AuthenticateParams;
 import com.sendbird.calls.SendBirdCall;
-import com.soultabcaregiver.FireBaseMessaging.CustomFireBaseMessasing;
+import com.soultabcaregiver.FireBaseMessaging.CustomFireBaseMessaging;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.PushUtils;
@@ -66,7 +66,7 @@ public class SendBirdAuthentication {
 	
 	public static void registerPushToken(String fcmToken,
 	                                     SendBirdAuthentication.CompletionHandler handler) {
-		PushUtils.registerPushHandler(new CustomFireBaseMessasing());
+		PushUtils.registerPushHandler(new CustomFireBaseMessaging());
 		SendBirdCall.registerPushToken(fcmToken, false, handler :: onCompleted);
 		//		SendBird.registerPushTokenForCurrentUser(pushToken, (pushTokenRegistrationStatus,
 		//		e) -> {
@@ -140,7 +140,7 @@ public class SendBirdAuthentication {
 	}
 	
 	public static void logout(LogoutHandler handler) {
-		CustomFireBaseMessasing.getPushToken((pushToken, e) -> {
+		CustomFireBaseMessaging.getPushToken((pushToken, e) -> {
 			unregisterPushToken(pushToken, e1 -> {
 				deAuthenticate(isSuccess -> {
 					SendBird.disconnect(() -> handler.onResult(true));

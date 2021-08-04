@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
+import com.sendbird.android.GroupChannel;
+import com.sendbird.android.UserMessageParams;
 import com.sendbird.calls.AudioDevice;
 import com.sendbird.calls.Room;
 import com.sendbird.calls.SendBirdCall;
@@ -20,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
@@ -32,7 +36,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class GroupCallFragment extends Fragment {
 	
 	public static final String EXTRA_ROOM_ID = "extra_room_id";
+	
 	public static final String EXTRA_CHANNEL_URL = "extra_channel_url";
+	
 	public static final String EXTRA_USERS_IDS = "extra_users_ids";
 	
 	private GroupCallViewModel viewModel;
@@ -40,12 +46,17 @@ public class GroupCallFragment extends Fragment {
 	private Room room;
 	
 	private String roomId;
+	
 	private String userIds;
+	
 	private String channelUrl;
 	
 	private RecyclerView recyclerView;
+	
 	private ImageView groupCallImageViewVideoOnOff;
+	
 	private ImageView groupCallImageViewAudioOnOff;
+	
 	private ImageView groupCallLinearLayoutParticipants;
 	
 	@Nullable
@@ -77,9 +88,26 @@ public class GroupCallFragment extends Fragment {
 	@Override
 	public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		//dismiss call automatically after 30 seconds
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (viewModel.participants.getValue().size() == 1) {
+					requireActivity().runOnUiThread(() -> viewModel.endCall());
+				}
+			}
+		}, 60000);
 	}
 	
-	// region Private methods
+	public static GroupCallFragment newInstance(String roomId, String channelUrl, String userIds) {
+		GroupCallFragment groupCallFragment = new GroupCallFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString(EXTRA_ROOM_ID, roomId);
+		bundle.putString(EXTRA_CHANNEL_URL, channelUrl);
+		bundle.putString(EXTRA_USERS_IDS, userIds);
+		groupCallFragment.setArguments(bundle);
+		return groupCallFragment;
+	}
 	
 	private void initViews(View view) {
 		
@@ -117,8 +145,21 @@ public class GroupCallFragment extends Fragment {
 		});
 		
 		groupCallImageViewExit.setOnClickListener(v -> {
-			viewModel.endCall();
-			requireActivity().finish();
+			if (viewModel.participants.getValue().size() == 1) {
+				UserMessageParams params = new UserMessageParams();
+				params.setCustomType(GroupCallType.END_GROUP_VIDEO.name());
+				GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
+					GroupCallMessage callMessage =
+							new GroupCallMessage(userIds, channelUrl, room.getRoomId());
+					Log.e("callMessage", callMessage.toString());
+					params.setMessage(callMessage.toString());
+					groupChannel.sendUserMessage(params, (userMessage, e1) -> {
+						viewModel.endCall();
+					});
+				});
+			} else {
+				viewModel.endCall();
+			}
 		});
 		
 	}
@@ -144,8 +185,7 @@ public class GroupCallFragment extends Fragment {
 		});
 		viewModel.callState.observe(getViewLifecycleOwner(), (Observer<Boolean>) aBoolean -> {
 			if (!aBoolean) {
-				viewModel.endCall();
-				requireActivity().finish();
+				getActivity().finish();
 			}
 		});
 	}
@@ -200,18 +240,6 @@ public class GroupCallFragment extends Fragment {
 			
 		}).create().show();
 		
-	}
-	
-	//endregion
-	
-	public static GroupCallFragment newInstance(String roomId, String channelUrl, String userIds) {
-		GroupCallFragment groupCallFragment = new GroupCallFragment();
-		Bundle bundle = new Bundle();
-		bundle.putString(EXTRA_ROOM_ID, roomId);
-		bundle.putString(EXTRA_CHANNEL_URL, channelUrl);
-		bundle.putString(EXTRA_USERS_IDS, userIds);
-		groupCallFragment.setArguments(bundle);
-		return groupCallFragment;
 	}
 	
 	

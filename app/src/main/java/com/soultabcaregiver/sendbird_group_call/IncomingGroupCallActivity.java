@@ -26,12 +26,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
+import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
 
 public class IncomingGroupCallActivity extends AppCompatActivity {
 	
 	private static final String TAG = GroupCallViewModel.class.getSimpleName();
 	
+	public static final String EXTRA_END_CALL = "end_call";
+	
 	private Room room;
+	
+	private GroupChannel channel;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,9 +50,12 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 		
 		String roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
 		String channelUrl = getIntent().getStringExtra(EXTRA_CHANNEL_URL);
+		String userIds = getIntent().getStringExtra(EXTRA_USERS_IDS);
 		
-		GroupChannel.getChannel(channelUrl,
-				(groupChannel, e) -> userName.setText(groupChannel.getName()));
+		GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
+			channel = groupChannel;
+			userName.setText(groupChannel.getName());
+		});
 		
 		this.room = SendBirdCall.getCachedRoomById(roomId);
 		
@@ -69,6 +77,14 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 		findViewById(R.id.declineButton).setOnClickListener(v -> {
 			finish();
 		});
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if (intent.getBooleanExtra(EXTRA_END_CALL, false)) {
+			finish();
+		}
 	}
 	
 	private void wakeScreen() {

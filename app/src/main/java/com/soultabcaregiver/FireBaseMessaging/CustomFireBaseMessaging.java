@@ -32,6 +32,7 @@ import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
+import com.soultabcaregiver.sendbird_group_call.GroupCallType;
 import com.soultabcaregiver.sendbird_group_call.IncomingGroupCallActivity;
 import com.soultabcaregiver.utils.Utility;
 
@@ -50,8 +51,10 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
+import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.IncomingGroupCallActivity.EXTRA_END_CALL;
 
-public class CustomFireBaseMessasing extends SendBirdPushHandler {
+public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	
 	private static final String TAG = "MyFirebaseMsgService";
 	
@@ -92,7 +95,7 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 			if (remoteMessage.getData().containsKey("sendbird")) {
 				JSONObject sendBird = new JSONObject(remoteMessage.getData().get("sendbird"));
 				if (sendBird.has("custom_type") && !sendBird.getString("custom_type").isEmpty()) {
-					handleGroupCalls(context, sendBird);
+					handleGroupCalls(context, sendBird, sendBird.getString("custom_type"));
 				} else {
 					handleChatMessage(context, remoteMessage, sendBird);
 				}
@@ -133,6 +136,70 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 		return true;
 	}
 	
+	/**
+	 * Create and show a simple notification containing the received FCM message.
+	 *
+	 * @param messageBody FCM message body received.
+	 */
+	public static void sendNotification(Context context, String messageBody, String channelUrl,
+	                                    String calleeId) {
+		NotificationManager notificationManager =
+				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+		
+		final String CHANNEL_ID = "CHANNEL_ID";
+		if (Build.VERSION.SDK_INT >= 26) {  // Build.VERSION_CODES.O
+			NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, "CHANNEL_NAME",
+					NotificationManager.IMPORTANCE_HIGH);
+			notificationManager.createNotificationChannel(mChannel);
+		}
+		
+		Intent intent = new Intent(context, SplashActivity.class);
+		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		PendingIntent pendingIntent =
+				PendingIntent.getActivity(context, 0 /* Request code */, intent,
+						PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		NotificationCompat.Builder notificationBuilder =
+				new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(
+						R.drawable.launcher_icon2).setColor(ContextCompat.getColor(context,
+						R.color.colorPrimary))  // small icon background color
+						.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+								R.drawable.launcher_icon2)).setContentTitle(
+						context.getResources().getString(R.string.app_name)).setAutoCancel(
+						true).setSound(defaultSoundUri).setPriority(
+						Notification.PRIORITY_MAX).setDefaults(
+						Notification.DEFAULT_ALL).setContentIntent(pendingIntent);
+		
+		//here the condition if to show message or not
+		if (true) {
+			notificationBuilder.setContentText(messageBody);
+		} else {
+			notificationBuilder.setContentText("Somebody sent you a message.");
+		}
+		
+		notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+	}
+	
+	public static void getPushToken(ITokenResult listener) {
+		String token = pushToken.get();
+		if (!TextUtils.isEmpty(token)) {
+			listener.onPushTokenReceived(token, null);
+			return;
+		}
+		
+		SendBirdPushHelper.getPushToken((newToken, e) -> {
+			if (listener != null) {
+				listener.onPushTokenReceived(newToken, e);
+			}
+			
+			if (e == null) {
+				pushToken.set(newToken);
+			}
+		});
+	}
+	
 	private boolean isAppIsInBackground(Context context) {
 		boolean isInBackground = true;
 		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -158,25 +225,42 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 		return isInBackground;
 	}
 	
-	private void handleGroupCalls(Context context, JSONObject sendBird) throws JSONException {
+	private void handleGroupCalls(Context context, JSONObject sendBird,
+	                              String type) throws JSONException {
 		JSONObject customMessageObj = new JSONObject(sendBird.get("message").toString());
 		String roomId = customMessageObj.getString("roomId");
 		String channelUrl = customMessageObj.getString("channelUrl");
-		checkAuthentication(context, isSuccess -> SendBirdCall.fetchRoomById(roomId, (room, e) -> {
-			if (room != null) {
-				if (room.getRemoteParticipants().size() > 0) {
-					Intent incomingCallIntent =
-							new Intent(context, IncomingGroupCallActivity.class);
-					incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
-					incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
-					incomingCallIntent.addFlags(
-							FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					context.startActivity(incomingCallIntent);
-				} else {
-					Log.e("TAG", "room is close");
-				}
+		String userIds = customMessageObj.getString("userIds");
+		if (userIds.contains(PrefUtils.getUserId(context))) {
+			
+			if (type.equals(GroupCallType.END_GROUP_VIDEO.name())) {
+				Intent incomingCallIntent = new Intent(context, IncomingGroupCallActivity.class);
+				incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
+				incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+				incomingCallIntent.putExtra(EXTRA_USERS_IDS, userIds);
+				incomingCallIntent.putExtra(EXTRA_END_CALL, true);
+				incomingCallIntent.addFlags(
+						FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				context.startActivity(incomingCallIntent);
+			} else {
+				checkAuthentication(context,
+						isSuccess -> SendBirdCall.fetchRoomById(roomId, (room, e) -> {
+							if (room != null) {
+								if (room.getRemoteParticipants().size() > 0) {
+									Intent incomingCallIntent =
+											new Intent(context, IncomingGroupCallActivity.class);
+									incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
+									incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+									incomingCallIntent.addFlags(
+											FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+									context.startActivity(incomingCallIntent);
+								} else {
+									Log.e("TAG", "room is close");
+								}
+							}
+						}));
 			}
-		}));
+		}
 	}
 	
 	private void handleChatMessage(Context context, RemoteMessage remoteMessage,
@@ -314,70 +398,6 @@ public class CustomFireBaseMessasing extends SendBirdPushHandler {
 			
 		}
 		
-	}
-	
-	/**
-	 * Create and show a simple notification containing the received FCM message.
-	 *
-	 * @param messageBody FCM message body received.
-	 */
-	public static void sendNotification(Context context, String messageBody, String channelUrl,
-	                                    String calleeId) {
-		NotificationManager notificationManager =
-				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-		
-		final String CHANNEL_ID = "CHANNEL_ID";
-		if (Build.VERSION.SDK_INT >= 26) {  // Build.VERSION_CODES.O
-			NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, "CHANNEL_NAME",
-					NotificationManager.IMPORTANCE_HIGH);
-			notificationManager.createNotificationChannel(mChannel);
-		}
-		
-		Intent intent = new Intent(context, SplashActivity.class);
-		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		PendingIntent pendingIntent =
-				PendingIntent.getActivity(context, 0 /* Request code */, intent,
-						PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		NotificationCompat.Builder notificationBuilder =
-				new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(
-						R.drawable.launcher_icon2).setColor(ContextCompat.getColor(context,
-						R.color.colorPrimary))  // small icon background color
-						.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-								R.drawable.launcher_icon2)).setContentTitle(
-						context.getResources().getString(R.string.app_name)).setAutoCancel(
-						true).setSound(defaultSoundUri).setPriority(
-						Notification.PRIORITY_MAX).setDefaults(
-						Notification.DEFAULT_ALL).setContentIntent(pendingIntent);
-		
-		//here the condition if to show message or not
-		if (true) {
-			notificationBuilder.setContentText(messageBody);
-		} else {
-			notificationBuilder.setContentText("Somebody sent you a message.");
-		}
-		
-		notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-	}
-	
-	public static void getPushToken(ITokenResult listener) {
-		String token = pushToken.get();
-		if (!TextUtils.isEmpty(token)) {
-			listener.onPushTokenReceived(token, null);
-			return;
-		}
-		
-		SendBirdPushHelper.getPushToken((newToken, e) -> {
-			if (listener != null) {
-				listener.onPushTokenReceived(newToken, e);
-			}
-			
-			if (e == null) {
-				pushToken.set(newToken);
-			}
-		});
 	}
 	
 	private void handleGroupCallNotification(Context context,
