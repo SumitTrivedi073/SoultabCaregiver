@@ -153,6 +153,8 @@ public class ChatListFragment extends BaseFragment {
 		SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
 			@Override
 			public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+				Log.e("SendBird", baseMessage.getMessage());
+				mChannelListAdapter.updateOrInsert(baseChannel);
 			}
 			
 			@Override

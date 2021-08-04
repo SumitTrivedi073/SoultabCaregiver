@@ -106,7 +106,7 @@ public class AlertFragment extends BaseFragment {
             
         }
         
-        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
+        //showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.AlertListAPI, mainObject,

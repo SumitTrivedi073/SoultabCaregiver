@@ -237,6 +237,10 @@ class ChatListViewHolder extends RecyclerView.ViewHolder {
 		}
 		
 		BaseMessage lastMessage = channel.getLastMessage();
+		if (lastMessage == null || !lastMessage.getCustomType().isEmpty()) {
+			lastMessage = loadLastReadableMsg(channel.getUrl(), context);
+		}
+		
 		if (lastMessage != null) {
 			dateText.setVisibility(View.VISIBLE);
 			lastMessageText.setVisibility(View.VISIBLE);
@@ -333,5 +337,30 @@ class ChatListViewHolder extends RecyclerView.ViewHolder {
 			return;
 		}
 		ImageUtils.displayRoundImageFromUrl(context, imageUrl, coverImage);
+	}
+	
+	public BaseMessage loadLastReadableMsg(String channelUrl, Context context) {
+		try {
+			File appDir = new File(context.getCacheDir(), SendBird.getApplicationId());
+			appDir.mkdirs();
+			
+			File dataFile = new File(appDir, TextUtils.generateMD5(
+					SendBird.getCurrentUser().getUserId() + channelUrl) + ".data");
+			
+			String content = FileUtils.loadFromFile(dataFile);
+			String[] dataArray = content.split("\n");
+			
+			// Reset message list, then add cached messages.
+			for (int i = 1; i < dataArray.length; i++) {
+				BaseMessage baseMessage = BaseMessage.buildFromSerializedData(
+						Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP));
+				if (baseMessage.getCustomType().isEmpty()) {
+					return baseMessage;
+				}
+			}
+		} catch (Exception e) {
+			// Nothing to load.
+		}
+		return null;
 	}
 }
