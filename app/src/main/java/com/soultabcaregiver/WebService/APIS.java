@@ -108,6 +108,8 @@ public class APIS {
 	
 	public static final String DoctorSendFaxAPI = "Users_milan/sendFax";
 	
+	public static final String GroupChatProfileImage = "Users/groupChatImage";
+	
 	//User Detail
 	public static final String user_id = "user_id";
 	

@@ -14,6 +14,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -811,6 +813,22 @@ public class Utility {
 		
 		prefsEditor.putString("availableDate", json);
 		prefsEditor.apply();
+	}
+	
+	public static byte[] getFileDataFromDraw(Context context, int id) {
+		Drawable drawable = ContextCompat.getDrawable(context, id);
+		assert drawable != null;
+		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 0, byteArrayOutputStream);
+		return byteArrayOutputStream.toByteArray();
+	}
+	
+	public static byte[] getFileDataFromDraw(Context context, Drawable drawable) {
+		Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+		return byteArrayOutputStream.toByteArray();
 	}
 	
 	public static void loadFragment(FragmentActivity activty, Fragment fragment, boolean backstack,
