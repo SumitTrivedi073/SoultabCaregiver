@@ -275,10 +275,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									String encodeValue = Base64.encodeToString(
 											loginModel.getResponse().getCaregiver_id().getBytes(),
 											Base64.NO_WRAP);
-									//                            byte[] encodeValue = Base64
-									//                            .encode(loginModel.getResponse()
-									//                            .getId().getBytes(), Base64
-									//                            .DEFAULT);
+									
 									Log.d("ENCODE_DECODE", "encodeValue = " + encodeValue);
 									
 									Utility.setSharedPreference(mContext, APIS.EncodeUser_id,
@@ -460,3 +457,5 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	}
 	
 }
+
+
