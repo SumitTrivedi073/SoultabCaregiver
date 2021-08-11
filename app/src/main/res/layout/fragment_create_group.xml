@@ -71,10 +71,11 @@
                 android:padding="@dimen/_8sdp"
                 app:layout_constraintTop_toBottomOf="@id/titleText">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ic_group_img"
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
-                    app:srcCompat="@drawable/ic_group_blue" />
+                    android:src="@drawable/ic_group_blue" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/groupNameET"

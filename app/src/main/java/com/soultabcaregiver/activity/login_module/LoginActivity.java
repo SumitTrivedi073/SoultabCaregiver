@@ -142,7 +142,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			if (resultCode == RESULT_CANCELED) {
 				//	Toast.makeText(getApplicationContext(),"Update canceled by user! Result Code:
 				//	" + resultCode, Toast.LENGTH_LONG).show();
-				Utility.ShowToast(mContext, "please update and enjoy the app");
+				Utility.ShowToast(mContext, "Please update and enjoy the app");
 			} else if (resultCode == RESULT_OK) {
 				Utility.ShowToast(mContext, "App update success");
 			} else {
@@ -183,6 +183,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	public void onClick(View v) {
 		
 		switch (v.getId()) {
+			
 			case R.id.tv_rem_pass:
 				tbRemPass.setChecked(!tbRemPass.isChecked());
 				break;
@@ -251,8 +252,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 							@Override
 							public void onResponse(JSONObject response) {
 								
-								hideProgressDialog();
-								
 								LoginModel loginModel =
 										new Gson().fromJson(response.toString(), LoginModel.class);
 								
@@ -275,10 +274,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 									String encodeValue = Base64.encodeToString(
 											loginModel.getResponse().getCaregiver_id().getBytes(),
 											Base64.NO_WRAP);
-									//                            byte[] encodeValue = Base64
-									//                            .encode(loginModel.getResponse()
-									//                            .getId().getBytes(), Base64
-									//                            .DEFAULT);
+									
 									Log.d("ENCODE_DECODE", "encodeValue = " + encodeValue);
 									
 									Utility.setSharedPreference(mContext, APIS.EncodeUser_id,
@@ -381,7 +377,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				Utility.getSharedPreferences(mContext, APIS.caregiver_id),
 				Utility.getSharedPreferences(mContext, APIS.Caregiver_name),
 				Utility.getSharedPreferences(mContext, APIS.profile_image), isSuccess -> {
+					hideProgressDialog();
 					if (isSuccess) {
+						
 						Intent intent = new Intent(mContext, MainActivity.class);
 						startActivity(intent);
 						finishAffinity();
@@ -460,3 +458,5 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	}
 	
 }
+
+
