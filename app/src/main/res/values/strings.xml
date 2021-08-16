@@ -327,6 +327,12 @@
     <string name="enter_your_telephone">Enter Your Telephone</string>
     <string name="Password">Password</string>
     <string name="plusmart">40PlusMart</string>
+    <string name="upload_img">Upload Image</string>
+    <string name="gallery">Gallery</string>
+    <string name="Camera">Camera</string>
+    <string name="Camera_permission_txt">Please give Soultab Caregiver access to this \n device\'s camera to click your pictures </string>
+    <string name="Participants">Participants</string>
+
     <!--Added by Sumit-->
 
 </resources>
