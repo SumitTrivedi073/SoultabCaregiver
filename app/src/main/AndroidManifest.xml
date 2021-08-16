@@ -34,19 +34,28 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths"
+                />
         </provider>
 
         <activity
+            android:name=".sendbird_chat.GroupDetailActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity
             android:name=".activity.shopping.ShoppingCategoryActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            />
 
         <activity
             android:name=".activity.docter.SocialActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            />
 
         <activity android:name=".activity.SplashActivity">
             <intent-filter>

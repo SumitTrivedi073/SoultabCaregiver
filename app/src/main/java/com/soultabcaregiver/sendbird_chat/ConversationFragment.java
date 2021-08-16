@@ -801,6 +801,17 @@ public class ConversationFragment extends BaseFragment {
 			//				}
 		});
 		
+		titleTextView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (mChannel.getMemberCount() > 2) {
+					Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
+					intent.putExtra(EXTRA_GROUP_CHANNEL_URL, mChannelUrl);
+					startActivity(intent);
+				}
+			}
+		});
+		
 	}
 	
 	private void startVideoCall() {
