@@ -13,32 +13,36 @@
     <RelativeLayout
         android:id="@+id/topbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:background="#034D75"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/chatTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@+id/videoCall"
             android:fontFamily="@font/muli_extrabold"
-            android:textColor="@color/blackish"
+            android:layout_toLeftOf="@+id/videoCall"
             android:textSize="@dimen/_16sdp"
+            android:layout_toEndOf="@+id/back_btn"
+            android:layout_toRightOf="@+id/back_btn"
+            android:gravity="center"
+            android:textColor="@color/white"
             tools:text="Chat Title" />
 
         <RelativeLayout
             android:id="@+id/back_btn"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_45sdp"
             android:layout_centerVertical="true">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:scaleType="fitXY"
-                android:src="@drawable/back_arrow" />
+                android:layout_margin="@dimen/_5sdp"
+                android:src="@drawable/back_arrow_white" />
 
         </RelativeLayout>
 
@@ -48,14 +52,13 @@
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:padding="@dimen/_6sdp"
-            android:tint="@color/blackish"
-            app:srcCompat="@drawable/ic_video" />
+            android:layout_alignParentRight="true"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/icon_video_on" />
 
     </RelativeLayout>
-
 
     <LinearLayout
 

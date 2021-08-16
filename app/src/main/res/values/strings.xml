@@ -331,6 +331,7 @@
     <string name="gallery">Gallery</string>
     <string name="Camera">Camera</string>
     <string name="Camera_permission_txt">Please give Soultab Caregiver access to this \n device\'s camera to click your pictures </string>
+    <string name="Participants">Participants</string>
 
     <!--Added by Sumit-->
 
