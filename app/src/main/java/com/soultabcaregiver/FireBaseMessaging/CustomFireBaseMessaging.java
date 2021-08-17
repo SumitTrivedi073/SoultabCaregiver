@@ -95,7 +95,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 			if (remoteMessage.getData().containsKey("sendbird")) {
 				JSONObject sendBird = new JSONObject(remoteMessage.getData().get("sendbird"));
 				if (sendBird.has("custom_type") && !sendBird.getString("custom_type").isEmpty()) {
-					handleGroupCalls(context, sendBird, sendBird.getString("custom_type"));
+					//handleGroupCalls(context, sendBird, sendBird.getString("custom_type"));
 				} else {
 					handleChatMessage(context, remoteMessage, sendBird);
 				}

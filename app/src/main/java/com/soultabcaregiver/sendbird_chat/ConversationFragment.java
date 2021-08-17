@@ -58,7 +58,6 @@ import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
-import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
 import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 import com.soultabcaregiver.sendbird_chat.utils.MediaPlayerActivity;
@@ -69,7 +68,6 @@ import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
 import com.soultabcaregiver.sendbird_group_call.GroupCallActivity;
 import com.soultabcaregiver.sendbird_group_call.GroupCallMessage;
 import com.soultabcaregiver.sendbird_group_call.GroupCallType;
-import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.Utility;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
@@ -203,7 +201,7 @@ public class ConversationFragment extends BaseFragment {
 								result.getStringArrayList(EXTRA_LIST_FOR_GROUP_CALL_MEMBERS);
 						if (members != null && members.size() > 0) {
 							String userIds = android.text.TextUtils.join(",", members);
-							createAndEnterGroupCall(userIds);
+							//createAndEnterGroupCall(userIds);
 						}
 					}
 				});
@@ -424,6 +422,9 @@ public class ConversationFragment extends BaseFragment {
 		
 		// Set action bar title to name of channel
 		titleTextView.setText(title);
+		if (mChannel.getMemberCount() > 2) {
+			videoCallBtn.setVisibility(View.GONE);
+		}
 	}
 	
 	private void setUpChatListAdapter() {
@@ -681,7 +682,8 @@ public class ConversationFragment extends BaseFragment {
 		final int size = (Integer) info.get("size");
 		
 		if (path.equals("")) {
-			Toast.makeText(requireContext(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
+			Toast.makeText(requireContext(), "File must be located in local storage.",
+					Toast.LENGTH_LONG).show();
 		} else {
 			BaseChannel.SendFileMessageWithProgressHandler fileMessageHandler =
 					new BaseChannel.SendFileMessageWithProgressHandler() {
@@ -816,21 +818,24 @@ public class ConversationFragment extends BaseFragment {
 	
 	private void startVideoCall() {
 		if (mChannel.getMemberCount() > 2) {
-			if (mChannel.getMemberCount() > 6) {
-				if (getParentFragment() != null && getParentFragment() instanceof TalkHolderFragment) {
-					((TalkHolderFragment) getParentFragment()).navigateToSelectGroupMembersFragment(
-							mChannelUrl);
-				}
-			} else {
-				ArrayList<String> membersIds = new ArrayList<>();
-				for (Member member : mChannel.getMembers()) {
-					if (!member.getUserId().equals(PrefUtils.getUserId(requireContext()))) {
-						membersIds.add(member.getUserId());
-					}
-				}
-				String userIds = android.text.TextUtils.join(",", membersIds);
-				createAndEnterGroupCall(userIds);
-			}
+			//			if (mChannel.getMemberCount() > 6) {
+			//				if (getParentFragment() != null && getParentFragment() instanceof
+			//				TalkHolderFragment) {
+			//					((TalkHolderFragment) getParentFragment())
+			//					.navigateToSelectGroupMembersFragment(
+			//							mChannelUrl);
+			//				}
+			//			} else {
+			//				ArrayList<String> membersIds = new ArrayList<>();
+			//				for (Member member : mChannel.getMembers()) {
+			//					if (!member.getUserId().equals(PrefUtils.getUserId(requireContext
+			//					()))) {
+			//						membersIds.add(member.getUserId());
+			//					}
+			//				}
+			//				String userIds = android.text.TextUtils.join(",", membersIds);
+			//				createAndEnterGroupCall(userIds);
+			//			}
 		} else {
 			SendbirdCallService.dial(requireContext(), TextUtils.getGroupOtherMemberId(mChannel),
 					TextUtils.getGroupChannelTitle(mChannel), true, false, mChannelUrl);
