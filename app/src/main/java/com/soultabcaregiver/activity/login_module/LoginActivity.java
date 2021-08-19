@@ -59,6 +59,8 @@ import static com.soultabcaregiver.utils.Utility.ShowToast;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 	
+	private static final int IMMEDIATE_APP_UPDATE_REQ_CODE = 124;
+	
 	private final String TAG = getClass().getSimpleName();
 	
 	Context mContext;
@@ -74,8 +76,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	String FirebaseToken = "";
 	
 	AlertDialog alertDialog;
-	
-	private static final int IMMEDIATE_APP_UPDATE_REQ_CODE = 124;
 	
 	private AppUpdateManager appUpdateManager;
 	
@@ -136,6 +136,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	}
 	
 	@Override
+	protected void onResume() {
+		super.onResume();
+		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
+		checkUpdate();
+	}
+	
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
@@ -153,6 +160,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			//In app Update link
 			//https://www.section.io/engineering-education/android-application-in-app-update-using
 			// -android-studio/
+		}
+	}
+	
+	private void checkUpdate() {
+		
+		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+		
+		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+			if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
+					AppUpdateType.IMMEDIATE)) {
+				startUpdateFlow(appUpdateInfo);
+			} else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+				startUpdateFlow(appUpdateInfo);
+			}
+		});
+	}
+	
+	private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
+		try {
+			appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this,
+					IMMEDIATE_APP_UPDATE_REQ_CODE);
+		} catch (IntentSender.SendIntentException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -317,7 +347,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 										authenticateInSendBird(loginModel);
 									}
 								} else {
-									//	ShowAlertResponse(loginModel.getMessage(), "0");
+									hideProgressDialog();
+									ShowAlertResponse(loginModel.getMessage(), "0");
+									
 								}
 								
 							}
@@ -425,36 +457,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			}
 		});
 		
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-		checkUpdate();
-	}
-	
-	private void checkUpdate() {
-		
-		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-		
-		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-			if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
-					AppUpdateType.IMMEDIATE)) {
-				startUpdateFlow(appUpdateInfo);
-			} else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-				startUpdateFlow(appUpdateInfo);
-			}
-		});
-	}
-	
-	private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
-		try {
-			appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this,
-					IMMEDIATE_APP_UPDATE_REQ_CODE);
-		} catch (IntentSender.SendIntentException e) {
-			e.printStackTrace();
-		}
 	}
 	
 }

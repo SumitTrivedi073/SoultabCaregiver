@@ -143,91 +143,15 @@ public class CreateGroupFragment extends BaseFragment {
 	
 	private void createChatChannel(List<String> ids) {
 		showProgressDialog(getContext(), getString(R.string.creating_group));
-		
-		final VolleyMultipartRequest multipartRequest =
-				new VolleyMultipartRequest(Request.Method.POST,
-						APIS.BASEURL + APIS.GroupChatProfileImage,
-						new Response.Listener<NetworkResponse>()
-								////Place user for service
-						{
-							@Override
-							public void onResponse(NetworkResponse response) {
-								
-								try {
-									String resultResponse = new String(response.data);
-									Log.e("response_profile_update", resultResponse);
-									
-									GroupChatImageModel groupChatImageModel =
-											new Gson().fromJson(resultResponse,
-													GroupChatImageModel.class);
-									
-									if (String.valueOf(groupChatImageModel.getStatusCode()).equals(
-											"200")) {
-										chat_image = groupChatImageModel.getResponse().getImage();
-										
-										ChatHelper.createGroupChannel(ids, !isForGroupChat,
-												groupChannel -> {
-													groupChannel.updateChannel(
-															groupNameEditText.getText().toString(),
-															chat_image, "", (groupChannel1, e) -> {
-																hideProgressDialog();
-																getActivity().onBackPressed();
-																Log.e("tag", "channel created");
-															});
-												});
-									} else {
-										hideProgressDialog();
-										
-									}
-									
-									
-								} catch (Exception e) {
-									e.printStackTrace();
-									
-								}
-							}
-							
-						}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						error.getMessage();
-						Log.e(TAG, "onErrorResponse: >>" + error.toString());
+		ChatHelper.createGroupChannel(ids, !isForGroupChat, groupChannel -> {
+			groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
+					(groupChannel1, e) -> {
 						hideProgressDialog();
-					}
-				}) {
-					@Override
-					public Map<String, String> getHeaders() {
-						Map<String, String> params = new HashMap<>();
-						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-						
-						return params;
-					}
-					
-					@Override
-					protected Map<String, DataPart> getByteData() {
-						Map<String, DataPart> params = new HashMap<>();
-						long imagename = System.currentTimeMillis();
-						
-						params.put("group_image", new DataPart(imagename + ".jpg",
-								Utility.getFileDataFromDraw(mContext, ic_group_img.getDrawable()),
-								"image/jpeg"));
-						
-						return params;
-					}
-					
-					@Override
-					protected Map<String, String> getParams() {
-						Map<String, String> params = new HashMap<String, String>();
-						params.put("prev_image", chat_image);
-						return params;
-					}
-				};
-		multipartRequest.setShouldCache(false);
-		multipartRequest.setTag(TAG);
-		multipartRequest.setRetryPolicy(
-				new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		AppController.getInstance().addToRequestQueue(multipartRequest);
+						getActivity().onBackPressed();
+						Log.e("tag", "channel created");
+					});
+		});
+		
 	}
 	
 	public void initUI(View view) {
@@ -284,6 +208,7 @@ public class CreateGroupFragment extends BaseFragment {
 		backButtonNoData.setOnClickListener(v -> getActivity().onBackPressed());
 		
 		createGroupButton.setOnClickListener(v -> {
+			
 			if (groupNameEditText.getText().toString().isEmpty()) {
 				Utility.showSnackBar(getView(), getString(R.string.enter_group_name));
 				return;
@@ -298,8 +223,21 @@ public class CreateGroupFragment extends BaseFragment {
 				return;
 			}
 			
-			createChatChannel(mSelectedIds);
-			
+			if (UserBitmap != null) {
+				showProgressDialog(getContext(), getString(R.string.creating_group));
+				UploadGroupImage();
+				
+			} else {
+				showProgressDialog(getContext(), getString(R.string.creating_group));
+				ChatHelper.createGroupChannel(mSelectedIds, false, groupChannel -> {
+					groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
+							(groupChannel1, e) -> {
+								hideProgressDialog();
+								requireActivity().onBackPressed();
+								Log.e("tag", "channel created");
+							});
+				});
+			}
 		});
 		
 		ic_group_img.setOnClickListener(new View.OnClickListener() {
@@ -685,4 +623,91 @@ public class CreateGroupFragment extends BaseFragment {
 		
 	}
 	
+	private void UploadGroupImage() {
+		//showProgressDialog(mContext,getResources().getString(R.string.Loading));
+		final VolleyMultipartRequest multipartRequest =
+				new VolleyMultipartRequest(Request.Method.POST,
+						APIS.BASEURL + APIS.GroupChatProfileImage,
+						new Response.Listener<NetworkResponse>()
+								////Place user for service
+						{
+							@Override
+							public void onResponse(NetworkResponse response) {
+								//	hideProgressDialog();
+								try {
+									String resultResponse = new String(response.data);
+									Log.e("response_profile_update", resultResponse);
+									
+									GroupChatImageModel groupChatImageModel =
+											new Gson().fromJson(resultResponse,
+													GroupChatImageModel.class);
+									
+									if (String.valueOf(groupChatImageModel.getStatusCode()).equals(
+											"200")) {
+										chat_image = groupChatImageModel.getResponse().getImage();
+										
+										ChatHelper.createGroupChannel(mSelectedIds, false,
+												groupChannel -> {
+													groupChannel.updateChannel(
+															groupNameEditText.getText().toString(),
+															chat_image, "", (groupChannel1, e) -> {
+																hideProgressDialog();
+																requireActivity().onBackPressed();
+																Log.e("tag", "channel created");
+															});
+												});
+									} else {
+										hideProgressDialog();
+										
+									}
+									
+									
+								} catch (Exception e) {
+									e.printStackTrace();
+									
+								}
+							}
+							
+						}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						error.getMessage();
+						Log.e(TAG, "onErrorResponse: >>" + error.toString());
+						hideProgressDialog();
+					}
+				}) {
+					@Override
+					public Map<String, String> getHeaders() {
+						Map<String, String> params = new HashMap<>();
+						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						
+						return params;
+					}
+					
+					@Override
+					protected Map<String, DataPart> getByteData() {
+						Map<String, DataPart> params = new HashMap<>();
+						long imagename = System.currentTimeMillis();
+						
+						params.put("group_image", new DataPart(imagename + ".jpg",
+								Utility.getFileDataFromDraw(mContext, ic_group_img.getDrawable()),
+								"image/jpeg"));
+						
+						return params;
+					}
+					
+					@Override
+					protected Map<String, String> getParams() {
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("prev_image", chat_image);
+						return params;
+					}
+				};
+		multipartRequest.setShouldCache(false);
+		multipartRequest.setTag(TAG);
+		multipartRequest.setRetryPolicy(
+				new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		AppController.getInstance().addToRequestQueue(multipartRequest);
+	}
 }
