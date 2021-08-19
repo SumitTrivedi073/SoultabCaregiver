@@ -539,9 +539,10 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 						}
 						
 						for (BaseMessage message : list) {
-							if (message.getCustomType().isEmpty()) {
+							/*if (message.getCustomType().isEmpty()) {
 								mMessageList.add(message);
-							}
+							}*/
+							mMessageList.add(message);
 						}
 						
 						notifyDataSetChanged();
@@ -597,9 +598,10 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 						mMessageList.clear();
 						
 						for (BaseMessage message : list) {
-							if (message.getCustomType().isEmpty()) {
+							/*if (message.getCustomType().isEmpty()) {
 								mMessageList.add(message);
-							}
+							}*/
+							mMessageList.add(message);
 						}
 						
 						notifyDataSetChanged();
@@ -703,7 +705,12 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		void bind(Context context, final UserMessage message, GroupChannel channel,
 		          boolean isContinuous, boolean isNewDay, final OnItemClickListener clickListener,
 		          final OnItemLongClickListener longClickListener, final int position) {
-			messageText.setText(message.getMessage());
+			
+			if (message.getCustomType().isEmpty()) {
+				messageText.setText(message.getMessage());
+			} else {
+				messageText.setText("Custom message");
+			}
 			timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 			
 			if (message.getUpdatedAt() > 0) {
@@ -820,7 +827,11 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 				nicknameText.setText(message.getSender().getNickname());
 			}
 			
-			messageText.setText(message.getMessage());
+			if (message.getCustomType().isEmpty()) {
+				messageText.setText(message.getMessage());
+			} else {
+				messageText.setText("Custom message");
+			}
 			timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 			
 			if (message.getUpdatedAt() > 0) {
