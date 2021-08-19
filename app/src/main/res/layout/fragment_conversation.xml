@@ -21,12 +21,9 @@
             android:id="@+id/chatTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@+id/videoCall"
+            android:layout_centerInParent="true"
             android:fontFamily="@font/muli_extrabold"
-            android:layout_toLeftOf="@+id/videoCall"
             android:textSize="@dimen/_16sdp"
-            android:layout_toEndOf="@+id/back_btn"
-            android:layout_toRightOf="@+id/back_btn"
             android:gravity="center"
             android:textColor="@color/white"
             tools:text="Chat Title" />

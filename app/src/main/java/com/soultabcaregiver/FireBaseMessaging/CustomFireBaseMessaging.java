@@ -52,7 +52,6 @@ import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROU
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
 import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
-import static com.soultabcaregiver.sendbird_group_call.IncomingGroupCallActivity.EXTRA_END_CALL;
 
 public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	
@@ -238,7 +237,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 				incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
 				incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
 				incomingCallIntent.putExtra(EXTRA_USERS_IDS, userIds);
-				incomingCallIntent.putExtra(EXTRA_END_CALL, true);
+				//incomingCallIntent.putExtra(EXTRA_END_CALL, true);
 				incomingCallIntent.addFlags(
 						FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				context.startActivity(incomingCallIntent);

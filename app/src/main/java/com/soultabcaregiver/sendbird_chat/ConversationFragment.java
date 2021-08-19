@@ -424,6 +424,9 @@ public class ConversationFragment extends BaseFragment {
 		
 		// Set action bar title to name of channel
 		titleTextView.setText(title);
+		//		if (mChannel.getMemberCount() > 2) {
+		//			videoCallBtn.setVisibility(View.GONE);
+		//		}
 	}
 	
 	private void setUpChatListAdapter() {
@@ -681,7 +684,8 @@ public class ConversationFragment extends BaseFragment {
 		final int size = (Integer) info.get("size");
 		
 		if (path.equals("")) {
-			Toast.makeText(requireContext(), "File must be located in local storage.", Toast.LENGTH_LONG).show();
+			Toast.makeText(requireContext(), "File must be located in local storage.",
+					Toast.LENGTH_LONG).show();
 		} else {
 			BaseChannel.SendFileMessageWithProgressHandler fileMessageHandler =
 					new BaseChannel.SendFileMessageWithProgressHandler() {

@@ -59,6 +59,8 @@ public class GroupCallFragment extends Fragment {
 	
 	private ImageView groupCallLinearLayoutParticipants;
 	
+	private Timer timer;
+	
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -89,7 +91,8 @@ public class GroupCallFragment extends Fragment {
 	public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		//dismiss call automatically after 30 seconds
-		new Timer().schedule(new TimerTask() {
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				if (viewModel.participants.getValue().size() == 1) {
@@ -242,5 +245,9 @@ public class GroupCallFragment extends Fragment {
 		
 	}
 	
-	
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		timer.cancel();
+	}
 }
