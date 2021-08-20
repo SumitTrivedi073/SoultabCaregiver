@@ -73,7 +73,7 @@ public class TextUtils {
 	public static String generateMD5(String data) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("MD5");
 		digest.update(data.getBytes());
-		byte messageDigest[] = digest.digest();
+		byte[] messageDigest = digest.digest();
 		
 		StringBuffer hexString = new StringBuffer();
 		for (int i = 0; i < messageDigest.length; i++)
@@ -84,5 +84,10 @@ public class TextUtils {
 	
 	public static boolean isEmpty(CharSequence text) {
 		return text == null || text.length() == 0;
+	}
+	
+	public static boolean isWhiteSpacesOnly(String text) {
+		return text.trim().length() == 0;
+		
 	}
 }
