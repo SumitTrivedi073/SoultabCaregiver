@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -31,8 +30,8 @@ import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
@@ -707,18 +706,13 @@ public class Utility {
 	}
 	
 	public static void ShowToast(Context mContext, String msg) {
-		Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
-		ViewGroup group = (ViewGroup) toast.getView();
-		
-		toast.getView().setBackgroundResource(R.drawable.orange_round_bg);
-		TextView text = toast.getView().findViewById(android.R.id.message);
+		Toast toast = new Toast(mContext);
+		View view = LayoutInflater.from(mContext).inflate(R.layout.custom_toast, null);
+		TextView textView = view.findViewById(R.id.toastmessage_txt);
+		textView.setText(msg);
+		toast.setView(view);
 		toast.setGravity(Gravity.CENTER, 0, 0);
-		
-		//Shadow of the Of the Text Color
-		text.setShadowLayer(0, 0, 0, ContextCompat.getColor(mContext, R.color.transparent_black));
-		text.setTextColor(Color.WHITE);
-		text.setTextSize(18);
-		text.setPadding(20, 20, 20, 20);
+		toast.setDuration(Toast.LENGTH_SHORT);
 		toast.show();
 	}
 	

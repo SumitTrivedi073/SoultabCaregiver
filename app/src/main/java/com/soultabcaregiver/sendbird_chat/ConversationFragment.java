@@ -798,6 +798,12 @@ public class ConversationFragment extends BaseFragment {
 			//					setState(STATE_NORMAL, null, -1);
 			//				} else {
 			String userInput = mMessageEditText.getText().toString();
+			
+			if (TextUtils.isWhiteSpacesOnly(userInput)) {
+				Utility.ShowToast(requireContext(), getString(R.string.empty_msg));
+				return;
+			}
+			
 			if (userInput.length() > 0) {
 				sendUserMessage(userInput);
 				mMessageEditText.setText("");
