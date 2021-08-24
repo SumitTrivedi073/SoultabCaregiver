@@ -14,10 +14,21 @@ import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_U
 public class GroupCallActivity extends AppCompatActivity {
 	
 	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		SendBirdGroupCallService.stopService(this);
+	}
+	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fragment_activity);
 		addGroupCallFragment();
+	}
+	
+	@Override
+	public void onBackPressed() {
+	
 	}
 	
 	private void addGroupCallFragment() {
@@ -28,5 +39,4 @@ public class GroupCallActivity extends AppCompatActivity {
 						getIntent().getStringExtra(EXTRA_USERS_IDS)));
 		transaction.commit();
 	}
-	
 }

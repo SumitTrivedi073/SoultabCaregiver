@@ -30,7 +30,7 @@ import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_U
 
 public class IncomingGroupCallActivity extends AppCompatActivity {
 	
-	private static final String TAG = GroupCallViewModel.class.getSimpleName();
+	private static final String TAG = IncomingGroupCallActivity.class.getSimpleName();
 	
 	public static final String EXTRA_END_CALL = "end_call";
 	
@@ -41,6 +41,10 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if (getIntent().getBooleanExtra(EXTRA_END_CALL, false)) {
+			finish();
+		}
 		
 		wakeScreen();
 		
@@ -57,7 +61,14 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 			userName.setText(groupChannel.getName());
 		});
 		
-		this.room = SendBirdCall.getCachedRoomById(roomId);
+		SendBirdCall.fetchRoomById(roomId, (newRoom, e) -> {
+			room = newRoom;
+			if (room != null) {
+				SendBirdGroupCallService.startService(IncomingGroupCallActivity.this, "GroupName",
+						room.getRoomId(), false);
+				room.addListener(TAG, new RoomListenerImpl());
+			}
+		});
 		
 		findViewById(R.id.answerButton).setOnClickListener(v -> {
 			EnterParams enterParams = new EnterParams();
@@ -82,9 +93,9 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		if (intent.getBooleanExtra(EXTRA_END_CALL, false)) {
-			finish();
-		}
+		//		if (intent.getBooleanExtra(EXTRA_END_CALL, false)) {
+		//			finish();
+		//		}
 	}
 	
 	private void wakeScreen() {

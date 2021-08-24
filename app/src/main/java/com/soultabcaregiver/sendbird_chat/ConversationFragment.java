@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -69,6 +70,7 @@ import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
 import com.soultabcaregiver.sendbird_group_call.GroupCallActivity;
 import com.soultabcaregiver.sendbird_group_call.GroupCallMessage;
 import com.soultabcaregiver.sendbird_group_call.GroupCallType;
+import com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.Utility;
 import com.vanniktech.emoji.EmojiEditText;
@@ -849,6 +851,9 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	private void createAndEnterGroupCall(String userIds) {
+		ProgressDialog progressDialog = new ProgressDialog(getContext());
+		progressDialog.setTitle("Starting Group Call");
+		progressDialog.show();
 		createAndEnterRoom(room -> {
 			if (room != null) {
 				Intent intent = new Intent(requireActivity(), GroupCallActivity.class);
@@ -867,9 +872,12 @@ public class ConversationFragment extends BaseFragment {
 				params.setMessage(callMessage.toString());
 				mChannel.sendUserMessage(params, (userMessage, e) -> {
 				});
+				SendBirdGroupCallService.startService(getContext(), mChannel.getName(),
+						room.getRoomId(), true);
 			} else {
 				Utility.ShowToast(requireContext(), "Can't connect for Video Call");
 			}
+			progressDialog.dismiss();
 		});
 	}
 	
