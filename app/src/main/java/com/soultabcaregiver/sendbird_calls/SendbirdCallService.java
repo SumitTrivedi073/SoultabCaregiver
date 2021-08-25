@@ -258,8 +258,7 @@ public class SendbirdCallService extends Service {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String channelName = mContext.getString(R.string.app_name);
 			NotificationChannel channel = new NotificationChannel(channelId, channelName,
-					serviceData.isHeadsUpNotification ? NotificationManager.IMPORTANCE_HIGH :
-							NotificationManager.IMPORTANCE_LOW);
+					NotificationManager.IMPORTANCE_LOW);
 			
 			NotificationManager notificationManager =
 					mContext.getSystemService(NotificationManager.class);

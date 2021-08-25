@@ -147,7 +147,7 @@
         <activity
             android:name=".sendbird_chat.NewMessageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:screenOrientation="user"
             android:theme="@style/DialogTheme" />
         <activity android:name=".sendbird_group_call.GroupCallActivity" />
