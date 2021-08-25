@@ -333,6 +333,8 @@
     <string name="Camera_permission_txt">Please give Soultab Caregiver access to this \n device\'s camera to click your pictures </string>
     <string name="Participants">Participants</string>
     <string name="empty_msg">Can\'t send empty message</string>
+    <string name="please_fill_daily_routine_form">Please fill out Daily Routine form</string>
+
     <!--Added by Sumit-->
 
 </resources>

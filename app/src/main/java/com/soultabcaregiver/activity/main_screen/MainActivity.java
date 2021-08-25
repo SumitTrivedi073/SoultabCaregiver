@@ -59,6 +59,7 @@ import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.shopping.ShoppingCategoryActivity;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -111,6 +112,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	TextView tv_badge;
 	
 	AlertFragment alertFragment;
+	
+	TalkFragment talkFragment;
 	
 	private BroadcastReceiver receiver;
 	
@@ -236,16 +239,23 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							alertFragment.GetAlertList(mContext);
 							
 						}
+						
 						itemView.removeView(badge);
 						if (alertCountModel.getResponse().getUnreadCount() > 9) {
 							tv_badge.setText("9+");
 							itemView.addView(badge);
-							
+							Utility.setSharedPreference(mContext, APIS.BadgeCount, "9+");
 						} else {
 							
 							tv_badge.setText(
 									String.valueOf(alertCountModel.getResponse().getUnreadCount()));
 							itemView.addView(badge);
+							Utility.setSharedPreference(mContext, APIS.BadgeCount,
+									tv_badge.getText().toString().trim());
+						}
+						talkFragment = TalkFragment.instance;
+						if (talkFragment != null) {
+							talkFragment.setBadge();
 						}
 						
 						

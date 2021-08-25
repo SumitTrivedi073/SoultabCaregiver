@@ -44,9 +44,7 @@ public class AlertFragment extends BaseFragment {
     TextView no_data_txt;
     FloatingActionButton create_alert_btn;
     CardView blank_card;
-    
     MainActivity mainActivity;
-    
     public static AlertFragment instance;
 
     @Override

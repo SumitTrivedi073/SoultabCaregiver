@@ -6,8 +6,8 @@ public class APIS {
 	
 	public static final String BASEURL1 = "https://mysoultab.com/api/";
 	
-	public static final String CaregiverImageURL1 =
-			"https://mysoultab" + ".com/uploads/profile_images/";
+	public static final String CaregiverImageURL1 = "https://mysoultab" +
+			".com/uploads/profile_images/";
 	
 	public static final String BASEURL40Plus1 = "https://40plusmart.com/wp-json/wp/v2/";
 	
@@ -140,6 +140,8 @@ public class APIS {
 	public static final String Caregiver_username = "Caregiver_username";
 	
 	public static final String Caregiver_countrycode = "Caregiver_countrycode";
+	
+	public static final String BadgeCount = "BadgeCount";
 	
 	//Key's
 	public static final String DocItemListItem = "DocItemListItem";
