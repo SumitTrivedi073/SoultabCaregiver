@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
@@ -396,26 +397,23 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineDataSet5.setLineWidth(3f);
                 dataSets.add(lineDataSet5);
                 lineDataSet5.setColor(Color.BLUE);
-
+    
             }
             //  dataSets.add(lineDataSet2);
-
-
+    
             data = new LineData(dataSets);
-
-
-            lineChart.getAxisLeft().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getAxisRight().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getXAxis().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getLegend().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getDescription().setTextColor(getResources().getColor(R.color.white));
-
-
+    
+            lineChart.getAxisLeft().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getAxisRight().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getXAxis().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getLegend().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getDescription().setTextColor(
+                    ContextCompat.getColor(mContext, R.color.white));
+    
             colorchange(lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5);
-
+    
             if (lineDataSet != null || lineDataSet3 != null || lineDataSet4 != null || lineDataSet5 != null) {
-
-
+        
                 lineChart.setData(data);
                 lineChart.invalidate();
 
