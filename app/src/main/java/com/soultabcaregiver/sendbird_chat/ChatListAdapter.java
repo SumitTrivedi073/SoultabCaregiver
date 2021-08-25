@@ -188,7 +188,7 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 	
 	interface OnItemClickListener {
 		
-		void onItemClick(GroupChannel channel);
+		void onItemClick(String channelUrl);
 	}
 	
 	interface OnItemLongClickListener {
@@ -297,7 +297,7 @@ class ChatListViewHolder extends RecyclerView.ViewHolder {
 			itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					clickListener.onItemClick(channel);
+					clickListener.onItemClick(channel.getUrl());
 				}
 			});
 		}

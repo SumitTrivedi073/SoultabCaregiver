@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CalenderFragment extends BaseFragment implements View.OnClickListener {
@@ -110,78 +111,75 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-       //  new ReminderCreateClass(getActivity());
-
+        //  new ReminderCreateClass(getActivity());
+    
         if (Utility.isNetworkConnected(mContext)) {
             GetAllEventAPI(FromDate, TODate);//for list data
         } else {
             Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
         }
-
-        daily.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-        weekly.setBackgroundColor(getResources().getColor(R.color.white));
-        Monthly.setBackgroundColor(getResources().getColor(R.color.white));
-
-        daily.setTextColor(getResources().getColor(R.color.white));
-        weekly.setTextColor(getResources().getColor(R.color.blackish));
-        Monthly.setTextColor(getResources().getColor(R.color.blackish));
-
+    
+        daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
+        weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+        Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+    
+        daily.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        weekly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+        Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+    
     }
 
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
-
-
+    
             case R.id.curret_date_txt:
-
+        
                 calendarPopup();
-
+        
                 break;
-
-
+    
             case R.id.daily:
-                daily.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-                weekly.setBackgroundColor(getResources().getColor(R.color.white));
-                Monthly.setBackgroundColor(getResources().getColor(R.color.white));
-    
-                daily.setTextColor(getResources().getColor(R.color.white));
-                weekly.setTextColor(getResources().getColor(R.color.blackish));
-                Monthly.setTextColor(getResources().getColor(R.color.blackish));
-    
+                daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
+                weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+        
+                daily.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                weekly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+        
                 Daily_select = true;
                 Weekly_select = false;
                 Monthly_select = false;
-    
+        
                 FromDate = Utility.yyyy_MM_dd.format(calendar.getTime());
                 TODate = Utility.yyyy_MM_dd.format(calendar.getTime());
-    
+        
                 try {
         
                     curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
                             FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
                             Utility.yyyy_MM_dd.parse(TODate)));
-        
+            
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
+        
                 GetAllEventAPI(FromDate, TODate);
-
+        
                 break;
-
+    
             case R.id.weekly:
-
-                daily.setBackgroundColor(getResources().getColor(R.color.white));
-                weekly.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-                Monthly.setBackgroundColor(getResources().getColor(R.color.white));
-
-                daily.setTextColor(getResources().getColor(R.color.blackish));
-                weekly.setTextColor(getResources().getColor(R.color.white));
-                Monthly.setTextColor(getResources().getColor(R.color.blackish));
-
-
+        
+                daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
+                Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+        
+                daily.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                weekly.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+        
                 Daily_select = false;
                 Weekly_select = true;
                 Monthly_select = false;
@@ -224,31 +222,30 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-        
+    
                 }
-    
+        
                 GetAllEventAPI(FromDate, TODate);
-    
+        
                 break;
     
             case R.id.Monthly:
         
-                daily.setBackgroundColor(getResources().getColor(R.color.white));
-                weekly.setBackgroundColor(getResources().getColor(R.color.white));
-                Monthly.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-
-                daily.setTextColor(getResources().getColor(R.color.blackish));
-                weekly.setTextColor(getResources().getColor(R.color.blackish));
-                Monthly.setTextColor(getResources().getColor(R.color.white));
-
-
+                daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
+        
+                daily.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                weekly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        
                 Daily_select = false;
                 Weekly_select = false;
                 Monthly_select = true;
-
+        
                 try {
                     // TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 30);
-    
+            
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         
                         LocalDate today1 = LocalDate.now();
