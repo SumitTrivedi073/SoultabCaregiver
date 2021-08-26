@@ -11,6 +11,8 @@ public class APIS {
 	
 	public static final String BASEURL40Plus1 = "https://40plusmart.com/wp-json/wp/v2/";
 	
+	public static final String SENDBIRD_APP_ID1 = "CE94DB4D-1530-433A-B0F2-1216153A37A3";// prod
+	
 	//  Development Server Base URL
 	public static final String BASEURL = "https://dev.mysoultab.com/api/";
 	
@@ -19,6 +21,8 @@ public class APIS {
 	
 	public static final String BASEURL40Plus = "https://dev.40plusmart.com/wp-json/wp/v2/";
 	
+	public static final String SENDBIRD_APP_ID = "3198C7B9-21D6-4C7B-8D2B-2567600213D4"; //dev
+	
 	//Streaging ke liye Base URL
 	public static final String BASEURL2 = "https://stage.mysoultab.com/api/";
 	
@@ -26,6 +30,8 @@ public class APIS {
 			"https://stage.mysoultab.com/uploads/profile_images/";
 	
 	public static final String BASEURL40Plus2 = "https://stage.40plusmart.com/wp-json/wp/v2/";
+	
+	public static final String SENDBIRD_APP_ID2 = "5209BF7E-7EF1-4EE9-856E-649708FF1AC7"; //staging
 	
 	//40 plus API
 	public static final String plus40Signup = "users";
