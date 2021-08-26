@@ -255,12 +255,10 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							tv_badge.setText(
 									String.valueOf(alertCountModel.getResponse().getUnreadCount()));
 							itemView.addView(badge);
+							
 							Utility.setSharedPreference(mContext, APIS.BadgeCount,
 									tv_badge.getText().toString().trim());
-						}
-						talkFragment = TalkFragment.instance;
-						if (talkFragment != null) {
-							talkFragment.setBadge();
+							
 						}
 						
 						

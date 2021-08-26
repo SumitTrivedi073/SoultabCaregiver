@@ -23,6 +23,7 @@ import com.soultabcaregiver.activity.alert.adapter.AlertAdapter;
 import com.soultabcaregiver.activity.alert.model.AlertModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -44,7 +45,11 @@ public class AlertFragment extends BaseFragment {
     TextView no_data_txt;
     FloatingActionButton create_alert_btn;
     CardView blank_card;
+    
     MainActivity mainActivity;
+    
+    TalkFragment talkFragment;
+    
     public static AlertFragment instance;
 
     @Override
@@ -71,7 +76,7 @@ public class AlertFragment extends BaseFragment {
         create_alert_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            
+    
                 Intent intent = new Intent(mContext, CaregiverListActivity.class);
                 startActivity(intent);
             

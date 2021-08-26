@@ -72,10 +72,33 @@ public class TalkFragment extends BaseFragment {
 		instance = TalkFragment.this;
 		tabs = view.findViewById(R.id.tabs);
 		viewPager = view.findViewById(R.id.viewpager);
+		viewPager.setOffscreenPageLimit(1);
 		tabs.setupWithViewPager(viewPager);
 		setupViewPager(viewPager);
 		
 		setBadge();
+		
+		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+			                           int positionOffsetPixels) {
+				
+			}
+			
+			@Override
+			public void onPageSelected(int position) {
+				if (position == 1) {
+					
+					setBadge();
+				}
+				
+			}
+			
+			@Override
+			public void onPageScrollStateChanged(int state) {
+			
+			}
+		});
 		
 		return view;
 	}
