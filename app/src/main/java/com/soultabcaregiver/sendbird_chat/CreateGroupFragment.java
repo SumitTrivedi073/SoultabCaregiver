@@ -63,6 +63,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_CANCELED;
+import static com.soultabcaregiver.sendbird_chat.ChatListFragment.EXTRA_GROUP_CHANNEL_URL;
+import static com.soultabcaregiver.sendbird_chat.ChatListFragment.REQUEST_KEY_FOR_CREATE_GROUP;
 import static com.soultabcaregiver.utils.photoFileUtils.getPath;
 
 public class CreateGroupFragment extends BaseFragment {
@@ -72,6 +74,12 @@ public class CreateGroupFragment extends BaseFragment {
 	
 	private static final String EXTRA_IS_GROUP = "extra_is_group";
 	
+	private final String TAG = getClass().getSimpleName();
+	
+	private final List<String> mSelectedIds = new ArrayList<>();
+	
+	Uri imageUri;
+	
 	private boolean isForGroupChat = false;
 	
 	private CreateGroupUsersAdapter adapter;
@@ -79,8 +87,6 @@ public class CreateGroupFragment extends BaseFragment {
 	private ProgressBar progressDialog;
 	
 	private CreateGroupUsersAdapter.OnItemTapListener onItemTapListener;
-	
-	private final String TAG = getClass().getSimpleName();
 	
 	private RecyclerView recyclerView;
 	
@@ -93,10 +99,6 @@ public class CreateGroupFragment extends BaseFragment {
 	private EditText searchEditText;
 	
 	private EditText groupNameEditText;
-	
-	private final List<String> mSelectedIds = new ArrayList<>();
-	
-	Uri imageUri;
 	
 	private CircleImageView ic_group_img;
 	
@@ -130,7 +132,7 @@ public class CreateGroupFragment extends BaseFragment {
 			} else {
 				ArrayList<String> ids = new ArrayList<>();
 				ids.add(user.getId());
-				createChatChannel(ids);
+				createChatChannel(ids, true, "");
 			}
 		};
 		
@@ -141,12 +143,16 @@ public class CreateGroupFragment extends BaseFragment {
 		return view;
 	}
 	
-	private void createChatChannel(List<String> ids) {
+	private void createChatChannel(List<String> ids, boolean isDistinct, String profileImage) {
 		showProgressDialog(getContext(), getString(R.string.creating_group));
-		ChatHelper.createGroupChannel(ids, !isForGroupChat, groupChannel -> {
-			groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
+		ChatHelper.createGroupChannel(ids, isDistinct, groupChannel -> {
+			groupChannel.updateChannel(groupNameEditText.getText().toString(), profileImage, "",
 					(groupChannel1, e) -> {
 						hideProgressDialog();
+						Bundle bundle = new Bundle();
+						bundle.putString(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
+						getActivity().getSupportFragmentManager().setFragmentResult(
+								REQUEST_KEY_FOR_CREATE_GROUP, bundle);
 						getActivity().onBackPressed();
 						Log.e("tag", "channel created");
 					});
@@ -229,14 +235,7 @@ public class CreateGroupFragment extends BaseFragment {
 				
 			} else {
 				showProgressDialog(getContext(), getString(R.string.creating_group));
-				ChatHelper.createGroupChannel(mSelectedIds, false, groupChannel -> {
-					groupChannel.updateChannel(groupNameEditText.getText().toString(), "", "",
-							(groupChannel1, e) -> {
-								hideProgressDialog();
-								requireActivity().onBackPressed();
-								Log.e("tag", "channel created");
-							});
-				});
+				createChatChannel(mSelectedIds, false, "");
 			}
 		});
 		
@@ -266,199 +265,82 @@ public class CreateGroupFragment extends BaseFragment {
 		
 	}
 	
-	@Override
-	public void onViewCreated(@NonNull @NotNull View view,
-	                          @Nullable @org.jetbrains.annotations.Nullable
-			                          Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		setupRecyclerView();
-		if (Utility.isNetworkConnected(getContext())) {
-			getCaregiverList();//for list data
-		} else {
-			Utility.ShowToast(getContext(), getResources().getString(R.string.net_connection));
-		}
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		getActivity().getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-	}
-	
-	private void setupRecyclerView() {
-		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-		recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		recyclerView.setAdapter(adapter);
-	}
-	
-	private void getCaregiverList() {
-		
-		progressDialog.setVisibility(View.VISIBLE);
-		
-		JSONObject mainObject = new JSONObject();
-		try {
-			mainObject.put("caregiverr_id",
-					Utility.getSharedPreferences(getContext(), APIS.caregiver_id));
-		} catch (JSONException e) {
-			e.printStackTrace();
-			
-		}
-		
-		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-				APIS.BASEURL + APIS.CaregiverListAPIForCreateGroup, mainObject, response -> {
-			progressDialog.setVisibility(View.GONE);
-			CareGiverListModel careGiverProfileModel =
-					new Gson().fromJson(response.toString(), CareGiverListModel.class);
-			
-			if (String.valueOf(careGiverProfileModel.getStatusCode()).equals("200")) {
-				
-				if (careGiverProfileModel.getResponse().size() > 0) {
-					adapter.setCaregiverList(careGiverProfileModel.getResponse());
-				} else {
-					//Empty View here
-					hideViews();
-				}
-			} else if (String.valueOf(careGiverProfileModel.getStatusCode()).equals("403")) {
-				logout_app(careGiverProfileModel.getMessage());
-			} else {
-				Utility.ShowToast(getContext(), careGiverProfileModel.getMessage());
-			}
-			
-		}, error -> {
-			progressDialog.setVisibility(View.GONE);
-		}) {
-			@Override
-			public Map<String, String> getHeaders() {
-				Map<String, String> params = new HashMap<>();
-				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-				params.put(APIS.HEADERKEY2,
-						Utility.getSharedPreferences(getContext(), APIS.EncodeUser_id));
-				return params;
-			}
-			
-		};
-		AppController.getInstance().addToRequestQueue(jsonObjReq);
-		jsonObjReq.setShouldCache(false);
-		jsonObjReq.setRetryPolicy(
-				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		
-	}
-	
-	private void hideViews() {
-		dataLayout.setVisibility(View.GONE);
-		noDataLayout.setVisibility(View.VISIBLE);
-	}
-	
-	public static CreateGroupFragment newInstance(boolean isForGroupChat) {
-		CreateGroupFragment groupFragment = new CreateGroupFragment();
-		Bundle bundle = new Bundle();
-		bundle.putBoolean(EXTRA_IS_GROUP, isForGroupChat);
-		groupFragment.setArguments(bundle);
-		return groupFragment;
-	}
-	
-	private void selectImage() {
-		
-		LayoutInflater inflater =
-				(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.pick_img_layout, null);
-		final AlertDialog.Builder builder =
-				new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
-		
-		builder.setView(layout);
-		builder.setCancelable(true);
-		alertDialog = builder.create();
-		alertDialog.setCanceledOnTouchOutside(true);
-		alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-		alertDialog.getWindow().setGravity(Gravity.BOTTOM);
-		alertDialog.show();
-		
-		LinearLayout Gallery = layout.findViewById(R.id.Gallery);
-		LinearLayout Camera = layout.findViewById(R.id.Camera);
-		
-		Gallery.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				alertDialog.dismiss();
-				galleryIntent();
-			}
-		});
-		
-		Camera.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				alertDialog.dismiss();
-				cameraIntent();
-			}
-		});
-		
-		
-	}
-	
-	private void CheakPermissions() {
-		if (!(ActivityCompat.checkSelfPermission(mContext,
-				Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-				mContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
-			ActivityCompat.requestPermissions(getActivity(),
-					new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-							Manifest.permission.CAMERA},
-					RequestPermissionCode);
-			
-			
-		}
-	}
-	
-	private void AccessCamera() {
-		
-		LayoutInflater inflater =
-				(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.cam_permission, null);
-		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-		
-		builder.setView(layout);
-		builder.setCancelable(false);
-		alertDialog = builder.create();
-		alertDialog.setCanceledOnTouchOutside(false);
-		alertDialog.getWindow().setBackgroundDrawableResource(R.color.transparent);
-		
-		TextView Cancle = layout.findViewById(R.id.btn_cancle);
-		TextView btn_Ok = layout.findViewById(R.id.btn_OK);
-		
-		alertDialog.show();
-		
-		Cancle.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				alertDialog.dismiss();
-			}
-		});
-		
-		btn_Ok.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				alertDialog.dismiss();
-				CheakPermissions();
-			}
-		});
-	}
-	
-	private void galleryIntent() {
-		Intent intent = new Intent();
-		intent.setType("image/*");
-		intent.setAction(Intent.ACTION_GET_CONTENT);//
-		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_IMAGE_GALLERY);
-	}
-	
-	private void cameraIntent() {
-		
-		ContentValues values = new ContentValues();
-		imageUri = getActivity().getContentResolver().insert(
-				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-		startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+	private void UploadGroupImage() {
+		//showProgressDialog(mContext,getResources().getString(R.string.Loading));
+		final VolleyMultipartRequest multipartRequest =
+				new VolleyMultipartRequest(Request.Method.POST,
+						APIS.BASEURL + APIS.GroupChatProfileImage,
+						new Response.Listener<NetworkResponse>()
+								////Place user for service
+						{
+							@Override
+							public void onResponse(NetworkResponse response) {
+								//	hideProgressDialog();
+								try {
+									String resultResponse = new String(response.data);
+									Log.e("response_profile_update", resultResponse);
+									
+									GroupChatImageModel groupChatImageModel =
+											new Gson().fromJson(resultResponse,
+													GroupChatImageModel.class);
+									
+									if (String.valueOf(groupChatImageModel.getStatusCode()).equals(
+											"200")) {
+										chat_image = groupChatImageModel.getResponse().getImage();
+										createChatChannel(mSelectedIds, false, chat_image);
+									} else {
+										hideProgressDialog();
+										
+									}
+									
+									
+								} catch (Exception e) {
+									e.printStackTrace();
+									
+								}
+							}
+							
+						}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						error.getMessage();
+						Log.e(TAG, "onErrorResponse: >>" + error.toString());
+						hideProgressDialog();
+					}
+				}) {
+					@Override
+					public Map<String, String> getHeaders() {
+						Map<String, String> params = new HashMap<>();
+						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						
+						return params;
+					}
+					
+					@Override
+					protected Map<String, DataPart> getByteData() {
+						Map<String, DataPart> params = new HashMap<>();
+						long imagename = System.currentTimeMillis();
+						
+						params.put("group_image", new DataPart(imagename + ".jpg",
+								Utility.getFileDataFromDraw(mContext, ic_group_img.getDrawable()),
+								"image/jpeg"));
+						
+						return params;
+					}
+					
+					@Override
+					protected Map<String, String> getParams() {
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("prev_image", chat_image);
+						return params;
+					}
+				};
+		multipartRequest.setShouldCache(false);
+		multipartRequest.setTag(TAG);
+		multipartRequest.setRetryPolicy(
+				new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		AppController.getInstance().addToRequestQueue(multipartRequest);
 	}
 	
 	@RequiresApi (api = Build.VERSION_CODES.KITKAT)
@@ -615,6 +497,26 @@ public class CreateGroupFragment extends BaseFragment {
 		}
 	}
 	
+	@Override
+	public void onViewCreated(@NonNull @NotNull View view,
+	                          @Nullable @org.jetbrains.annotations.Nullable
+			                          Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		setupRecyclerView();
+		if (Utility.isNetworkConnected(getContext())) {
+			getCaregiverList();//for list data
+		} else {
+			Utility.ShowToast(getContext(), getResources().getString(R.string.net_connection));
+		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		getActivity().getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+	}
+	
 	public static Bitmap rotateImage(Bitmap source, float angle) {
 		Matrix matrix = new Matrix();
 		matrix.postRotate(angle);
@@ -623,91 +525,178 @@ public class CreateGroupFragment extends BaseFragment {
 		
 	}
 	
-	private void UploadGroupImage() {
-		//showProgressDialog(mContext,getResources().getString(R.string.Loading));
-		final VolleyMultipartRequest multipartRequest =
-				new VolleyMultipartRequest(Request.Method.POST,
-						APIS.BASEURL + APIS.GroupChatProfileImage,
-						new Response.Listener<NetworkResponse>()
-								////Place user for service
-						{
-							@Override
-							public void onResponse(NetworkResponse response) {
-								//	hideProgressDialog();
-								try {
-									String resultResponse = new String(response.data);
-									Log.e("response_profile_update", resultResponse);
-									
-									GroupChatImageModel groupChatImageModel =
-											new Gson().fromJson(resultResponse,
-													GroupChatImageModel.class);
-									
-									if (String.valueOf(groupChatImageModel.getStatusCode()).equals(
-											"200")) {
-										chat_image = groupChatImageModel.getResponse().getImage();
-										
-										ChatHelper.createGroupChannel(mSelectedIds, false,
-												groupChannel -> {
-													groupChannel.updateChannel(
-															groupNameEditText.getText().toString(),
-															chat_image, "", (groupChannel1, e) -> {
-																hideProgressDialog();
-																requireActivity().onBackPressed();
-																Log.e("tag", "channel created");
-															});
-												});
-									} else {
-										hideProgressDialog();
-										
-									}
-									
-									
-								} catch (Exception e) {
-									e.printStackTrace();
-									
-								}
-							}
-							
-						}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						error.getMessage();
-						Log.e(TAG, "onErrorResponse: >>" + error.toString());
-						hideProgressDialog();
-					}
-				}) {
-					@Override
-					public Map<String, String> getHeaders() {
-						Map<String, String> params = new HashMap<>();
-						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-						
-						return params;
-					}
-					
-					@Override
-					protected Map<String, DataPart> getByteData() {
-						Map<String, DataPart> params = new HashMap<>();
-						long imagename = System.currentTimeMillis();
-						
-						params.put("group_image", new DataPart(imagename + ".jpg",
-								Utility.getFileDataFromDraw(mContext, ic_group_img.getDrawable()),
-								"image/jpeg"));
-						
-						return params;
-					}
-					
-					@Override
-					protected Map<String, String> getParams() {
-						Map<String, String> params = new HashMap<String, String>();
-						params.put("prev_image", chat_image);
-						return params;
-					}
-				};
-		multipartRequest.setShouldCache(false);
-		multipartRequest.setTag(TAG);
-		multipartRequest.setRetryPolicy(
-				new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		AppController.getInstance().addToRequestQueue(multipartRequest);
+	private void setupRecyclerView() {
+		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+		recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		recyclerView.setAdapter(adapter);
+	}
+	
+	private void getCaregiverList() {
+		
+		progressDialog.setVisibility(View.VISIBLE);
+		
+		JSONObject mainObject = new JSONObject();
+		try {
+			mainObject.put("caregiverr_id",
+					Utility.getSharedPreferences(getContext(), APIS.caregiver_id));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			
+		}
+		
+		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+				APIS.BASEURL + APIS.CaregiverListAPIForCreateGroup, mainObject, response -> {
+			progressDialog.setVisibility(View.GONE);
+			CareGiverListModel careGiverProfileModel =
+					new Gson().fromJson(response.toString(), CareGiverListModel.class);
+			
+			if (String.valueOf(careGiverProfileModel.getStatusCode()).equals("200")) {
+				
+				if (careGiverProfileModel.getResponse().size() > 0) {
+					adapter.setCaregiverList(careGiverProfileModel.getResponse());
+				} else {
+					//Empty View here
+					hideViews();
+				}
+			} else if (String.valueOf(careGiverProfileModel.getStatusCode()).equals("403")) {
+				logout_app(careGiverProfileModel.getMessage());
+			} else {
+				Utility.ShowToast(getContext(), careGiverProfileModel.getMessage());
+			}
+			
+		}, error -> {
+			progressDialog.setVisibility(View.GONE);
+		}) {
+			@Override
+			public Map<String, String> getHeaders() {
+				Map<String, String> params = new HashMap<>();
+				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				params.put(APIS.HEADERKEY2,
+						Utility.getSharedPreferences(getContext(), APIS.EncodeUser_id));
+				return params;
+			}
+			
+		};
+		AppController.getInstance().addToRequestQueue(jsonObjReq);
+		jsonObjReq.setShouldCache(false);
+		jsonObjReq.setRetryPolicy(
+				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		
+	}
+	
+	private void hideViews() {
+		dataLayout.setVisibility(View.GONE);
+		noDataLayout.setVisibility(View.VISIBLE);
+	}
+	
+	private void selectImage() {
+		
+		LayoutInflater inflater =
+				(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.pick_img_layout, null);
+		final AlertDialog.Builder builder =
+				new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
+		
+		builder.setView(layout);
+		builder.setCancelable(true);
+		alertDialog = builder.create();
+		alertDialog.setCanceledOnTouchOutside(true);
+		alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+		alertDialog.getWindow().setGravity(Gravity.BOTTOM);
+		alertDialog.show();
+		
+		LinearLayout Gallery = layout.findViewById(R.id.Gallery);
+		LinearLayout Camera = layout.findViewById(R.id.Camera);
+		
+		Gallery.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				alertDialog.dismiss();
+				galleryIntent();
+			}
+		});
+		
+		Camera.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				alertDialog.dismiss();
+				cameraIntent();
+			}
+		});
+		
+		
+	}
+	
+	private void CheakPermissions() {
+		if (!(ActivityCompat.checkSelfPermission(mContext,
+				Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+				mContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
+			ActivityCompat.requestPermissions(getActivity(),
+					new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+							Manifest.permission.CAMERA},
+					RequestPermissionCode);
+			
+			
+		}
+	}
+	
+	private void AccessCamera() {
+		
+		LayoutInflater inflater =
+				(LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.cam_permission, null);
+		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		
+		builder.setView(layout);
+		builder.setCancelable(false);
+		alertDialog = builder.create();
+		alertDialog.setCanceledOnTouchOutside(false);
+		alertDialog.getWindow().setBackgroundDrawableResource(R.color.transparent);
+		
+		TextView Cancle = layout.findViewById(R.id.btn_cancle);
+		TextView btn_Ok = layout.findViewById(R.id.btn_OK);
+		
+		alertDialog.show();
+		
+		Cancle.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				alertDialog.dismiss();
+			}
+		});
+		
+		btn_Ok.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				alertDialog.dismiss();
+				CheakPermissions();
+			}
+		});
+	}
+	
+	private void galleryIntent() {
+		Intent intent = new Intent();
+		intent.setType("image/*");
+		intent.setAction(Intent.ACTION_GET_CONTENT);//
+		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_IMAGE_GALLERY);
+	}
+	
+	private void cameraIntent() {
+		
+		ContentValues values = new ContentValues();
+		imageUri = getActivity().getContentResolver().insert(
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+		startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+	}
+	
+	public static CreateGroupFragment newInstance(boolean isForGroupChat) {
+		CreateGroupFragment groupFragment = new CreateGroupFragment();
+		Bundle bundle = new Bundle();
+		bundle.putBoolean(EXTRA_IS_GROUP, isForGroupChat);
+		groupFragment.setArguments(bundle);
+		return groupFragment;
 	}
 }

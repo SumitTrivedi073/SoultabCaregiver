@@ -32,6 +32,10 @@ public class ChatListFragment extends BaseFragment {
 	
 	private static final String CHANNEL_HANDLER_ID = "CHANNEL_HANDLER_GROUP_CHANNEL_LIST";
 	
+	public static final String REQUEST_KEY_FOR_CREATE_GROUP = "request_key_for_create_group";
+	
+	public static final String EXTRA_GROUP_CHANNEL_URL = "extra_group_channel_url";
+	
 	private RecyclerView mRecyclerView;
 	
 	private FloatingActionButton newChatFabBtn, newGroupChatBtn;
@@ -41,6 +45,18 @@ public class ChatListFragment extends BaseFragment {
 	private GroupChannelListQuery mChannelListQuery;
 	
 	private ChatListAdapter mChannelListAdapter;
+	
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		getActivity().getSupportFragmentManager().setFragmentResultListener(
+				REQUEST_KEY_FOR_CREATE_GROUP, this, (requestKey, result) -> {
+					if (requestKey.equals(REQUEST_KEY_FOR_CREATE_GROUP)) {
+						String groupChannel = result.getString(EXTRA_GROUP_CHANNEL_URL);
+						enterGroupChannel(groupChannel);
+					}
+				});
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -135,10 +151,10 @@ public class ChatListFragment extends BaseFragment {
 		});
 	}
 	
-	private void enterGroupChannel(GroupChannel channel) {
+	private void enterGroupChannel(String channelUrl) {
 		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
 		if (chatFragment != null) {
-			chatFragment.navigateToConversationFragment(channel.getUrl());
+			chatFragment.navigateToConversationFragment(channelUrl);
 		}
 	}
 	
