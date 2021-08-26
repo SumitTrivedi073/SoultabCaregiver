@@ -293,7 +293,7 @@
     <string name="reply">Reply</string>
     <string name="new_message_group_text">You have a new message in</string>
     <string name="new_message_user_text">You have a new message from</string>
-    <string name="update_application_for_chat">Please have caregiver install caregiver application on their phone</string>
+    <string name="update_application_for_chat">Caregiver isn\'t registered</string>
     <string name="group_call_participants">Participants</string>
     <string name="group_call_select_audio_device_dialog_title">Audio device</string>
     <string name="incoming_call">Incoming call</string>

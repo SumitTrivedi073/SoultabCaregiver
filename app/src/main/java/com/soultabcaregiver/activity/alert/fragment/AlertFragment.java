@@ -195,7 +195,7 @@ public class AlertFragment extends BaseFragment {
                     if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
 
                         if (mainActivity != null) {
-                            mainActivity.Alert_countAPI();
+                            mainActivity.Alert_countAPI("1");
                         }
 
                     }else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {

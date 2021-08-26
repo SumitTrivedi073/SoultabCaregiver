@@ -392,8 +392,11 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 			if (!TextUtils.isEmpty(Utility.getSharedPreferences(context, APIS.user_id))) {
 				mainActivity = MainActivity.instance;
 				if (mainActivity != null) {
-					mainActivity.Alert_countAPI();
+					
+					mainActivity.Alert_countAPI("0");
 				}
+				
+				
 			}
 			
 		}
