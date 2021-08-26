@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
@@ -158,13 +159,13 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        today_txt.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-        lastweek_txt.setBackgroundColor(getResources().getColor(R.color.white));
-        lastmonth_txt.setBackgroundColor(getResources().getColor(R.color.white));
-
-        today_txt.setTextColor(getResources().getColor(R.color.white));
-        lastweek_txt.setTextColor(getResources().getColor(R.color.blackish));
-        lastmonth_txt.setTextColor(getResources().getColor(R.color.blackish));
+        today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
+        lastweek_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+        lastmonth_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+    
+        today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+        lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
     
     }
 
@@ -396,26 +397,23 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineDataSet5.setLineWidth(3f);
                 dataSets.add(lineDataSet5);
                 lineDataSet5.setColor(Color.BLUE);
-
+    
             }
             //  dataSets.add(lineDataSet2);
-
-
+    
             data = new LineData(dataSets);
-
-
-            lineChart.getAxisLeft().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getAxisRight().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getXAxis().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getLegend().setTextColor(getResources().getColor(R.color.white));
-            lineChart.getDescription().setTextColor(getResources().getColor(R.color.white));
-
-
+    
+            lineChart.getAxisLeft().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getAxisRight().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getXAxis().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getLegend().setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineChart.getDescription().setTextColor(
+                    ContextCompat.getColor(mContext, R.color.white));
+    
             colorchange(lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5);
-
+    
             if (lineDataSet != null || lineDataSet3 != null || lineDataSet4 != null || lineDataSet5 != null) {
-
-
+        
                 lineChart.setData(data);
                 lineChart.invalidate();
 
@@ -461,89 +459,30 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
     }
 
-    private void colorchange(LineDataSet lineDataSet, LineDataSet
-            lineDataSet3, LineDataSet lineDataSet4, LineDataSet lineDataSet5) {
-
-        if (lineDataSet != null) {
-            lineDataSet.setHighLightColor(Color.parseColor("#BEBEBE"));
-            lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-            lineDataSet.setValueTextColor(getResources().getColor(R.color.white));
-            lineDataSet.setValueTextSize(5f);
-        }
-
-
-        if (lineDataSet3 != null) {
-
-            lineDataSet3.setHighLightColor(Color.parseColor("#BEBEBE"));
-            lineDataSet3.setAxisDependency(YAxis.AxisDependency.LEFT);
-            lineDataSet3.setValueTextColor(getResources().getColor(R.color.white));
-            lineDataSet3.setValueTextSize(5f);
-        }
-        if (lineDataSet4 != null) {
-
-            lineDataSet4.setHighLightColor(Color.parseColor("#BEBEBE"));
-            lineDataSet4.setAxisDependency(YAxis.AxisDependency.LEFT);
-            lineDataSet4.setValueTextColor(getResources().getColor(R.color.white));
-            lineDataSet4.setValueTextSize(5f);
-        }
-        if (lineDataSet5 != null) {
-
-            lineDataSet5.setHighLightColor(Color.parseColor("#BEBEBE"));
-            lineDataSet5.setAxisDependency(YAxis.AxisDependency.LEFT);
-            lineDataSet5.setValueTextColor(getResources().getColor(R.color.white));
-            lineDataSet5.setValueTextSize(5f);
-        }
-    }
-
-    private ArrayList<Entry> datavalue1(List<String> yAxis) {
-
-        ArrayList<Entry> datavalue = new ArrayList<Entry>();
-
-        try {
-            if (yAxis.size() > 0) {
-                for (int j = 0; j < yAxis.size(); j++) {
-
-                    String yAxisValue = yAxis.get(j).trim();
-
-                    float yflot = Float.parseFloat(yAxisValue);
-
-                    datavalue.add(new Entry(j, yflot));
-
-
-                }
-
-
-            }
-        } catch (NumberFormatException nfe) {
-            System.out.println("Could not parse " + nfe);
-        }
-
-
-        return datavalue;
-    }
-
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
-
+    
             case R.id.today_txt:
-                today_txt.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-                lastweek_txt.setBackgroundColor(getResources().getColor(R.color.white));
-                lastmonth_txt.setBackgroundColor(getResources().getColor(R.color.white));
-
-                today_txt.setTextColor(getResources().getColor(R.color.white));
-                lastweek_txt.setTextColor(getResources().getColor(R.color.blackish));
-                lastmonth_txt.setTextColor(getResources().getColor(R.color.blackish));
-
+                today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
+                lastweek_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                lastmonth_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+        
+                today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+        
                 Log.e("getDaily", String.valueOf(chartModel.getData().getCompliance().getDaily()));
                 if (chartModel != null) {
                     if (chartModel.getData().getCompliance().getDaily().getType() != null) {
-
+                
                         name_event_linear.setVisibility(View.VISIBLE);
                         no_data_txt.setVisibility(View.GONE);
-                        compliance_name_txt.setText(chartModel.getData().getCompliance().getDaily().getType());
-                        compliance_count_txt.setText(chartModel.getData().getCompliance().getDaily().getCount());
+                        compliance_name_txt.setText(
+                                chartModel.getData().getCompliance().getDaily().getType());
+                        compliance_count_txt.setText(
+                                chartModel.getData().getCompliance().getDaily().getCount());
                     } else {
                         name_event_linear.setVisibility(View.GONE);
                         no_data_txt.setVisibility(View.VISIBLE);
@@ -551,27 +490,30 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 } else {
                     name_event_linear.setVisibility(View.GONE);
                     no_data_txt.setVisibility(View.VISIBLE);
-
+            
                 }
-
+        
                 break;
-
+    
             case R.id.lastweek_txt:
-
-                today_txt.setBackgroundColor(getResources().getColor(R.color.white));
-                lastweek_txt.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-                lastmonth_txt.setBackgroundColor(getResources().getColor(R.color.white));
-
-                today_txt.setTextColor(getResources().getColor(R.color.blackish));
-                lastweek_txt.setTextColor(getResources().getColor(R.color.white));
-                lastmonth_txt.setTextColor(getResources().getColor(R.color.blackish));
+        
+                today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                lastweek_txt.setBackgroundColor(
+                        ContextCompat.getColor(mContext, R.color.muzli_color));
+                lastmonth_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+        
+                today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 if (chartModel != null) {
                     if (chartModel.getData().getCompliance().getWeekly().getType() != null) {
-
+                
                         name_event_linear.setVisibility(View.VISIBLE);
                         no_data_txt.setVisibility(View.GONE);
-                        compliance_name_txt.setText(chartModel.getData().getCompliance().getWeekly().getType());
-                        compliance_count_txt.setText(chartModel.getData().getCompliance().getWeekly().getCount());
+                        compliance_name_txt.setText(
+                                chartModel.getData().getCompliance().getWeekly().getType());
+                        compliance_count_txt.setText(
+                                chartModel.getData().getCompliance().getWeekly().getCount());
                     } else {
                         name_event_linear.setVisibility(View.GONE);
                         no_data_txt.setVisibility(View.VISIBLE);
@@ -579,29 +521,31 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 } else {
                     name_event_linear.setVisibility(View.GONE);
                     no_data_txt.setVisibility(View.VISIBLE);
-
+            
                 }
-
+        
                 break;
-
+    
             case R.id.lastmonth_txt:
-
-                today_txt.setBackgroundColor(getResources().getColor(R.color.white));
-                lastweek_txt.setBackgroundColor(getResources().getColor(R.color.white));
-                lastmonth_txt.setBackgroundColor(getResources().getColor(R.color.muzli_color));
-
-                today_txt.setTextColor(getResources().getColor(R.color.blackish));
-                lastweek_txt.setTextColor(getResources().getColor(R.color.blackish));
-                lastmonth_txt.setTextColor(getResources().getColor(R.color.white));
-
-
+        
+                today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                lastweek_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                lastmonth_txt.setBackgroundColor(
+                        ContextCompat.getColor(mContext, R.color.muzli_color));
+        
+                today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
+                lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+        
                 if (chartModel != null) {
                     if (chartModel.getData().getCompliance().getMonthly().getType() != null) {
-
+                
                         name_event_linear.setVisibility(View.VISIBLE);
                         no_data_txt.setVisibility(View.GONE);
-                        compliance_name_txt.setText(chartModel.getData().getCompliance().getMonthly().getType());
-                        compliance_count_txt.setText(chartModel.getData().getCompliance().getMonthly().getCount());
+                        compliance_name_txt.setText(
+                                chartModel.getData().getCompliance().getMonthly().getType());
+                        compliance_count_txt.setText(
+                                chartModel.getData().getCompliance().getMonthly().getCount());
                     } else {
                         name_event_linear.setVisibility(View.GONE);
                         no_data_txt.setVisibility(View.VISIBLE);
@@ -620,16 +564,75 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         , getResources().getString(R.string.yes_text));
                 diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
                     //  ReminderCreateClass.getInstance().DeleteReminderlogout();
-
+    
                     if (mainActivity != null) {
                         diloagBoxCommon.getDialog().dismiss();
                         logout_app("Logout Successfully");
                     }
-
+    
                 });
                 break;
         }
     }
-
-
+    
+    private ArrayList<Entry> datavalue1(List<String> yAxis) {
+        
+        ArrayList<Entry> datavalue = new ArrayList<Entry>();
+        
+        try {
+            if (yAxis.size() > 0) {
+                for (int j = 0; j < yAxis.size(); j++) {
+                    
+                    String yAxisValue = yAxis.get(j).trim();
+                    
+                    float yflot = Float.parseFloat(yAxisValue);
+                    
+                    datavalue.add(new Entry(j, yflot));
+                    
+                    
+                }
+                
+                
+            }
+        } catch (NumberFormatException nfe) {
+            System.out.println("Could not parse " + nfe);
+        }
+        
+        return datavalue;
+    }
+    
+    private void colorchange(LineDataSet lineDataSet, LineDataSet lineDataSet3,
+                             LineDataSet lineDataSet4, LineDataSet lineDataSet5) {
+        
+        if (lineDataSet != null) {
+            lineDataSet.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineDataSet.setValueTextSize(5f);
+        }
+        
+        if (lineDataSet3 != null) {
+            
+            lineDataSet3.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet3.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet3.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineDataSet3.setValueTextSize(5f);
+        }
+        if (lineDataSet4 != null) {
+            
+            lineDataSet4.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet4.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet4.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineDataSet4.setValueTextSize(5f);
+        }
+        if (lineDataSet5 != null) {
+            
+            lineDataSet5.setHighLightColor(Color.parseColor("#BEBEBE"));
+            lineDataSet5.setAxisDependency(YAxis.AxisDependency.LEFT);
+            lineDataSet5.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
+            lineDataSet5.setValueTextSize(5f);
+        }
+    }
+    
+    
 }

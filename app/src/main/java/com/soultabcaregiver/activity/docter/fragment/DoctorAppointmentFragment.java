@@ -12,10 +12,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -40,6 +36,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class DoctorAppointmentFragment extends BaseFragment implements DoctorAppointedListAdptr.AppointedDocSelectionListener {
 
@@ -110,27 +110,27 @@ public class DoctorAppointmentFragment extends BaseFragment implements DoctorApp
 
             }
         });
-
+    
         ImageView searchIcon = doctor_Appointment_search.findViewById(R.id.search_button);
         searchIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_search));
-        searchIcon.setColorFilter(getResources().getColor(R.color.themecolor));
-
+        searchIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.themecolor));
+    
         ImageView searchClose = doctor_Appointment_search.findViewById(R.id.search_close_btn);
-        searchClose.setColorFilter(getResources().getColor(R.color.themecolor));
-
-
+        searchClose.setColorFilter(ContextCompat.getColor(mContext, R.color.themecolor));
+    
         EditText searchEditText = doctor_Appointment_search.findViewById(R.id.search_src_text);
-        searchEditText.setTextColor(getResources().getColor(R.color.themecolor));
-        searchEditText.setHintTextColor(getResources().getColor(R.color.themecolor));
-        searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen._14sdp));
-
+        searchEditText.setTextColor(ContextCompat.getColor(mContext, R.color.themecolor));
+        searchEditText.setHintTextColor(ContextCompat.getColor(mContext, R.color.themecolor));
+        searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen._14sdp));
+    
         doctor_Appointment_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (adapter != null) {
                     adapter.getFilter().filter(query);
                 }
-
+            
                 return false;
             }
 

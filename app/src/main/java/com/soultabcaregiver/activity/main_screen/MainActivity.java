@@ -176,6 +176,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 				}
 			});
 		}
+		
+		if (getIntent().hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
+			checkForCurrentScreen(getIntent().getStringExtra(EXTRA_GROUP_CHANNEL_URL));
+		}
+		
 	}
 	
 	private void buildGoogleApiClient() {

@@ -72,6 +72,7 @@ public class NewMessageActivity extends BaseActivity {
 			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
+			finish();
 		});
 	}
 	
