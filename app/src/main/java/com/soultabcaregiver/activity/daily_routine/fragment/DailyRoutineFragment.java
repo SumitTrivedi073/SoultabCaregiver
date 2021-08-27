@@ -479,16 +479,12 @@ public class DailyRoutineFragment extends BaseFragment {
         Evening = SplitString(Evening);
         Dinner = SplitString(Dinner);
         BedTime = SplitString(BedTime);
-
-        System.out.println("Morninglist elements copied from aList1= " + Morning);
-        System.out.println("Noonlist elements copied from aList1= " + Noon);
-        System.out.println("Eveninglist elements copied from aList1= " + Evening);
-        System.out.println("Dinnerlist elements copied from aList1= " + Dinner);
-        System.out.println("BedTimelist elements copied from aList1= " + BedTime);
-
-        if (!Morning.equals("") || !Noon.equals("") || !Evening.equals("") || !Dinner.equals("")
-                || !BedTime.equals("")) {
+    
+        if (!Morning.equals("") || !Noon.equals("") || !Evening.equals("") || !Dinner.equals(
+                "") || !BedTime.equals("")) {
             SubmitDailyRoutine();
+        } else {
+            Utility.ShowToast(mContext, getString(R.string.please_fill_daily_routine_form));
         }
     }
 

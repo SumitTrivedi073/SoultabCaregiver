@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DocorDetailsActivity;
@@ -22,15 +20,27 @@ import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.ViewHolder> implements Filterable {
-    Context context;
-    String docCatNm;
-    TextView tvNodata;
-    private List<DoctorListModel.Response.DoctorDatum> arDoclist, arSearch;
-    private AppointedDocSelectionListener docSelectionListener;
-    private AppointedDocSelectionListener docFavListener;
+import androidx.recyclerview.widget.RecyclerView;
 
-    public DoctorListAdapter(Activity mainActivity, List<DoctorListModel.Response.DoctorDatum> listdata, TextView tvNodata) {
+public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.ViewHolder> implements Filterable {
+    
+    Context context;
+    
+    String docCatNm;
+    
+    TextView tvNodata;
+    
+    private final List<DoctorListModel.Response.DoctorDatum> arSearch;
+    
+    private List<DoctorListModel.Response.DoctorDatum> arDoclist;
+    
+    private AppointedDocSelectionListener docSelectionListener;
+    
+    private AppointedDocSelectionListener docFavListener;
+    
+    public DoctorListAdapter(Activity mainActivity,
+                             List<DoctorListModel.Response.DoctorDatum> listdata,
+                             TextView tvNodata) {
         arDoclist = listdata;
         context = mainActivity;
         this.arSearch = new ArrayList<>();
@@ -74,7 +84,7 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
             @Override
             public void onClick(View v) {
                 if (docSelectionListener != null) {
-                    docSelectionListener.DocFavListener(DocListBean, holder.getAdapterPosition());
+                    docSelectionListener.DocFavListener(DocListBean, holder.getLayoutPosition());
                 }
             }
         });

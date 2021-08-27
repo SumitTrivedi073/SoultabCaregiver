@@ -3,8 +3,7 @@ package com.soultabcaregiver.sendbird_calls.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import static com.soultabcaregiver.utils.AppController.SENDBIRD_APP_ID;
-
+import static com.soultabcaregiver.WebService.APIS.SENDBIRD_APP_ID;
 
 public class PrefUtils {
 	

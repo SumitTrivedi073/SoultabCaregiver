@@ -2,6 +2,7 @@ package com.soultabcaregiver.activity.alert.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -39,6 +36,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdapter.ViewHolder> {
 
@@ -215,16 +216,23 @@ public class CareGiverListAdapter extends RecyclerView.Adapter<CareGiverListAdap
                 if (pickup_medicine_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.pickup_medicine);
                 }
-
+    
                 if (book_taxi_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.book_taxi);
                 }
                 if (book_doctor_checkbox.isChecked()) {
                     Message = mContext.getResources().getString(R.string.book_doctor_appointment);
                 }
-
-                SendAlertMessage(Selected_caregiver_id);
-                alertDialog.dismiss();
+    
+                if (!TextUtils.isEmpty(Message) && !Message.equals("")) {
+                    SendAlertMessage(Selected_caregiver_id);
+                    alertDialog.dismiss();
+                } else {
+                    Utility.ShowToast(mContext,
+                            mContext.getResources().getString(R.string.select_one_message));
+                }
+    
+    
             }
         });
 
