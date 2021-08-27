@@ -415,6 +415,10 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
+	public void updatenavigation() {
+		navigationView.setSelectedItemId(R.id.navigation_talk);
+	}
+	
 	@Override
 	protected void onStart() {
 		super.onStart();
