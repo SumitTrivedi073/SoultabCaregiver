@@ -306,13 +306,15 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	}
 	
 	private void checkForCurrentScreen(String channelUrl) {
-		//navigationView.setSelectedItemId(R.id.navigation_talk);
+		navigationView.setSelectedItemId(R.id.navigation_talk);
 		Fragment f1 = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 		if (f1 instanceof TalkHolderFragment) {
 			TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
 			Fragment f2 =
 					talkHolderFragment.getChildFragmentManager().findFragmentById(R.id.container);
 			talkHolderFragment.navigateToConversationFragment(channelUrl);
+			
+			
 		} else {
 			loadTalkHolderFragment(channelUrl);
 		}

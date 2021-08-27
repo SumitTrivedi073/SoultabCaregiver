@@ -1,12 +1,8 @@
 package com.soultabcaregiver.sendbird_chat;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -21,8 +17,6 @@ import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_chat.utils.ImageUtils;
-
-import java.util.List;
 
 import androidx.core.content.ContextCompat;
 
@@ -46,9 +40,6 @@ public class NewMessageActivity extends BaseActivity {
 	
 	private TextView messageTextView;
 	
-	MainActivity mainActivity;
-	
-	boolean AppInBackground;
 	
 	@SuppressLint ("SetTextI18n")
 	@Override
@@ -61,8 +52,6 @@ public class NewMessageActivity extends BaseActivity {
 		getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT);
 		
-		mainActivity = MainActivity.instance;
-		AppInBackground = isAppIsInBackground(this);
 		if (getSupportActionBar() != null) {
 			getSupportActionBar().hide();
 		}
@@ -71,31 +60,6 @@ public class NewMessageActivity extends BaseActivity {
 		setData(getIntent());
 		
 		
-	}
-	
-	private boolean isAppIsInBackground(Context context) {
-		boolean isInBackground = true;
-		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-			List<ActivityManager.RunningAppProcessInfo> runningProcesses =
-					am.getRunningAppProcesses();
-			for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-				if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-					for (String activeProcess : processInfo.pkgList) {
-						if (activeProcess.equals(context.getPackageName())) {
-							isInBackground = false;
-						}
-					}
-				}
-			}
-		} else {
-			List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-			ComponentName componentInfo = taskInfo.get(0).topActivity;
-			if (componentInfo.getPackageName().equals(context.getPackageName())) {
-				isInBackground = false;
-			}
-		}
-		return isInBackground;
 	}
 	
 	private void setData(Intent intent) {
@@ -149,12 +113,6 @@ public class NewMessageActivity extends BaseActivity {
 			finish();
 		});
 		findViewById(R.id.replyBtn).setOnClickListener(v -> {
-			/*if (AppInBackground){
-				if (mainActivity != null) {
-					
-					mainActivity.updatenavigation();
-				}
-			}*/
 			
 			Intent intent = new Intent(this, MainActivity.class);
 			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
