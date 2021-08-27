@@ -59,6 +59,7 @@ import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.shopping.ShoppingCategoryActivity;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -86,6 +87,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	private static final int REQUEST_CODE_PERMISSION = 2;
 	
+	private static final int IMMEDIATE_APP_UPDATE_REQ_CODE = 124;
+	
 	public static MainActivity instance;
 	
 	private final String TAG = getClass().getSimpleName();
@@ -112,6 +115,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	AlertFragment alertFragment;
 	
+	TalkFragment talkFragment;
+	
 	private BroadcastReceiver receiver;
 	
 	private String CityZipCode;
@@ -121,8 +126,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	private BroadcastReceiver mReceiver;
 	
 	private Timer tmrStartEng;
-	
-	private static final int IMMEDIATE_APP_UPDATE_REQ_CODE = 124;
 	
 	private AppUpdateManager appUpdateManager;
 	
@@ -236,22 +239,29 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							new Gson().fromJson(response.toString(), AlertCountModel.class);
 					
 					if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
+						
 						alertFragment = AlertFragment.instance;
 						if (alertFragment != null) {
 							alertFragment.GetAlertList(mContext);
 							
 						}
+						
 						itemView.removeView(badge);
-						if (alertCountModel.getResponse().getUnreadCount() > 9) {
-							tv_badge.setText("9+");
-							itemView.addView(badge);
 							
-						} else {
-							
-							tv_badge.setText(
-									String.valueOf(alertCountModel.getResponse().getUnreadCount()));
-							itemView.addView(badge);
-						}
+							if (alertCountModel.getResponse().getUnreadCount() > 9) {
+								tv_badge.setText("9+");
+								itemView.addView(badge);
+								Utility.setSharedPreference(mContext, APIS.BadgeCount, "9+");
+							} else {
+								
+								tv_badge.setText(String.valueOf(
+										alertCountModel.getResponse().getUnreadCount()));
+								itemView.addView(badge);
+								Utility.setSharedPreference(mContext, APIS.BadgeCount,
+										tv_badge.getText().toString().trim());
+								
+								
+							}
 						
 						
 					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
@@ -284,88 +294,32 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		if (intent.hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
-			checkForCurrentScreen(intent.getStringExtra(EXTRA_GROUP_CHANNEL_URL));
-		} else {
-			super.onNewIntent(intent);
+	public void updatebadge() {
+		
+		alertFragment = AlertFragment.instance;
+		if (alertFragment != null) {
+			alertFragment.AlertCountUpdate();
+			
 		}
+		
+		
 	}
 	
 	private void checkForCurrentScreen(String channelUrl) {
-		//navigationView.setSelectedItemId(R.id.navigation_talk);
+		navigationView.setSelectedItemId(R.id.navigation_talk);
 		Fragment f1 = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 		if (f1 instanceof TalkHolderFragment) {
 			TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
 			Fragment f2 =
 					talkHolderFragment.getChildFragmentManager().findFragmentById(R.id.container);
 			talkHolderFragment.navigateToConversationFragment(channelUrl);
+			
+			
 		} else {
 			loadTalkHolderFragment(channelUrl);
 		}
 	}
 	
-	private void openPlaceCallActivity() {
-		//		ArrayList<String> ids = new ArrayList<>();
-		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
-		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
-		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
-		//			Log.e("channel", "" + groupChannel.getUrl());
-		//			Intent intent = new Intent(this, ConversationFragment.class);
-		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
-		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
-		//			.user_id));
-		//			startActivity(intent);
-		//		});
-		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
-				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
-	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		receiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, final Intent intent) {
-				
-				String action = intent.getAction();
-				
-				if (action.matches(LocationManager.PROVIDERS_CHANGED_ACTION)) {
-					LocationManager lm =
-							(LocationManager) getApplicationContext().getSystemService(
-							Context.LOCATION_SERVICE);
-					
-					try {
-						isLocationEnabled = Utility.isLocationEnabled(getApplicationContext());
-						if (!isLocationEnabled) {
-							Utility.buildAlertMessageNoGps(MainActivity.this);
-						}
-					} catch (Exception ignored) {
-					}
-				}
-			}
-		};
-		
-		// register events
-		getApplicationContext().registerReceiver(receiver,
-				new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
-		
-		
-	}
-	
-	@Override
-	public void onStop() {
-		super.onStop();
-		LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(receiver);
-		if (null != tmrStartEng) {
-			tmrStartEng.cancel();
-			tmrStartEng = null;
-			Log.e("Timer", "Stop");
-			
-		}
-		unregisterReceiver();
-	}
 	
 	private void listner() {
 		
@@ -463,6 +417,93 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
+	public void updatenavigation() {
+		navigationView.setSelectedItemId(R.id.navigation_talk);
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		receiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, final Intent intent) {
+				
+				String action = intent.getAction();
+				
+				if (action.matches(LocationManager.PROVIDERS_CHANGED_ACTION)) {
+					LocationManager lm =
+							(LocationManager) getApplicationContext().getSystemService(
+							Context.LOCATION_SERVICE);
+					
+					try {
+						isLocationEnabled = Utility.isLocationEnabled(getApplicationContext());
+						if (!isLocationEnabled) {
+							Utility.buildAlertMessageNoGps(MainActivity.this);
+						}
+					} catch (Exception ignored) {
+					}
+				}
+			}
+		};
+		
+		// register events
+		getApplicationContext().registerReceiver(receiver,
+				new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
+		
+		
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(receiver);
+		if (null != tmrStartEng) {
+			tmrStartEng.cancel();
+			tmrStartEng = null;
+			Log.e("Timer", "Stop");
+			
+		}
+		unregisterReceiver();
+	}
+	
+	private void unregisterReceiver() {
+		Log.i(TAG, "[MainActivity] unregisterReceiver()");
+		
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
+		}
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (null != tmrStartEng) {
+			tmrStartEng.cancel();
+			tmrStartEng = null;
+			Log.e("Timer", "Pause");
+			
+		}
+		
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		if (intent.hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
+			checkForCurrentScreen(intent.getStringExtra(EXTRA_GROUP_CHANNEL_URL));
+		} else {
+			super.onNewIntent(intent);
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		//   new ReminderCreateClass(MainActivity.this);
+		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
+		checkUpdate();
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -539,34 +580,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	}
 	
 	@Override
-	public void onPause() {
-		super.onPause();
-		if (null != tmrStartEng) {
-			tmrStartEng.cancel();
-			tmrStartEng = null;
-			Log.e("Timer", "Pause");
-			
-		}
-		
-	}
-	
-	private void loadTalkHolderFragment(String channelUrl) {
-		video_call.setVisibility(View.GONE);
-		shopping_btn.setVisibility(View.GONE);
-		Utility.loadFragment(MainActivity.this, TalkHolderFragment.newInstance(channelUrl), false,
-				null);
-	}
-	
-	private void unregisterReceiver() {
-		Log.i(TAG, "[MainActivity] unregisterReceiver()");
-		
-		if (mReceiver != null) {
-			unregisterReceiver(mReceiver);
-			mReceiver = null;
-		}
-	}
-	
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
@@ -585,6 +598,52 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			//https://www.section.io/engineering-education/android-application-in-app-update-using
 			// -android-studio/
 		}
+	}
+	
+	private void checkUpdate() {
+		
+		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+		
+		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+			if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
+					AppUpdateType.IMMEDIATE)) {
+				startUpdateFlow(appUpdateInfo);
+			} else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+				startUpdateFlow(appUpdateInfo);
+			}
+		});
+	}
+	
+	private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
+		try {
+			appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this,
+					IMMEDIATE_APP_UPDATE_REQ_CODE);
+		} catch (IntentSender.SendIntentException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadTalkHolderFragment(String channelUrl) {
+		video_call.setVisibility(View.GONE);
+		shopping_btn.setVisibility(View.GONE);
+		Utility.loadFragment(MainActivity.this, TalkHolderFragment.newInstance(channelUrl), false,
+				null);
+	}
+	
+	private void openPlaceCallActivity() {
+		//		ArrayList<String> ids = new ArrayList<>();
+		//		ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
+		//		ids.add(Utility.getSharedPreferences(this, APIS.user_id));
+		//		ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+		//			Log.e("channel", "" + groupChannel.getUrl());
+		//			Intent intent = new Intent(this, ConversationFragment.class);
+		//			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, groupChannel.getUrl());
+		//			intent.putExtra(EXTRA_CALLEE_ID, Utility.getSharedPreferences(this, APIS
+		//			.user_id));
+		//			startActivity(intent);
+		//		});
+		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
+				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
 	}
 	
 	public static MainActivity getInstance() {
@@ -621,37 +680,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			} catch (IllegalAccessException e) {
 				Log.e("ERROR ILLEGAL ALG", "Unable to change value of shift mode");
 			}
-		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		//   new ReminderCreateClass(MainActivity.this);
-		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-		checkUpdate();
-	}
-	
-	private void checkUpdate() {
-		
-		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-		
-		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-			if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
-					AppUpdateType.IMMEDIATE)) {
-				startUpdateFlow(appUpdateInfo);
-			} else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-				startUpdateFlow(appUpdateInfo);
-			}
-		});
-	}
-	
-	private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
-		try {
-			appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this,
-					IMMEDIATE_APP_UPDATE_REQ_CODE);
-		} catch (IntentSender.SendIntentException e) {
-			e.printStackTrace();
 		}
 	}
 	

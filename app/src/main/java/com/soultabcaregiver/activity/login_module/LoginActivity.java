@@ -163,29 +163,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		}
 	}
 	
-	private void checkUpdate() {
-		
-		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-		
-		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-			if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
-					AppUpdateType.IMMEDIATE)) {
-				startUpdateFlow(appUpdateInfo);
-			} else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-				startUpdateFlow(appUpdateInfo);
-			}
-		});
-	}
-	
-	private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
-		try {
-			appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this,
-					IMMEDIATE_APP_UPDATE_REQ_CODE);
-		} catch (IntentSender.SendIntentException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	private void Listener() {
 		tvLogin.setOnClickListener(this);
 		tvForgot.setOnClickListener(this);
@@ -207,6 +184,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				
 			}
 		});
+	}
+	
+	private void checkUpdate() {
+		
+		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+		
+		appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+			if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(
+					AppUpdateType.IMMEDIATE)) {
+				startUpdateFlow(appUpdateInfo);
+			} else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+				startUpdateFlow(appUpdateInfo);
+			}
+		});
+	}
+	
+	private void startUpdateFlow(AppUpdateInfo appUpdateInfo) {
+		try {
+			appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this,
+					IMMEDIATE_APP_UPDATE_REQ_CODE);
+		} catch (IntentSender.SendIntentException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -232,28 +232,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	private void Login() {
 		if (Utility.isNetworkConnected(LoginActivity.this)) {
 			if (etEmail.getText().toString().trim().isEmpty()) {
-				
 				Utility.ShowToast(mContext, getResources().getString(R.string.valid_email));
-				
-				
 			} else if (etPass.getText().toString().trim().isEmpty()) {
-				
 				Utility.ShowToast(mContext, getResources().getString(R.string.valid_pass));
-				
 			} else if (!Utility.isvalidatePassword(etPass.getText().toString().trim())) {
 				Utility.ShowToast(mContext, getResources().getString(R.string.password_not_valid));
-				
 			} else if (etPass.getText().toString().trim().length() < 8) {
 				Utility.ShowToast(mContext, getResources().getString(R.string.password_notvalid));
-				
 			} else {
 				GetLogin();
 			}
 		} else {
-			
 			Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-			
-			
 		}
 	}
 	

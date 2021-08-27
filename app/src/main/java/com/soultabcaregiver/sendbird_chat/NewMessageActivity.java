@@ -40,6 +40,7 @@ public class NewMessageActivity extends BaseActivity {
 	
 	private TextView messageTextView;
 	
+	
 	@SuppressLint ("SetTextI18n")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,21 +60,6 @@ public class NewMessageActivity extends BaseActivity {
 		setData(getIntent());
 		
 		
-	}
-	
-	private void setupUI() {
-		messageTextView = findViewById(R.id.messageTextView);
-		groupPic = findViewById(R.id.groupAvatar);
-		findViewById(R.id.closeBtn).setOnClickListener(v -> {
-			finish();
-		});
-		findViewById(R.id.replyBtn).setOnClickListener(v -> {
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			finish();
-		});
 	}
 	
 	private void setData(Intent intent) {
@@ -118,6 +104,22 @@ public class NewMessageActivity extends BaseActivity {
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		setData(intent);
+	}
+	
+	private void setupUI() {
+		messageTextView = findViewById(R.id.messageTextView);
+		groupPic = findViewById(R.id.groupAvatar);
+		findViewById(R.id.closeBtn).setOnClickListener(v -> {
+			finish();
+		});
+		findViewById(R.id.replyBtn).setOnClickListener(v -> {
+			
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			finish();
+		});
 	}
 	
 }

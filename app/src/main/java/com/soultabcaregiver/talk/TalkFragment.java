@@ -1,24 +1,32 @@
 package com.soultabcaregiver.talk;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_chat.CallListFragment;
 import com.soultabcaregiver.sendbird_chat.ChatFragment;
+import com.soultabcaregiver.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -28,16 +36,66 @@ import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROU
 
 public class TalkFragment extends BaseFragment {
 	
+	public static TalkFragment instance;
+	
+	private final String TAG = getClass().getSimpleName();
+	
+	TabLayout tabs;
+	
+	TabLayout itemView;
+	
+	View badge;
+	
+	TextView tv_badge;
+	
+	Context mContext;
+	
 	private ViewPager viewPager;
+	
+	MainActivity mainActivity;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_talk, container, false);
-		TabLayout tabs = view.findViewById(R.id.tabs);
+		
+		mContext = getActivity();
+		instance = TalkFragment.this;
+		mainActivity = MainActivity.instance;
+		tabs = view.findViewById(R.id.tabs);
 		viewPager = view.findViewById(R.id.viewpager);
+		viewPager.setOffscreenPageLimit(1);
 		tabs.setupWithViewPager(viewPager);
 		setupViewPager(viewPager);
+		
+		setBadge();
+		
+		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+			                           int positionOffsetPixels) {
+				
+			}
+			
+			@Override
+			public void onPageSelected(int position) {
+				if (position == 1) {
+					
+					setBadge2();
+					if (mainActivity != null) {
+						mainActivity.updatebadge();
+					}
+					
+				}
+				
+			}
+			
+			@Override
+			public void onPageScrollStateChanged(int state) {
+			
+			}
+		});
+		
 		return view;
 	}
 	
@@ -47,6 +105,25 @@ public class TalkFragment extends BaseFragment {
 		adapter.addFragment(new AlertFragment(), getString(R.string.alert));
 		adapter.addFragment(new CallListFragment(), getString(R.string.calls));
 		viewPager.setAdapter(adapter);
+		
+		
+	}
+	
+	public void setBadge() {
+		BadgeDrawable badgeDrawable = Objects.requireNonNull(tabs.getTabAt(1)).getOrCreateBadge();
+		badgeDrawable.setVisible(true);
+		badgeDrawable.setNumber(
+				Integer.parseInt(Utility.getSharedPreferences(mContext, APIS.BadgeCount)));
+		badgeDrawable.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange_color));
+		
+	}
+	
+	public void setBadge2() {
+		BadgeDrawable badgeDrawable = Objects.requireNonNull(tabs.getTabAt(1)).getOrCreateBadge();
+		badgeDrawable.setVisible(true);
+		badgeDrawable.setNumber(0);
+		badgeDrawable.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange_color));
+		
 	}
 	
 	@Override
@@ -60,6 +137,13 @@ public class TalkFragment extends BaseFragment {
 		}
 	}
 	
+	public void navigateToConversationFragment(String url) {
+		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
+		if (talkHolderFragment != null) {
+			talkHolderFragment.navigateToConversationFragment(url);
+		}
+	}
+	
 	public static TalkFragment newInstance(String channelUrl) {
 		Bundle args = new Bundle();
 		TalkFragment fragment = new TalkFragment();
@@ -68,13 +152,6 @@ public class TalkFragment extends BaseFragment {
 		}
 		fragment.setArguments(args);
 		return fragment;
-	}
-	
-	public void navigateToConversationFragment(String url) {
-		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
-		if (talkHolderFragment != null) {
-			talkHolderFragment.navigateToConversationFragment(url);
-		}
 	}
 	
 	public void navigateToCreateGroupFragment(boolean isForGroupChat) {
@@ -87,7 +164,6 @@ public class TalkFragment extends BaseFragment {
 	public int getCurrentPageIndex() {
 		return viewPager.getCurrentItem();
 	}
-	
 	
 }
 
@@ -120,5 +196,7 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
 		mFragmentList.add(fragment);
 		mFragmentTitleList.add(title);
 	}
+	
+	
 }
 

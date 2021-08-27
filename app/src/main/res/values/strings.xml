@@ -293,7 +293,7 @@
     <string name="reply">Reply</string>
     <string name="new_message_group_text">You have a new message in</string>
     <string name="new_message_user_text">You have a new message from</string>
-    <string name="update_application_for_chat">The caregiver needs to update the application</string>
+    <string name="update_application_for_chat">Caregiver isn\'t registered</string>
     <string name="group_call_participants">Participants</string>
     <string name="group_call_select_audio_device_dialog_title">Audio device</string>
     <string name="incoming_call">Incoming call</string>
@@ -333,6 +333,9 @@
     <string name="Camera_permission_txt">Please give Soultab Caregiver access to this \n device\'s camera to click your pictures </string>
     <string name="Participants">Participants</string>
     <string name="empty_msg">Can\'t send empty message</string>
+    <string name="please_fill_daily_routine_form">Please fill out Daily Routine form</string>
+    <string name="select_one_message">Please select atleast one message</string>
+
     <!--Added by Sumit-->
 
 </resources>
