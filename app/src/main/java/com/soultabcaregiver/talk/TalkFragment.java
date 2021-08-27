@@ -81,7 +81,7 @@ public class TalkFragment extends BaseFragment {
 			public void onPageSelected(int position) {
 				if (position == 1) {
 					
-					setBadge();
+					setBadge2();
 					if (mainActivity != null) {
 						mainActivity.updatebadge();
 					}
@@ -114,6 +114,14 @@ public class TalkFragment extends BaseFragment {
 		badgeDrawable.setVisible(true);
 		badgeDrawable.setNumber(
 				Integer.parseInt(Utility.getSharedPreferences(mContext, APIS.BadgeCount)));
+		badgeDrawable.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange_color));
+		
+	}
+	
+	public void setBadge2() {
+		BadgeDrawable badgeDrawable = Objects.requireNonNull(tabs.getTabAt(1)).getOrCreateBadge();
+		badgeDrawable.setVisible(true);
+		badgeDrawable.setNumber(0);
 		badgeDrawable.setBackgroundColor(ContextCompat.getColor(mContext, R.color.orange_color));
 		
 	}

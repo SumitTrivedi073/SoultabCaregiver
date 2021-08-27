@@ -91,7 +91,7 @@ public class AlertFragment extends BaseFragment {
         super.onResume();
         if (Utility.isNetworkConnected(mContext)) {
             GetAlertList(mContext);//for list data
-            AlertCountUpdate();
+    
         } else {
             Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
         }
@@ -195,7 +195,7 @@ public class AlertFragment extends BaseFragment {
                     if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
 
                         if (mainActivity != null) {
-                            mainActivity.Alert_countAPI("1");
+                            mainActivity.Alert_countAPI();
                         }
 
                     }else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {

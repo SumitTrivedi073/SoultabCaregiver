@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		tv_badge = badge.findViewById(R.id.notification_badge);
 		
 		registerReceiver();
-		Alert_countAPI("0");
+		Alert_countAPI();
 		listner();
 		
 		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
@@ -217,7 +217,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		registerReceiver(mReceiver, intentFilter);
 	}
 	
-	public void Alert_countAPI(String value) {
+	public void Alert_countAPI() {
 		
 		JSONObject mainObject = new JSONObject();
 		try {
@@ -245,8 +245,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 							alertFragment.GetAlertList(mContext);
 							
 						}
-						if (value.equals("0")) {
-							itemView.removeView(badge);
+						
+						itemView.removeView(badge);
 							
 							if (alertCountModel.getResponse().getUnreadCount() > 9) {
 								tv_badge.setText("9+");
@@ -261,42 +261,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 										tv_badge.getText().toString().trim());
 								
 								
-								/*if (Utility.getSharedPreferences(mContext,
-										APIS.BadgeCount).equals("0")){
-									Log.e("badgecount","Empty");
-									tv_badge.setText(String.valueOf(alertCountModel.getResponse()
-									.getUnreadCount()));
-									itemView.addView(badge);
-									Utility.setSharedPreference(mContext, APIS.BadgeCount,
-									tv_badge.getText().toString().trim());
-									
-								}else {
-									Log.e("badgecount","notEmpty");
-									
-									int x=Integer.parseInt(Utility.getSharedPreferences(mContext,
-											APIS.BadgeCount));
-									int y=Integer.parseInt(String.valueOf(alertCountModel
-									.getResponse().getUnreadCount()));
-									
-									//sum these two numbers
-									int z=x+y;
-									
-									Log.e("total", String.valueOf(z));
-									tv_badge.setText(String.valueOf(z));
-									itemView.addView(badge);
-									Utility.setSharedPreference(mContext, APIS.BadgeCount, String
-									.valueOf(z));
-									
-								}*/
-								
 							}
-							
-						} else {
-							
-							Utility.setSharedPreference(mContext, APIS.BadgeCount,
-									String.valueOf(alertCountModel.getResponse().getUnreadCount()));
-							
-						}
+						
+						
 					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
 						logout_app(alertCountModel.getMessage());
 					} else {
@@ -323,6 +290,17 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		jsonObjReq.setShouldCache(false);
 		jsonObjReq.setRetryPolicy(
 				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		
+		
+	}
+	
+	public void updatebadge() {
+		
+		alertFragment = AlertFragment.instance;
+		if (alertFragment != null) {
+			alertFragment.AlertCountUpdate();
+			
+		}
 		
 		
 	}
@@ -644,13 +622,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		shopping_btn.setVisibility(View.GONE);
 		Utility.loadFragment(MainActivity.this, TalkHolderFragment.newInstance(channelUrl), false,
 				null);
-	}
-	
-	public void updatebadge() {
-		itemView.removeView(badge);
-		tv_badge.setText(Utility.getSharedPreferences(mContext, APIS.BadgeCount));
-		itemView.addView(badge);
-		
 	}
 	
 	private void openPlaceCallActivity() {

@@ -393,7 +393,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 				mainActivity = MainActivity.instance;
 				if (mainActivity != null) {
 					
-					mainActivity.Alert_countAPI("0");
+					mainActivity.Alert_countAPI();
 				}
 				
 				
