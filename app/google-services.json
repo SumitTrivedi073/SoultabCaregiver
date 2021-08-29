@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "90774745825-nmmildipeghdrbl8si7fr39ljslbv541.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.soultabcaregiver",
+            "certificate_hash": "0f540bc7fdad970f0fbb9c3614e47811a64f5dfd"
+          }
+        },
+        {
+          "client_id": "90774745825-pqcku78rl10tp2v1t8l09hsovr6lo3l7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.soultabcaregiver",
+            "certificate_hash": "c0904fdce2f4b77c496f04a2527acea2eade4d85"
+          }
+        },
+        {
           "client_id": "90774745825-sl0legr66tbv6jfg4qrhit4kv0ss600g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -37,6 +53,13 @@
             {
               "client_id": "90774745825-mj0sej098kfg1b55bs9q9g4e27f2iua8.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "90774745825-vlq7vkmmlockn43e81prvvjl4e6jgkqm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.soultabcaregiver"
+              }
             }
           ]
         }
