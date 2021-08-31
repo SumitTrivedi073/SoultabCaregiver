@@ -375,7 +375,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		String channelId = "Default";
 		NotificationCompat.Builder builder =
 				new NotificationCompat.Builder(context, MyNoti).setSmallIcon(
-						R.drawable.notification_icon).setContentTitle(title).setContentText(
+						R.drawable.main_logo).setContentTitle(title).setContentText(
 						body).setAutoCancel(true).setContentIntent(pendingIntent);
 		NotificationManager manager =
 				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
