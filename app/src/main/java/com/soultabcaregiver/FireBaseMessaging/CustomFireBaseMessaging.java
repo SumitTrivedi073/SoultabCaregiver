@@ -163,10 +163,9 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 		NotificationCompat.Builder notificationBuilder =
 				new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(
-						R.drawable.launcher_icon2).setColor(ContextCompat.getColor(context,
-						R.color.colorPrimary))  // small icon background color
+						R.drawable.main_logo)  // small icon background color
 						.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-								R.drawable.launcher_icon2)).setContentTitle(
+								R.drawable.main_logo)).setContentTitle(
 						context.getResources().getString(R.string.app_name)).setAutoCancel(
 						true).setSound(defaultSoundUri).setPriority(
 						Notification.PRIORITY_MAX).setDefaults(
