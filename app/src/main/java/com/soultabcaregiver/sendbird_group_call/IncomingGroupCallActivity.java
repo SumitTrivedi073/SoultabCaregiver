@@ -63,11 +63,6 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 		
 		SendBirdCall.fetchRoomById(roomId, (newRoom, e) -> {
 			room = newRoom;
-			if (room != null) {
-				SendBirdGroupCallService.startService(IncomingGroupCallActivity.this, "GroupName",
-						room.getRoomId(), false);
-				room.addListener(TAG, new RoomListenerImpl());
-			}
 		});
 		
 		findViewById(R.id.answerButton).setOnClickListener(v -> {
@@ -75,6 +70,11 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 			enterParams.setAudioEnabled(true);
 			enterParams.setVideoEnabled(true);
 			if (room != null) {
+				
+				SendBirdGroupCallService.startService(IncomingGroupCallActivity.this, "GroupName",
+						room.getRoomId(), false);
+				room.addListener(TAG, new RoomListenerImpl());
+				
 				room.enter(enterParams, e1 -> {
 					Intent groupCallIntent = new Intent(this, GroupCallActivity.class);
 					groupCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
@@ -86,6 +86,7 @@ public class IncomingGroupCallActivity extends AppCompatActivity {
 		});
 		
 		findViewById(R.id.declineButton).setOnClickListener(v -> {
+			SendBirdGroupCallService.stopService(IncomingGroupCallActivity.this);
 			finish();
 		});
 	}

@@ -34,6 +34,7 @@ import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.sendbird_group_call.GroupCallType;
 import com.soultabcaregiver.sendbird_group_call.IncomingGroupCallActivity;
+import com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONException;
@@ -44,7 +45,6 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -230,34 +230,39 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		String roomId = customMessageObj.getString("roomId");
 		String channelUrl = customMessageObj.getString("channelUrl");
 		String userIds = customMessageObj.getString("userIds");
+		
 		if (userIds.contains(PrefUtils.getUserId(context))) {
-			
-			if (type.equals(GroupCallType.END_GROUP_VIDEO.name())) {
-				Intent incomingCallIntent = new Intent(context, IncomingGroupCallActivity.class);
-				incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
-				incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
-				incomingCallIntent.putExtra(EXTRA_USERS_IDS, userIds);
-				incomingCallIntent.putExtra(EXTRA_END_CALL, true);
-				incomingCallIntent.addFlags(
-						FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				context.startActivity(incomingCallIntent);
-			} else {
-				checkAuthentication(context,
-						isSuccess -> SendBirdCall.fetchRoomById(roomId, (room, e) -> {
-							if (room != null) {
-								if (room.getRemoteParticipants().size() > 0) {
-									Intent incomingCallIntent =
-											new Intent(context, IncomingGroupCallActivity.class);
-									incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
-									incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
-									incomingCallIntent.addFlags(
-											FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-									context.startActivity(incomingCallIntent);
-								} else {
-									Log.e("TAG", "room is close");
+			if (!SendBirdGroupCallService.hasActiveCall) {
+				if (type.equals(GroupCallType.END_GROUP_VIDEO.name())) {
+					Intent incomingCallIntent =
+							new Intent(context, IncomingGroupCallActivity.class);
+					incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
+					incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+					incomingCallIntent.putExtra(EXTRA_USERS_IDS, userIds);
+					incomingCallIntent.putExtra(EXTRA_END_CALL, true);
+					incomingCallIntent.addFlags(
+							FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					context.startActivity(incomingCallIntent);
+				} else {
+					checkAuthentication(context,
+							isSuccess -> SendBirdCall.fetchRoomById(roomId, (room, e) -> {
+								if (room != null) {
+									if (room.getRemoteParticipants().size() > 0) {
+										Intent incomingCallIntent = new Intent(context,
+												IncomingGroupCallActivity.class);
+										incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
+										incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+										incomingCallIntent.addFlags(
+												FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+										context.startActivity(incomingCallIntent);
+									} else {
+										Log.e("TAG", "room is close");
+									}
 								}
-							}
-						}));
+							}));
+				}
+			} else {
+				Log.e(TAG, "One Call is On Going");
 			}
 		}
 	}
