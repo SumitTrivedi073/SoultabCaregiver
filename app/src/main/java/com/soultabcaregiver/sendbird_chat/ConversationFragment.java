@@ -1021,9 +1021,9 @@ public class ConversationFragment extends BaseFragment {
 		UserMessage tempUserMessage = mChannel.sendUserMessage(text, (userMessage, e) -> {
 			if (e != null) {
 				// Error!
-				Toast.makeText(requireContext(),
+				/*Toast.makeText(requireContext(),
 						"Send failed with error " + e.getCode() + ": " + e.getMessage(),
-						Toast.LENGTH_SHORT).show();
+						Toast.LENGTH_SHORT).show();*/
 				mChatAdapter.markMessageFailed(userMessage);
 				return;
 			}
