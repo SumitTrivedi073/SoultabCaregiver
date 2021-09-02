@@ -194,9 +194,7 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		flexParams.setMargins(leftMargin, topMargin, rightMargin, 0);
 		holder.itemView.setLayoutParams(flexParams);
 		
-		LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
-				parentRatio > expectedRatio ? (int) (height * expectedRatio) : width,
-				parentRatio > expectedRatio ? height : (int) (width / expectedRatio));
+		LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(width, height);
 		
 		if (getItemCount() <= 2) {
 			linearParams.width = width;
