@@ -25,6 +25,7 @@ import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ImageUtils;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.sendbird_chat.utils.UrlPreviewInfo;
+import com.soultabcaregiver.sendbird_group_call.GroupCallType;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -61,6 +62,8 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 	private static final int VIEW_TYPE_FILE_MESSAGE_AUDIO_OTHER = 27;
 	
 	private static final int VIEW_TYPE_ADMIN_MESSAGE = 30;
+	
+	private static final int VIEW_TYPE_CALL_MESSAGE = 31;
 	
 	public static final String URL_PREVIEW_CUSTOM_TYPE = "url_preview";
 	
@@ -134,6 +137,10 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 				View otherAudioFileMsgView = LayoutInflater.from(parent.getContext()).inflate(
 						R.layout.list_item_group_chat_file_audio_other, parent, false);
 				return new OtherAudioFileMessageHolder(otherAudioFileMsgView);
+			case VIEW_TYPE_CALL_MESSAGE:
+				View videoCallMessage = LayoutInflater.from(parent.getContext()).inflate(
+						R.layout.list_item_group_chat_call, parent, false);
+				return new CallMessageHolder(videoCallMessage);
 			default:
 				return null;
 			
@@ -187,6 +194,10 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 				((AdminMessageHolder) holder).bind(mContext, (AdminMessage) message, mChannel,
 						isNewDay);
 				break;
+			case VIEW_TYPE_CALL_MESSAGE:
+				((CallMessageHolder) holder).bind(mContext, (UserMessage) message, mChannel,
+						isNewDay);
+				break;
 			case VIEW_TYPE_FILE_MESSAGE_ME:
 				((MyFileMessageHolder) holder).bind(mContext, (FileMessage) message, mChannel,
 						isNewDay, mItemClickListener);
@@ -234,6 +245,11 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		
 		if (message instanceof UserMessage) {
 			UserMessage userMessage = (UserMessage) message;
+			
+			if (!userMessage.getCustomType().isEmpty()) {
+				return VIEW_TYPE_CALL_MESSAGE;
+			}
+			
 			// If the sender is current user
 			if (userMessage.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
 				return VIEW_TYPE_USER_MESSAGE_ME;
@@ -249,6 +265,7 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 					return VIEW_TYPE_FILE_MESSAGE_IMAGE_ME;
 				} else {
 					return VIEW_TYPE_FILE_MESSAGE_IMAGE_OTHER;
+					
 				}
 			} else if (fileMessage.getType().toLowerCase().startsWith("video")) {
 				if (fileMessage.getSender().getUserId().equals(
@@ -361,6 +378,7 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			for (int i = 1; i < dataArray.length; i++) {
 				mMessageList.add(BaseMessage.buildFromSerializedData(
 						Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
+				
 			}
 			
 			notifyDataSetChanged();
@@ -641,6 +659,42 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 		void onAudioMessageItemClick(FileMessage message);
 	}
 	
+	private class CallMessageHolder extends RecyclerView.ViewHolder {
+		
+		private final TextView messageText;
+		
+		private final TextView dateText;
+		
+		CallMessageHolder(View itemView) {
+			super(itemView);
+			
+			messageText = itemView.findViewById(R.id.text_group_chat_message);
+			dateText = itemView.findViewById(R.id.text_group_chat_date);
+		}
+		
+		void bind(Context context, UserMessage message, GroupChannel channel, boolean isNewDay) {
+			
+			if (message.getCustomType().equals(GroupCallType.START_GROUP_VIDEO.name())) {
+				messageText.setText("Video Call Started");
+			} else if (message.getCustomType().equals(GroupCallType.END_GROUP_VIDEO.name())) {
+				messageText.setText("Video Call Ended");
+			} else if (message.getCustomType().equals(GroupCallType.START_GROUP_VOICE.name())) {
+				messageText.setText("Voice Call Started");
+			} else if (message.getCustomType().equals(GroupCallType.END_GROUP_VOICE.name())) {
+				messageText.setText("Voice Call Ended");
+			} else {
+				messageText.setText(message.getMessage());
+			}
+			
+			if (isNewDay) {
+				dateText.setVisibility(View.VISIBLE);
+				dateText.setText(DateUtils.formatDate(message.getCreatedAt()));
+			} else {
+				dateText.setVisibility(View.GONE);
+			}
+		}
+	}
+	
 	private class AdminMessageHolder extends RecyclerView.ViewHolder {
 		
 		private final TextView messageText;
@@ -831,7 +885,6 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			} else {
 				messageText.setText("Custom message");
 			}
-			
 			timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
 			
 			if (message.getUpdatedAt() > 0) {
@@ -1038,12 +1091,7 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			}
 			
 			if (listener != null) {
-				itemView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						listener.onFileMessageItemClick(message);
-					}
-				});
+				itemView.setOnClickListener(v -> listener.onFileMessageItemClick(message));
 			}
 			
 			messageStatusView.drawMessageStatus(channel, message);
@@ -1117,12 +1165,7 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			}
 			
 			if (listener != null) {
-				itemView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						listener.onFileMessageItemClick(message);
-					}
-				});
+				itemView.setOnClickListener(v -> listener.onFileMessageItemClick(message));
 			}
 		}
 	}
@@ -1330,15 +1373,12 @@ class ChatWindowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 			}
 			
 			if (listener != null) {
-				itemView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						listener.onFileMessageItemClick(message);
-					}
-				});
+				itemView.setOnClickListener(v -> listener.onFileMessageItemClick(message));
 			}
 		}
 	}
+	
+	
 }
 
 

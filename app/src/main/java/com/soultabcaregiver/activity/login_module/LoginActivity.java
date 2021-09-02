@@ -25,8 +25,6 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -34,8 +32,7 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.Model.LoginModel;
@@ -52,8 +49,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
 
 import static com.soultabcaregiver.utils.Utility.ShowToast;
 
@@ -91,6 +86,54 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
+			if (resultCode == RESULT_CANCELED) {
+				//	Toast.makeText(getApplicationContext(),"Update canceled by user! Result Code:
+				//	" + resultCode, Toast.LENGTH_LONG).show();
+				Utility.ShowToast(mContext, "Please update and enjoy the app");
+			} else if (resultCode == RESULT_OK) {
+				Utility.ShowToast(mContext, "App update success");
+			} else {
+				//Toast.makeText(getApplicationContext(),"Update Failed! Result Code: " +
+				// resultCode, Toast.LENGTH_LONG).show();
+				checkUpdate();
+			}
+			//In app Update link
+			//https://www.section.io/engineering-education/android-application-in-app-update-using
+			// -android-studio/
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
+		checkUpdate();
+	}
+	
+	@Override
+	public void onClick(View v) {
+		
+		switch (v.getId()) {
+			
+			case R.id.tv_rem_pass:
+				tbRemPass.setChecked(!tbRemPass.isChecked());
+				break;
+			case R.id.tv_forgot_pass:
+				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+				break;
+			
+			case R.id.tv_login:
+				Login();
+				break;
+			
+		}
+		
+	}
+	
 	private void init() {
 		tvLogin = findViewById(R.id.tv_login);
 		tvForgot = findViewById(R.id.tv_forgot_pass);
@@ -114,52 +157,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
 		if (resultCode == ConnectionResult.SUCCESS) {
 			
-			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
-					new OnSuccessListener<InstanceIdResult>() {
-						@Override
-						public void onSuccess(InstanceIdResult instanceIdResult) {
-							// Get new Instance ID token
-							FirebaseToken = instanceIdResult.getToken();
-							Log.e("newToken", FirebaseToken);
-							PrefUtils.setPushToken(FirebaseToken);
-							SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
-							
-							});
-						}
-					}).addOnFailureListener(new OnFailureListener() {
-				@Override
-				public void onFailure(@NonNull Exception e) {
-					e.printStackTrace();
-				}
+			FirebaseInstallations.getInstance().getId().addOnCompleteListener(this, task -> {
+				FirebaseToken = task.getResult();
+				Log.e("newToken", FirebaseToken);
+				PrefUtils.setPushToken(FirebaseToken);
+				SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
+				
+				});
 			});
-		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-		checkUpdate();
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
-			if (resultCode == RESULT_CANCELED) {
-				//	Toast.makeText(getApplicationContext(),"Update canceled by user! Result Code:
-				//	" + resultCode, Toast.LENGTH_LONG).show();
-				Utility.ShowToast(mContext, "Please update and enjoy the app");
-			} else if (resultCode == RESULT_OK) {
-				Utility.ShowToast(mContext, "App update success");
-			} else {
-				//Toast.makeText(getApplicationContext(),"Update Failed! Result Code: " +
-				// resultCode, Toast.LENGTH_LONG).show();
-				checkUpdate();
-			}
-			//In app Update link
-			//https://www.section.io/engineering-education/android-application-in-app-update-using
-			// -android-studio/
 		}
 	}
 	
@@ -207,26 +212,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		} catch (IntentSender.SendIntentException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	@Override
-	public void onClick(View v) {
-		
-		switch (v.getId()) {
-			
-			case R.id.tv_rem_pass:
-				tbRemPass.setChecked(!tbRemPass.isChecked());
-				break;
-			case R.id.tv_forgot_pass:
-				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-				break;
-			
-			case R.id.tv_login:
-				Login();
-				break;
-			
-		}
-		
 	}
 	
 	private void Login() {

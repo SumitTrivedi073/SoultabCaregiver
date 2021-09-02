@@ -150,6 +150,7 @@
             android:name=".sendbird_group_call.IncomingGroupCallActivity"
             android:launchMode="singleTask"
             android:showOnLockScreen="true"
+            android:excludeFromRecents="true"
             android:showWhenLocked="true" />
 
         <service

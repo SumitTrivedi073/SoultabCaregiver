@@ -98,7 +98,7 @@ public class GroupCallFragment extends Fragment {
 			public void run() {
 				if (adapter.getParticipants().size() == 1) {
 					if (getActivity() != null) {
-						requireActivity().runOnUiThread(() -> endCall());
+						requireActivity().runOnUiThread(() -> endCallAndSendEndMessage());
 					}
 				}
 			}
@@ -116,20 +116,6 @@ public class GroupCallFragment extends Fragment {
 				}
 			}
 		}, 0, 2000);
-	}
-	
-	@Override
-	public void onResume() {
-		super.onResume();
-		startLocalVideo();
-		unmuteMicrophone();
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		stopLocalVideo();
-		muteMicrophone();
 	}
 	
 	@Override
@@ -208,22 +194,26 @@ public class GroupCallFragment extends Fragment {
 		
 		groupCallImageViewExit.setOnClickListener(v -> {
 			if (adapter.getParticipants().size() == 1) {
-				UserMessageParams params = new UserMessageParams();
-				params.setCustomType(GroupCallType.END_GROUP_VIDEO.name());
-				GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
-					GroupCallMessage callMessage =
-							new GroupCallMessage(userIds, channelUrl, room.getRoomId());
-					Log.e("callMessage", callMessage.toString());
-					params.setMessage(callMessage.toString());
-					groupChannel.sendUserMessage(params, (userMessage, e1) -> {
-						endCall();
-					});
-				});
+				endCallAndSendEndMessage();
 			} else {
 				endCall();
 			}
 		});
 		
+	}
+	
+	private void endCallAndSendEndMessage() {
+		UserMessageParams params = new UserMessageParams();
+		params.setCustomType(GroupCallType.END_GROUP_VIDEO.name());
+		GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
+			GroupCallMessage callMessage =
+					new GroupCallMessage(userIds, channelUrl, room.getRoomId());
+			Log.e("callMessage", callMessage.toString());
+			params.setMessage(callMessage.toString());
+			groupChannel.sendUserMessage(params, (userMessage, e1) -> {
+				endCall();
+			});
+		});
 	}
 	
 	private List<Participant> getSortedParticipant() {
@@ -332,6 +322,7 @@ public class GroupCallFragment extends Fragment {
 	public void stopLocalVideo() {
 		if (room != null && room.getLocalParticipant() != null) {
 			room.getLocalParticipant().stopVideo();
+			adapter.updateParticipant(room.getLocalParticipant());
 			setVideoEnabledImage(false);
 		}
 	}
@@ -339,6 +330,7 @@ public class GroupCallFragment extends Fragment {
 	public void startLocalVideo() {
 		if (room != null && room.getLocalParticipant() != null) {
 			room.getLocalParticipant().startVideo();
+			adapter.updateParticipant(room.getLocalParticipant());
 			setVideoEnabledImage(true);
 		}
 	}

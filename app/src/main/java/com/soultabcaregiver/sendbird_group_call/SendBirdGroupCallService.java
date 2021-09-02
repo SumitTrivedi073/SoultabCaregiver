@@ -38,6 +38,8 @@ public class SendBirdGroupCallService extends Service {
 	
 	public static final String EXTRA_DO_END = "do_end";
 	
+	public static boolean hasActiveCall = false;
+	
 	private final GroupCallData mServiceData = new GroupCallData();
 	
 	private final IBinder mBinder = new CallBinder();
@@ -103,6 +105,7 @@ public class SendBirdGroupCallService extends Service {
 			} else {
 				context.startService(intent);
 			}
+			hasActiveCall = true;
 		}
 	}
 	
@@ -111,6 +114,7 @@ public class SendBirdGroupCallService extends Service {
 			Intent intent = new Intent(context, SendBirdGroupCallService.class);
 			context.stopService(intent);
 		}
+		hasActiveCall = false;
 	}
 	
 	public void updateNotification(@NonNull GroupCallData callData) {

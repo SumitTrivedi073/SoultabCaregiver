@@ -28,11 +28,42 @@ android {
         applicationId "com.soultabcaregiver"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 6
-        versionName "1.4.1"
+        versionCode 7
+        versionName "1.5.0"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions 'server'
+
+    productFlavors {
+        developement{
+            dimension 'server'
+            buildConfigField 'String', 'baseUrl', '"https://dev.mysoultab.com/api/"'
+            buildConfigField 'String', 'caregiverImageUrl', '"https://dev.mysoultab.com/uploads/profile_images/"'
+            buildConfigField 'String', 'base40plusUrl', '"https://dev.40plusmart.com/wp-json/wp/v2/"'
+            buildConfigField 'String', 'sendBirdAppID', '"3198C7B9-21D6-4C7B-8D2B-2567600213D4"'
+            versionNameSuffix "-dev"
+        }
+
+        staging{
+            dimension 'server'
+            buildConfigField 'String', 'baseUrl', '"https://stage.mysoultab.com/api/"'
+            buildConfigField 'String', 'caregiverImageUrl', '"https://stage.mysoultab.com/uploads/profile_images/"'
+            buildConfigField 'String', 'base40plusUrl', '"https://stage.40plusmart.com/wp-json/wp/v2/"'
+            buildConfigField 'String', 'sendBirdAppID', '"5209BF7E-7EF1-4EE9-856E-649708FF1AC7"'
+            versionNameSuffix "-staging"
+        }
+
+        production{
+            dimension 'server'
+            buildConfigField 'String', 'baseUrl', '"https://mysoultab.com/api/"'
+            buildConfigField 'String', 'caregiverImageUrl', '"https://mysoultab.com/uploads/profile_images/"'
+            buildConfigField 'String', 'base40plusUrl', '"https://40plusmart.com/wp-json/wp/v2/"'
+            buildConfigField 'String', 'sendBirdAppID', '"CE94DB4D-1530-433A-B0F2-1216153A37A3"'
+        }
+
     }
 
     buildTypes {
