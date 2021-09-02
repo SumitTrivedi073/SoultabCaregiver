@@ -40,13 +40,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_CHANNEL_URL;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUPS_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_ROOM_ID;
+
 public class GroupCallFragment extends Fragment {
-	
-	public static final String EXTRA_ROOM_ID = "extra_room_id";
-	
-	public static final String EXTRA_CHANNEL_URL = "extra_channel_url";
-	
-	public static final String EXTRA_USERS_IDS = "extra_users_ids";
 	
 	private Room room;
 	
@@ -80,7 +78,7 @@ public class GroupCallFragment extends Fragment {
 			roomId = getArguments().getString(EXTRA_ROOM_ID, "");
 			Log.e("roomId", roomId);
 			channelUrl = getArguments().getString(EXTRA_CHANNEL_URL, "");
-			userIds = getArguments().getString(EXTRA_USERS_IDS, "");
+			userIds = getArguments().getString(EXTRA_GROUPS_USERS_IDS, "");
 			
 		}
 		
@@ -125,20 +123,33 @@ public class GroupCallFragment extends Fragment {
 		participantTimer.cancel();
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		startLocalVideo();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		stopLocalVideo();
+	}
+	
 	public static GroupCallFragment newInstance(String roomId, String channelUrl, String userIds) {
 		GroupCallFragment groupCallFragment = new GroupCallFragment();
 		Bundle bundle = new Bundle();
 		bundle.putString(EXTRA_ROOM_ID, roomId);
 		bundle.putString(EXTRA_CHANNEL_URL, channelUrl);
-		bundle.putString(EXTRA_USERS_IDS, userIds);
+		bundle.putString(EXTRA_GROUPS_USERS_IDS, userIds);
 		groupCallFragment.setArguments(bundle);
 		return groupCallFragment;
 	}
-	
+
 	public void endCall() {
 		if (room != null) {
 			try {
 				room.exit();
+				SendBirdGroupCallService.stopService(getContext());
 				if (getActivity() != null) {
 					getActivity().finish();
 				}

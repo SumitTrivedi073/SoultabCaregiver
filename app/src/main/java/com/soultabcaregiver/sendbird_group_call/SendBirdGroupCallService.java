@@ -38,9 +38,13 @@ public class SendBirdGroupCallService extends Service {
 	
 	public static final String EXTRA_DO_END = "do_end";
 	
+	public static final String EXTRA_CHANNEL_URL = "extra_channel_url";
+	
+	public static final String EXTRA_GROUPS_USERS_IDS = "extra_users_ids";
+	
 	public static boolean hasActiveCall = false;
 	
-	private final GroupCallData mServiceData = new GroupCallData();
+	private final GroupCallData groupCallData = new GroupCallData();
 	
 	private final IBinder mBinder = new CallBinder();
 	
@@ -58,13 +62,15 @@ public class SendBirdGroupCallService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i(TAG, "[CallService] onStartCommand()");
 		
-		mServiceData.groupName = intent.getStringExtra(EXTRA_GROUP_NAME);
-		mServiceData.callState = (STATE) intent.getSerializableExtra(EXTRA_CALL_STATE);
-		mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false);
-		mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false);
-		mServiceData.roomId = intent.getStringExtra(EXTRA_ROOM_ID);
+		groupCallData.groupName = intent.getStringExtra(EXTRA_GROUP_NAME);
+		groupCallData.callState = (STATE) intent.getSerializableExtra(EXTRA_CALL_STATE);
+		groupCallData.channelUrl = intent.getStringExtra(EXTRA_CHANNEL_URL);
+		groupCallData.userIds = intent.getStringExtra(EXTRA_GROUPS_USERS_IDS);
+		groupCallData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false);
+		groupCallData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false);
+		groupCallData.roomId = intent.getStringExtra(EXTRA_ROOM_ID);
 		
-		updateNotification(mServiceData);
+		updateNotification(groupCallData);
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
@@ -79,19 +85,16 @@ public class SendBirdGroupCallService extends Service {
 		final Intent intent;
 		
 		intent = new Intent(context, GroupCallActivity.class);
-		intent.putExtra(EXTRA_CALL_STATE, groupCallData.callState);
-		intent.putExtra(EXTRA_DO_DIAL, groupCallData.doDial);
-		intent.putExtra(EXTRA_DO_ACCEPT, groupCallData.doAccept);
 		intent.putExtra(EXTRA_ROOM_ID, groupCallData.roomId);
-		
-		intent.putExtra(EXTRA_DO_END, doEnd);
+		intent.putExtra(EXTRA_CHANNEL_URL, groupCallData.channelUrl);
+		intent.putExtra(EXTRA_GROUPS_USERS_IDS, groupCallData.userIds);
 		intent.addFlags(
 				Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 		return intent;
 	}
 	
 	public static void startService(Context context, String groupName, String roomId,
-	                                boolean doDial) {
+	                                String channelUrl, String userIds, boolean doDial) {
 		if (context != null) {
 			Intent intent = new Intent(context, SendBirdGroupCallService.class);
 			
@@ -99,6 +102,8 @@ public class SendBirdGroupCallService extends Service {
 			intent.putExtra(EXTRA_GROUP_NAME, groupName);
 			intent.putExtra(EXTRA_ROOM_ID, roomId);
 			intent.putExtra(EXTRA_DO_DIAL, doDial);
+			intent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+			intent.putExtra(EXTRA_GROUPS_USERS_IDS, userIds);
 			
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				context.startForegroundService(intent);
@@ -118,8 +123,8 @@ public class SendBirdGroupCallService extends Service {
 	}
 	
 	public void updateNotification(@NonNull GroupCallData callData) {
-		mServiceData.set(callData);
-		startForeground(NOTIFICATION_ID, getNotification(mServiceData));
+		groupCallData.set(callData);
+		startForeground(NOTIFICATION_ID, getNotification(groupCallData));
 	}
 	
 	private Notification getNotification(@NonNull GroupCallData groupCallData) {
@@ -184,6 +189,10 @@ public class SendBirdGroupCallService extends Service {
 		
 		String roomId;
 		
+		String channelUrl;
+		
+		String userIds;
+		
 		String groupName;
 		
 		STATE callState;
@@ -197,6 +206,8 @@ public class SendBirdGroupCallService extends Service {
 		
 		void set(GroupCallData data) {
 			this.groupName = data.groupName;
+			this.channelUrl = data.channelUrl;
+			this.userIds = data.userIds;
 			this.callState = data.callState;
 			this.doDial = data.doDial;
 			this.doAccept = data.doAccept;

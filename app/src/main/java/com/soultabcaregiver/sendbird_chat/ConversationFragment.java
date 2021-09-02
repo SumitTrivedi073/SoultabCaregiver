@@ -98,9 +98,9 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_CHANNEL_URL;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUPS_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_ROOM_ID;
 
 public class ConversationFragment extends BaseFragment {
 	
@@ -859,7 +859,7 @@ public class ConversationFragment extends BaseFragment {
 				Intent intent = new Intent(requireActivity(), GroupCallActivity.class);
 				intent.putExtra(EXTRA_ROOM_ID, room.getRoomId());
 				intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
-				intent.putExtra(EXTRA_USERS_IDS, userIds);
+				intent.putExtra(EXTRA_GROUPS_USERS_IDS, userIds);
 				startActivity(intent);
 				
 				UserMessageParams params = new UserMessageParams();
@@ -873,7 +873,7 @@ public class ConversationFragment extends BaseFragment {
 				mChannel.sendUserMessage(params, (userMessage, e) -> {
 				});
 				SendBirdGroupCallService.startService(getContext(), mChannel.getName(),
-						room.getRoomId(), true);
+						room.getRoomId(), mChannelUrl, userIds, true);
 			} else {
 				Utility.ShowToast(requireContext(), "Can't connect for Video Call");
 			}

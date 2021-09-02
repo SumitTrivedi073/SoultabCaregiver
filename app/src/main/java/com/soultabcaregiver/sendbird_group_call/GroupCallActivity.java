@@ -7,16 +7,15 @@ import com.soultabcaregiver.R;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_CHANNEL_URL;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUPS_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_ROOM_ID;
 
 public class GroupCallActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		SendBirdGroupCallService.stopService(this);
 	}
 	
 	@Override
@@ -36,7 +35,7 @@ public class GroupCallActivity extends AppCompatActivity {
 		transaction.add(R.id.container,
 				GroupCallFragment.newInstance(getIntent().getStringExtra(EXTRA_ROOM_ID),
 						getIntent().getStringExtra(EXTRA_CHANNEL_URL),
-						getIntent().getStringExtra(EXTRA_USERS_IDS)));
+						getIntent().getStringExtra(EXTRA_GROUPS_USERS_IDS)));
 		transaction.commit();
 	}
 }
