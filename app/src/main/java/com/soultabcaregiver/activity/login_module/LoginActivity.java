@@ -32,7 +32,7 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.Model.LoginModel;
@@ -157,14 +157,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
 		if (resultCode == ConnectionResult.SUCCESS) {
 			
-			FirebaseInstallations.getInstance().getId().addOnCompleteListener(this, task -> {
-				FirebaseToken = task.getResult();
-				Log.e("newToken", FirebaseToken);
-				PrefUtils.setPushToken(FirebaseToken);
-				SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
-				
-				});
-			});
+			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this,
+					instanceIdResult -> {
+						String FirebaseToken = instanceIdResult.getToken();
+						Log.e("newToken", FirebaseToken);
+						PrefUtils.setPushToken(FirebaseToken);
+						SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
+						
+						});
+					});
 		}
 	}
 	
