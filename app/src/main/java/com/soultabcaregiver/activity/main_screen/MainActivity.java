@@ -307,7 +307,10 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 	
 	private void checkForCurrentScreen(String channelUrl) {
 		navigationView.setSelectedItemId(R.id.navigation_talk);
-		Fragment f1 = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+		//i commented this code because of this it's not reflected to conversation screen
+		//it's reflected to chat list screen
+
+		/*Fragment f1 = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 		if (f1 instanceof TalkHolderFragment) {
 			TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
 			Fragment f2 =
@@ -317,7 +320,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			
 		} else {
 			loadTalkHolderFragment(channelUrl);
-		}
+		}*/
+		loadTalkHolderFragment(channelUrl);
+
 	}
 	
 	
@@ -416,11 +421,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		});
 		
 	}
-	
-	public void updatenavigation() {
-		navigationView.setSelectedItemId(R.id.navigation_talk);
-	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();

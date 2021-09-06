@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -58,6 +59,7 @@ import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
+import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
 import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 import com.soultabcaregiver.sendbird_chat.utils.MediaPlayerActivity;
@@ -68,6 +70,8 @@ import com.soultabcaregiver.sendbird_chat.utils.WebUtils;
 import com.soultabcaregiver.sendbird_group_call.GroupCallActivity;
 import com.soultabcaregiver.sendbird_group_call.GroupCallMessage;
 import com.soultabcaregiver.sendbird_group_call.GroupCallType;
+import com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService;
+import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.Utility;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
@@ -94,9 +98,9 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_CHANNEL_URL;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUPS_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_ROOM_ID;
 
 public class ConversationFragment extends BaseFragment {
 	
@@ -201,7 +205,7 @@ public class ConversationFragment extends BaseFragment {
 								result.getStringArrayList(EXTRA_LIST_FOR_GROUP_CALL_MEMBERS);
 						if (members != null && members.size() > 0) {
 							String userIds = android.text.TextUtils.join(",", members);
-							//createAndEnterGroupCall(userIds);
+							createAndEnterGroupCall(userIds);
 						}
 					}
 				});
@@ -422,9 +426,9 @@ public class ConversationFragment extends BaseFragment {
 		
 		// Set action bar title to name of channel
 		titleTextView.setText(title);
-		if (mChannel.getMemberCount() > 2) {
-			videoCallBtn.setVisibility(View.GONE);
-		}
+		//		if (mChannel.getMemberCount() > 2) {
+		//			videoCallBtn.setVisibility(View.GONE);
+		//		}
 	}
 	
 	private void setUpChatListAdapter() {
@@ -824,24 +828,21 @@ public class ConversationFragment extends BaseFragment {
 	
 	private void startVideoCall() {
 		if (mChannel.getMemberCount() > 2) {
-			//			if (mChannel.getMemberCount() > 6) {
-			//				if (getParentFragment() != null && getParentFragment() instanceof
-			//				TalkHolderFragment) {
-			//					((TalkHolderFragment) getParentFragment())
-			//					.navigateToSelectGroupMembersFragment(
-			//							mChannelUrl);
-			//				}
-			//			} else {
-			//				ArrayList<String> membersIds = new ArrayList<>();
-			//				for (Member member : mChannel.getMembers()) {
-			//					if (!member.getUserId().equals(PrefUtils.getUserId(requireContext
-			//					()))) {
-			//						membersIds.add(member.getUserId());
-			//					}
-			//				}
-			//				String userIds = android.text.TextUtils.join(",", membersIds);
-			//				createAndEnterGroupCall(userIds);
-			//			}
+			if (mChannel.getMemberCount() > 6) {
+				if (getParentFragment() != null && getParentFragment() instanceof TalkHolderFragment) {
+					((TalkHolderFragment) getParentFragment()).navigateToSelectGroupMembersFragment(
+							mChannelUrl);
+				}
+			} else {
+				ArrayList<String> membersIds = new ArrayList<>();
+				for (Member member : mChannel.getMembers()) {
+					if (!member.getUserId().equals(PrefUtils.getUserId(requireContext()))) {
+						membersIds.add(member.getUserId());
+					}
+				}
+				String userIds = android.text.TextUtils.join(",", membersIds);
+				createAndEnterGroupCall(userIds);
+			}
 		} else {
 			SendbirdCallService.dial(requireContext(), TextUtils.getGroupOtherMemberId(mChannel),
 					TextUtils.getGroupChannelTitle(mChannel), true, false, mChannelUrl);
@@ -850,12 +851,15 @@ public class ConversationFragment extends BaseFragment {
 	}
 	
 	private void createAndEnterGroupCall(String userIds) {
+		ProgressDialog progressDialog = new ProgressDialog(getContext());
+		progressDialog.setTitle("Starting Group Call");
+		progressDialog.show();
 		createAndEnterRoom(room -> {
 			if (room != null) {
 				Intent intent = new Intent(requireActivity(), GroupCallActivity.class);
 				intent.putExtra(EXTRA_ROOM_ID, room.getRoomId());
 				intent.putExtra(EXTRA_CHANNEL_URL, mChannelUrl);
-				intent.putExtra(EXTRA_USERS_IDS, userIds);
+				intent.putExtra(EXTRA_GROUPS_USERS_IDS, userIds);
 				startActivity(intent);
 				
 				UserMessageParams params = new UserMessageParams();
@@ -868,9 +872,12 @@ public class ConversationFragment extends BaseFragment {
 				params.setMessage(callMessage.toString());
 				mChannel.sendUserMessage(params, (userMessage, e) -> {
 				});
+				SendBirdGroupCallService.startService(getContext(), mChannel.getName(),
+						room.getRoomId(), mChannelUrl, userIds, true);
 			} else {
 				Utility.ShowToast(requireContext(), "Can't connect for Video Call");
 			}
+			progressDialog.dismiss();
 		});
 	}
 	

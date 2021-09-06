@@ -132,15 +132,15 @@ public class GroupDetailActivity extends BaseActivity {
 		groupMemberList = new ArrayList<>();
 		
 		for (Member member : mChannel.getMembers()) {
-			if (!member.getUserId().equals(
-					Utility.getSharedPreferences(mContext, APIS.caregiver_id))) {
+			//if (!member.getUserId().equals(
+				//	Utility.getSharedPreferences(mContext, APIS.caregiver_id))) {
 				membersIds.add(member.getUserId());
 				GroupMemberModel groupMemberModel = new GroupMemberModel();
 				groupMemberModel.setId(String.valueOf(member.getUserId()));
 				groupMemberModel.setNickname(member.getNickname());
 				groupMemberModel.setImage(member.getProfileUrl());
 				groupMemberList.add(groupMemberModel);
-			}
+			//}
 		}
 		String userIds = android.text.TextUtils.join(",", membersIds);
 		

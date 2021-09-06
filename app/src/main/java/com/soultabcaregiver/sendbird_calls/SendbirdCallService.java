@@ -277,9 +277,9 @@ public class SendbirdCallService extends Service {
 		
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId);
 		builder.setContentTitle(serviceData.remoteNicknameOrUserId).setContentText(
-				content).setSmallIcon(R.drawable.notification_icon).setLargeIcon(
+				content).setSmallIcon(R.drawable.main_logo).setLargeIcon(
 				BitmapFactory.decodeResource(mContext.getResources(),
-						R.drawable.notification_icon)).setPriority(
+						R.drawable.main_logo)).setPriority(
 				serviceData.isHeadsUpNotification ? NotificationCompat.PRIORITY_HIGH :
 						NotificationCompat.PRIORITY_LOW);
 		

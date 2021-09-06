@@ -18,6 +18,7 @@ import com.google.android.flexbox.FlexboxLayoutManager;
 import com.sendbird.calls.LocalParticipant;
 import com.sendbird.calls.Participant;
 import com.sendbird.calls.ParticipantState;
+import com.sendbird.calls.RemoteParticipant;
 import com.sendbird.calls.SendBirdVideoView;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.utils.Utility;
@@ -62,8 +63,41 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		((ParticipantViewHolder) holder).bind(this.participants.get(position));
 	}
 	
+	@Override
+	public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position,
+	                             @NonNull List<Object> payload) {
+		this.setViewHolderLayout((ParticipantViewHolder) holder, position);
+		if (!payload.isEmpty()) {
+			((ParticipantViewHolder) holder).refreshAudio(
+					((Participant) payload.get(0)).isAudioEnabled());
+		} else {
+			((ParticipantViewHolder) holder).bind(this.participants.get(position));
+		}
+	}
+	
+	@Override
+	public long getItemId(int position) {
+		return this.participants.get(position).getParticipantId().hashCode();
+	}
+	
 	public int getItemCount() {
 		return this.participants.size();
+	}
+	
+	public void updateParticipants(List<RemoteParticipant> newParticipants) {
+		for (Participant newParticipant : newParticipants) {
+			boolean contains = false;
+			for (Participant participant : this.participants) {
+				if (participant.getParticipantId().equals(newParticipant.getParticipantId())) {
+					contains = true;
+					break;
+				}
+			}
+			if (!contains) {
+				this.participants.add(newParticipant);
+				notifyItemInserted(this.participants.size() - 1);
+			}
+		}
 	}
 	
 	private void setViewHolderLayout(ParticipantListAdapter.ParticipantViewHolder holder,
@@ -160,9 +194,7 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		flexParams.setMargins(leftMargin, topMargin, rightMargin, 0);
 		holder.itemView.setLayoutParams(flexParams);
 		
-		LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
-				parentRatio > expectedRatio ? (int) (height * expectedRatio) : width,
-				parentRatio > expectedRatio ? height : (int) (width / expectedRatio));
+		LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(width, height);
 		
 		if (getItemCount() <= 2) {
 			linearParams.width = width;
@@ -186,9 +218,45 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		return this.participants;
 	}
 	
-	public final void setParticipants(List<Participant> value) {
-		this.participants = value;
-		this.notifyDataSetChanged();
+	public final void removeParticipant(Participant participant) {
+		int index = -1;
+		for (int i = 0; i < this.participants.size(); i++) {
+			if (participants.get(i).getParticipantId().equals(participant.getParticipantId())) {
+				index = i;
+				break;
+			}
+		}
+		if (index != -1) {
+			this.participants.remove(index);
+			notifyDataSetChanged();
+		}
+	}
+	
+	public final void updateParticipantAudio(Participant participant) {
+		for (int i = 0; i < this.participants.size(); i++) {
+			if (this.participants.get(i).getParticipantId().equals(
+					participant.getParticipantId())) {
+				notifyItemChanged(i, participant);
+				break;
+			}
+		}
+	}
+	
+	public final void updateParticipant(Participant participant) {
+		for (int i = 0; i < this.participants.size(); i++) {
+			if (this.participants.get(i).getParticipantId().equals(
+					participant.getParticipantId())) {
+				this.participants.remove(i);
+				this.participants.add(i, participant);
+				notifyItemChanged(i);
+				break;
+			}
+		}
+	}
+	
+	public final void addParticipant(Participant participant) {
+		this.participants.add(participant);
+		notifyDataSetChanged();
 	}
 	
 	public enum ViewHolderPositionType {
@@ -198,9 +266,13 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 	public static final class ParticipantViewHolder extends RecyclerView.ViewHolder {
 		
 		RelativeLayout participantRelativeLayoutVideoView;
+		
 		SendBirdVideoView participantVideoView;
+		
 		LinearLayout participantLinearLayout;
+		
 		ImageView participantImageViewProfile, participantImageViewAudioOnOff;
+		
 		TextView participantUserId;
 		
 		public ParticipantViewHolder(View itemView) {
@@ -214,6 +286,14 @@ public class ParticipantListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			participantUserId = itemView.findViewById(R.id.participant_text_view_user_id);
 			participantImageViewAudioOnOff =
 					itemView.findViewById(R.id.participant_image_view_audio_muted);
+		}
+		
+		public void refreshAudio(boolean isAudioEnabled) {
+			if (isAudioEnabled) {
+				participantImageViewAudioOnOff.setVisibility(View.GONE);
+			} else {
+				participantImageViewAudioOnOff.setVisibility(View.VISIBLE);
+			}
 		}
 		
 		@SuppressLint ("CheckResult")

@@ -34,6 +34,7 @@ import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.sendbird_group_call.GroupCallType;
 import com.soultabcaregiver.sendbird_group_call.IncomingGroupCallActivity;
+import com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONException;
@@ -44,15 +45,14 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_CHANNEL_URL;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_ROOM_ID;
-import static com.soultabcaregiver.sendbird_group_call.GroupCallFragment.EXTRA_USERS_IDS;
 import static com.soultabcaregiver.sendbird_group_call.IncomingGroupCallActivity.EXTRA_END_CALL;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_CHANNEL_URL;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUPS_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_ROOM_ID;
 
 public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	
@@ -87,14 +87,14 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	
 	@Override
 	protected void onMessageReceived(Context context, RemoteMessage remoteMessage) {
-		
+		Log.e("remote_msg_size==", remoteMessage.getData().toString());
 		AppInBackground = isAppIsInBackground(context);
 		
 		try {
 			if (remoteMessage.getData().containsKey("sendbird")) {
 				JSONObject sendBird = new JSONObject(remoteMessage.getData().get("sendbird"));
 				if (sendBird.has("custom_type") && !sendBird.getString("custom_type").isEmpty()) {
-					//handleGroupCalls(context, sendBird, sendBird.getString("custom_type"));
+					handleGroupCalls(context, sendBird, sendBird.getString("custom_type"));
 				} else {
 					handleChatMessage(context, remoteMessage, sendBird);
 				}
@@ -162,10 +162,9 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 		NotificationCompat.Builder notificationBuilder =
 				new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(
-						R.drawable.launcher_icon2).setColor(ContextCompat.getColor(context,
-						R.color.colorPrimary))  // small icon background color
+						R.drawable.main_logo)  // small icon background color
 						.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-								R.drawable.launcher_icon2)).setContentTitle(
+								R.drawable.main_logo)).setContentTitle(
 						context.getResources().getString(R.string.app_name)).setAutoCancel(
 						true).setSound(defaultSoundUri).setPriority(
 						Notification.PRIORITY_MAX).setDefaults(
@@ -230,34 +229,39 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		String roomId = customMessageObj.getString("roomId");
 		String channelUrl = customMessageObj.getString("channelUrl");
 		String userIds = customMessageObj.getString("userIds");
+		
 		if (userIds.contains(PrefUtils.getUserId(context))) {
-			
-			if (type.equals(GroupCallType.END_GROUP_VIDEO.name())) {
-				Intent incomingCallIntent = new Intent(context, IncomingGroupCallActivity.class);
-				incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
-				incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
-				incomingCallIntent.putExtra(EXTRA_USERS_IDS, userIds);
-				incomingCallIntent.putExtra(EXTRA_END_CALL, true);
-				incomingCallIntent.addFlags(
-						FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				context.startActivity(incomingCallIntent);
-			} else {
-				checkAuthentication(context,
-						isSuccess -> SendBirdCall.fetchRoomById(roomId, (room, e) -> {
-							if (room != null) {
-								if (room.getRemoteParticipants().size() > 0) {
-									Intent incomingCallIntent =
-											new Intent(context, IncomingGroupCallActivity.class);
-									incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
-									incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
-									incomingCallIntent.addFlags(
-											FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-									context.startActivity(incomingCallIntent);
-								} else {
-									Log.e("TAG", "room is close");
+			if (!SendBirdGroupCallService.hasActiveCall) {
+				if (type.equals(GroupCallType.END_GROUP_VIDEO.name())) {
+					Intent incomingCallIntent =
+							new Intent(context, IncomingGroupCallActivity.class);
+					incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
+					incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+					incomingCallIntent.putExtra(EXTRA_GROUPS_USERS_IDS, userIds);
+					incomingCallIntent.putExtra(EXTRA_END_CALL, true);
+					incomingCallIntent.addFlags(
+							FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					context.startActivity(incomingCallIntent);
+				} else {
+					checkAuthentication(context,
+							isSuccess -> SendBirdCall.fetchRoomById(roomId, (room, e) -> {
+								if (room != null) {
+									if (room.getRemoteParticipants().size() > 0) {
+										Intent incomingCallIntent = new Intent(context,
+												IncomingGroupCallActivity.class);
+										incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
+										incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+										incomingCallIntent.addFlags(
+												FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+										context.startActivity(incomingCallIntent);
+									} else {
+										Log.e("TAG", "room is close");
+									}
 								}
-							}
-						}));
+							}));
+				}
+			} else {
+				Log.e(TAG, "One Call is On Going");
 			}
 		}
 	}
@@ -400,20 +404,6 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 			
 		}
 		
-	}
-	
-	private void handleGroupCallNotification(Context context,
-	                                         RemoteMessage remoteMessage) throws JSONException {
-		JSONObject jsonObject = new JSONObject(remoteMessage.getData().get("body"));
-		String channelUrl = jsonObject.optString("channelUrl");
-		String roomId = jsonObject.optString("roomId");
-		String type = jsonObject.optString("type");
-		
-		Intent incomingCallIntent = new Intent(context, IncomingGroupCallActivity.class);
-		incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
-		incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
-		incomingCallIntent.addFlags(FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		context.startActivity(incomingCallIntent);
 	}
 	
 	private interface SendBirdAuthHandler {
