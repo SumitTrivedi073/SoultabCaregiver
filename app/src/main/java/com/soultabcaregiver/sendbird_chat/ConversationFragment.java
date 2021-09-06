@@ -866,7 +866,8 @@ public class ConversationFragment extends BaseFragment {
 				params.setCustomType(GroupCallType.START_GROUP_VIDEO.name());
 				
 				GroupCallMessage callMessage =
-						new GroupCallMessage(userIds, mChannelUrl, room.getRoomId());
+						new GroupCallMessage(userIds, mChannelUrl, room.getRoomId(),
+								mChannel.getName());
 				Log.e("callMessage", callMessage.toString());
 				
 				params.setMessage(callMessage.toString());
