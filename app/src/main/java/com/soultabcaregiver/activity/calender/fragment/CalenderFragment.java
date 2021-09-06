@@ -248,7 +248,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         
-                        LocalDate today1 = LocalDate.now();
+                        LocalDate today1 = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
         
                         LocalDate firstdayofmonth = today1.withDayOfMonth(1);
                         System.out.println("First day: " + firstdayofmonth);
