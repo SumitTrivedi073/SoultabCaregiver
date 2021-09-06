@@ -159,7 +159,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			
 			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this,
 					instanceIdResult -> {
-						String FirebaseToken = instanceIdResult.getToken();
+						 FirebaseToken = instanceIdResult.getToken();
 						Log.e("newToken", FirebaseToken);
 						PrefUtils.setPushToken(FirebaseToken);
 						SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
