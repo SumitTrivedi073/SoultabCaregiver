@@ -91,7 +91,6 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		AppInBackground = isAppIsInBackground(context);
 		
 		try {
-			
 			if (remoteMessage.getData().containsKey("sendbird")) {
 				JSONObject sendBird = new JSONObject(remoteMessage.getData().get("sendbird"));
 				if (sendBird.has("custom_type") && !sendBird.getString("custom_type").isEmpty()) {
