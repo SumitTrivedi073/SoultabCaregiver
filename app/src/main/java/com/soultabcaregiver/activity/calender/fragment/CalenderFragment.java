@@ -352,7 +352,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         
                     LocalDate today = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        today = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
+                        today = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar1.getTime()));
             
                         // Go backward to get Monday
                         LocalDate monday = today;
@@ -368,8 +368,14 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             
                         FromDate = monday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                         TODate = sunday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            
-            
+
+                        try {
+                            curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
+                                    FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
+                                    Utility.yyyy_MM_dd.parse(TODate)));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 if (Monthly_select) {
@@ -382,7 +388,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         
-                        LocalDate today1 = LocalDate.now();
+                        LocalDate today1 = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar1.getTime()));
         
                         LocalDate firstdayofmonth = today1.withDayOfMonth(1);
                         System.out.println("First day: " + firstdayofmonth);
@@ -392,7 +398,14 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                         FromDate =
                                 firstdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                         TODate = lastdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        
+
+                        try {
+                            curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
+                                    FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
+                                    Utility.yyyy_MM_dd.parse(TODate)));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
