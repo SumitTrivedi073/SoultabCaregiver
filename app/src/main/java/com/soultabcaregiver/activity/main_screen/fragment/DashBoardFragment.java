@@ -137,7 +137,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
             good_morning_txt.setText(getResources().getString(R.string.good_evening));
 
         } else if (timeOfDay >= 21 && timeOfDay < 24) {
-            good_morning_txt.setText(getResources().getString(R.string.good_night));
+            good_morning_txt.setText(getResources().getString(R.string.good_evening));
         }
 
         user_name_txt.setText(Utility.getSharedPreferences(mContext, APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext, APIS.Caregiver_lastname));
