@@ -52,6 +52,7 @@ import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROU
 import static com.soultabcaregiver.sendbird_group_call.IncomingGroupCallActivity.EXTRA_END_CALL;
 import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_CHANNEL_URL;
 import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUPS_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUP_NAME;
 import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_ROOM_ID;
 
 public class CustomFireBaseMessaging extends SendBirdPushHandler {
@@ -230,6 +231,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		String roomId = customMessageObj.getString("roomId");
 		String channelUrl = customMessageObj.getString("channelUrl");
 		String userIds = customMessageObj.getString("userIds");
+		String groupName = customMessageObj.getString("groupName");
 		
 		if (userIds.contains(PrefUtils.getUserId(context))) {
 			if (!SendBirdGroupCallService.hasActiveCall) {
@@ -239,6 +241,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 					incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
 					incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
 					incomingCallIntent.putExtra(EXTRA_GROUPS_USERS_IDS, userIds);
+					incomingCallIntent.putExtra(EXTRA_GROUP_NAME, groupName);
 					incomingCallIntent.putExtra(EXTRA_END_CALL, true);
 					incomingCallIntent.addFlags(
 							FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -252,6 +255,9 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 												IncomingGroupCallActivity.class);
 										incomingCallIntent.putExtra(EXTRA_ROOM_ID, roomId);
 										incomingCallIntent.putExtra(EXTRA_CHANNEL_URL, channelUrl);
+										incomingCallIntent.putExtra(EXTRA_GROUPS_USERS_IDS,
+												userIds);
+										incomingCallIntent.putExtra(EXTRA_GROUP_NAME, groupName);
 										incomingCallIntent.addFlags(
 												FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 										context.startActivity(incomingCallIntent);

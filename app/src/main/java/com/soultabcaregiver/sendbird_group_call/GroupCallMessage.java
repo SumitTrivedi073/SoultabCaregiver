@@ -8,13 +8,18 @@ import org.jetbrains.annotations.NotNull;
 public class GroupCallMessage {
 	
 	@SerializedName ("userIds") String userIds;
+	
 	@SerializedName ("channelUrl") String channelUrl;
+	
 	@SerializedName ("roomId") String roomId;
 	
-	public GroupCallMessage(String userIds, String channelUrl, String roomId) {
+	@SerializedName ("groupName") String groupName;
+	
+	public GroupCallMessage(String userIds, String channelUrl, String roomId, String groupName) {
 		this.userIds = userIds;
 		this.channelUrl = channelUrl;
 		this.roomId = roomId;
+		this.groupName = groupName;
 	}
 	
 	@NotNull

@@ -42,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_CHANNEL_URL;
 import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUPS_USERS_IDS;
+import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_GROUP_NAME;
 import static com.soultabcaregiver.sendbird_group_call.SendBirdGroupCallService.EXTRA_ROOM_ID;
 
 public class GroupCallFragment extends Fragment {
@@ -53,6 +54,8 @@ public class GroupCallFragment extends Fragment {
 	private String userIds;
 	
 	private String channelUrl;
+	
+	private String groupName;
 	
 	private ParticipantListAdapter adapter;
 	
@@ -78,6 +81,7 @@ public class GroupCallFragment extends Fragment {
 			roomId = getArguments().getString(EXTRA_ROOM_ID, "");
 			Log.e("roomId", roomId);
 			channelUrl = getArguments().getString(EXTRA_CHANNEL_URL, "");
+			groupName = getArguments().getString(EXTRA_GROUP_NAME, "");
 			userIds = getArguments().getString(EXTRA_GROUPS_USERS_IDS, "");
 			
 		}
@@ -117,13 +121,6 @@ public class GroupCallFragment extends Fragment {
 	}
 	
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		callEndTimer.cancel();
-		participantTimer.cancel();
-	}
-	
-	@Override
 	public void onResume() {
 		super.onResume();
 		startLocalVideo();
@@ -135,6 +132,13 @@ public class GroupCallFragment extends Fragment {
 		stopLocalVideo();
 	}
 	
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		callEndTimer.cancel();
+		participantTimer.cancel();
+	}
+	
 	public static GroupCallFragment newInstance(String roomId, String channelUrl, String userIds) {
 		GroupCallFragment groupCallFragment = new GroupCallFragment();
 		Bundle bundle = new Bundle();
@@ -144,7 +148,7 @@ public class GroupCallFragment extends Fragment {
 		groupCallFragment.setArguments(bundle);
 		return groupCallFragment;
 	}
-
+	
 	public void endCall() {
 		if (room != null) {
 			try {
@@ -218,7 +222,7 @@ public class GroupCallFragment extends Fragment {
 		params.setCustomType(GroupCallType.END_GROUP_VIDEO.name());
 		GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
 			GroupCallMessage callMessage =
-					new GroupCallMessage(userIds, channelUrl, room.getRoomId());
+					new GroupCallMessage(userIds, channelUrl, room.getRoomId(), groupName);
 			Log.e("callMessage", callMessage.toString());
 			params.setMessage(callMessage.toString());
 			groupChannel.sendUserMessage(params, (userMessage, e1) -> {
