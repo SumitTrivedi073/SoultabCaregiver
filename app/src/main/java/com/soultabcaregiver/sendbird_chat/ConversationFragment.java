@@ -426,9 +426,9 @@ public class ConversationFragment extends BaseFragment {
 		
 		// Set action bar title to name of channel
 		titleTextView.setText(title);
-		//		if (mChannel.getMemberCount() > 2) {
-		//			videoCallBtn.setVisibility(View.GONE);
-		//		}
+				if (mChannel.getMemberCount() > 2) {
+					videoCallBtn.setVisibility(View.GONE);
+			}
 	}
 	
 	private void setUpChatListAdapter() {
