@@ -40,6 +40,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -178,7 +179,23 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
 
                             Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
                         } else {
-                            GetDocAvailableTime(2);
+                            try {
+                                Calendar now = Calendar.getInstance();
+                                now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
+                                        sSelDateId + " " + sSelTimeId));
+                                String completeDate =
+                                        Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                                if (compareDateTime(completeDate)) {
+                                    Log.e("sSelTimeId", sSelTimeId);
+                                    GetDocAvailableTime(2);
+                                } else {
+                                    Utility.ShowToast(mContext,
+                                            getString(R.string.select_future_time));
+
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else {
 
@@ -187,7 +204,24 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                         } else if (TextUtils.isEmpty(sSelDateId)) {
                             Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
                         } else {
-                            GetDocAvailableTime(2);
+                            try {
+                                Calendar now = Calendar.getInstance();
+                                now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
+                                        sSelDateId + " " + sSelTimeId));
+                                String completeDate =
+                                        Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                                if (compareDateTime(completeDate)) {
+                                    Log.e("sSelTimeId", sSelTimeId);
+                                    GetDocAvailableTime(2);
+                                } else {
+                                    Utility.ShowToast(mContext,
+                                            getString(R.string.select_future_time));
+
+                                }
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } else {
@@ -704,5 +738,34 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
     }
+    private boolean compareDateTime(String date) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            boolean graterThanDate;
+            String todayDate = Utility.yyyy_mm_dd_hh_mm_ss.format(calendar.getTime());
+            String selectDate =
+                    Utility.yyyy_mm_dd_hh_mm_ss.format(Utility.yyyy_mm_dd_hh_mm_aa.parse(date));
 
+            Date selectDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(selectDate);
+            Date todayDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(todayDate);
+
+            Log.e("selectDateDate", String.valueOf(selectDateDate));
+            Log.e("todayDateDate", String.valueOf(todayDateDate));
+
+            if (String.valueOf(selectDateDate).equals(String.valueOf(todayDateDate))) {
+                graterThanDate = true;  // If two dates are equal.
+            } else // If start date is after the end date.
+            {
+                assert selectDateDate != null;
+                graterThanDate = selectDateDate.after(todayDateDate);
+            }
+
+            return graterThanDate;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
 }
