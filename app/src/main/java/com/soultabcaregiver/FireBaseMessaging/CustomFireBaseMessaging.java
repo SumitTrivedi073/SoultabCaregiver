@@ -384,8 +384,11 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		String channelId = "Default";
 		NotificationCompat.Builder builder =
 				new NotificationCompat.Builder(context, MyNoti).setSmallIcon(
-						R.drawable.main_logo).setContentTitle(title).setContentText(
-						body).setAutoCancel(true).setContentIntent(pendingIntent);
+						R.drawable.main_logo)
+						.setContentTitle(title)
+						.setContentText(body)
+						.setAutoCancel(true)
+						.setContentIntent(pendingIntent);
 		NotificationManager manager =
 				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -403,6 +406,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 				if (mainActivity != null) {
 					
 					mainActivity.Alert_countAPI();
+					manager.cancelAll();
 				}
 				
 				
