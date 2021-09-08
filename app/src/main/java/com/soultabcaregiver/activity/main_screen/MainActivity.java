@@ -45,6 +45,7 @@ import com.google.android.play.core.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
+import com.sendbird.android.SendBird;
 import com.sendbird.calls.DirectCallLog;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
@@ -77,7 +78,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
@@ -183,245 +183,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		
 	}
 	
-	private void buildGoogleApiClient() {
-		
-		googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(
-				this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
-		googleApiClient.connect();
-	}
-	
-	private void registerReceiver() {
-		Log.i(TAG, "[MainActivity] registerReceiver()");
-		
-		if (mReceiver != null) {
-			return;
-		}
-		
-		mReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Log.i(TAG, "[MainActivity] onReceive()");
-				
-				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
-						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
-				if (callLog != null) {
-					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
-					.getItem(1);
-					historyFragment.addLatestCallLog(callLog);*/
-				}
-			}
-		};
-		
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
-		registerReceiver(mReceiver, intentFilter);
-	}
-	
-	public void Alert_countAPI() {
-		
-		JSONObject mainObject = new JSONObject();
-		try {
-			mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
-			
-			Log.e(TAG, "AlertCount API========>" + mainObject.toString());
-		} catch (JSONException e) {
-			e.printStackTrace();
-			
-		}
-		
-		JsonObjectRequest jsonObjReq =
-				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.AlertCount,
-						mainObject, response -> {
-					Log.e(TAG, "AlertCount response=" + response.toString());
-					hideProgressDialog();
-					
-					AlertCountModel alertCountModel =
-							new Gson().fromJson(response.toString(), AlertCountModel.class);
-					
-					if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
-						
-						alertFragment = AlertFragment.instance;
-						if (alertFragment != null) {
-							alertFragment.GetAlertList(mContext);
-							
-						}
-						
-						itemView.removeView(badge);
-							
-							if (alertCountModel.getResponse().getUnreadCount() > 9) {
-								tv_badge.setText("9+");
-								itemView.addView(badge);
-								Utility.setSharedPreference(mContext, APIS.BadgeCount, "9+");
-							} else {
-								
-								tv_badge.setText(String.valueOf(
-										alertCountModel.getResponse().getUnreadCount()));
-								itemView.addView(badge);
-								Utility.setSharedPreference(mContext, APIS.BadgeCount,
-										tv_badge.getText().toString().trim());
-								
-								
-							}
-						
-						
-					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
-						logout_app(alertCountModel.getMessage());
-					} else {
-						Utility.ShowToast(mContext, alertCountModel.getMessage());
-					}
-					
-				}, error -> {
-					VolleyLog.d(TAG, "Error: " + error.getMessage());
-					hideProgressDialog();
-				}) {
-					@Override
-					public Map<String, String> getHeaders() {
-						Map<String, String> params = new HashMap<>();
-						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-						params.put(APIS.HEADERKEY2,
-								Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
-						
-						return params;
-					}
-					
-				};
-		AppController.getInstance().addToRequestQueue(jsonObjReq);
-		jsonObjReq.setShouldCache(false);
-		jsonObjReq.setRetryPolicy(
-				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		
-		
-	}
-	
-	public void updatebadge() {
-		
-		alertFragment = AlertFragment.instance;
-		if (alertFragment != null) {
-			alertFragment.AlertCountUpdate();
-			
-		}
-		
-		
-	}
-	
-	private void checkForCurrentScreen(String channelUrl) {
-		navigationView.setSelectedItemId(R.id.navigation_talk);
-		//i commented this code because of this it's not reflected to conversation screen
-		//it's reflected to chat list screen
-
-		/*Fragment f1 = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-		if (f1 instanceof TalkHolderFragment) {
-			TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
-			Fragment f2 =
-					talkHolderFragment.getChildFragmentManager().findFragmentById(R.id.container);
-			talkHolderFragment.navigateToConversationFragment(channelUrl);
-			
-			
-		} else {
-			loadTalkHolderFragment(channelUrl);
-		}*/
-		loadTalkHolderFragment(channelUrl);
-
-	}
-	
-	
-	private void listner() {
-		
-		navigationView.setOnNavigationItemSelectedListener(
-				new BottomNavigationView.OnNavigationItemSelectedListener() {
-					@Override
-					public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-						FragmentManager fm = getFragmentManager();
-						switch (item.getItemId()) {
-							
-							case R.id.navigation_dashboard:
-								video_call.setVisibility(View.VISIBLE);
-								shopping_btn.setVisibility(View.VISIBLE);
-								Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
-										false, null);
-								
-								return true;
-							
-							case R.id.navigation_appointment:
-								
-								video_call.setVisibility(View.GONE);
-								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
-										false,
-										null);
-								return true;
-							
-							case R.id.navigation_dailyroutine:
-								
-								video_call.setVisibility(View.GONE);
-								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
-										false, null);
-								
-								break;
-							case R.id.navigation_talk:
-								loadTalkHolderFragment(null);
-								
-								return true;
-							case R.id.navigation_calender:
-								
-								video_call.setVisibility(View.GONE);
-								shopping_btn.setVisibility(View.GONE);
-								Utility.loadFragment(MainActivity.this, new CalenderFragment(),
-										false, null);
-								break;
-						}
-						return true;
-					}
-					
-				});
-		
-		navigationView.setSelectedItemId(R.id.navigation_dashboard);
-		
-		video_call.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (Utility.isNetworkConnected(mContext)) {
-					if (!(ActivityCompat.checkSelfPermission(MainActivity.this,
-							Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-							MainActivity.this,
-							Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-						ActivityCompat.requestPermissions(MainActivity.this,
-								new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-										Manifest.permission.ACCESS_COARSE_LOCATION,
-										Manifest.permission.CAMERA,
-										Manifest.permission.WRITE_EXTERNAL_STORAGE,
-										Manifest.permission.RECORD_AUDIO},
-								REQUEST_CODE_PERMISSION);
-						
-						
-					} else {
-						openPlaceCallActivity();
-					}
-					
-				} else {
-					Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-				}
-			}
-		});
-		
-		shopping_btn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
-				startActivity(intent);
-			}
-		});
-		
-	}
-
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -465,44 +226,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 			
 		}
 		unregisterReceiver();
-	}
-	
-	private void unregisterReceiver() {
-		Log.i(TAG, "[MainActivity] unregisterReceiver()");
-		
-		if (mReceiver != null) {
-			unregisterReceiver(mReceiver);
-			mReceiver = null;
-		}
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		if (null != tmrStartEng) {
-			tmrStartEng.cancel();
-			tmrStartEng = null;
-			Log.e("Timer", "Pause");
-			
-		}
-		
-	}
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		if (intent.hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
-			checkForCurrentScreen(intent.getStringExtra(EXTRA_GROUP_CHANNEL_URL));
-		} else {
-			super.onNewIntent(intent);
-		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		//   new ReminderCreateClass(MainActivity.this);
-		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-		checkUpdate();
 	}
 	
 	@Override
@@ -601,6 +324,288 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		}
 	}
 	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (null != tmrStartEng) {
+			tmrStartEng.cancel();
+			tmrStartEng = null;
+			Log.e("Timer", "Pause");
+			
+		}
+		
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		if (intent.hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
+			checkForCurrentScreen(intent.getStringExtra(EXTRA_GROUP_CHANNEL_URL));
+		} else {
+			super.onNewIntent(intent);
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		//   new ReminderCreateClass(MainActivity.this);
+		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
+		checkUpdate();
+	}
+	
+	public static MainActivity getInstance() {
+		return instance;
+	}
+	
+	private void buildGoogleApiClient() {
+		
+		googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(
+				this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
+		googleApiClient.connect();
+	}
+	
+	private void registerReceiver() {
+		Log.i(TAG, "[MainActivity] registerReceiver()");
+		
+		if (mReceiver != null) {
+			return;
+		}
+		
+		mReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.i(TAG, "[MainActivity] onReceive()");
+				
+				DirectCallLog callLog = (DirectCallLog) intent.getSerializableExtra(
+						BroadcastUtils.INTENT_EXTRA_CALL_LOG);
+				if (callLog != null) {
+					/*HistoryFragment historyFragment = (HistoryFragment) mMainPagerAdapter
+					.getItem(1);
+					historyFragment.addLatestCallLog(callLog);*/
+				}
+			}
+		};
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BroadcastUtils.INTENT_ACTION_ADD_CALL_LOG);
+		registerReceiver(mReceiver, intentFilter);
+	}
+	
+	public void Alert_countAPI() {
+		
+		JSONObject mainObject = new JSONObject();
+		try {
+			mainObject.put("user_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+			
+			Log.e(TAG, "AlertCount API========>" + mainObject.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+			
+		}
+		
+		JsonObjectRequest jsonObjReq =
+				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.AlertCount,
+						mainObject, response -> {
+					Log.e(TAG, "AlertCount response=" + response.toString());
+					hideProgressDialog();
+					
+					AlertCountModel alertCountModel =
+							new Gson().fromJson(response.toString(), AlertCountModel.class);
+					
+					if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
+						
+						alertFragment = AlertFragment.instance;
+						if (alertFragment != null) {
+							alertFragment.GetAlertList(mContext);
+							
+						}
+						
+						Utility.setSharedPreference(mContext, APIS.BadgeCount,
+								String.valueOf(alertCountModel.getResponse().getUnreadCount()));
+						updateBadgeCount();
+						
+						
+					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
+						logout_app(alertCountModel.getMessage());
+					} else {
+						Utility.ShowToast(mContext, alertCountModel.getMessage());
+					}
+					
+				}, error -> {
+					VolleyLog.d(TAG, "Error: " + error.getMessage());
+					hideProgressDialog();
+				}) {
+					@Override
+					public Map<String, String> getHeaders() {
+						Map<String, String> params = new HashMap<>();
+						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+						params.put(APIS.HEADERKEY2,
+								Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+						
+						return params;
+					}
+					
+				};
+		AppController.getInstance().addToRequestQueue(jsonObjReq);
+		jsonObjReq.setShouldCache(false);
+		jsonObjReq.setRetryPolicy(
+				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		
+		
+	}
+	
+	public void updateBadgeCount() {
+		int alertCount = Integer.parseInt(Utility.getSharedPreferences(mContext, APIS.BadgeCount));
+		int unreadMessageCount = SendBird.getSubscribedTotalUnreadMessageCount();
+		
+		int totalMessageCount = alertCount + unreadMessageCount;
+		itemView.removeView(badge);
+		if (totalMessageCount > 9) {
+			tv_badge.setText("9+");
+		} else {
+			tv_badge.setText(String.valueOf(totalMessageCount));
+		}
+		itemView.addView(badge);
+		
+	}
+	
+	public void updatebadge() {
+		
+		alertFragment = AlertFragment.instance;
+		if (alertFragment != null) {
+			alertFragment.AlertCountUpdate();
+			
+		}
+		
+		
+	}
+	
+	private void checkForCurrentScreen(String channelUrl) {
+		navigationView.setSelectedItemId(R.id.navigation_talk);
+		//i commented this code because of this it's not reflected to conversation screen
+		//it's reflected to chat list screen
+
+		/*Fragment f1 = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+		if (f1 instanceof TalkHolderFragment) {
+			TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
+			Fragment f2 =
+					talkHolderFragment.getChildFragmentManager().findFragmentById(R.id.container);
+			talkHolderFragment.navigateToConversationFragment(channelUrl);
+			
+			
+		} else {
+			loadTalkHolderFragment(channelUrl);
+		}*/
+		loadTalkHolderFragment(channelUrl);
+		
+	}
+	
+	private void listner() {
+		
+		navigationView.setOnNavigationItemSelectedListener(
+				new BottomNavigationView.OnNavigationItemSelectedListener() {
+					@Override
+					public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+						FragmentManager fm = getFragmentManager();
+						switch (item.getItemId()) {
+							
+							case R.id.navigation_dashboard:
+								video_call.setVisibility(View.VISIBLE);
+								shopping_btn.setVisibility(View.VISIBLE);
+								Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
+										false, null);
+								
+								return true;
+							
+							case R.id.navigation_appointment:
+								
+								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
+								Utility.loadFragment(MainActivity.this, new DoctorFragment(),
+										false,
+										null);
+								return true;
+							
+							case R.id.navigation_dailyroutine:
+								
+								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
+								Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
+										false, null);
+								
+								break;
+							case R.id.navigation_talk:
+								loadTalkHolderFragment(null);
+								
+								return true;
+							case R.id.navigation_calender:
+								
+								video_call.setVisibility(View.GONE);
+								shopping_btn.setVisibility(View.GONE);
+								Utility.loadFragment(MainActivity.this, new CalenderFragment(),
+										false, null);
+								break;
+						}
+						return true;
+					}
+					
+				});
+		
+		navigationView.setSelectedItemId(R.id.navigation_dashboard);
+		
+		video_call.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (Utility.isNetworkConnected(mContext)) {
+					if (!(ActivityCompat.checkSelfPermission(MainActivity.this,
+							Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+							MainActivity.this,
+							Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+						ActivityCompat.requestPermissions(MainActivity.this,
+								new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+										Manifest.permission.ACCESS_COARSE_LOCATION,
+										Manifest.permission.CAMERA,
+										Manifest.permission.WRITE_EXTERNAL_STORAGE,
+										Manifest.permission.RECORD_AUDIO},
+								REQUEST_CODE_PERMISSION);
+						
+						
+					} else {
+						openPlaceCallActivity();
+					}
+					
+				} else {
+					Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+				}
+			}
+		});
+		
+		shopping_btn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
+				startActivity(intent);
+			}
+		});
+		
+	}
+	
+	private void unregisterReceiver() {
+		Log.i(TAG, "[MainActivity] unregisterReceiver()");
+		
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
+		}
+	}
+	
 	private void checkUpdate() {
 		
 		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
@@ -645,10 +650,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 		//		});
 		SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
 				Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
-	}
-	
-	public static MainActivity getInstance() {
-		return instance;
 	}
 	
 	//to kill the current session of SinchService
