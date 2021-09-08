@@ -42,7 +42,9 @@ import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
+import com.sendbird.android.SendBird;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -857,6 +859,22 @@ public class Utility {
 	public static int dpToPixel(Context context, int dp) {
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
 				context.getResources().getDisplayMetrics());
+	}
+	
+	public static void logException(String divider, Exception exception) {
+		try {
+			File appDir = new File(mContext.getExternalCacheDir(), SendBird.getApplicationId());
+			appDir.mkdirs();
+			
+			File dataFile = new File(appDir, "Exceptions.text");
+			FileUtils.saveToFile(dataFile, divider);
+			if (exception.getLocalizedMessage() != null)
+				FileUtils.saveToFile(dataFile, exception.getLocalizedMessage());
+			else
+				FileUtils.saveToFile(dataFile, "Exception");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void removeFragments(FragmentActivity activty) {

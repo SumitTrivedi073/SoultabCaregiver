@@ -15,6 +15,7 @@ import com.sendbird.android.SendBird;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
 import com.soultabcaregiver.sendbird_chat.utils.SpaceItemDecoration;
 import com.soultabcaregiver.utils.Utility;
@@ -59,6 +60,59 @@ public class ChatListFragment extends BaseFragment {
 	}
 	
 	@Override
+	public void onViewCreated(@NonNull @NotNull View view,
+	                          @Nullable @org.jetbrains.annotations.Nullable
+			                          Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mChannelListAdapter = new ChatListAdapter(getActivity());
+		mChannelListAdapter.load();
+		setUpRecyclerView();
+		setUpChannelListAdapter();
+		getMyChatChannels();
+	}
+	
+	@Override
+	public void onResume() {
+		Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
+		
+		MainActivity.getInstance().Alert_countAPI();
+		
+		ConnectionManager.addConnectionManagementHandler(
+				Utility.getSharedPreferences(getContext(), APIS.caregiver_id),
+				CONNECTION_HANDLER_ID, reconnect -> refresh());
+		
+		SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
+			@Override
+			public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+				Log.e("SendBird", baseMessage.getMessage());
+				mChannelListAdapter.updateOrInsert(baseChannel);
+			}
+			
+			@Override
+			public void onChannelChanged(BaseChannel channel) {
+				mChannelListAdapter.updateOrInsert(channel);
+				MainActivity.instance.Alert_countAPI();
+			}
+			
+			@Override
+			public void onTypingStatusUpdated(GroupChannel channel) {
+				mChannelListAdapter.updateOrInsert(channel);
+				mChannelListAdapter.notifyDataSetChanged();
+			}
+		});
+		
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		mChannelListAdapter.save();
+		ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
+		SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
+		super.onPause();
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
@@ -78,18 +132,6 @@ public class ChatListFragment extends BaseFragment {
 		if (chatFragment != null) {
 			chatFragment.navigateToCreateGroupFragment(isForGroupChat);
 		}
-	}
-	
-	@Override
-	public void onViewCreated(@NonNull @NotNull View view,
-	                          @Nullable @org.jetbrains.annotations.Nullable
-			                          Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		mChannelListAdapter = new ChatListAdapter(getActivity());
-		mChannelListAdapter.load();
-		setUpRecyclerView();
-		setUpChannelListAdapter();
-		getMyChatChannels();
 	}
 	
 	// Sets up recycler view
@@ -158,46 +200,8 @@ public class ChatListFragment extends BaseFragment {
 		}
 	}
 	
-	@Override
-	public void onResume() {
-		Log.d("LIFECYCLE", "GroupChannelListFragment onResume()");
-		
-		ConnectionManager.addConnectionManagementHandler(
-				Utility.getSharedPreferences(getContext(), APIS.caregiver_id),
-				CONNECTION_HANDLER_ID, reconnect -> refresh());
-		
-		SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
-			@Override
-			public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
-				Log.e("SendBird", baseMessage.getMessage());
-				mChannelListAdapter.updateOrInsert(baseChannel);
-			}
-			
-			@Override
-			public void onChannelChanged(BaseChannel channel) {
-				mChannelListAdapter.updateOrInsert(channel);
-			}
-			
-			@Override
-			public void onTypingStatusUpdated(GroupChannel channel) {
-				mChannelListAdapter.updateOrInsert(channel);
-				mChannelListAdapter.notifyDataSetChanged();
-			}
-		});
-		
-		super.onResume();
-	}
-	
 	private void refresh() {
 		getMyChatChannels();
-	}
-	
-	@Override
-	public void onPause() {
-		mChannelListAdapter.save();
-		ConnectionManager.removeConnectionManagementHandler(CONNECTION_HANDLER_ID);
-		SendBird.removeChannelHandler(CHANNEL_HANDLER_ID);
-		super.onPause();
 	}
 	
 	
