@@ -75,7 +75,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		mReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				
+				MainActivity.instance.updateBadgeCount();
 				String name = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_NAME);
 				String avatar = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_AVATAR);
 				String lastMessage =

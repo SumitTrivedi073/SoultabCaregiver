@@ -84,6 +84,7 @@ public class TalkFragment extends BaseFragment {
 					setBadge2();
 					if (mainActivity != null) {
 						mainActivity.updatebadge();
+						mainActivity.updateBadgeCount();
 					}
 					
 				}
@@ -119,6 +120,7 @@ public class TalkFragment extends BaseFragment {
 	}
 	
 	public void setBadge2() {
+		Utility.setSharedPreference(mContext, APIS.BadgeCount, "0");
 		BadgeDrawable badgeDrawable = Objects.requireNonNull(tabs.getTabAt(1)).getOrCreateBadge();
 		badgeDrawable.setVisible(true);
 		badgeDrawable.setNumber(0);

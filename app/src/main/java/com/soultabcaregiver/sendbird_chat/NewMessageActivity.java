@@ -10,6 +10,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,11 +41,13 @@ public class NewMessageActivity extends BaseActivity {
 	
 	private TextView messageTextView;
 	
-	
 	@SuppressLint ("SetTextI18n")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		wakeScreen();
+		
 		supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.activity_new_message);
@@ -60,6 +63,18 @@ public class NewMessageActivity extends BaseActivity {
 		setData(getIntent());
 		
 		
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setData(intent);
+	}
+	
+	private void wakeScreen() {
+		Window window = getWindow();
+		window.addFlags(
+				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 	}
 	
 	private void setData(Intent intent) {
@@ -98,12 +113,6 @@ public class NewMessageActivity extends BaseActivity {
 				Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		
 		messageTextView.setText(spannedText);
-	}
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		setData(intent);
 	}
 	
 	private void setupUI() {
