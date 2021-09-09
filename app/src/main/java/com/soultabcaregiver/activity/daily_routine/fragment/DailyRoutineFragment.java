@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -23,6 +24,7 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.daily_routine.model.DailyRoutineModel;
+import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -39,6 +41,7 @@ import java.util.Map;
 
 public class DailyRoutineFragment extends BaseFragment {
 
+    public static DailyRoutineFragment instance;
     private final String TAG = getClass().getSimpleName();
     View view;
     Context mContext;
@@ -62,6 +65,7 @@ public class DailyRoutineFragment extends BaseFragment {
     List<String> Dinnerlist = new ArrayList<>();
     List<String> BedTimelist = new ArrayList<>();
     Calendar calendar;
+    RelativeLayout show_daily_routine_Relative, hide_daily_routine_Relative;
 
 
     @Override
@@ -78,11 +82,12 @@ public class DailyRoutineFragment extends BaseFragment {
         view = inflater.inflate(R.layout.fragment_daily_routine, container, false);
 
         calendar = Calendar.getInstance();
-
+        instance = DailyRoutineFragment.this;
         init();
         StringValue();
         Listner();
         GetDailyRoutineData();
+        dailyroutine_hideshow();
 
         return view;
     }
@@ -124,7 +129,8 @@ public class DailyRoutineFragment extends BaseFragment {
         BedTime_Yoga = view.findViewById(R.id.BedTime_Yoga);
         BedTime_Meditation = view.findViewById(R.id.BedTime_Meditation);
         BedTime_Nap = view.findViewById(R.id.BedTime_Nap);
-
+        show_daily_routine_Relative = view.findViewById(R.id.show_daily_routine_Relative);
+        hide_daily_routine_Relative = view.findViewById(R.id.hide_daily_routine_Relative);
 
     }
 
@@ -179,6 +185,17 @@ public class DailyRoutineFragment extends BaseFragment {
             }
         });
 
+    }
+
+
+    public void dailyroutine_hideshow() {
+        if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("1")) {
+            show_daily_routine_Relative.setVisibility(View.GONE);
+            hide_daily_routine_Relative.setVisibility(View.VISIBLE);
+        } else if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("2")) {
+            show_daily_routine_Relative.setVisibility(View.VISIBLE);
+            hide_daily_routine_Relative.setVisibility(View.GONE);
+        }
     }
 
     private void CheckedListner() {
@@ -479,7 +496,7 @@ public class DailyRoutineFragment extends BaseFragment {
         Evening = SplitString(Evening);
         Dinner = SplitString(Dinner);
         BedTime = SplitString(BedTime);
-    
+
         if (!Morning.equals("") || !Noon.equals("") || !Evening.equals("") || !Dinner.equals(
                 "") || !BedTime.equals("")) {
             SubmitDailyRoutine();
@@ -657,7 +674,7 @@ public class DailyRoutineFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 
@@ -895,7 +912,7 @@ public class DailyRoutineFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 

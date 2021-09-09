@@ -8,6 +8,19 @@
     tools:context=".activity.calender.fragment.CalenderFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:id="@+id/show_cal_Relative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/hide_cal_Relative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,14 +93,6 @@
 
 
             </RelativeLayout>
-
-
-            <!--
-                                <CalendarView
-                                    android:id="@+id/customCalendarView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content" />
-            -->
 
 
             <RelativeLayout
@@ -223,7 +228,6 @@
 
     </LinearLayout>
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/reminder_btn"
         android:layout_width="wrap_content"
@@ -239,5 +243,6 @@
         app:pressedTranslationZ="@dimen/_5sdp"
         app:tint="@android:color/white" />
 
+    </RelativeLayout>
 
 </RelativeLayout>

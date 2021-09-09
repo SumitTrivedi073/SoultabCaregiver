@@ -7,6 +7,20 @@
     android:background="@color/light_white"
     tools:context=".activity.daily_routine.fragment.DailyRoutineFragment">
 
+    <RelativeLayout
+        android:id="@+id/hide_daily_routine_Relative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+
+    <RelativeLayout
+        android:id="@+id/show_daily_routine_Relative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -806,5 +820,7 @@
         app:fabSize="auto"
         app:pressedTranslationZ="@dimen/_5sdp"
         app:tint="@android:color/white" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

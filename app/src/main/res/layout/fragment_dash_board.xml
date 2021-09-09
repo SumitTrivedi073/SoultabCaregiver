@@ -8,6 +8,18 @@
     android:orientation="vertical"
     tools:context=".activity.main_screen.fragment.DashBoardFragment">
 
+    <RelativeLayout
+        android:id="@+id/dashboard_show_relative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/dashboard_hide_relative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -397,5 +409,7 @@
         </androidx.core.widget.NestedScrollView>
 
     </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>

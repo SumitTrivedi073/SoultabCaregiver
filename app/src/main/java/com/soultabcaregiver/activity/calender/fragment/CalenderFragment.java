@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CalendarView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -26,6 +27,7 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.AllEventModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.calender.adapter.CustomEventAdapter;
+import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -50,6 +52,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CalenderFragment extends BaseFragment implements View.OnClickListener {
 
+    public static CalenderFragment instance;
     Context mContext;
     View view;
     RecyclerView rvReminder;
@@ -59,10 +62,10 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     String FromDate = "", FromDate2 = "", TODate = "", TODate2 = "";
     Calendar calendar, calendar1;
     AlertDialog alertDialog;
-    boolean isFirstTimeCalendar = true, Daily_select = true, Weekly_select = false, Monthly_select = false;
+    boolean  Daily_select = true, Weekly_select = false, Monthly_select = false;
     List<ReminderBean> arRemin;
     boolean isFirstTimeShowLoader = true;
-
+    RelativeLayout show_cal_Relative,hide_cal_Relative;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         view = inflater.inflate(R.layout.fragment_calender, container, false);
 
         calendar = Calendar.getInstance();
+        instance = CalenderFragment.this;
         int mYear = calendar.get(Calendar.YEAR);
         int mMonth = calendar.get(Calendar.MONTH);
         int mDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -90,8 +94,19 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
 
         init();
         Listener();
+        calenderhide_show();
 
         return view;
+    }
+
+    public void calenderhide_show() {
+        if (Utility.getSharedPreferences(mContext,APIS.calender_hideshow).equals("1")) {
+            show_cal_Relative.setVisibility(View.GONE);
+            hide_cal_Relative.setVisibility(View.VISIBLE);
+        }else if (Utility.getSharedPreferences(mContext,APIS.calender_hideshow).equals("2")){
+            show_cal_Relative.setVisibility(View.VISIBLE);
+            hide_cal_Relative.setVisibility(View.GONE);
+        }
     }
 
     private void init() {
