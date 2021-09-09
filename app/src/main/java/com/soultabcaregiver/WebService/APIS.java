@@ -97,6 +97,10 @@ public class APIS {
 
     public static final String GroupChatProfileImage = "Users/groupChatImage";
 
+    //tabs hide show API
+    public static final String caregiver_permissionsAPI = "Caregiver/caregiver_permissions";
+
+
     //User Detail
     public static final String user_id = "user_id";
 

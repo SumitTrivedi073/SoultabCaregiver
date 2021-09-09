@@ -31,7 +31,6 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.docter.fragment.DoctorListFragment;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
@@ -150,16 +149,9 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
         user_name_txt.setText(Utility.getSharedPreferences(mContext, APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext, APIS.Caregiver_lastname));
 
-
-        if (Utility.isNetworkConnected(mContext)) {
-            ChartAPI(chart_value_data);
-
-        } else {
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
+        Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
 
         listner();
-        Dashboardhide_show();
 
         return view;
     }
@@ -263,7 +255,10 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     }
 
     private void ChartAPI(String chart_value_data) {
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
+
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.LineChartAPI,
                 new Response.Listener<String>() {
                     @Override
@@ -642,13 +637,20 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    public void Dashboardhide_show() {
-        if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("1")) {
+    public void Dashboardhide_show(String dashboardNew) {
+
+        if (dashboardNew.equals("1")) {
             dashboard_show_relative.setVisibility(View.GONE);
             dashboard_hide_relative.setVisibility(View.VISIBLE);
-        } else if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("2")) {
+        } else if (dashboardNew.equals("2") || dashboardNew.equals("0")) {
             dashboard_show_relative.setVisibility(View.VISIBLE);
             dashboard_hide_relative.setVisibility(View.GONE);
+            if (Utility.isNetworkConnected(mContext)) {
+                ChartAPI(chart_value_data);
+
+            } else {
+                Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+            }
         }
     }
 }

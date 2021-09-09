@@ -24,7 +24,6 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.daily_routine.model.DailyRoutineModel;
-import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -86,8 +85,8 @@ public class DailyRoutineFragment extends BaseFragment {
         init();
         StringValue();
         Listner();
-        GetDailyRoutineData();
-        dailyroutine_hideshow();
+        dailyroutine_hideshow(Utility.getSharedPreferences(mContext,APIS.dailyroutine_hideshow));
+
 
         return view;
     }
@@ -188,13 +187,18 @@ public class DailyRoutineFragment extends BaseFragment {
     }
 
 
-    public void dailyroutine_hideshow() {
-        if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("1")) {
+    public void dailyroutine_hideshow(String dailyroutine) {
+        if (dailyroutine.equals("1")) {
             show_daily_routine_Relative.setVisibility(View.GONE);
             hide_daily_routine_Relative.setVisibility(View.VISIBLE);
-        } else if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("2")) {
+        } else if (dailyroutine.equals("2")) {
             show_daily_routine_Relative.setVisibility(View.VISIBLE);
             hide_daily_routine_Relative.setVisibility(View.GONE);
+            Submit_btn.setVisibility(View.GONE);
+            GetDailyRoutineData();
+        }else if (dailyroutine.equals("0")) {
+            Submit_btn.setVisibility(View.VISIBLE);
+            GetDailyRoutineData();
         }
     }
 
@@ -596,7 +600,9 @@ public class DailyRoutineFragment extends BaseFragment {
         }
         Log.e(TAG, "GetDailyRoutineData_API=  " + mainObject.toString());
 
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+            showProgressDialog(mContext, getResources().getString(R.string.Loading));
+
+
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.GetDailyRoutineAPI, mainObject,
                 new Response.Listener<JSONObject>() {

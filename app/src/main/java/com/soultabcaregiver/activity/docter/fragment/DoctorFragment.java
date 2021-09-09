@@ -22,7 +22,6 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.AddDoctorActivity;
-import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.utils.NonSwipeableViewPager;
 import com.soultabcaregiver.utils.Utility;
 
@@ -91,7 +90,7 @@ public class DoctorFragment extends BaseFragment {
         doctor_hide_Relative = view.findViewById(R.id.doctor_hide_Relative);
 
 
-        doctorhide_show();
+        doctorhide_show(Utility.getSharedPreferences(mContext, APIS.doctor_hide_show));
 
         Add_doctor_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,13 +167,15 @@ public class DoctorFragment extends BaseFragment {
     }
 
 
-    public void doctorhide_show() {
-        if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("1")) {
+    public void doctorhide_show(String doctorhide_show) {
+        if (doctorhide_show.equals("1")) {
             doctor_show_Relative.setVisibility(View.GONE);
             doctor_hide_Relative.setVisibility(View.VISIBLE);
-        } else if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals("2")) {
+            Add_doctor_btn.setVisibility(View.GONE);
+        } else if (doctorhide_show.equals("2")|| doctorhide_show.equals("0")) {
             doctor_show_Relative.setVisibility(View.VISIBLE);
             doctor_hide_Relative.setVisibility(View.GONE);
+            Add_doctor_btn.setVisibility(View.VISIBLE);
         }
     }
 }

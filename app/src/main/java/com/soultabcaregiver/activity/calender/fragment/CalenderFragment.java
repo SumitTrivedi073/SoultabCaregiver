@@ -27,7 +27,6 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.calender.CalenderModel.AllEventModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.ReminderBean;
 import com.soultabcaregiver.activity.calender.adapter.CustomEventAdapter;
-import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.reminder.AddReminderActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -94,18 +93,23 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
 
         init();
         Listener();
-        calenderhide_show();
+        calenderhide_show(Utility.getSharedPreferences(mContext,APIS.calender_hideshow));
 
         return view;
     }
 
-    public void calenderhide_show() {
-        if (Utility.getSharedPreferences(mContext,APIS.calender_hideshow).equals("1")) {
+    public void calenderhide_show(String calender_hideshow) {
+        if (calender_hideshow.equals("1")) {
             show_cal_Relative.setVisibility(View.GONE);
             hide_cal_Relative.setVisibility(View.VISIBLE);
-        }else if (Utility.getSharedPreferences(mContext,APIS.calender_hideshow).equals("2")){
+        }else if (calender_hideshow.equals("2")||calender_hideshow.equals("0")){
             show_cal_Relative.setVisibility(View.VISIBLE);
             hide_cal_Relative.setVisibility(View.GONE);
+            if (Utility.isNetworkConnected(mContext)) {
+                GetAllEventAPI(FromDate, TODate);//for list data
+            } else {
+                Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+            }
         }
     }
 
@@ -128,11 +132,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         super.onResume();
         //  new ReminderCreateClass(getActivity());
     
-        if (Utility.isNetworkConnected(mContext)) {
-            GetAllEventAPI(FromDate, TODate);//for list data
-        } else {
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
+
     
         daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
         weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
@@ -472,8 +472,10 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             e.printStackTrace();
 
         }
-        if (isFirstTimeShowLoader)
-            showProgressDialog(mContext, getResources().getString(R.string.Loading));
+
+            if (isFirstTimeShowLoader)
+                showProgressDialog(mContext, getResources().getString(R.string.Loading));
+
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.EVENTLIST, mainObject,

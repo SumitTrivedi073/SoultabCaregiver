@@ -88,7 +88,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	
 	@Override
 	protected void onMessageReceived(Context context, RemoteMessage remoteMessage) {
-		Log.e("remote_msg_size==", remoteMessage.getData().toString());
+		Log.e("remote_msg_size==", remoteMessage.getNotification().getBody());
 		AppInBackground = isAppIsInBackground(context);
 		
 		try {
