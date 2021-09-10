@@ -1,5 +1,6 @@
 package com.soultabcaregiver.activity.calender.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -67,7 +68,7 @@ public class CustomEventAdapter extends
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, @SuppressLint("RecyclerView") final int position) {
         // Get the data model based on position
         final ReminderBean reminderBean = arRemindIn.get(position);
         viewHolder.tvTitle.setText(reminderBean.getTitle());
@@ -105,10 +106,15 @@ public class CustomEventAdapter extends
         viewHolder.delete_Reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (reminderBean.isAppointment()) {
-                    alertmessage(reminderBean.getId(), position, "1");
+                if (Utility.getSharedPreferences(context, APIS.calender_hideshow).equals(APIS.Edit)) {
+
+                    if (reminderBean.isAppointment()) {
+                        alertmessage(reminderBean.getId(), position, "1");
+                    } else {
+                        alertmessage(reminderBean.getId(), position, "0");
+                    }
                 } else {
-                    alertmessage(reminderBean.getId(), position, "0");
+                    Utility.ShowToast(context, context.getResources().getString(R.string.only_view_permission));
                 }
 
             }

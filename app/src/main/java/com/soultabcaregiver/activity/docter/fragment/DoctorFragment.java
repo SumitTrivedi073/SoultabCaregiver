@@ -95,8 +95,13 @@ public class DoctorFragment extends BaseFragment {
         Add_doctor_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, AddDoctorActivity.class);
-                startActivity(intent);
+                if (Utility.getSharedPreferences(mContext, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+                    Intent intent = new Intent(mContext, AddDoctorActivity.class);
+                    startActivity(intent);
+                }else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
             }
         });
 
@@ -168,11 +173,15 @@ public class DoctorFragment extends BaseFragment {
 
 
     public void doctorhide_show(String doctorhide_show) {
-        if (doctorhide_show.equals("1")) {
+        if (doctorhide_show.equals(APIS.Hide)) {
             doctor_show_Relative.setVisibility(View.GONE);
             doctor_hide_Relative.setVisibility(View.VISIBLE);
             Add_doctor_btn.setVisibility(View.GONE);
-        } else if (doctorhide_show.equals("2")|| doctorhide_show.equals("0")) {
+        } else if (doctorhide_show.equals(APIS.View)) {
+            doctor_show_Relative.setVisibility(View.VISIBLE);
+            doctor_hide_Relative.setVisibility(View.GONE);
+            Add_doctor_btn.setVisibility(View.VISIBLE);
+        } else if (doctorhide_show.equals(APIS.Edit)) {
             doctor_show_Relative.setVisibility(View.VISIBLE);
             doctor_hide_Relative.setVisibility(View.GONE);
             Add_doctor_btn.setVisibility(View.VISIBLE);

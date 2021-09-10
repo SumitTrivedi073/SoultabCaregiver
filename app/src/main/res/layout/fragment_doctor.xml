@@ -7,16 +7,34 @@
     android:background="@color/light_white"
     tools:context=".activity.docter.fragment.DoctorFragment">
 
+
+    <TextView
+        android:id="@+id/tv_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/muli_extrabold"
+        android:gravity="center"
+        android:text="@string/appointment"
+        android:textColor="@color/blackish"
+        android:textSize="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_20sdp"/>
+
+
     <RelativeLayout
         android:id="@+id/doctor_hide_Relative"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_text"
         android:visibility="gone"/>
+
+
+
 
     <RelativeLayout
         android:id="@+id/doctor_show_Relative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_text"
         android:visibility="visible">
 
     <LinearLayout
@@ -24,16 +42,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/muli_extrabold"
-            android:gravity="center"
-            android:text="@string/appointment"
-            android:textColor="@color/blackish"
-            android:textSize="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_20sdp"/>
+
 
 
         <TextView

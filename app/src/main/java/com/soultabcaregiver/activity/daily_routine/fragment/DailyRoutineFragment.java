@@ -180,7 +180,12 @@ public class DailyRoutineFragment extends BaseFragment {
         Submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckedListner();
+                if (Utility.getSharedPreferences(mContext, APIS.dailyroutine_hideshow).equals(APIS.Edit)) {
+
+                    CheckedListner();
+                }else {
+                    Utility.ShowToast(mContext,mContext.getResources().getString(R.string.only_view_permission));
+                }
             }
         });
 
@@ -188,18 +193,18 @@ public class DailyRoutineFragment extends BaseFragment {
 
 
     public void dailyroutine_hideshow(String dailyroutine) {
-        if (dailyroutine.equals("1")) {
+        if (dailyroutine.equals(APIS.Hide)) {
             show_daily_routine_Relative.setVisibility(View.GONE);
             hide_daily_routine_Relative.setVisibility(View.VISIBLE);
-        } else if (dailyroutine.equals("2")) {
+        } else if (dailyroutine.equals(APIS.View)) {
             show_daily_routine_Relative.setVisibility(View.VISIBLE);
             hide_daily_routine_Relative.setVisibility(View.GONE);
-            Submit_btn.setVisibility(View.GONE);
             GetDailyRoutineData();
-        }else if (dailyroutine.equals("0")) {
+        }else if (dailyroutine.equals(APIS.Edit)) {
+            show_daily_routine_Relative.setVisibility(View.VISIBLE);
+            hide_daily_routine_Relative.setVisibility(View.GONE);
             Submit_btn.setVisibility(View.VISIBLE);
-            GetDailyRoutineData();
-        }
+         }
     }
 
     private void CheckedListner() {

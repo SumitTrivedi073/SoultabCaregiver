@@ -142,6 +142,9 @@ public class APIS {
     public static final String calender_hideshow = "calender_hideshow";
 
     public static final String dailyroutine_hideshow = "dailyroutine_hideshow";
+    public static final String Hide = "1";
+    public static final String View = "2";
+    public static final String Edit = "0";
 
 
     //Key's

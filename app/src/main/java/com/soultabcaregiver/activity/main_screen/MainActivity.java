@@ -149,7 +149,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         shopping_btn = findViewById(R.id.shopping_btn);
 
 
-
         BottomNavigationViewHelper.removeShiftMode(navigationView);
 
         BottomNavigationMenuView bottomNavigationMenuView =
@@ -321,7 +320,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
 
-
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent.hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
@@ -395,7 +393,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         switch (item.getItemId()) {
 
                             case R.id.navigation_dashboard:
-                                if (Utility.getSharedPreferences(mContext,APIS.dashbooard_hide_Show).equals("1")){
+                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
                                     video_call.setVisibility(View.GONE);
                                     shopping_btn.setVisibility(View.GONE);
                                 }
@@ -443,32 +441,37 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         video_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utility.isNetworkConnected(mContext)) {
-                    if (!(ActivityCompat.checkSelfPermission(MainActivity.this,
-                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-                            MainActivity.this,
-                            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-                            MainActivity.this,
-                            Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-                            MainActivity.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
-                            MainActivity.this,
-                            Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
-                        ActivityCompat.requestPermissions(MainActivity.this,
-                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        Manifest.permission.CAMERA,
-                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                        Manifest.permission.RECORD_AUDIO},
-                                REQUEST_CODE_PERMISSION);
+                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Edit)) {
+                    if (Utility.isNetworkConnected(mContext)) {
+                        if (!(ActivityCompat.checkSelfPermission(MainActivity.this,
+                                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+                                MainActivity.this,
+                                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+                                MainActivity.this,
+                                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+                                MainActivity.this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) || !(ActivityCompat.checkSelfPermission(
+                                MainActivity.this,
+                                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                                            Manifest.permission.CAMERA,
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                            Manifest.permission.RECORD_AUDIO},
+                                    REQUEST_CODE_PERMISSION);
 
+
+                        } else {
+                            openPlaceCallActivity();
+                        }
 
                     } else {
-                        openPlaceCallActivity();
+                        Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                     }
-
                 } else {
-                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                    Utility.ShowToast(mContext, getString(R.string.only_view_permission));
+
                 }
             }
         });
@@ -476,8 +479,14 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         shopping_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
-                startActivity(intent);
+                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Edit)) {
+
+                    Intent intent = new Intent(mContext, ShoppingCategoryActivity.class);
+                    startActivity(intent);
+                } else {
+                    Utility.ShowToast(mContext, getString(R.string.only_view_permission));
+
+                }
             }
         });
 
@@ -571,7 +580,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
             e.printStackTrace();
 
         }
-      //  showProgressDialog(getResources().getString(R.string.Loading));
+        //  showProgressDialog(getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq =
                 new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.caregiver_permissionsAPI,
                         mainObject, response -> {
@@ -596,8 +605,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                                 dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
 
+                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Edit)) {
+                                    video_call.setVisibility(View.VISIBLE);
+                                    shopping_btn.setVisibility(View.VISIBLE);
+                                }
                             }
-
 
                         }
 
