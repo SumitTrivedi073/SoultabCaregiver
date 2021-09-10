@@ -5,12 +5,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.media.AudioAttributes;
 import android.os.Build;
 import android.util.Log;
 
@@ -21,10 +19,8 @@ import com.sendbird.android.SendBirdException;
 import com.sendbird.android.SendBirdPushHandler;
 import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.calls.SendBirdCall;
-import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
-import com.soultabcaregiver.activity.SplashActivity;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
@@ -141,35 +137,40 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	 *
 	 * @param messageBody FCM message body received.
 	 */
-	public static void sendNotification(Context context, String messageBody, String channelUrl,
-	                                    String calleeId) {
-		NotificationManager notificationManager =
-				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+	public static void sendNotification(Context context, String messageBody, String channelUrl) {
+		final int currentTime = (int) System.currentTimeMillis();
+		final String channelId = context.getPackageName() + currentTime;
 		
-		final String CHANNEL_ID = "CHANNEL_ID";
-		if (Build.VERSION.SDK_INT >= 26) {  // Build.VERSION_CODES.O
-			NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, "CHANNEL_NAME",
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {  // Build.VERSION_CODES.O
+			String channelName = "Caregiver_Notification_Channel";
+			NotificationChannel channel = new NotificationChannel(channelId, channelName,
 					NotificationManager.IMPORTANCE_HIGH);
-			notificationManager.createNotificationChannel(mChannel);
+			AudioAttributes audioAttributes = new AudioAttributes.Builder().setContentType(
+					AudioAttributes.CONTENT_TYPE_SONIFICATION).setUsage(
+					AudioAttributes.USAGE_NOTIFICATION).build();
+			NotificationManager notificationManager =
+					context.getSystemService(NotificationManager.class);
+			channel.enableLights(true);
+			if (notificationManager != null) {
+				notificationManager.createNotificationChannel(channel);
+			}
 		}
 		
-		Intent intent = new Intent(context, SplashActivity.class);
+		Intent intent = new Intent(context, MainActivity.class);
 		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		PendingIntent pendingIntent =
 				PendingIntent.getActivity(context, 0 /* Request code */, intent,
 						PendingIntent.FLAG_UPDATE_CURRENT);
 		
-		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 		NotificationCompat.Builder notificationBuilder =
-				new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(
+				new NotificationCompat.Builder(context, channelId).setSmallIcon(
 						R.drawable.main_logo)  // small icon background color
 						.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
 								R.drawable.main_logo)).setContentTitle(
 						context.getResources().getString(R.string.app_name)).setAutoCancel(
-						true).setSound(defaultSoundUri).setPriority(
-						Notification.PRIORITY_MAX).setDefaults(
-						Notification.DEFAULT_ALL).setContentIntent(pendingIntent);
+						true).setPriority(Notification.PRIORITY_MAX).setDefaults(
+						NotificationCompat.DEFAULT_ALL).setContentIntent(pendingIntent);
 		
 		//here the condition if to show message or not
 		if (true) {
@@ -177,7 +178,8 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		} else {
 			notificationBuilder.setContentText("Somebody sent you a message.");
 		}
-		
+		NotificationManager notificationManager =
+				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 		notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 	}
 	
@@ -202,23 +204,14 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	private boolean isAppIsInBackground(Context context) {
 		boolean isInBackground = true;
 		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-			List<ActivityManager.RunningAppProcessInfo> runningProcesses =
-					am.getRunningAppProcesses();
-			for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-				if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-					for (String activeProcess : processInfo.pkgList) {
-						if (activeProcess.equals(context.getPackageName())) {
-							isInBackground = false;
-						}
+		List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+		for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+			if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+				for (String activeProcess : processInfo.pkgList) {
+					if (activeProcess.equals(context.getPackageName())) {
+						isInBackground = false;
 					}
 				}
-			}
-		} else {
-			List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-			ComponentName componentInfo = taskInfo.get(0).topActivity;
-			if (componentInfo.getPackageName().equals(context.getPackageName())) {
-				isInBackground = false;
 			}
 		}
 		return isInBackground;
@@ -284,10 +277,15 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		if (AppInBackground) {
 			checkAuthentication(context,
 					isSuccess -> GroupChannel.getChannel(channelUrl, (groupChannel, e) -> {
-						BaseActivity.getPopupIntent(context,
-								TextUtils.getGroupChannelTitle(groupChannel),
-								groupChannel.getCoverUrl(), groupChannel.getMemberCount() > 2,
-								channelUrl, remoteMessage.getData().get("message"));
+						sendNotification(context, remoteMessage.getData().get("message"),
+								channelUrl);
+						//						BaseActivity.getPopupIntent(context,
+						//								TextUtils.getGroupChannelTitle
+						//								(groupChannel),
+						//								groupChannel.getCoverUrl(), groupChannel
+						//								.getMemberCount() > 2,
+						//								channelUrl, remoteMessage.getData().get
+						//								("message"));
 					}));
 		} else {
 			checkAuthentication(context, isSuccess -> {
@@ -384,11 +382,8 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		String channelId = "Default";
 		NotificationCompat.Builder builder =
 				new NotificationCompat.Builder(context, MyNoti).setSmallIcon(
-						R.drawable.main_logo)
-						.setContentTitle(title)
-						.setContentText(body)
-						.setAutoCancel(true)
-						.setContentIntent(pendingIntent);
+						R.drawable.main_logo).setContentTitle(title).setContentText(
+						body).setAutoCancel(true).setContentIntent(pendingIntent);
 		NotificationManager manager =
 				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

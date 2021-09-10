@@ -1,5 +1,6 @@
 package com.soultabcaregiver.sendbird_calls;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -8,6 +9,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -20,19 +23,21 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_calls.utils.UserInfoUtils;
 import com.soultabcaregiver.utils.Utility;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import static com.soultabcaregiver.utils.Utility.ShowToast;
 
-
 public class SendbirdCallService extends Service {
 	
+	private static final int NOTIFICATION_ID = 1;
+	
+	private static final String TAG = "VideoCallActivity";
 	
 	public static final String EXTRA_IS_HEADS_UP_NOTIFICATION = "is_heads_up_notification";
-	
-	private static final int NOTIFICATION_ID = 1;
 	
 	public static final String EXTRA_CALL_STATE = "call_state";
 	
@@ -56,13 +61,42 @@ public class SendbirdCallService extends Service {
 	
 	public static final String EXTRA_DO_END = "do_end";
 	
-	private static final String TAG = "VideoCallActivity";
-	
-	private Context mContext;
-	
 	private final IBinder mBinder = new CallBinder();
 	
 	private final ServiceData mServiceData = new ServiceData();
+	
+	private Context mContext;
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		Log.i(TAG, "[CallService] onCreate()");
+		
+		mContext = this;
+	}
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.i(TAG, "[CallService] onStartCommand()");
+		
+		mServiceData.isHeadsUpNotification =
+				intent.getBooleanExtra(EXTRA_IS_HEADS_UP_NOTIFICATION, false);
+		mServiceData.remoteNicknameOrUserId =
+				intent.getStringExtra(EXTRA_REMOTE_NICKNAME_OR_USER_ID);
+		mServiceData.callState =
+				(CallActivity.STATE) intent.getSerializableExtra(EXTRA_CALL_STATE);
+		mServiceData.callId = intent.getStringExtra(EXTRA_CALL_ID);
+		mServiceData.isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEO_CALL, false);
+		mServiceData.calleeIdToDial = intent.getStringExtra(EXTRA_CALLEE_ID_TO_DIAL);
+		mServiceData.channelUrl = intent.getStringExtra(EXTRA_CALL_TO_CHANNEL);
+		mServiceData.isCallingFromChat = intent.getBooleanExtra(EXTRA_CALLING_FROM_CHAT, false);
+		mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false);
+		mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false);
+		mServiceData.doLocalVideoStart = intent.getBooleanExtra(EXTRA_DO_LOCAL_VIDEO_START, false);
+		
+		updateNotification(mServiceData);
+		return super.onStartCommand(intent, flags, startId);
+	}
 	
 	@Override
 	public void onDestroy() {
@@ -75,6 +109,15 @@ public class SendbirdCallService extends Service {
 	public IBinder onBind(Intent intent) {
 		Log.i(TAG, "[CallService] onBind()");
 		return mBinder;
+	}
+	
+	@Override
+	public void onTaskRemoved(Intent rootIntent) {
+		super.onTaskRemoved(rootIntent);
+		Log.i(TAG, "[CallService] onTaskRemoved()");
+		
+		mServiceData.isHeadsUpNotification = true;
+		updateNotification(mServiceData);
 	}
 	
 	public static void dial(Context context, String doDialWithCalleeId, String name,
@@ -177,14 +220,6 @@ public class SendbirdCallService extends Service {
 		startService(context, serviceData);
 	}
 	
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		Log.i(TAG, "[CallService] onCreate()");
-		
-		mContext = this;
-	}
-	
 	public static void stopService(Context context) {
 		Log.i(TAG, "[CallService] stopService()");
 		
@@ -192,38 +227,6 @@ public class SendbirdCallService extends Service {
 			Intent intent = new Intent(context, SendbirdCallService.class);
 			context.stopService(intent);
 		}
-	}
-	
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.i(TAG, "[CallService] onStartCommand()");
-		
-		mServiceData.isHeadsUpNotification =
-				intent.getBooleanExtra(EXTRA_IS_HEADS_UP_NOTIFICATION, false);
-		mServiceData.remoteNicknameOrUserId =
-				intent.getStringExtra(EXTRA_REMOTE_NICKNAME_OR_USER_ID);
-		mServiceData.callState =
-				(CallActivity.STATE) intent.getSerializableExtra(EXTRA_CALL_STATE);
-		mServiceData.callId = intent.getStringExtra(EXTRA_CALL_ID);
-		mServiceData.isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEO_CALL, false);
-		mServiceData.calleeIdToDial = intent.getStringExtra(EXTRA_CALLEE_ID_TO_DIAL);
-		mServiceData.channelUrl = intent.getStringExtra(EXTRA_CALL_TO_CHANNEL);
-		mServiceData.isCallingFromChat = intent.getBooleanExtra(EXTRA_CALLING_FROM_CHAT, false);
-		mServiceData.doDial = intent.getBooleanExtra(EXTRA_DO_DIAL, false);
-		mServiceData.doAccept = intent.getBooleanExtra(EXTRA_DO_ACCEPT, false);
-		mServiceData.doLocalVideoStart = intent.getBooleanExtra(EXTRA_DO_LOCAL_VIDEO_START, false);
-		
-		updateNotification(mServiceData);
-		return super.onStartCommand(intent, flags, startId);
-	}
-	
-	@Override
-	public void onTaskRemoved(Intent rootIntent) {
-		super.onTaskRemoved(rootIntent);
-		Log.i(TAG, "[CallService] onTaskRemoved()");
-		
-		mServiceData.isHeadsUpNotification = true;
-		updateNotification(mServiceData);
 	}
 	
 	private Notification getNotification(@NonNull ServiceData serviceData) {
@@ -251,15 +254,22 @@ public class SendbirdCallService extends Service {
 			}
 		}
 		
-		
 		final int currentTime = (int) System.currentTimeMillis();
 		final String channelId = mContext.getPackageName() + currentTime;
+		
+		Uri ringingUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			String channelName = mContext.getString(R.string.app_name);
 			NotificationChannel channel = new NotificationChannel(channelId, channelName,
-					NotificationManager.IMPORTANCE_LOW);
-			
+					isAppIsInBackground(
+							this) ? NotificationManager.IMPORTANCE_HIGH :
+							NotificationManager.IMPORTANCE_LOW);
+			//			AudioAttributes audioAttributes = new AudioAttributes.Builder()
+			//			.setContentType(
+			//					AudioAttributes.CONTENT_TYPE_SONIFICATION).setUsage(
+			//					AudioAttributes.USAGE_NOTIFICATION).build();
+			//			channel.setSound(ringingUri, audioAttributes);
 			NotificationManager notificationManager =
 					mContext.getSystemService(NotificationManager.class);
 			if (notificationManager != null) {
@@ -279,9 +289,9 @@ public class SendbirdCallService extends Service {
 		builder.setContentTitle(serviceData.remoteNicknameOrUserId).setContentText(
 				content).setSmallIcon(R.drawable.main_logo).setLargeIcon(
 				BitmapFactory.decodeResource(mContext.getResources(),
-						R.drawable.main_logo)).setPriority(
-				serviceData.isHeadsUpNotification ? NotificationCompat.PRIORITY_HIGH :
-						NotificationCompat.PRIORITY_LOW);
+						R.drawable.main_logo)).setDefaults(
+				NotificationCompat.DEFAULT_ALL).setPriority(isAppIsInBackground(
+				this) ? NotificationCompat.PRIORITY_HIGH : NotificationCompat.PRIORITY_LOW);
 		
 		if (SendBirdCall.getOngoingCallCount() > 0) {
 			if (serviceData.doAccept) {
@@ -305,6 +315,22 @@ public class SendbirdCallService extends Service {
 		
 		mServiceData.set(serviceData);
 		startForeground(NOTIFICATION_ID, getNotification(mServiceData));
+	}
+	
+	private boolean isAppIsInBackground(Context context) {
+		boolean isInBackground = true;
+		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+		for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+			if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+				for (String activeProcess : processInfo.pkgList) {
+					if (activeProcess.equals(context.getPackageName())) {
+						isInBackground = false;
+					}
+				}
+			}
+		}
+		return isInBackground;
 	}
 	
 	static class ServiceData {
@@ -353,5 +379,6 @@ public class SendbirdCallService extends Service {
 			return SendbirdCallService.this;
 		}
 	}
+	
 }
 

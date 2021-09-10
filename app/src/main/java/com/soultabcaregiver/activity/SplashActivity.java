@@ -30,13 +30,11 @@ public class SplashActivity extends BaseActivity {
 	
 	public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 2323;
 	
-	
 	Context mContext;
 	
 	String User_id;
 	
 	private long back_pressed;
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +44,20 @@ public class SplashActivity extends BaseActivity {
 		
 		User_id = Utility.getSharedPreferences(mContext, APIS.user_id);
 		
+	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		int TIME_DELAY = 2000;
+		if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+			super.onBackPressed();
+			finish();
+		} else {
+			
+			//      Support.ShowToast(this, getResources().getString(R.string.press_Again));
+		}
+		back_pressed = System.currentTimeMillis();
 	}
 	
 	@Override
@@ -106,13 +118,14 @@ public class SplashActivity extends BaseActivity {
 			
 			
 		} else {
+			changeScreen();
+			//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings
+			//			.canDrawOverlays(
+			//					mContext)) {
+			//				requestPermission();
+			//			} else {
 			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
-					mContext)) {
-				requestPermission();
-			} else {
-				changeScreen();
-			}
+			//			}
 		}
 	}
 	
@@ -162,19 +175,5 @@ public class SplashActivity extends BaseActivity {
 			}
 			
 		}, 3000);
-	}
-	
-	@Override
-	public void onBackPressed() {
-		super.onBackPressed();
-		int TIME_DELAY = 2000;
-		if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
-			super.onBackPressed();
-			finish();
-		} else {
-			
-			//      Support.ShowToast(this, getResources().getString(R.string.press_Again));
-		}
-		back_pressed = System.currentTimeMillis();
 	}
 }
