@@ -65,7 +65,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/caregiver_detail_relative"
-        android:visibility="gone"/>
+        android:visibility="gone">
+
+        <include layout="@layout/permission_hideview"/>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/dashboard_show_relative"
