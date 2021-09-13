@@ -366,8 +366,9 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 						mainActivity.PermissionTabAPI();
 					}else {
 					mainActivity.Alert_countAPI();
+					}
 					manager.cancelAll();
-				}
+
 				}
 			}
 
