@@ -161,6 +161,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         tv_badge = badge.findViewById(R.id.notification_badge);
 
         registerReceiver();
+        PermissionTabAPI();
 
         listner();
 
@@ -337,7 +338,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         //   new ReminderCreateClass(MainActivity.this);
         appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
         checkUpdate();
-        PermissionTabAPI();
     }
 
 
@@ -399,6 +399,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                                 if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
                                     video_call.setVisibility(View.GONE);
                                     shopping_btn.setVisibility(View.GONE);
+                                }else {
+                                    video_call.setVisibility(View.VISIBLE);
+                                    shopping_btn.setVisibility(View.VISIBLE);
                                 }
                                 Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
                                         false, null);
@@ -600,13 +603,17 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         if (permissionModel.getPermission().getDashboardNew() != null
                                 && !permissionModel.getPermission().getDashboardNew().equals("")) {
 
+                            Utility.setSharedPreference(mContext, APIS.dashbooard_hide_Show, permissionModel.getPermission().getDashboardNew());
+                            Utility.setSharedPreference(mContext, APIS.dailyroutine_hideshow, permissionModel.getPermission().getDailyroutine());
+                            Utility.setSharedPreference(mContext, APIS.calender_hideshow, permissionModel.getPermission().getShowActivities());
+                            Utility.setSharedPreference(mContext, APIS.doctor_hide_show, permissionModel.getPermission().getAppointmentList());
+
                             dashBoardFragment = DashBoardFragment.instance;
 
                             if (dashBoardFragment != null) {
 
-                                Utility.setSharedPreference(mContext, APIS.dashbooard_hide_Show, permissionModel.getPermission().getDashboardNew());
+                               dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
 
-                                dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
 
                                 if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
                                     video_call.setVisibility(View.GONE);
@@ -625,10 +632,10 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                             dailyRoutineFragment = DailyRoutineFragment.instance;
 
                             if (dailyRoutineFragment != null) {
-                                Utility.setSharedPreference(mContext, APIS.dailyroutine_hideshow, permissionModel.getPermission().getDailyroutine());
 
                                 dailyRoutineFragment.dailyroutine_hideshow(Utility.getSharedPreferences(mContext, APIS.dailyroutine_hideshow));
-
+                                video_call.setVisibility(View.GONE);
+                                shopping_btn.setVisibility(View.GONE);
                             }
 
 
@@ -641,8 +648,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             if (calenderFragment != null) {
 
-                                Utility.setSharedPreference(mContext, APIS.calender_hideshow, permissionModel.getPermission().getShowActivities());
-
+                                video_call.setVisibility(View.GONE);
+                                shopping_btn.setVisibility(View.GONE);
                                 calenderFragment.calenderhide_show(Utility.getSharedPreferences(mContext, APIS.calender_hideshow));
 
                             }
@@ -652,14 +659,14 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         if (permissionModel.getPermission().getAppointmentList() != null
                                 && !permissionModel.getPermission().getAppointmentList().equals("")) {
 
-                            Utility.setSharedPreference(mContext, APIS.doctor_hide_show, permissionModel.getPermission().getAppointmentList());
 
                             doctorFragment = DoctorFragment.instance;
 
                             if (doctorFragment != null) {
 
                                 doctorFragment.doctorhide_show(Utility.getSharedPreferences(mContext, APIS.doctor_hide_show));
-
+                                video_call.setVisibility(View.GONE);
+                                shopping_btn.setVisibility(View.GONE);
                             }
                         }
 

@@ -107,7 +107,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             if (Utility.isNetworkConnected(mContext)) {
                 GetAllEventAPI(FromDate, TODate);//for list data
             } else {
-                Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                Utility.ShowToast(mContext, mContext.getResources().getString(R.string.net_connection));
             }
         } else if (calender_hideshow.equals(APIS.Edit)) {
             show_cal_Relative.setVisibility(View.VISIBLE);
@@ -463,7 +463,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         }
 
         if (isFirstTimeShowLoader)
-            showProgressDialog(mContext, getResources().getString(R.string.Loading));
+            showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
 
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
@@ -483,7 +483,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                                 ReminderBean reminderBean = new ReminderBean();
 
                                 reminderBean.setId(allEventModel.getResponse().getActivities().getAppointments().get(i).getId());
-                                reminderBean.setTitle(getResources().getString(R.string.appointment));//title
+                                reminderBean.setTitle(mContext.getResources().getString(R.string.appointment));//title
                                 reminderBean.setDate(allEventModel.getResponse().getActivities().getAppointments().get(i).getSelectedDate());
                                 reminderBean.setTime(allEventModel.getResponse().getActivities().getAppointments().get(i).getScheduleTime());//time
                                 reminderBean.setAppointment(true);
