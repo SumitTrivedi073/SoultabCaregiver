@@ -161,7 +161,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         tv_badge = badge.findViewById(R.id.notification_badge);
 
         registerReceiver();
-        PermissionTabAPI();
+
         listner();
 
         int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
@@ -189,6 +189,8 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         }
 
     }
+
+
 
 
     @Override
@@ -335,6 +337,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         //   new ReminderCreateClass(MainActivity.this);
         appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
         checkUpdate();
+        PermissionTabAPI();
     }
 
 
@@ -570,7 +573,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
 
-    private void PermissionTabAPI() {
+    public void PermissionTabAPI() {
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("caregiver_id", Utility.getSharedPreferences(mContext, APIS.caregiver_id));
@@ -605,7 +608,10 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                                 dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
 
-                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Edit)) {
+                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
+                                    video_call.setVisibility(View.GONE);
+                                    shopping_btn.setVisibility(View.GONE);
+                                }else {
                                     video_call.setVisibility(View.VISIBLE);
                                     shopping_btn.setVisibility(View.VISIBLE);
                                 }

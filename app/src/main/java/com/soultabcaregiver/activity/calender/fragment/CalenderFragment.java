@@ -503,7 +503,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                         } else {
                             rvReminder.setAdapter(null);
                             tvNodata.setVisibility(View.VISIBLE);
-                            tvNodata.setText(getResources().getString(R.string.no_activity_scheduled) + " " + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
+                            tvNodata.setText(mContext.getResources().getString(R.string.no_activity_scheduled) + " " + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
 
                         }
                     } catch (Exception e) {

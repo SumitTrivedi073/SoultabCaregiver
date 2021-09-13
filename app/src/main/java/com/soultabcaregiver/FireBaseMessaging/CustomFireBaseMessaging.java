@@ -136,51 +136,8 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		return true;
 	}
 	
-	/**
-	 * Create and show a simple notification containing the received FCM message.
-	 *
-	 * @param messageBody FCM message body received.
-	 */
-	public static void sendNotification(Context context, String messageBody, String channelUrl,
-	                                    String calleeId) {
-		NotificationManager notificationManager =
-				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-		
-		final String CHANNEL_ID = "CHANNEL_ID";
-		if (Build.VERSION.SDK_INT >= 26) {  // Build.VERSION_CODES.O
-			NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, "CHANNEL_NAME",
-					NotificationManager.IMPORTANCE_HIGH);
-			notificationManager.createNotificationChannel(mChannel);
-		}
-		
-		Intent intent = new Intent(context, SplashActivity.class);
-		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		PendingIntent pendingIntent =
-				PendingIntent.getActivity(context, 0 /* Request code */, intent,
-						PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-		NotificationCompat.Builder notificationBuilder =
-				new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(
-						R.drawable.main_logo)  // small icon background color
-						.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-								R.drawable.main_logo)).setContentTitle(
-						context.getResources().getString(R.string.app_name)).setAutoCancel(
-						true).setSound(defaultSoundUri).setPriority(
-						Notification.PRIORITY_MAX).setDefaults(
-						Notification.DEFAULT_ALL).setContentIntent(pendingIntent);
-		
-		//here the condition if to show message or not
-		if (true) {
-			notificationBuilder.setContentText(messageBody);
-		} else {
-			notificationBuilder.setContentText("Somebody sent you a message.");
-		}
-		
-		notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-	}
-	
+
+
 	public static void getPushToken(ITokenResult listener) {
 		String token = pushToken.get();
 		if (!TextUtils.isEmpty(token)) {
@@ -404,16 +361,18 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 			if (!TextUtils.isEmpty(Utility.getSharedPreferences(context, APIS.user_id))) {
 				mainActivity = MainActivity.instance;
 				if (mainActivity != null) {
-					
+
+					if(title.equals("Permission Notification")){
+						mainActivity.PermissionTabAPI();
+					}else {
 					mainActivity.Alert_countAPI();
 					manager.cancelAll();
 				}
-				
-				
+				}
 			}
-			
+
+
 		}
-		
 	}
 	
 	private interface SendBirdAuthHandler {

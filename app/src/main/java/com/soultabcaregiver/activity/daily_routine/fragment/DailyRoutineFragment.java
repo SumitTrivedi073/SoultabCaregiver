@@ -605,7 +605,7 @@ public class DailyRoutineFragment extends BaseFragment {
         }
         Log.e(TAG, "GetDailyRoutineData_API=  " + mainObject.toString());
 
-            showProgressDialog(mContext, getResources().getString(R.string.Loading));
+            showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
 
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
@@ -881,7 +881,7 @@ public class DailyRoutineFragment extends BaseFragment {
 
 
         System.out.println(mainObject.toString());
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DailyRoutine, mainObject,
                 new Response.Listener<JSONObject>() {
