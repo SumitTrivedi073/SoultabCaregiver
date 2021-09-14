@@ -5,10 +5,12 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
@@ -21,6 +23,7 @@ import com.sendbird.android.SendBirdPushHelper;
 import com.sendbird.calls.SendBirdCall;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.SplashActivity;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.IncomingCallActivity;
@@ -84,9 +87,9 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	
 	@Override
 	protected void onMessageReceived(Context context, RemoteMessage remoteMessage) {
-
+		
 		AppInBackground = isAppIsInBackground(context);
-
+		
 		try {
 			if (remoteMessage.getData().containsKey("sendbird")) {
 				JSONObject sendBird = new JSONObject(remoteMessage.getData().get("sendbird"));
@@ -132,8 +135,50 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 		return true;
 	}
 	
-
-
+	/**
+	 * Create and show a simple notification containing the received FCM message.
+	 *
+	 * @param messageBody FCM message body received.
+	 */
+	public static void sendNotification(Context context, String messageBody, String channelUrl) {
+		NotificationManager notificationManager =
+				(NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+		
+		final String CHANNEL_ID = "CHANNEL_ID";
+		if (Build.VERSION.SDK_INT >= 26) {  // Build.VERSION_CODES.O
+			NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, "CHANNEL_NAME",
+					NotificationManager.IMPORTANCE_HIGH);
+			notificationManager.createNotificationChannel(mChannel);
+		}
+		
+		Intent intent = new Intent(context, SplashActivity.class);
+		intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		PendingIntent pendingIntent =
+				PendingIntent.getActivity(context, 0 /* Request code */, intent,
+						PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		NotificationCompat.Builder notificationBuilder =
+				new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(
+						R.drawable.main_logo)  // small icon background color
+						.setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+								R.drawable.main_logo)).setContentTitle(
+						context.getResources().getString(R.string.app_name)).setAutoCancel(
+						true).setSound(defaultSoundUri).setPriority(
+						Notification.PRIORITY_MAX).setDefaults(
+						Notification.DEFAULT_ALL).setContentIntent(pendingIntent);
+		
+		//here the condition if to show message or not
+		if (true) {
+			notificationBuilder.setContentText(messageBody);
+		} else {
+			notificationBuilder.setContentText("Somebody sent you a message.");
+		}
+		
+		notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+	}
+	
 	public static void getPushToken(ITokenResult listener) {
 		String token = pushToken.get();
 		if (!TextUtils.isEmpty(token)) {
@@ -155,14 +200,23 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 	private boolean isAppIsInBackground(Context context) {
 		boolean isInBackground = true;
 		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-		List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-		for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-			if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-				for (String activeProcess : processInfo.pkgList) {
-					if (activeProcess.equals(context.getPackageName())) {
-						isInBackground = false;
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+			List<ActivityManager.RunningAppProcessInfo> runningProcesses =
+					am.getRunningAppProcesses();
+			for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+				if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+					for (String activeProcess : processInfo.pkgList) {
+						if (activeProcess.equals(context.getPackageName())) {
+							isInBackground = false;
+						}
 					}
 				}
+			}
+		} else {
+			List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+			ComponentName componentInfo = taskInfo.get(0).topActivity;
+			if (componentInfo.getPackageName().equals(context.getPackageName())) {
+				isInBackground = false;
 			}
 		}
 		return isInBackground;
@@ -350,19 +404,20 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 			if (!TextUtils.isEmpty(Utility.getSharedPreferences(context, APIS.user_id))) {
 				mainActivity = MainActivity.instance;
 				if (mainActivity != null) {
-
-					if(title.equals("Permission Notification")){
+					
+					if (title.equals("Permission Notification")) {
 						mainActivity.PermissionTabAPI();
-					}else {
-					mainActivity.Alert_countAPI();
+					} else {
+						mainActivity.Alert_countAPI();
 					}
 					manager.cancelAll();
-
+					
 				}
 			}
-
-
+			
+			
 		}
+		
 	}
 	
 	private interface SendBirdAuthHandler {
