@@ -1,5 +1,7 @@
 package com.soultabcaregiver.activity.docter.adapter;
 
+import static com.soultabcaregiver.utils.Utility.mContext;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.docter.DocorDetailsActivity;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,21 +26,21 @@ import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.ViewHolder> implements Filterable {
-    
+
     Context context;
-    
+
     String docCatNm;
-    
+
     TextView tvNodata;
-    
+
     private final List<DoctorListModel.Response.DoctorDatum> arSearch;
-    
+
     private List<DoctorListModel.Response.DoctorDatum> arDoclist;
-    
+
     private AppointedDocSelectionListener docSelectionListener;
-    
+
     private AppointedDocSelectionListener docFavListener;
-    
+
     public DoctorListAdapter(Activity mainActivity,
                              List<DoctorListModel.Response.DoctorDatum> listdata,
                              TextView tvNodata) {
@@ -72,10 +75,15 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
         holder.doctor_list_relative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Utility.getSharedPreferences(context, APIS.doctor_hide_show).equals(APIS.Edit)) {
 
-                Intent mINTENT = new Intent(view.getContext(), DocorDetailsActivity.class);
-                mINTENT.putExtra(APIS.DocListItem, DocListBean);
-                view.getContext().startActivity(mINTENT);
+                    Intent mINTENT = new Intent(view.getContext(), DocorDetailsActivity.class);
+                    mINTENT.putExtra(APIS.DocListItem, DocListBean);
+                    view.getContext().startActivity(mINTENT);
+                } else {
+                    Utility.ShowToast(context, mContext.getResources().getString(R.string.only_view_permission));
+
+                }
 
             }
         });
@@ -83,8 +91,14 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
         holder.rl_cust_fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (docSelectionListener != null) {
-                    docSelectionListener.DocFavListener(DocListBean, holder.getLayoutPosition());
+                if (Utility.getSharedPreferences(context, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+                    if (docSelectionListener != null) {
+                        docSelectionListener.DocFavListener(DocListBean, holder.getLayoutPosition());
+                    }
+                } else {
+                    Utility.ShowToast(context, context.getResources().getString(R.string.only_view_permission));
+
                 }
             }
         });
@@ -116,7 +130,7 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView doctor_name;
-        public RelativeLayout doctor_list_relative,rl_cust_fav;
+        public RelativeLayout doctor_list_relative, rl_cust_fav;
         public ImageView iv_fav;
 
         public ViewHolder(View itemView) {
@@ -125,6 +139,8 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
             doctor_list_relative = itemView.findViewById(R.id.doctor_list_relative);
             rl_cust_fav = itemView.findViewById(R.id.rl_cust_fav);
             iv_fav = itemView.findViewById(R.id.iv_fav);
+
+
         }
     }
 
@@ -134,6 +150,7 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
         void DocFavListener(DoctorListModel.Response.DoctorDatum DocBeanList, int isSearch);
 
     }
+
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -148,7 +165,7 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
-                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) ) {
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -164,12 +181,12 @@ public class DoctorListAdapter extends RecyclerView.Adapter<DoctorListAdapter.Vi
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 arDoclist = (ArrayList<DoctorListModel.Response.DoctorDatum>) filterResults.values;
-                if (arDoclist.size()>0){
+                if (arDoclist.size() > 0) {
                     tvNodata.setVisibility(View.GONE);
                     if (docSelectionListener != null) {
                         docSelectionListener.DocSelectionListener(arDoclist, true);
                     }
-                }else {
+                } else {
                     tvNodata.setVisibility(View.VISIBLE);
                 }
                 notifyDataSetChanged();

@@ -25,6 +25,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -33,6 +34,7 @@ import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.Model.LoginModel;
@@ -51,6 +53,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.soultabcaregiver.utils.Utility.ShowToast;
+
+import androidx.annotation.NonNull;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 	
@@ -156,15 +160,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
 		if (resultCode == ConnectionResult.SUCCESS) {
-			
-			FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this,
-					instanceIdResult -> {
-						 FirebaseToken = instanceIdResult.getToken();
-						Log.e("newToken", FirebaseToken);
-						PrefUtils.setPushToken(FirebaseToken);
-						SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
-						
-						});
+
+			FirebaseMessaging.getInstance().getToken()
+					.addOnCompleteListener(new OnCompleteListener<String>() {
+						@Override
+						public void onComplete(@NonNull com.google.android.gms.tasks.Task<String> task) {
+							if (!task.isSuccessful()) {
+								Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+								return;
+							}
+
+							// Get new FCM registration token
+							FirebaseToken = task.getResult();
+							Log.e("newToken", FirebaseToken);
+							PrefUtils.setPushToken(FirebaseToken);
+							SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
+
+							});
+						}
+
 					});
 		}
 	}
@@ -257,7 +271,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
-								
+
+								Log.e("response",response.toString());
 								LoginModel loginModel =
 										new Gson().fromJson(response.toString(), LoginModel.class);
 								
@@ -281,8 +296,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getCaregiver_id().getBytes(),
 											Base64.NO_WRAP);
 									
-									Log.d("ENCODE_DECODE", "encodeValue = " + encodeValue);
-									
+
 									Utility.setSharedPreference(mContext, APIS.EncodeUser_id,
 											encodeValue);
 									
@@ -316,7 +330,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getCountrycode());
 									Utility.setSharedPreference(mContext, APIS.Caregiver_username,
 											loginModel.getResponse().getCaregiver_username());
-									
+
+
+									Utility.setSharedPreference(mContext, APIS.dashbooard_hide_Show,
+											loginModel.getResponse().getPermission().getDashboardNew());
+
+
+									Utility.setSharedPreference(mContext, APIS.doctor_hide_show,
+											loginModel.getResponse().getPermission().getAppointmentList());
+
+
+									Utility.setSharedPreference(mContext, APIS.dailyroutine_hideshow,
+											loginModel.getResponse().getPermission().getDailyroutine());
+
+
+
+									Utility.setSharedPreference(mContext, APIS.calender_hideshow,
+											loginModel.getResponse().getPermission().getShowActivities());
+
+
 									if (loginModel.getResponse().getIsSendBirdUser().equals("0")) {
 										updateSendBirdFlag(loginModel);
 									} else {

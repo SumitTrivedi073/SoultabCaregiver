@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -39,6 +40,7 @@ import java.util.Map;
 
 public class DailyRoutineFragment extends BaseFragment {
 
+    public static DailyRoutineFragment instance;
     private final String TAG = getClass().getSimpleName();
     View view;
     Context mContext;
@@ -62,6 +64,7 @@ public class DailyRoutineFragment extends BaseFragment {
     List<String> Dinnerlist = new ArrayList<>();
     List<String> BedTimelist = new ArrayList<>();
     Calendar calendar;
+    RelativeLayout show_daily_routine_Relative, hide_daily_routine_Relative;
 
 
     @Override
@@ -78,11 +81,12 @@ public class DailyRoutineFragment extends BaseFragment {
         view = inflater.inflate(R.layout.fragment_daily_routine, container, false);
 
         calendar = Calendar.getInstance();
-
+        instance = DailyRoutineFragment.this;
         init();
         StringValue();
         Listner();
-        GetDailyRoutineData();
+        dailyroutine_hideshow(Utility.getSharedPreferences(mContext,APIS.dailyroutine_hideshow));
+
 
         return view;
     }
@@ -124,7 +128,8 @@ public class DailyRoutineFragment extends BaseFragment {
         BedTime_Yoga = view.findViewById(R.id.BedTime_Yoga);
         BedTime_Meditation = view.findViewById(R.id.BedTime_Meditation);
         BedTime_Nap = view.findViewById(R.id.BedTime_Nap);
-
+        show_daily_routine_Relative = view.findViewById(R.id.show_daily_routine_Relative);
+        hide_daily_routine_Relative = view.findViewById(R.id.hide_daily_routine_Relative);
 
     }
 
@@ -175,10 +180,40 @@ public class DailyRoutineFragment extends BaseFragment {
         Submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckedListner();
+                if (Utility.getSharedPreferences(mContext, APIS.dailyroutine_hideshow).equals(APIS.Edit)) {
+
+                    CheckedListner();
+                }else {
+                    Utility.ShowToast(mContext,mContext.getResources().getString(R.string.only_view_permission));
+                }
             }
         });
 
+    }
+
+
+    public void dailyroutine_hideshow(String dailyroutine) {
+        if (dailyroutine!=null){
+        if (dailyroutine.equals(APIS.Hide)) {
+            show_daily_routine_Relative.setVisibility(View.GONE);
+            hide_daily_routine_Relative.setVisibility(View.VISIBLE);
+        } else if (dailyroutine.equals(APIS.View)) {
+            show_daily_routine_Relative.setVisibility(View.VISIBLE);
+            hide_daily_routine_Relative.setVisibility(View.GONE);
+            Submit_btn.setVisibility(View.VISIBLE);
+            GetDailyRoutineData();
+        }else if (dailyroutine.equals(APIS.Edit)) {
+            show_daily_routine_Relative.setVisibility(View.VISIBLE);
+            hide_daily_routine_Relative.setVisibility(View.GONE);
+            Submit_btn.setVisibility(View.VISIBLE);
+            GetDailyRoutineData();
+         }
+        }else {
+            show_daily_routine_Relative.setVisibility(View.VISIBLE);
+            hide_daily_routine_Relative.setVisibility(View.GONE);
+            Submit_btn.setVisibility(View.VISIBLE);
+            GetDailyRoutineData();
+        }
     }
 
     private void CheckedListner() {
@@ -479,7 +514,7 @@ public class DailyRoutineFragment extends BaseFragment {
         Evening = SplitString(Evening);
         Dinner = SplitString(Dinner);
         BedTime = SplitString(BedTime);
-    
+
         if (!Morning.equals("") || !Noon.equals("") || !Evening.equals("") || !Dinner.equals(
                 "") || !BedTime.equals("")) {
             SubmitDailyRoutine();
@@ -579,7 +614,9 @@ public class DailyRoutineFragment extends BaseFragment {
         }
         Log.e(TAG, "GetDailyRoutineData_API=  " + mainObject.toString());
 
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+            showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
+
+
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.GetDailyRoutineAPI, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -657,7 +694,7 @@ public class DailyRoutineFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 
@@ -853,7 +890,7 @@ public class DailyRoutineFragment extends BaseFragment {
 
 
         System.out.println(mainObject.toString());
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DailyRoutine, mainObject,
                 new Response.Listener<JSONObject>() {
@@ -895,7 +932,7 @@ public class DailyRoutineFragment extends BaseFragment {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 

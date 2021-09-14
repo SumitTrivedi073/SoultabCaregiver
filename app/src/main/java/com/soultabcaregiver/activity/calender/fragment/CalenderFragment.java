@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CalendarView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -50,6 +51,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CalenderFragment extends BaseFragment implements View.OnClickListener {
 
+    public static CalenderFragment instance;
     Context mContext;
     View view;
     RecyclerView rvReminder;
@@ -59,10 +61,10 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     String FromDate = "", FromDate2 = "", TODate = "", TODate2 = "";
     Calendar calendar, calendar1;
     AlertDialog alertDialog;
-    boolean isFirstTimeCalendar = true, Daily_select = true, Weekly_select = false, Monthly_select = false;
+    boolean Daily_select = true, Weekly_select = false, Monthly_select = false;
     List<ReminderBean> arRemin;
     boolean isFirstTimeShowLoader = true;
-
+    RelativeLayout show_cal_Relative, hide_cal_Relative;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         view = inflater.inflate(R.layout.fragment_calender, container, false);
 
         calendar = Calendar.getInstance();
+        instance = CalenderFragment.this;
         int mYear = calendar.get(Calendar.YEAR);
         int mMonth = calendar.get(Calendar.MONTH);
         int mDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -94,6 +97,40 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         return view;
     }
 
+    public void calenderhide_show(String calender_hideshow) {
+        if (calender_hideshow!=null) {
+            if (calender_hideshow.equals(APIS.Hide)) {
+                show_cal_Relative.setVisibility(View.GONE);
+                hide_cal_Relative.setVisibility(View.VISIBLE);
+            } else if (calender_hideshow.equals(APIS.View)) {
+                show_cal_Relative.setVisibility(View.VISIBLE);
+                hide_cal_Relative.setVisibility(View.GONE);
+                if (Utility.isNetworkConnected(mContext)) {
+                    GetAllEventAPI(FromDate, TODate);//for list data
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.net_connection));
+                }
+            } else if (calender_hideshow.equals(APIS.Edit)) {
+                show_cal_Relative.setVisibility(View.VISIBLE);
+                hide_cal_Relative.setVisibility(View.GONE);
+                if (Utility.isNetworkConnected(mContext)) {
+                    GetAllEventAPI(FromDate, TODate);//for list data
+                } else {
+                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                }
+            }
+        }else {
+            show_cal_Relative.setVisibility(View.VISIBLE);
+            hide_cal_Relative.setVisibility(View.GONE);
+            if (Utility.isNetworkConnected(mContext)) {
+                GetAllEventAPI(FromDate, TODate);//for list data
+            } else {
+                Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+            }
+        }
+
+    }
+
     private void init() {
         tvNodata = view.findViewById(R.id.tv_no_data);
         rvReminder = view.findViewById(R.id.rv_event);
@@ -102,7 +139,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         weekly = view.findViewById(R.id.weekly);
         Monthly = view.findViewById(R.id.Monthly);
         reminder_btn = view.findViewById(R.id.reminder_btn);
-
+        show_cal_Relative = view.findViewById(R.id.show_cal_Relative);
+        hide_cal_Relative = view.findViewById(R.id.hide_cal_Relative);
 
         curret_date_txt.setText(Utility.MMM_dd_yyyy.format(calendar.getTime()) + " - "
                 + Utility.MMM_dd_yyyy.format(calendar.getTime()));
@@ -112,109 +150,94 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
         //  new ReminderCreateClass(getActivity());
-    
-        if (Utility.isNetworkConnected(mContext)) {
-            GetAllEventAPI(FromDate, TODate);//for list data
-        } else {
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
-    
+
+
         daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
         weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
         Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-    
+
         daily.setTextColor(ContextCompat.getColor(mContext, R.color.white));
         weekly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
         Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
-    
+
+        calenderhide_show(Utility.getSharedPreferences(mContext, APIS.calender_hideshow));
+
     }
 
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
-    
+
             case R.id.curret_date_txt:
-        
+
                 calendarPopup();
-        
+
                 break;
-    
+
             case R.id.daily:
                 daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
                 weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-        
+
                 daily.setTextColor(ContextCompat.getColor(mContext, R.color.white));
                 weekly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
-        
+
                 Daily_select = true;
                 Weekly_select = false;
                 Monthly_select = false;
-        
+
                 FromDate = Utility.yyyy_MM_dd.format(calendar.getTime());
                 TODate = Utility.yyyy_MM_dd.format(calendar.getTime());
-        
+
                 try {
-        
+
                     curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
                             FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
                             Utility.yyyy_MM_dd.parse(TODate)));
-            
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-        
+
                 GetAllEventAPI(FromDate, TODate);
-        
+
                 break;
-    
+
             case R.id.weekly:
-        
+
                 daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
                 Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-        
+
                 daily.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 weekly.setTextColor(ContextCompat.getColor(mContext, R.color.white));
                 Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
-        
+
                 Daily_select = false;
                 Weekly_select = true;
                 Monthly_select = false;
 
-
-              /*  try {
-                    TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 7);
-
-                    curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse
-                    (FromDate)) + " - "
-                            + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(TODate)));
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }*/
-    
                 LocalDate today = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     today = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
-        
+
                     // Go backward to get Monday
                     LocalDate monday = today;
                     while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
                         monday = monday.minusDays(1);
                     }
-        
+
                     // Go forward to get Sunday
                     LocalDate sunday = today;
                     while (sunday.getDayOfWeek() != DayOfWeek.SUNDAY) {
                         sunday = sunday.plusDays(1);
                     }
-        
+
                     FromDate = monday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                     TODate = sunday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        
+
                     try {
                         curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
                                 FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
@@ -222,48 +245,48 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-    
+
                 }
-        
+
                 GetAllEventAPI(FromDate, TODate);
-        
+
                 break;
-    
+
             case R.id.Monthly:
-        
+
                 daily.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 weekly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 Monthly.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
-        
+
                 daily.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 weekly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-        
+
                 Daily_select = false;
                 Weekly_select = false;
                 Monthly_select = true;
-        
+
                 try {
                     // TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 30);
-            
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        
+
                         LocalDate today1 = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
-        
+
                         LocalDate firstdayofmonth = today1.withDayOfMonth(1);
                         System.out.println("First day: " + firstdayofmonth);
-        
+
                         LocalDate lastdayofmonth = today1.withDayOfMonth(today1.lengthOfMonth());
                         System.out.println("Last day: " + lastdayofmonth);
                         FromDate =
                                 firstdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                         TODate = lastdayofmonth.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        
+
                     }
                     curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
                             FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
                             Utility.yyyy_MM_dd.parse(TODate)));
-    
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -273,10 +296,12 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 break;
 
             case R.id.reminder_btn:
-
-                Intent intent = new Intent(mContext, AddReminderActivity.class);
-                startActivity(intent);
-
+                if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
+                    Intent intent = new Intent(mContext, AddReminderActivity.class);
+                    startActivity(intent);
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
 
         }
@@ -325,15 +350,15 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month,
                                             int dayOfMonth) {
-    
+
                 calendar1 = new GregorianCalendar(year, month, dayOfMonth);
                 FromDate2 = Utility.MM_dd_yyyy.format(calendar1.getTime());
                 FromDate = Utility.yyyy_MM_dd.format(calendar1.getTime());
-    
+
                 if (Daily_select) {
-        
+
                     TODate = Utility.yyyy_MM_dd.format(calendar1.getTime());
-        
+
                     try {
                         curret_date_txt.setText(Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(
                                 FromDate)) + " - " + Utility.MMM_dd_yyyy.format(
@@ -341,31 +366,26 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-        
+
                 }
                 if (Weekly_select) {
-                    /*try {
-                        TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 7);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }*/
-        
+
                     LocalDate today = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         today = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar1.getTime()));
-            
+
                         // Go backward to get Monday
                         LocalDate monday = today;
                         while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
                             monday = monday.minusDays(1);
                         }
-            
+
                         // Go forward to get Sunday
                         LocalDate sunday = today;
                         while (sunday.getDayOfWeek() != DayOfWeek.SUNDAY) {
                             sunday = sunday.plusDays(1);
                         }
-            
+
                         FromDate = monday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                         TODate = sunday.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
@@ -379,20 +399,14 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                     }
                 }
                 if (Monthly_select) {
-                   /* try {
-                        TODate = Utility.getCalculatedDate(FromDate, "yyyy-MM-dd", 30);
 
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }*/
-    
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        
+
                         LocalDate today1 = LocalDate.parse(Utility.yyyy_MM_dd.format(calendar1.getTime()));
-        
+
                         LocalDate firstdayofmonth = today1.withDayOfMonth(1);
                         System.out.println("First day: " + firstdayofmonth);
-        
+
                         LocalDate lastdayofmonth = today1.withDayOfMonth(today1.lengthOfMonth());
                         System.out.println("Last day: " + lastdayofmonth);
                         FromDate =
@@ -457,8 +471,10 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
             e.printStackTrace();
 
         }
+
         if (isFirstTimeShowLoader)
-            showProgressDialog(mContext, getResources().getString(R.string.Loading));
+            showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
+
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.EVENTLIST, mainObject,
@@ -477,7 +493,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                                 ReminderBean reminderBean = new ReminderBean();
 
                                 reminderBean.setId(allEventModel.getResponse().getActivities().getAppointments().get(i).getId());
-                                reminderBean.setTitle(getResources().getString(R.string.appointment));//title
+                                reminderBean.setTitle(mContext.getResources().getString(R.string.appointment));//title
                                 reminderBean.setDate(allEventModel.getResponse().getActivities().getAppointments().get(i).getSelectedDate());
                                 reminderBean.setTime(allEventModel.getResponse().getActivities().getAppointments().get(i).getScheduleTime());//time
                                 reminderBean.setAppointment(true);
@@ -489,15 +505,15 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                                 arRemin.add(reminderBean);
                             }
                             tvNodata.setVisibility(View.GONE);
-                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin,  tvNodata, FromDate2);
+                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin, tvNodata, FromDate2);
                             rvReminder.setAdapter(adapter);
 
-                        }else if (String.valueOf(allEventModel.getStatusCode()).equals("403")) {
+                        } else if (String.valueOf(allEventModel.getStatusCode()).equals("403")) {
                             logout_app(response.getString("message"));
                         } else {
                             rvReminder.setAdapter(null);
                             tvNodata.setVisibility(View.VISIBLE);
-                            tvNodata.setText(getResources().getString(R.string.no_activity_scheduled) + " " + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
+                            tvNodata.setText(mContext.getResources().getString(R.string.no_activity_scheduled) + " " + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
 
                         }
                     } catch (Exception e) {
@@ -512,7 +528,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 Map<String, String> params = new HashMap<>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
 
                 return params;
             }

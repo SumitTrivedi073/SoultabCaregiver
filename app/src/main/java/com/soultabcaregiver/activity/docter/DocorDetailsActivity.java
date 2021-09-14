@@ -70,7 +70,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
     AlertDialog alertDialog;
     LinearLayout btn_call, decline_call;
     String sSelTimeId = "", sSelTimeNm = "", sSelDateId = "";
-    
+
     private Calendar calendar;
 
 
@@ -85,6 +85,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         GetValuFromIntent();
         Listener();
     }
+
 
     private void InitCompo() {
         back_btn = findViewById(R.id.back_btn);
@@ -105,6 +106,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
         sdf = new SimpleDateFormat(myFormat, Locale.US);
         sdf1 = new SimpleDateFormat(myFormat1, Locale.US);
     }
+
 
     private void GetValuFromIntent() {
 
@@ -157,75 +159,89 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 onBackPressed();
                 break;
             case R.id.rl_date:
-                ChooseDate();
+                if (Utility.getSharedPreferences(mContext, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+                    ChooseDate();
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
 
             case R.id.rl_time:
-                chooseTimePicker();
+                if (Utility.getSharedPreferences(mContext, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+                    chooseTimePicker();
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
 
 
             case R.id.tv_make_appoi:
+                if (Utility.getSharedPreferences(mContext, APIS.doctor_hide_show).equals(APIS.Edit)) {
 
-                if (Utility.isNetworkConnected(mContext)) {
-                    if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
-                        Log.e("equal true", "equal true");
+                    if (Utility.isNetworkConnected(mContext)) {
+                        if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
+                            Log.e("equal true", "equal true");
 
 
-                        if (TextUtils.isEmpty(sSelTimeId)) {
-                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                            if (TextUtils.isEmpty(sSelTimeId)) {
+                                Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
 
-                        } else if (TextUtils.isEmpty(sSelDateId)) {
+                            } else if (TextUtils.isEmpty(sSelDateId)) {
 
-                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
-                        } else {
-                            try {
-                                Calendar now = Calendar.getInstance();
-                                now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
-                                        sSelDateId + " " + sSelTimeId));
-                                String completeDate =
-                                        Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
-                                if (compareDateTime(completeDate)) {
-                                    Log.e("sSelTimeId", sSelTimeId);
-                                    GetDocAvailableTime(2);
-                                } else {
-                                    Utility.ShowToast(mContext,
-                                            getString(R.string.select_future_time));
+                                Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                            } else {
+                                try {
+                                    Calendar now = Calendar.getInstance();
+                                    now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
+                                            sSelDateId + " " + sSelTimeId));
+                                    String completeDate =
+                                            Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                                    if (compareDateTime(completeDate)) {
+                                        Log.e("sSelTimeId", sSelTimeId);
+                                        GetDocAvailableTime(2);
+                                    } else {
+                                        Utility.ShowToast(mContext,
+                                                getString(R.string.select_future_time));
 
+                                    }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+                            }
+                        } else {
+
+                            if (TextUtils.isEmpty(sSelTimeId)) {
+                                Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                            } else if (TextUtils.isEmpty(sSelDateId)) {
+                                Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                            } else {
+                                try {
+                                    Calendar now = Calendar.getInstance();
+                                    now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
+                                            sSelDateId + " " + sSelTimeId));
+                                    String completeDate =
+                                            Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                                    if (compareDateTime(completeDate)) {
+                                        Log.e("sSelTimeId", sSelTimeId);
+                                        GetDocAvailableTime(2);
+                                    } else {
+                                        Utility.ShowToast(mContext,
+                                                getString(R.string.select_future_time));
+
+                                    }
+
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     } else {
-
-                        if (TextUtils.isEmpty(sSelTimeId)) {
-                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
-                        } else if (TextUtils.isEmpty(sSelDateId)) {
-                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
-                        } else {
-                            try {
-                                Calendar now = Calendar.getInstance();
-                                now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
-                                        sSelDateId + " " + sSelTimeId));
-                                String completeDate =
-                                        Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
-                                if (compareDateTime(completeDate)) {
-                                    Log.e("sSelTimeId", sSelTimeId);
-                                    GetDocAvailableTime(2);
-                                } else {
-                                    Utility.ShowToast(mContext,
-                                            getString(R.string.select_future_time));
-
-                                }
-
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                     }
                 } else {
-                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
                 }
 
 
@@ -353,12 +369,12 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                                               int minute) {
                             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                                     calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                            if(calendar.before(GregorianCalendar.getInstance())){
-                                Utility.ShowToast(mContext,getResources().getString(R.string.select_future_time));
+                            if (calendar.before(GregorianCalendar.getInstance())) {
+                                Utility.ShowToast(mContext, getResources().getString(R.string.select_future_time));
                             } else {
-                                Calendar datetime=Calendar.getInstance();
-                                datetime.set(Calendar.HOUR_OF_DAY,hourOfDay);
-                                datetime.set(Calendar.MINUTE,minute);
+                                Calendar datetime = Calendar.getInstance();
+                                datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                datetime.set(Calendar.MINUTE, minute);
                                 tv_time.setText(Utility.hh_mm_aa.format(calendar.getTime()));
 
                                 sSelTimeId = Utility.hh_mm_aa.format(calendar.getTime());
@@ -738,6 +754,7 @@ public class DocorDetailsActivity extends BaseActivity implements View.OnClickLi
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
     }
+
     private boolean compareDateTime(String date) {
         try {
             Calendar calendar = Calendar.getInstance();

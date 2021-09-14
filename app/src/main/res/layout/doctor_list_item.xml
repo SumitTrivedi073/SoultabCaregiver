@@ -60,17 +60,17 @@
         android:id="@+id/btn_schedule"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_30sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginRight="@dimen/_5sdp"
         android:background="@drawable/muzli_btn_bg"
         android:fontFamily="@font/muli_bold"
         android:gravity="center"
         android:text="@string/schedule"
         android:textColor="@color/white"
-        android:textSize="@dimen/_10sdp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="@dimen/_5sdp"
-        android:layout_marginRight="@dimen/_5sdp" />
+        android:textSize="@dimen/_10sdp" />
 
 
 

@@ -166,6 +166,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
     public void onResume() {
         super.onResume();
         if (Utility.isNetworkConnected(mContext)) {
+
             GetDocList();
         } else {
 
@@ -186,8 +187,14 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        if (Utility.getSharedPreferences(mContext,APIS.dailyroutine_hideshow)!= null) {
+            if (!Utility.getSharedPreferences(mContext, APIS.doctor_hide_show).equals("1")) {
+                showProgressDialog(mContext, getResources().getString(R.string.Loading));
+            }
+        }else {
+            showProgressDialog(mContext, getResources().getString(R.string.Loading));
 
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+        }
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.GETDOCLISTAPI, mainObject,
                 response -> {

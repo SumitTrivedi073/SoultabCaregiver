@@ -335,6 +335,8 @@
     <string name="empty_msg">Can\'t send empty message</string>
     <string name="please_fill_daily_routine_form">Please fill out Daily Routine form</string>
     <string name="select_one_message">Please select atleast one message</string>
+    <string name="only_view_permission">Sorry you do not have permission to edit</string>
+    <string name="permission_see_this_txt">Sorry you do not have \npermissions to see \nthis page</string>
 
     <!--Added by Sumit-->
 
