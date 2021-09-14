@@ -95,7 +95,6 @@ public class DoctorAppointedListAdptr extends
         viewHolder.doctor_name.setText(AppointedDocBean.getDoctorName());
 
 
-
         viewHolder.doctor_list_relative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +107,12 @@ public class DoctorAppointedListAdptr extends
         viewHolder.delete_appointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertmessage(AppointedDocBean.getAppointmentId());
+                if (Utility.getSharedPreferences(context, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+                    alertmessage(AppointedDocBean.getAppointmentId());
+                } else {
+                    Utility.ShowToast(context, context.getResources().getString(R.string.only_view_permission));
+                }
             }
         });
 
@@ -127,6 +131,7 @@ public class DoctorAppointedListAdptr extends
             e.printStackTrace();
         }
     }
+
     public interface AppointedDocSelectionListener {
         void DocSelectionListener(List<DoctorAppointmentList.Response.AppointmentDatum> DocBeanList, boolean isSearch);
 
@@ -146,7 +151,7 @@ public class DoctorAppointedListAdptr extends
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
-                        if (row.getDoctorName().toLowerCase().contains(charString.toLowerCase()) ) {
+                        if (row.getDoctorName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -163,12 +168,12 @@ public class DoctorAppointedListAdptr extends
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 arAppointedDoc = (ArrayList<DoctorAppointmentList.Response.AppointmentDatum>) filterResults.values;
 
-                if (arAppointedDoc.size()>0){
+                if (arAppointedDoc.size() > 0) {
                     tvNodata.setVisibility(View.GONE);
                     if (docSelectionListener != null) {
                         docSelectionListener.DocSelectionListener(arAppointedDoc, true);
                     }
-                }else {
+                } else {
                     tvNodata.setVisibility(View.VISIBLE);
                 }
                 notifyDataSetChanged();
@@ -177,17 +182,17 @@ public class DoctorAppointedListAdptr extends
     }
 
 
-
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView doctor_name;
-        RelativeLayout doctor_list_relative,delete_appointment;
+        RelativeLayout doctor_list_relative, delete_appointment;
 
         public ViewHolder(View itemView) {
             super(itemView);
             doctor_name = itemView.findViewById(R.id.doctor_name);
             delete_appointment = itemView.findViewById(R.id.delete_appointment);
             doctor_list_relative = itemView.findViewById(R.id.doctor_list_relative);
+
+
         }
     }
 
@@ -235,7 +240,7 @@ public class DoctorAppointedListAdptr extends
             }
         });
 
-     }
+    }
 
     public void DeletAppointment(String appointmentId) {
 
@@ -243,14 +248,14 @@ public class DoctorAppointedListAdptr extends
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("appointment_id", appointmentId);
-            mainObject.put("user_id", Utility.getSharedPreferences(context,APIS.user_id));
-            mainObject.put("caregiver_id", Utility.getSharedPreferences(context,APIS.caregiver_id));
+            mainObject.put("user_id", Utility.getSharedPreferences(context, APIS.user_id));
+            mainObject.put("caregiver_id", Utility.getSharedPreferences(context, APIS.caregiver_id));
 
             Log.e(TAG, "appointmentdelete======>" + mainObject.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        showProgressDialog(context,context.getResources().getString(R.string.Loading));
+        showProgressDialog(context, context.getResources().getString(R.string.Loading));
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 APIS.BASEURL + APIS.DELETE_DOC_APPOIN_API, mainObject,
@@ -266,7 +271,7 @@ public class DoctorAppointedListAdptr extends
                                 Utility.ShowToast(context, response.getJSONObject("response")
                                         .getString("appointment_data"));
 
-                                    doctorAppointmentFragment.GetAppointedDocRecond();
+                                doctorAppointmentFragment.GetAppointedDocRecond();
 
                             }
 
@@ -287,7 +292,7 @@ public class DoctorAppointedListAdptr extends
                 Map<String, String> params = new HashMap<String, String>();
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
 
@@ -299,16 +304,15 @@ public class DoctorAppointedListAdptr extends
                 10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
-    public void showProgressDialog(Context context,String message){
-        if(progressDialog == null) progressDialog = new CustomProgressDialog(context, message);
+    public void showProgressDialog(Context context, String message) {
+        if (progressDialog == null) progressDialog = new CustomProgressDialog(context, message);
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
-    public void hideProgressDialog(){
-        if(progressDialog != null) progressDialog.dismiss();
+    public void hideProgressDialog() {
+        if (progressDialog != null) progressDialog.dismiss();
     }
-
 
 
 }

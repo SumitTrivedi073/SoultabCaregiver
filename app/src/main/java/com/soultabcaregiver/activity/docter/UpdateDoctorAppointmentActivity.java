@@ -81,7 +81,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
     LinearLayout btn_call, decline_call;
     DoctorAppointmentList.Response.AppointmentDatum appointmentDatum;
     String sSelTimeId = "", sSelTimeNm = "", sSelDateId = "", setToggle = "", sSelTimeSlotNm = "";
-    
+
     private Context context;
     private int Year, Month, Day;
     private Calendar calendar;
@@ -96,6 +96,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         InitCompo();
         GetValuFromIntent();
         Listener();
+
     }
 
     @Override
@@ -105,120 +106,111 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                 finish();
                 break;
             case R.id.rl_date:
-                ChooseDate();
+                if (Utility.getSharedPreferences(context, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+                    ChooseDate();
+                } else {
+                    Utility.ShowToast(context, context.getResources().getString(R.string.only_view_permission));
+
+                }
                 break;
 
             case R.id.rl_time:
-                chooseTimePicker();
+                if (Utility.getSharedPreferences(context, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+                    chooseTimePicker();
+                } else {
+                    Utility.ShowToast(context, context.getResources().getString(R.string.only_view_permission));
+
+                }
                 break;
 
             case R.id.tv_make_appoi:
-                if (Utility.isNetworkConnected(mContext)) {
+                if (Utility.getSharedPreferences(context, APIS.doctor_hide_show).equals(APIS.Edit)) {
 
-                    if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
-                        Log.e("equal true", "equal true");
-    
-                        if (TextUtils.isEmpty(sSelTimeId)) {
-                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                    if (Utility.isNetworkConnected(mContext)) {
 
-                        } else if (TextUtils.isEmpty(sSelDateId)) {
+                        if (sdf.format(new Date()).equals((tvDate.getText().toString()))) {
+                            Log.e("equal true", "equal true");
 
-                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
-                        } else {
-                            try {
-                                Calendar now = Calendar.getInstance();
-                                now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
-                                        sSelDateId + " " + sSelTimeId));
-                                String completeDate =
-                                        Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
-                                if (compareDateTime(completeDate)) {
-                                    Log.e("sSelTimeId", sSelTimeId);
-                                    GetDocAvailableTime(1);
-                                } else {
-                                    Utility.ShowToast(mContext,
-                                            getString(R.string.select_future_time));
-                
+                            if (TextUtils.isEmpty(sSelTimeId)) {
+                                Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+
+                            } else if (TextUtils.isEmpty(sSelDateId)) {
+
+                                Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_date));
+                            } else {
+                                try {
+                                    Calendar now = Calendar.getInstance();
+                                    now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
+                                            sSelDateId + " " + sSelTimeId));
+                                    String completeDate =
+                                            Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                                    if (compareDateTime(completeDate)) {
+                                        Log.e("sSelTimeId", sSelTimeId);
+                                        GetDocAvailableTime(1);
+                                    } else {
+                                        Utility.ShowToast(mContext,
+                                                getString(R.string.select_future_time));
+
+                                    }
+
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
-            
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+
                             }
-        
+                        } else {
+
+                            if (TextUtils.isEmpty(sSelTimeId)) {
+                                Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
+                            } else if (TextUtils.isEmpty(sSelDateId)) {
+                                Utility.ShowToast(mContext,
+                                        getResources().getString(R.string.doctor_appointment_date));
+                            } else {
+                                try {
+                                    Calendar now = Calendar.getInstance();
+                                    now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
+                                            sSelDateId + " " + sSelTimeId));
+                                    String completeDate =
+                                            Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                                    if (compareDateTime(completeDate)) {
+                                        Log.e("sSelTimeId", sSelTimeId);
+                                        GetDocAvailableTime(1);
+                                    } else {
+                                        Utility.ShowToast(mContext,
+                                                getString(R.string.select_future_time));
+
+                                    }
+
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
                         }
                     } else {
-
-                        if (TextUtils.isEmpty(sSelTimeId)) {
-                            Utility.ShowToast(mContext, getResources().getString(R.string.doctor_appointment_time));
-                        } else if (TextUtils.isEmpty(sSelDateId)) {
-                            Utility.ShowToast(mContext,
-                                    getResources().getString(R.string.doctor_appointment_date));
-                        } else {
-                            try {
-                                Calendar now = Calendar.getInstance();
-                                now.setTime(Utility.yyyy_mm_dd_hh_mm_aa.parse(
-                                        sSelDateId + " " + sSelTimeId));
-                                String completeDate =
-                                        Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
-                                if (compareDateTime(completeDate)) {
-                                    Log.e("sSelTimeId", sSelTimeId);
-                                    GetDocAvailableTime(1);
-                                } else {
-                                    Utility.ShowToast(mContext,
-                                            getString(R.string.select_future_time));
-            
-                                }
-        
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
+                        Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
                     }
                 } else {
-                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                    Utility.ShowToast(context, context.getResources().getString(R.string.only_view_permission));
+
                 }
-    
+
                 break;
             case R.id.cancel_appointment_btn:
-                GetDocAvailableTime(2);
+                if (Utility.getSharedPreferences(context, APIS.doctor_hide_show).equals(APIS.Edit)) {
+
+
+                    GetDocAvailableTime(2);
+                } else {
+                    Utility.ShowToast(context, context.getResources().getString(R.string.only_view_permission));
+
+                }
                 break;
         }
     }
 
-  /*  private void GetValuFromIntent() {
-
-        appointmentDatum = (DoctorAppointmentList.Response.AppointmentDatum) getIntent()
-        .getSerializableExtra(APIS.DocListItem);
-
-        assert appointmentDatum != null;
-        AppointmentId = String.valueOf(appointmentDatum.getAppointmentId());
-        tvDocNm.setText(appointmentDatum.getDoctorName());
-        txt_doctor_address.setText(appointmentDatum.getDoctorAddress());
-        txt_mobile_number.setText(appointmentDatum.getDoctorMobile());
-        txt_fax.setText(appointmentDatum.getFax());
-        txt_Portal.setText(appointmentDatum.getWebsite());
-        if (appointmentDatum.getEmail() != null) {
-            txt_doctor_email.setText(appointmentDatum.getEmail());
-        }
-
-        tvDate.setText(String.valueOf(Utility.ChangeDateFormat("yyyy-MM-dd", "MM-dd-yyyy",
-        appointmentDatum.getDate())));
-        sSelDateId = appointmentDatum.getDate();
-
-
-        if (String.valueOf(appointmentDatum.getAppointmentsReminder()).equals("1")) {
-            tbDocAppTog.setChecked(true);
-        } else {
-            tbDocAppTog.setChecked(false);
-        }
-
-
-        tv_time.setText(appointmentDatum.getTime());
-        sSelTimeId = appointmentDatum.getTime();
-
-    }
-*/
-    
     private boolean compareDateTime(String date) {
         try {
             Calendar calendar = Calendar.getInstance();
@@ -226,13 +218,13 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             String todayDate = Utility.yyyy_mm_dd_hh_mm_ss.format(calendar.getTime());
             String selectDate =
                     Utility.yyyy_mm_dd_hh_mm_ss.format(Utility.yyyy_mm_dd_hh_mm_aa.parse(date));
-            
+
             Date selectDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(selectDate);
             Date todayDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(todayDate);
-            
+
             Log.e("selectDateDate", String.valueOf(selectDateDate));
             Log.e("todayDateDate", String.valueOf(todayDateDate));
-            
+
             if (String.valueOf(selectDateDate).equals(String.valueOf(todayDateDate))) {
                 graterThanDate = true;  // If two dates are equal.
             } else // If start date is after the end date.
@@ -240,27 +232,27 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                 assert selectDateDate != null;
                 graterThanDate = selectDateDate.after(todayDateDate);
             }
-            
+
             return graterThanDate;
-            
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return false;
-        
+
     }
-    
+
     private void InitCompo() {
         back_btn = findViewById(R.id.back_btn);
         tvDocNm = findViewById(R.id.txt_doctor_name);
         txt_doctor_address = findViewById(R.id.txt_doctor_address);
         txt_mobile_number = findViewById(R.id.txt_mobile_number);
-        
+
         tvDocNm = findViewById(R.id.txt_doctor_name);
         txt_doctor_address = findViewById(R.id.txt_doctor_address);
         txt_mobile_number = findViewById(R.id.txt_mobile_number);
         txt_doctor_email = findViewById(R.id.txt_doctor_email);
-        
+
         tbDocAppTog = findViewById(R.id.tb_doc_appoint);
         rlDate = findViewById(R.id.rl_date);
         tvDate = findViewById(R.id.tv_date);
@@ -270,37 +262,37 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         txt_fax = findViewById(R.id.txt_fax);
         txt_Portal = findViewById(R.id.txt_Portal);
         cancel_appointment_btn = findViewById(R.id.cancel_appointment_btn);
-        
+
         calendar = Calendar.getInstance();
         Year = calendar.get(Calendar.YEAR);
         Month = calendar.get(Calendar.MONTH);
         Day = calendar.get(Calendar.DAY_OF_MONTH);
         sdf = new SimpleDateFormat(myFormat, Locale.US);
         sdf1 = new SimpleDateFormat(myFormat1, Locale.US);
-        
+
         myCalendar = Calendar.getInstance();
         curDate = sdf.format(calendar.getTime());
-        
-        
+
+
     }
-    
+
     private void Listener() {
         rlDate.setOnClickListener(this);
         rl_time.setOnClickListener(this);
         tvMakeAppoint.setOnClickListener(this);
         back_btn.setOnClickListener(this);
         cancel_appointment_btn.setOnClickListener(this);
-        
-        
+
+
     }
-    
+
     private void GetValuFromIntent() {
-        
+
         if (!String.valueOf(getIntent().getStringExtra("diff_")).equals("2")) {
             appointmentDatum =
                     (DoctorAppointmentList.Response.AppointmentDatum) getIntent().getSerializableExtra(
                             APIS.DocListItem);
-            
+
             assert appointmentDatum != null;
             AppointmentId = String.valueOf(appointmentDatum.getAppointmentId());
             DoctorID = String.valueOf(appointmentDatum.getDoctor_id());
@@ -312,33 +304,34 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             if (appointmentDatum.getEmail() != null) {
                 txt_doctor_email.setText(appointmentDatum.getEmail());
             }
-            
+
             tvDate.setText(String.valueOf(Utility.ChangeDateFormat("yyyy-MM-dd", "MM-dd-yyyy",
                     appointmentDatum.getDate())));
             sSelDateId = appointmentDatum.getDate();
-            
+
             tbDocAppTog.setChecked(
                     String.valueOf(appointmentDatum.getAppointmentsReminder()).equals("1"));
-            
+
             tv_time.setText(appointmentDatum.getTime());
             sSelTimeId = appointmentDatum.getTime();
-            
-            
+
+
         } else {
             AppointmentId = getIntent().getStringExtra("id");
             DoctorID = getIntent().getStringExtra("Doctor_id");
             GetDoctorApointmentDetail();
         }
     }
-    
+
+
     private void AccessCall(String number, String name) {
-        
+
         LayoutInflater inflater =
                 (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.assistent_layout, null);
         final AlertDialog.Builder builder =
                 new AlertDialog.Builder(mContext, R.style.MyDialogTheme);
-        
+
         builder.setView(layout);
         builder.setCancelable(false);
         alertDialog = builder.create();
@@ -449,12 +442,12 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                                               int minute) {
                             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                                     calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                            if(calendar.before(GregorianCalendar.getInstance())){
-                                Utility.ShowToast(mContext,getResources().getString(R.string.select_future_time));
+                            if (calendar.before(GregorianCalendar.getInstance())) {
+                                Utility.ShowToast(mContext, getResources().getString(R.string.select_future_time));
                             } else {
-                                Calendar datetime=Calendar.getInstance();
-                                datetime.set(Calendar.HOUR_OF_DAY,hourOfDay);
-                                datetime.set(Calendar.MINUTE,minute);
+                                Calendar datetime = Calendar.getInstance();
+                                datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                datetime.set(Calendar.MINUTE, minute);
                                 tv_time.setText(Utility.hh_mm_aa.format(calendar.getTime()));
 
                                 sSelTimeId = Utility.hh_mm_aa.format(calendar.getTime());
@@ -824,12 +817,12 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(txt_Portal.getText().toString())) {
-	                Intent intent = new Intent(mContext, SocialActivity.class);
-	                intent.putExtra("webUrl", txt_Portal.getText().toString().trim());
-	                intent.putExtra("title", tvDocNm.getText().toString().trim());
-	
-	                startActivity(intent);
-	                finish();
+                    Intent intent = new Intent(mContext, SocialActivity.class);
+                    intent.putExtra("webUrl", txt_Portal.getText().toString().trim());
+                    intent.putExtra("title", tvDocNm.getText().toString().trim());
+
+                    startActivity(intent);
+                    finish();
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.Portal_unavailable));
                     finish();
@@ -908,21 +901,21 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
         jsonObjReq.setShouldCache(false);
         jsonObjReq.setRetryPolicy(
                 new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    
+
     }
-    
+
     @Override
     public void onBackPressed() {
         finish();
         super.onBackPressed();
     }
-    
+
     private void GetDoctorApointmentDetail() {
         final String TAG = "Get Doc details";
         JSONObject mainObject = new JSONObject();
         try {
             mainObject.put("appointment_id", AppointmentId);
-            
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -935,7 +928,7 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "Get Doc details response=" + response.toString());
                         hideProgressDialog();
-                        
+
                         try {
                             String code = response.getString("status_code");
                             if (code.equals("200")) {
@@ -944,64 +937,64 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                                             response.getJSONObject("response").getJSONArray(
                                                     "appointment_data");
                                     if (jsArray != null && jsArray.length() > 0) {
-                                        
+
                                         JSONObject jsDocAvaiTimeMain = jsArray.getJSONObject(0);
                                         tvDocNm.setText(jsDocAvaiTimeMain.getString("doctor_name"));
                                         txt_doctor_address.setText(
                                                 jsDocAvaiTimeMain.getString("doctor_address"));
                                         txt_mobile_number.setText(
                                                 jsDocAvaiTimeMain.getString("contact"));
-                                        
+
                                         tvDate.setText(String.valueOf(
                                                 Utility.ChangeDateFormat("yyyy-MM-dd", "MM-dd-yyyy",
                                                         jsDocAvaiTimeMain.getString("date_id"))));
                                         sSelDateId = jsDocAvaiTimeMain.getString("date_id");
-                                        
+
                                         tbDocAppTog.setChecked(
                                                 jsDocAvaiTimeMain.getString("reminder").equals(
                                                         "1"));
-                                        
+
                                         tv_time.setText(jsDocAvaiTimeMain.getString("time_id"));
-                                        
+
                                         if (!TextUtils.isEmpty(
                                                 getIntent().getStringExtra("Doctor_Fax"))) {
                                             txt_fax.setText(
                                                     getIntent().getStringExtra("Doctor_Fax"));
                                         }
-                                        
+
                                         if (!TextUtils.isEmpty(
                                                 getIntent().getStringExtra("Doctor_Website"))) {
                                             txt_Portal.setText(
                                                     getIntent().getStringExtra("Doctor_Website"));
                                         }
-                                        
+
                                         if (!TextUtils.isEmpty(
                                                 getIntent().getStringExtra("Doctor_Email"))) {
                                             txt_doctor_email.setText(
                                                     getIntent().getStringExtra("Doctor_Email"));
                                         }
-                                        
+
                                     }
-                                    
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             } else if (code.equals("403")) {
                                 logout_app(response.getString("message"));
                             } else {
-                                
+
                                 Utility.ShowToast(mContext, response.getString("message"));
                                 hideProgressDialog();
                                 finish();
-                                
+
                             }
-                            
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
-            
+
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
@@ -1017,14 +1010,14 @@ public class UpdateDoctorAppointmentActivity extends BaseActivity implements Vie
                         Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
                 return params;
             }
-            
+
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq);
         jsonObjReq.setShouldCache(false);
         jsonObjReq.setRetryPolicy(
                 new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        
+
     }
-    
+
 }

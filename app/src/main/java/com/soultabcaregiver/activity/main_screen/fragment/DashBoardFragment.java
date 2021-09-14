@@ -48,42 +48,45 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DashBoardFragment extends BaseFragment implements View.OnClickListener {
-    
+
+    public static DashBoardFragment instance;
+
     private final String TAG = getClass().getSimpleName();
-    
+
     View view;
-    
+
     Context mContext;
-    
+
     RelativeLayout logout;
-    
+
     LineChart lineChart;
-    
+
     RecyclerView bar_chart_list;
-    
+
     ProgressDialog progressDialog;
-    
+
     LinearLayout name_event_linear;
-    
+
     CardView compliance_card;
-    
+
     LineDataSet lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5;
-    
+
     LineData data;
-    
+
     CheckBox weekly_chart, three_month_chart, six_month_chart, twelve_month_chart;
-    
+
     TextView today_txt, lastweek_txt, lastmonth_txt, good_morning_txt, user_name_txt,
             compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt;
-    
+
     MainActivity mainActivity;
-    
+
     Calendar calendar;
-    
+
     ChartModel chartModel;
-    
+
     String chart_value_data = "week";
 
+    RelativeLayout dashboard_show_relative, dashboard_hide_relative;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,6 +102,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         view = inflater.inflate(R.layout.fragment_dash_board, container, false);
 
         mainActivity = MainActivity.instance;
+        instance = DashBoardFragment.this;
+
         lineChart = view.findViewById(R.id.lineChart);
         bar_chart_list = view.findViewById(R.id.bar_chart_list);
         compliance_name_txt = view.findViewById(R.id.compliance_name_txt);
@@ -117,6 +122,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         three_month_chart = view.findViewById(R.id.three_month_chart);
         six_month_chart = view.findViewById(R.id.six_month_chart);
         twelve_month_chart = view.findViewById(R.id.twelve_month_chart);
+        dashboard_show_relative = view.findViewById(R.id.dashboard_show_relative);
+        dashboard_hide_relative = view.findViewById(R.id.dashboard_hide_relative);
 
         calendar = Calendar.getInstance();
 
@@ -142,16 +149,9 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
         user_name_txt.setText(Utility.getSharedPreferences(mContext, APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext, APIS.Caregiver_lastname));
 
-
-        if (Utility.isNetworkConnected(mContext)) {
-            ChartAPI(chart_value_data);
-
-        } else {
-            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-        }
+        Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
 
         listner();
-
 
         return view;
     }
@@ -162,11 +162,11 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
         lastweek_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
         lastmonth_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-    
+
         today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
         lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
         lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
-    
+
     }
 
     private void listner() {
@@ -255,7 +255,10 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     }
 
     private void ChartAPI(String chart_value_data) {
-        showProgressDialog(mContext, getResources().getString(R.string.Loading));
+
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
+
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.LineChartAPI,
                 new Response.Listener<String>() {
                     @Override
@@ -397,23 +400,23 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineDataSet5.setLineWidth(3f);
                 dataSets.add(lineDataSet5);
                 lineDataSet5.setColor(Color.BLUE);
-    
+
             }
             //  dataSets.add(lineDataSet2);
-    
+
             data = new LineData(dataSets);
-    
+
             lineChart.getAxisLeft().setTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineChart.getAxisRight().setTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineChart.getXAxis().setTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineChart.getLegend().setTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineChart.getDescription().setTextColor(
                     ContextCompat.getColor(mContext, R.color.white));
-    
+
             colorchange(lineDataSet, lineDataSet3, lineDataSet4, lineDataSet5);
-    
+
             if (lineDataSet != null || lineDataSet3 != null || lineDataSet4 != null || lineDataSet5 != null) {
-        
+
                 lineChart.setData(data);
                 lineChart.invalidate();
 
@@ -463,20 +466,20 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     public void onClick(View v) {
 
         switch (v.getId()) {
-    
+
             case R.id.today_txt:
                 today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.muzli_color));
                 lastweek_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 lastmonth_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-        
+
                 today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
                 lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
-        
+
                 Log.e("getDaily", String.valueOf(chartModel.getData().getCompliance().getDaily()));
                 if (chartModel != null) {
                     if (chartModel.getData().getCompliance().getDaily().getType() != null) {
-                
+
                         name_event_linear.setVisibility(View.VISIBLE);
                         no_data_txt.setVisibility(View.GONE);
                         compliance_name_txt.setText(
@@ -490,24 +493,24 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 } else {
                     name_event_linear.setVisibility(View.GONE);
                     no_data_txt.setVisibility(View.VISIBLE);
-            
+
                 }
-        
+
                 break;
-    
+
             case R.id.lastweek_txt:
-        
+
                 today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 lastweek_txt.setBackgroundColor(
                         ContextCompat.getColor(mContext, R.color.muzli_color));
                 lastmonth_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-        
+
                 today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
                 lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 if (chartModel != null) {
                     if (chartModel.getData().getCompliance().getWeekly().getType() != null) {
-                
+
                         name_event_linear.setVisibility(View.VISIBLE);
                         no_data_txt.setVisibility(View.GONE);
                         compliance_name_txt.setText(
@@ -521,25 +524,25 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 } else {
                     name_event_linear.setVisibility(View.GONE);
                     no_data_txt.setVisibility(View.VISIBLE);
-            
+
                 }
-        
+
                 break;
-    
+
             case R.id.lastmonth_txt:
-        
+
                 today_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 lastweek_txt.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 lastmonth_txt.setBackgroundColor(
                         ContextCompat.getColor(mContext, R.color.muzli_color));
-        
+
                 today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
                 lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
-        
+
                 if (chartModel != null) {
                     if (chartModel.getData().getCompliance().getMonthly().getType() != null) {
-                
+
                         name_event_linear.setVisibility(View.VISIBLE);
                         no_data_txt.setVisibility(View.GONE);
                         compliance_name_txt.setText(
@@ -558,81 +561,106 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 break;
 
             case R.id.logout:
-                final DiloagBoxCommon diloagBoxCommon = Alertmessage(mContext, getResources().getString(R.string.logout)
-                        , getResources().getString(R.string.are_you_sure_you_want_to_logout)
-                        , getResources().getString(R.string.no_text)
-                        , getResources().getString(R.string.yes_text));
-                diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
-                    //  ReminderCreateClass.getInstance().DeleteReminderlogout();
-    
-                    if (mainActivity != null) {
-                        diloagBoxCommon.getDialog().dismiss();
-                        logout_app("Logout Successfully");
-                    }
-    
-                });
+
+                    final DiloagBoxCommon diloagBoxCommon = Alertmessage(mContext, getResources().getString(R.string.logout)
+                            , getResources().getString(R.string.are_you_sure_you_want_to_logout)
+                            , getResources().getString(R.string.no_text)
+                            , getResources().getString(R.string.yes_text));
+                    diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
+                        //  ReminderCreateClass.getInstance().DeleteReminderlogout();
+
+                        if (mainActivity != null) {
+                            diloagBoxCommon.getDialog().dismiss();
+                            logout_app("Logout Successfully");
+                        }
+
+                    });
                 break;
         }
     }
-    
+
     private ArrayList<Entry> datavalue1(List<String> yAxis) {
-        
+
         ArrayList<Entry> datavalue = new ArrayList<Entry>();
-        
+
         try {
             if (yAxis.size() > 0) {
                 for (int j = 0; j < yAxis.size(); j++) {
-                    
+
                     String yAxisValue = yAxis.get(j).trim();
-                    
+
                     float yflot = Float.parseFloat(yAxisValue);
-                    
+
                     datavalue.add(new Entry(j, yflot));
-                    
-                    
+
+
                 }
-                
-                
+
+
             }
         } catch (NumberFormatException nfe) {
             System.out.println("Could not parse " + nfe);
         }
-        
+
         return datavalue;
     }
-    
+
     private void colorchange(LineDataSet lineDataSet, LineDataSet lineDataSet3,
                              LineDataSet lineDataSet4, LineDataSet lineDataSet5) {
-        
+
         if (lineDataSet != null) {
             lineDataSet.setHighLightColor(Color.parseColor("#BEBEBE"));
             lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
             lineDataSet.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineDataSet.setValueTextSize(5f);
         }
-        
+
         if (lineDataSet3 != null) {
-            
+
             lineDataSet3.setHighLightColor(Color.parseColor("#BEBEBE"));
             lineDataSet3.setAxisDependency(YAxis.AxisDependency.LEFT);
             lineDataSet3.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineDataSet3.setValueTextSize(5f);
         }
         if (lineDataSet4 != null) {
-            
+
             lineDataSet4.setHighLightColor(Color.parseColor("#BEBEBE"));
             lineDataSet4.setAxisDependency(YAxis.AxisDependency.LEFT);
             lineDataSet4.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineDataSet4.setValueTextSize(5f);
         }
         if (lineDataSet5 != null) {
-            
+
             lineDataSet5.setHighLightColor(Color.parseColor("#BEBEBE"));
             lineDataSet5.setAxisDependency(YAxis.AxisDependency.LEFT);
             lineDataSet5.setValueTextColor(ContextCompat.getColor(mContext, R.color.white));
             lineDataSet5.setValueTextSize(5f);
         }
     }
-    
-    
+
+    public void Dashboardhide_show(String dashboardNew) {
+
+        if (dashboardNew.equals(APIS.Hide)) {
+            dashboard_show_relative.setVisibility(View.GONE);
+            dashboard_hide_relative.setVisibility(View.VISIBLE);
+        } else if (dashboardNew.equals(APIS.View)) {
+            dashboard_show_relative.setVisibility(View.VISIBLE);
+            dashboard_hide_relative.setVisibility(View.GONE);
+            if (Utility.isNetworkConnected(mContext)) {
+                ChartAPI(chart_value_data);
+
+            } else {
+                Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+            }
+        }else if (dashboardNew.equals(APIS.Edit)){
+            dashboard_show_relative.setVisibility(View.VISIBLE);
+            dashboard_hide_relative.setVisibility(View.GONE);
+            if (Utility.isNetworkConnected(mContext)) {
+                ChartAPI(chart_value_data);
+
+            } else {
+                Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+            }
+        }
+    }
 }

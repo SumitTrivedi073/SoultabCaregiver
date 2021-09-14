@@ -7,7 +7,33 @@
     android:background="@color/light_white"
     tools:context=".activity.calender.fragment.CalenderFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/user_name_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:fontFamily="@font/muli_extrabold"
+        android:gravity="center"
+        android:text="@string/calender"
+        android:textColor="@color/blackish"
+        android:textSize="@dimen/_16sdp" />
+
+    <RelativeLayout
+        android:id="@+id/hide_cal_Relative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/user_name_txt"
+        android:visibility="gone">
+
+        <include layout="@layout/permission_hideview"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/show_cal_Relative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/user_name_txt"
+        android:visibility="visible">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,24 +44,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
 
-            <TextView
-                android:id="@+id/user_name_txt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:fontFamily="@font/muli_extrabold"
-                android:gravity="center"
-                android:text="@string/calender"
-                android:textColor="@color/blackish"
-                android:textSize="@dimen/_16sdp" />
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_20sdp"
                 android:fontFamily="@font/muli_bold"
                 android:gravity="center"
@@ -57,7 +74,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginLeft="@dimen/_10sdp"
                     android:fontFamily="@font/muli_bold"
                     android:gravity="center"
                     android:text="@string/date"
@@ -70,24 +86,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_marginEnd="@dimen/_10sdp"
-                    android:layout_marginRight="@dimen/_10sdp"
                     android:fontFamily="@font/muli_bold"
                     android:gravity="center"
                     android:textColor="@color/themecolor"
-                    android:textSize="@dimen/_12sdp" />
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="RelativeOverlap" />
 
 
             </RelativeLayout>
-
-
-            <!--
-                                <CalendarView
-                                    android:id="@+id/customCalendarView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content" />
-            -->
 
 
             <RelativeLayout
@@ -223,21 +230,25 @@
 
     </LinearLayout>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/reminder_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:src="@drawable/plus"
+            app:backgroundTint="@color/orange_color"
+            app:elevation="@dimen/_5sdp"
+            app:fabSize="auto"
+            app:pressedTranslationZ="@dimen/_5sdp"
+            app:tint="@android:color/white"
+            android:contentDescription="TODO"
+            tools:ignore="ContentDescription,HardcodedText" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/reminder_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/_16sdp"
-        android:src="@drawable/plus"
-        app:backgroundTint="@color/orange_color"
-        app:elevation="@dimen/_5sdp"
-        app:fabSize="auto"
-        app:pressedTranslationZ="@dimen/_5sdp"
-        app:tint="@android:color/white" />
-
+    </RelativeLayout>
 
 </RelativeLayout>

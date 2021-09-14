@@ -20,7 +20,9 @@ import androidx.fragment.app.FragmentTransaction;
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
 public class TalkHolderFragment extends BaseFragment {
-	
+
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {

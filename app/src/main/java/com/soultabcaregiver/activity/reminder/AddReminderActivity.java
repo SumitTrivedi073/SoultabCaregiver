@@ -57,18 +57,18 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class AddReminderActivity extends BaseActivity implements View.OnClickListener {
-    
-    
+
+
     public static final int REQUEST_Snooze = 102;
-    
+
     public static int Alarm_Count;
-    
+
     String TAG = getClass().getSimpleName();
-    
+
     EditText et_title;
-    
+
     TextView tvWhenDate, tvWhenTime, tv_text, tv_snooze_txt;
-    
+
     TextView tvRepeat, tvBeforRemindTxt, btn_submit_reminder;
     RelativeLayout tv_snooze_layout, back_btn;
     Calendar myCalendar;
@@ -263,51 +263,81 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                 break;
 
             case R.id.tv_when_date:
-                ChooseDate();
+                if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
+
+                    ChooseDate();
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
             case R.id.tv_when_time:
-                chooseTimePicker();
+                if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
+
+                    chooseTimePicker();
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
             case R.id.tv_reminder_txt:
-                DlgBeforRemind();
+                if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
+
+                    DlgBeforRemind();
+
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
             case R.id.tv_repeat_txt:
-                DlgRepeatRemind();
+                if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
+
+                    DlgRepeatRemind();
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
             case R.id.tv_snooze_layout:
-                Intent i = new Intent(getApplicationContext(), AddSnoozeTime.class);
-                i.putExtra("Snooze_minute", shp.getString("Snooze_minute", ""));
-                i.putExtra("Snooze_times", shp.getString("Snooze_times", ""));
-                i.putExtra("Snooze_on", shp.getString("Snooze_on", ""));
-                startActivity(i);
+                if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
+                    Intent i = new Intent(getApplicationContext(), AddSnoozeTime.class);
+                    i.putExtra("Snooze_minute", shp.getString("Snooze_minute", ""));
+                    i.putExtra("Snooze_times", shp.getString("Snooze_times", ""));
+                    i.putExtra("Snooze_on", shp.getString("Snooze_on", ""));
+                    startActivity(i);
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
+                }
                 break;
             case R.id.btn_submit_reminder:
-                if (validFields()) {
-                    if (Utility.isNetworkConnected(AddReminderActivity.this)) {
-    
-                        Calendar now = Calendar.getInstance();
-                        try {
-                            now.setTime(
-                                    Utility.yyyy_mm_dd_hh_mm_aa.parse(sWhenDate + " " + sWhenTime));
-        
-                            String completeDate = Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
-                            if (compareDateTime(completeDate)) {
-            
-                                SetAlarmVal();
-                            } else {
-                                Utility.ShowToast(mContext,
-                                        getResources().getString(R.string.select_future_time));
-            
+                if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
+
+                    if (validFields()) {
+                        if (Utility.isNetworkConnected(AddReminderActivity.this)) {
+
+                            Calendar now = Calendar.getInstance();
+                            try {
+                                now.setTime(
+                                        Utility.yyyy_mm_dd_hh_mm_aa.parse(sWhenDate + " " + sWhenTime));
+
+                                String completeDate = Utility.yyyy_mm_dd_hh_mm_aa.format(now.getTime());
+                                if (compareDateTime(completeDate)) {
+
+                                    SetAlarmVal();
+                                } else {
+                                    Utility.ShowToast(mContext,
+                                            getResources().getString(R.string.select_future_time));
+
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+
+                        } else {
+
+                            Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+
                         }
-    
-                    } else {
-
-                        Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
-
                     }
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
                 }
                 break;
         }
@@ -413,7 +443,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                                 ShowAlertResponse(commonResponseModel.getMessage(), "1");
                             }
 
-                   
+
                         } else if (String.valueOf(commonResponseModel.getStatusCode()).equals("403")) {
                             logout_app(commonResponseModel.getMessage());
                         }
@@ -498,7 +528,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                             myCalendar.set(myCalendar.get(Calendar.YEAR),
                                     myCalendar.get(Calendar.MONTH),
                                     myCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-    
+
                             if (myCalendar.before(GregorianCalendar.getInstance())) {
                                 Utility.ShowToast(mContext,
                                         getResources().getString(R.string.select_future_time));
@@ -506,9 +536,9 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                                 Calendar datetime = Calendar.getInstance();
                                 datetime.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                 datetime.set(Calendar.MINUTE, minute);
-        
+
                                 tvWhenTime.setText(Utility.hh_mm_aa.format(myCalendar.getTime()));
-        
+
                             }
                         }
                     }, myCalendar.get(Calendar.HOUR_OF_DAY), myCalendar.get(Calendar.MINUTE), false);
@@ -751,13 +781,13 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
         });
         dialog.show();
     }
-    
+
     @Override
     public void onBackPressed() {
         finish();
         super.onBackPressed();
     }
-    
+
     private boolean compareDateTime(String date) {
         try {
             Calendar calendar = Calendar.getInstance();
@@ -765,13 +795,13 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
             String todayDate = Utility.yyyy_mm_dd_hh_mm_ss.format(calendar.getTime());
             String selectDate =
                     Utility.yyyy_mm_dd_hh_mm_ss.format(Utility.yyyy_mm_dd_hh_mm_aa.parse(date));
-            
+
             Date selectDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(selectDate);
             Date todayDateDate = Utility.yyyy_mm_dd_hh_mm_ss.parse(todayDate);
-            
+
             Log.e("selectDateDate", String.valueOf(selectDateDate));
             Log.e("todayDateDate", String.valueOf(todayDateDate));
-            
+
             if (String.valueOf(selectDateDate).equals(String.valueOf(todayDateDate))) {
                 graterThanDate = true;  // If two dates are equal.
             } else // If start date is after the end date.
@@ -779,14 +809,14 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                 assert selectDateDate != null;
                 graterThanDate = selectDateDate.after(todayDateDate);
             }
-            
+
             return graterThanDate;
-            
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return false;
-        
+
     }
-    
+
 }
