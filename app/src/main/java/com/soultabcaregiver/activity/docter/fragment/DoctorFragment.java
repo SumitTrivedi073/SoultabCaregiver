@@ -173,15 +173,21 @@ public class DoctorFragment extends BaseFragment {
 
 
     public void doctorhide_show(String doctorhide_show) {
-        if (doctorhide_show.equals(APIS.Hide)) {
-            doctor_show_Relative.setVisibility(View.GONE);
-            doctor_hide_Relative.setVisibility(View.VISIBLE);
-            Add_doctor_btn.setVisibility(View.GONE);
-        } else if (doctorhide_show.equals(APIS.View)) {
-            doctor_show_Relative.setVisibility(View.VISIBLE);
-            doctor_hide_Relative.setVisibility(View.GONE);
-            Add_doctor_btn.setVisibility(View.VISIBLE);
-        } else if (doctorhide_show.equals(APIS.Edit)) {
+        if (doctorhide_show!=null) {
+            if (doctorhide_show.equals(APIS.Hide)) {
+                doctor_show_Relative.setVisibility(View.GONE);
+                doctor_hide_Relative.setVisibility(View.VISIBLE);
+                Add_doctor_btn.setVisibility(View.GONE);
+            } else if (doctorhide_show.equals(APIS.View)) {
+                doctor_show_Relative.setVisibility(View.VISIBLE);
+                doctor_hide_Relative.setVisibility(View.GONE);
+                Add_doctor_btn.setVisibility(View.VISIBLE);
+            } else if (doctorhide_show.equals(APIS.Edit)) {
+                doctor_show_Relative.setVisibility(View.VISIBLE);
+                doctor_hide_Relative.setVisibility(View.GONE);
+                Add_doctor_btn.setVisibility(View.VISIBLE);
+            }
+        }else {
             doctor_show_Relative.setVisibility(View.VISIBLE);
             doctor_hide_Relative.setVisibility(View.GONE);
             Add_doctor_btn.setVisibility(View.VISIBLE);

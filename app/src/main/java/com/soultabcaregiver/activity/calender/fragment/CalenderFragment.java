@@ -98,18 +98,28 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     }
 
     public void calenderhide_show(String calender_hideshow) {
-        if (calender_hideshow.equals(APIS.Hide)) {
-            show_cal_Relative.setVisibility(View.GONE);
-            hide_cal_Relative.setVisibility(View.VISIBLE);
-        } else if (calender_hideshow.equals(APIS.View)) {
-            show_cal_Relative.setVisibility(View.VISIBLE);
-            hide_cal_Relative.setVisibility(View.GONE);
-            if (Utility.isNetworkConnected(mContext)) {
-                GetAllEventAPI(FromDate, TODate);//for list data
-            } else {
-                Utility.ShowToast(mContext, mContext.getResources().getString(R.string.net_connection));
+        if (calender_hideshow!=null) {
+            if (calender_hideshow.equals(APIS.Hide)) {
+                show_cal_Relative.setVisibility(View.GONE);
+                hide_cal_Relative.setVisibility(View.VISIBLE);
+            } else if (calender_hideshow.equals(APIS.View)) {
+                show_cal_Relative.setVisibility(View.VISIBLE);
+                hide_cal_Relative.setVisibility(View.GONE);
+                if (Utility.isNetworkConnected(mContext)) {
+                    GetAllEventAPI(FromDate, TODate);//for list data
+                } else {
+                    Utility.ShowToast(mContext, mContext.getResources().getString(R.string.net_connection));
+                }
+            } else if (calender_hideshow.equals(APIS.Edit)) {
+                show_cal_Relative.setVisibility(View.VISIBLE);
+                hide_cal_Relative.setVisibility(View.GONE);
+                if (Utility.isNetworkConnected(mContext)) {
+                    GetAllEventAPI(FromDate, TODate);//for list data
+                } else {
+                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                }
             }
-        } else if (calender_hideshow.equals(APIS.Edit)) {
+        }else {
             show_cal_Relative.setVisibility(View.VISIBLE);
             hide_cal_Relative.setVisibility(View.GONE);
             if (Utility.isNetworkConnected(mContext)) {

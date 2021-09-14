@@ -193,18 +193,27 @@ public class DailyRoutineFragment extends BaseFragment {
 
 
     public void dailyroutine_hideshow(String dailyroutine) {
+        if (dailyroutine!=null){
         if (dailyroutine.equals(APIS.Hide)) {
             show_daily_routine_Relative.setVisibility(View.GONE);
             hide_daily_routine_Relative.setVisibility(View.VISIBLE);
         } else if (dailyroutine.equals(APIS.View)) {
             show_daily_routine_Relative.setVisibility(View.VISIBLE);
             hide_daily_routine_Relative.setVisibility(View.GONE);
+            Submit_btn.setVisibility(View.VISIBLE);
             GetDailyRoutineData();
         }else if (dailyroutine.equals(APIS.Edit)) {
             show_daily_routine_Relative.setVisibility(View.VISIBLE);
             hide_daily_routine_Relative.setVisibility(View.GONE);
             Submit_btn.setVisibility(View.VISIBLE);
+            GetDailyRoutineData();
          }
+        }else {
+            show_daily_routine_Relative.setVisibility(View.VISIBLE);
+            hide_daily_routine_Relative.setVisibility(View.GONE);
+            Submit_btn.setVisibility(View.VISIBLE);
+            GetDailyRoutineData();
+        }
     }
 
     private void CheckedListner() {
