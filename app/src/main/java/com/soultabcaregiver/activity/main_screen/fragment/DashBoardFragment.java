@@ -562,19 +562,19 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 
             case R.id.logout:
 
-                    final DiloagBoxCommon diloagBoxCommon = Alertmessage(mContext, getResources().getString(R.string.logout)
-                            , getResources().getString(R.string.are_you_sure_you_want_to_logout)
-                            , getResources().getString(R.string.no_text)
-                            , getResources().getString(R.string.yes_text));
-                    diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
-                        //  ReminderCreateClass.getInstance().DeleteReminderlogout();
+                final DiloagBoxCommon diloagBoxCommon = Alertmessage(mContext, getResources().getString(R.string.logout)
+                        , getResources().getString(R.string.are_you_sure_you_want_to_logout)
+                        , getResources().getString(R.string.no_text)
+                        , getResources().getString(R.string.yes_text));
+                diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
+                    //  ReminderCreateClass.getInstance().DeleteReminderlogout();
 
-                        if (mainActivity != null) {
-                            diloagBoxCommon.getDialog().dismiss();
-                            logout_app("Logout Successfully");
-                        }
+                    if (mainActivity != null) {
+                        diloagBoxCommon.getDialog().dismiss();
+                        logout_app("Logout Successfully");
+                    }
 
-                    });
+                });
                 break;
         }
     }
@@ -639,22 +639,30 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     }
 
     public void Dashboardhide_show(String dashboardNew) {
+        if (dashboardNew != null) {
+            if (dashboardNew.equals(APIS.Hide)) {
+                dashboard_show_relative.setVisibility(View.GONE);
+                dashboard_hide_relative.setVisibility(View.VISIBLE);
+            } else if (dashboardNew.equals(APIS.View)) {
+                dashboard_show_relative.setVisibility(View.VISIBLE);
+                dashboard_hide_relative.setVisibility(View.GONE);
+                if (Utility.isNetworkConnected(mContext)) {
+                    ChartAPI(chart_value_data);
 
-        if (dashboardNew.equals(APIS.Hide)) {
-            dashboard_show_relative.setVisibility(View.GONE);
-            dashboard_hide_relative.setVisibility(View.VISIBLE);
-        } else if (dashboardNew.equals(APIS.View)) {
-            dashboard_show_relative.setVisibility(View.VISIBLE);
-            dashboard_hide_relative.setVisibility(View.GONE);
-            if (Utility.isNetworkConnected(mContext)) {
-                ChartAPI(chart_value_data);
+                } else {
+                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                }
+            } else if (dashboardNew.equals(APIS.Edit)) {
+                dashboard_show_relative.setVisibility(View.VISIBLE);
+                dashboard_hide_relative.setVisibility(View.GONE);
+                if (Utility.isNetworkConnected(mContext)) {
+                    ChartAPI(chart_value_data);
 
-            } else {
-                Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                } else {
+                    Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
+                }
             }
-        }else if (dashboardNew.equals(APIS.Edit)){
-            dashboard_show_relative.setVisibility(View.VISIBLE);
-            dashboard_hide_relative.setVisibility(View.GONE);
+        } else {
             if (Utility.isNetworkConnected(mContext)) {
                 ChartAPI(chart_value_data);
 

@@ -192,8 +192,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
 
-
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -396,10 +394,16 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         switch (item.getItemId()) {
 
                             case R.id.navigation_dashboard:
-                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
-                                    video_call.setVisibility(View.GONE);
-                                    shopping_btn.setVisibility(View.GONE);
-                                }else {
+                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show) != null
+                                        && Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals("")) {
+                                    if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
+                                        video_call.setVisibility(View.GONE);
+                                        shopping_btn.setVisibility(View.GONE);
+                                    } else {
+                                        video_call.setVisibility(View.VISIBLE);
+                                        shopping_btn.setVisibility(View.VISIBLE);
+                                    }
+                                } else {
                                     video_call.setVisibility(View.VISIBLE);
                                     shopping_btn.setVisibility(View.VISIBLE);
                                 }
@@ -612,13 +616,13 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             if (dashBoardFragment != null) {
 
-                               dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
+                                dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
 
 
                                 if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
                                     video_call.setVisibility(View.GONE);
                                     shopping_btn.setVisibility(View.GONE);
-                                }else {
+                                } else {
                                     video_call.setVisibility(View.VISIBLE);
                                     shopping_btn.setVisibility(View.VISIBLE);
                                 }
