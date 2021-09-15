@@ -410,7 +410,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 					} else {
 						mainActivity.Alert_countAPI();
 					}
-					manager.cancelAll();
+
 					
 				}
 			}
