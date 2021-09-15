@@ -14,6 +14,8 @@ public class APIS {
 
     public static final String SENDBIRD_APP_ID = BuildConfig.sendBirdAppID;// prod
 
+    public static final String ShoppingAuthorizationKey = BuildConfig.Authorization;
+
     //40 plus API
     public static final String plus40Signup = "users";
 

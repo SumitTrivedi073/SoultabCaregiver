@@ -352,7 +352,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 					public Map<String, String> getHeaders() throws AuthFailureError {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-						params.put("Authorization", "Basic YWRtaW46TW9iaXZAIzEyMw==");
+						params.put("Authorization", APIS.ShoppingAuthorizationKey);
 						
 						return params;
 					}

@@ -1,7 +1,10 @@
 package com.soultabcaregiver.activity.shopping;
 
+import static com.soultabcaregiver.WebService.APIS.ShoppingAuthorizationKey;
+
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -185,8 +188,13 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 			public Map<String, String> getHeaders() throws AuthFailureError {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-				params.put("Authorization", "Basic YWRtaW46TW9iaXZAIzEyMw==");
-				
+				//Development
+				//	params.put("Authorization", "Basic YWRtaW46TW9iaXYxMjNAIw==");
+				//Production
+				params.put("Authorization", ShoppingAuthorizationKey);
+				Log.e("AuthorizationKey",ShoppingAuthorizationKey);
+
+
 				return params;
 			}
 			
@@ -204,28 +212,5 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 				break;
 		}
 	}
-	
-	private class CustomJsonArrayRequest extends JsonRequest<JSONArray> {
-		
-		public CustomJsonArrayRequest(int method, String url, JSONObject jsonRequest,
-		                              Response.Listener<JSONArray> listener,
-		                              Response.ErrorListener errorListener) {
-			super(method, url, (jsonRequest == null) ? null : jsonRequest.toString(), listener,
-					errorListener);
-		}
-		
-		@Override
-		protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
-			try {
-				String jsonString = new String(response.data,
-						HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
-				return Response.success(new JSONArray(jsonString),
-						HttpHeaderParser.parseCacheHeaders(response));
-			} catch (UnsupportedEncodingException e) {
-				return Response.error(new ParseError(e));
-			} catch (JSONException je) {
-				return Response.error(new ParseError(je));
-			}
-		}
-	}
+
 }
