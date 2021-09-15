@@ -104,7 +104,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 						handleIncomingCall(context, remoteMessage);
 					}
 				});
-			} else if (remoteMessage != null && remoteMessage.getNotification().getBody() != null) {
+			}  if (remoteMessage != null && remoteMessage.getNotification().getBody() != null) {
 				Log.d(TAG,
 						"Message Notification Body: " + remoteMessage.getNotification().getBody());
 				Log.d(TAG,
@@ -113,7 +113,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 				getNotification(context, remoteMessage.getNotification().getTitle(),
 						remoteMessage.getNotification().getBody());
 				
-			} else if (remoteMessage != null && remoteMessage.getData().size() > 0) {
+			}  if (remoteMessage != null && remoteMessage.getData().size() > 0) {
 				
 				count = count + 1;
 				Log.e("remote_msg_size==", remoteMessage.getData().toString());
@@ -410,7 +410,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 					} else {
 						mainActivity.Alert_countAPI();
 					}
-					manager.cancelAll();
+
 					
 				}
 			}

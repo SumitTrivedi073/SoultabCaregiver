@@ -3,6 +3,7 @@ package com.soultabcaregiver.activity.main_screen;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.FragmentManager;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -148,6 +149,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         video_call = findViewById(R.id.video_call);
         shopping_btn = findViewById(R.id.shopping_btn);
 
+        //clear all notification
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
 
         BottomNavigationViewHelper.removeShiftMode(navigationView);
 
