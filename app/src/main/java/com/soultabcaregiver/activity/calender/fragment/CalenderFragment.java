@@ -342,9 +342,9 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         int mMonth = calendar1.get(Calendar.MONTH);
         int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
         calendar1.set(Calendar.DAY_OF_MONTH, mDay);
-
+/*
         long endOfMonth = calendar1.getTimeInMillis();
-        calendarView.setMaxDate(endOfMonth);
+        calendarView.setMaxDate(endOfMonth);*/
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
