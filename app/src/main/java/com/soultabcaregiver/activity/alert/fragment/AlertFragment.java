@@ -23,6 +23,7 @@ import com.soultabcaregiver.activity.alert.adapter.AlertAdapter;
 import com.soultabcaregiver.activity.alert.model.AlertModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.companion.CompanionMainActivity;
 import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -48,7 +49,7 @@ public class AlertFragment extends BaseFragment {
     
     MainActivity mainActivity;
     
-    TalkFragment talkFragment;
+    CompanionMainActivity companionMainActivity;
     
     public static AlertFragment instance;
 
@@ -71,6 +72,7 @@ public class AlertFragment extends BaseFragment {
         blank_card = view.findViewById(R.id.blank_card);
     
         mainActivity = MainActivity.instance;
+        companionMainActivity = CompanionMainActivity.instance;
         instance = AlertFragment.this;
     
         create_alert_btn.setOnClickListener(new View.OnClickListener() {
@@ -194,10 +196,15 @@ public class AlertFragment extends BaseFragment {
 
                     if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
 
-                        if (mainActivity != null) {
-                            mainActivity.Alert_countAPI();
+                        if (Utility.getSharedPreferences(mContext,APIS.is_companion).equals("0")) {
+                            if (mainActivity != null) {
+                                mainActivity.Alert_countAPI();
+                            }
+                        }else {
+                            if (companionMainActivity != null) {
+                                companionMainActivity.Alert_countAPI();
+                            }
                         }
-
                     }else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
                         logout_app(alertCountModel.getMessage());
                     }else {

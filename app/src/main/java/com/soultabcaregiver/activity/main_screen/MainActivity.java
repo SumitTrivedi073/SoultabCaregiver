@@ -142,7 +142,6 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         mContext = this;
         buildGoogleApiClient();
-
         instance = MainActivity.this;
 
         navigationView = findViewById(R.id.bottom_navigation);

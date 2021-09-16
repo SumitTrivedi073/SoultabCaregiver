@@ -41,6 +41,7 @@ import com.soultabcaregiver.Model.LoginModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.companion.CompanionMainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.utils.AppController;
@@ -95,14 +96,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
 			if (resultCode == RESULT_CANCELED) {
-				//	Toast.makeText(getApplicationContext(),"Update canceled by user! Result Code:
-				//	" + resultCode, Toast.LENGTH_LONG).show();
 				Utility.ShowToast(mContext, "Please update and enjoy the app");
 			} else if (resultCode == RESULT_OK) {
 				Utility.ShowToast(mContext, "App update success");
 			} else {
-				//Toast.makeText(getApplicationContext(),"Update Failed! Result Code: " +
-				// resultCode, Toast.LENGTH_LONG).show();
 				checkUpdate();
 			}
 			//In app Update link
@@ -304,6 +301,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getId());
 									Utility.setSharedPreference(mContext, APIS.caregiver_id,
 											loginModel.getResponse().getCaregiver_id());
+
+									Utility.setSharedPreference(mContext, APIS.is_companion,
+											loginModel.getResponse().getIs_companion());
+
 									Utility.setSharedPreference(mContext, APIS.Caregiver_name,
 											loginModel.getResponse().getName());
 									Utility.setSharedPreference(mContext, APIS.Caregiver_lastname,
@@ -350,9 +351,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
 
 									if (loginModel.getResponse().getIsSendBirdUser().equals("0")) {
-										updateSendBirdFlag(loginModel);
+										updateSendBirdFlag();
 									} else {
-										authenticateInSendBird(loginModel);
+										authenticateInSendBird();
 									}
 								} else {
 									hideProgressDialog();
@@ -382,7 +383,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		AppController.getInstance().addToRequestQueue(jsonObjReq);
 	}
 	
-	private void updateSendBirdFlag(LoginModel loginModel) {
+	private void updateSendBirdFlag() {
 		JSONObject mainObject = new JSONObject();
 		try {
 			mainObject.put("user_id", Utility.getSharedPreferences(this, APIS.caregiver_id));
@@ -392,7 +393,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		}
 		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
 				APIS.BASEURL + APIS.update_caregiver_flags, mainObject, response -> {
-			authenticateInSendBird(loginModel);
+			authenticateInSendBird();
 		}, error -> {
 			VolleyLog.d(TAG, "Error: " + error.getMessage());
 			hideProgressDialog();
@@ -412,17 +413,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				new DefaultRetryPolicy(10000, 1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 	}
 	
-	private void authenticateInSendBird(LoginModel loginModel) {
+	private void authenticateInSendBird() {
 		SendBirdAuthentication.authenticate(mContext,
 				Utility.getSharedPreferences(mContext, APIS.caregiver_id),
 				Utility.getSharedPreferences(mContext, APIS.Caregiver_name),
 				Utility.getSharedPreferences(mContext, APIS.profile_image), isSuccess -> {
 					hideProgressDialog();
 					if (isSuccess) {
-						
-						Intent intent = new Intent(mContext, MainActivity.class);
-						startActivity(intent);
-						finishAffinity();
+
+						if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
+							Intent intent = new Intent(mContext, MainActivity.class);
+							startActivity(intent);
+							finishAffinity();
+						}else {
+							Intent intent = new Intent(mContext, CompanionMainActivity.class);
+							startActivity(intent);
+							finishAffinity();
+						}
 						//	ShowAlertResponse(loginModel.getMessage(), "1");
 					} else {
 						ShowToast(mContext, "Sendbird Auth " + "Failed");

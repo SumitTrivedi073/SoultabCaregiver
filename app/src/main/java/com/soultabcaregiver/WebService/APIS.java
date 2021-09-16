@@ -104,6 +104,9 @@ public class APIS {
 
 
     //User Detail
+
+    public static final String is_companion = "is_companion";
+
     public static final String user_id = "user_id";
 
     public static final String caregiver_id = "caregiver_id";

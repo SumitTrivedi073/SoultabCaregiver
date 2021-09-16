@@ -16,8 +16,11 @@ import android.widget.TextView;
 
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.companion.CompanionMainActivity;
 import com.soultabcaregiver.sendbird_chat.utils.ImageUtils;
+import com.soultabcaregiver.utils.Utility;
 
 import androidx.core.content.ContextCompat;
 
@@ -40,6 +43,7 @@ public class NewMessageActivity extends BaseActivity {
 	private ImageView groupPic;
 	
 	private TextView messageTextView;
+
 	
 	@SuppressLint ("SetTextI18n")
 	@Override
@@ -122,12 +126,20 @@ public class NewMessageActivity extends BaseActivity {
 			finish();
 		});
 		findViewById(R.id.replyBtn).setOnClickListener(v -> {
-			
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			finish();
+
+			if (Utility.getSharedPreferences(this, APIS.is_companion).equals("0")) {
+				Intent intent = new Intent(this, MainActivity.class);
+				intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+				finish();
+			}else {
+				Intent intent = new Intent(this, CompanionMainActivity.class);
+				intent.putExtra(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+				finish();
+			}
 		});
 	}
 	
