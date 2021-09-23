@@ -24,7 +24,6 @@ import com.soultabcaregiver.activity.alert.model.AlertModel;
 import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.companion.CompanionMainActivity;
-import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -49,8 +48,6 @@ public class AlertFragment extends BaseFragment {
     
     MainActivity mainActivity;
     
-    CompanionMainActivity companionMainActivity;
-    
     public static AlertFragment instance;
 
     @Override
@@ -72,13 +69,16 @@ public class AlertFragment extends BaseFragment {
         blank_card = view.findViewById(R.id.blank_card);
     
         mainActivity = MainActivity.instance;
-        companionMainActivity = CompanionMainActivity.instance;
         instance = AlertFragment.this;
+    
+        if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
+            create_alert_btn.setVisibility(View.GONE);
+        }
     
         create_alert_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-    
+            
                 Intent intent = new Intent(mContext, CaregiverListActivity.class);
                 startActivity(intent);
             
@@ -201,7 +201,9 @@ public class AlertFragment extends BaseFragment {
                                 mainActivity.Alert_countAPI();
                             }
                         }else {
-                            if (companionMainActivity != null) {
+                            if (getActivity() instanceof CompanionMainActivity) {
+                                CompanionMainActivity companionMainActivity =
+                                        (CompanionMainActivity) getActivity();
                                 companionMainActivity.Alert_countAPI();
                             }
                         }
