@@ -101,17 +101,17 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_toStartOf="@+id/view_pwd1"
+                android:layout_toLeftOf="@+id/view_pwd1"
                 android:background="@color/transparent"
                 android:fontFamily="@font/muli_bold"
                 android:gravity="center|start"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:inputType="textPassword"
                 android:hint="@string/hint_pass"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@color/themecolor"
-                android:textSize="@dimen/_12sdp"
-                android:layout_toStartOf="@+id/view_pwd1"
-                android:layout_toLeftOf="@+id/view_pwd1" />
+                android:textSize="@dimen/_12sdp" />
 
 
             <CheckBox

@@ -337,6 +337,12 @@
     <string name="select_one_message">Please select atleast one message</string>
     <string name="only_view_permission">Sorry you do not have permission to edit</string>
     <string name="permission_see_this_txt">Sorry you do not have \npermissions to see \nthis page</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="firstname">Firstname</string>
+    <string name="lastname">Lastname</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="change_password">Change Password?</string>
 
     <!--Added by Sumit-->
 
