@@ -360,8 +360,8 @@
                             android:background="@color/transparent"
                             android:fontFamily="@font/muli_bold"
                             android:gravity="center|start"
-                            android:hint="@string/enter_user_name"
-                           android:maxLines="1"
+                            android:hint="@string/passowrd_not_match"
+                            android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="@color/themecolor"
                             android:textSize="@dimen/_12sdp" />

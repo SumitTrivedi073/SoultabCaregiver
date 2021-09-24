@@ -344,7 +344,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="change_password">Change Password?</string>
     <string name="need_assistance">Need Assistance?</string>
-
+    <string name="enter_password">Please Enter your Password</string>
     <!--Added by Sumit-->
 
 </resources>

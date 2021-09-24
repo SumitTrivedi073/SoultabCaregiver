@@ -130,6 +130,26 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 				requireActivity().onBackPressed();
 				
 			break;
+			
+			case R.id.btn_SubmitProfile:
+				if (TextUtils.isEmpty(Firstname.getText().toString().trim())) {
+					Utility.ShowToast(mContext, getResources().getString(R.string.hint_usr));
+				} else if (Lastname.getText().toString().isEmpty()) {
+					Utility.ShowToast(mContext, getResources().getString(R.string.hint_usr2));
+					
+				} else if (CountryCode.getText().toString().isEmpty()) {
+					Utility.ShowToast(mContext, getResources().getString(R.string.select_country_code));
+					
+				} else if (MobileNumber.getText().toString().isEmpty()) {
+					Utility.ShowToast(mContext, getResources().getString(R.string.enter_phone_number));
+					
+				} else if (!Utility.isValidMobile(MobileNumber.getText().toString())) {
+					Utility.ShowToast(mContext, getResources().getString(R.string.valid_phone1));
+					
+				} else {
+				
+				}
+				break;
 		}
 	}
 	
