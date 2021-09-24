@@ -29,6 +29,7 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
+import com.soultabcaregiver.companion.fragment.ProfileFragment;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
@@ -171,6 +172,10 @@ public class CompanionMainActivity extends BaseActivity {
 		TextView goodMorningText = findViewById(R.id.good_morning_txt);
 		TextView companionNameText = findViewById(R.id.user_name_txt);
 		CircleImageView profilePic = findViewById(R.id.profilePic);
+		
+		profilePic.setOnClickListener(
+				v -> Utility.loadFragment(CompanionMainActivity.this, new ProfileFragment(), true,
+						ProfileFragment.class.getSimpleName()));
 		
 		Glide.with(this).load(Utility.getSharedPreferences(this, APIS.profile_image)).
 				placeholder(R.drawable.user_img).into(profilePic);
