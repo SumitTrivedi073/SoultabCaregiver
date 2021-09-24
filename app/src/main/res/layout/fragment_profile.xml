@@ -184,8 +184,8 @@
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/popup_relative">
 
-                        <EditText
-                            android:id="@+id/txt_email_address"
+                        <TextView
+                            android:id="@+id/email_address"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/_10sdp"
@@ -193,8 +193,6 @@
                             android:fontFamily="@font/muli_bold"
                             android:gravity="center|start"
                             android:hint="@string/enter_your_email_address"
-                            android:imeOptions="actionNext"
-                            android:inputType="textEmailAddress"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="@color/themecolor"
@@ -230,7 +228,7 @@
                             android:layout_marginTop="@dimen/_5sdp">
 
                             <LinearLayout
-                                android:id="@+id/countryLL"
+                                android:id="@+id/CountryLL"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_centerVertical="true"
@@ -238,7 +236,7 @@
                                 android:orientation="horizontal">
 
                                 <TextView
-                                    android:id="@+id/countryCodeTv"
+                                    android:id="@+id/countryCodetxt"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="center"
@@ -263,11 +261,11 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_marginStart="@dimen/_5sdp"
-                                android:layout_toEndOf="@+id/countryLL"
+                                android:layout_toEndOf="@+id/CountryLL"
                                 android:background="@drawable/popup_relative">
 
                                 <EditText
-                                    android:id="@+id/txt_mobile_number"
+                                    android:id="@+id/mobile_number"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginStart="@dimen/_10sdp"
@@ -275,7 +273,7 @@
                                     android:fontFamily="@font/muli_bold"
                                     android:gravity="center|start"
                                     android:hint="@string/enter_phone_number"
-                                    android:imeOptions="actionNext"
+                                    android:imeOptions="actionDone"
                                     android:inputType="phone"
                                     android:maxLength="10"
                                     android:maxLines="1"
@@ -315,8 +313,8 @@
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/popup_relative">
 
-                        <EditText
-                            android:id="@+id/txt_username"
+                        <TextView
+                            android:id="@+id/username"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/_10sdp"
@@ -324,8 +322,6 @@
                             android:fontFamily="@font/muli_bold"
                             android:gravity="center|start"
                             android:hint="@string/enter_user_name"
-                            android:imeOptions="actionNext"
-                            android:inputType="textPersonName"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="@color/themecolor"
@@ -356,8 +352,8 @@
                         android:layout_marginTop="@dimen/_5sdp"
                         android:background="@drawable/popup_relative">
 
-                        <EditText
-                            android:id="@+id/txt_Password"
+                        <TextView
+                            android:id="@+id/password_ext"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginStart="@dimen/_10sdp"
@@ -365,9 +361,7 @@
                             android:fontFamily="@font/muli_bold"
                             android:gravity="center|start"
                             android:hint="@string/enter_user_name"
-                            android:imeOptions="actionDone"
-                            android:inputType="textPassword"
-                            android:maxLines="1"
+                           android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="@color/themecolor"
                             android:textSize="@dimen/_12sdp" />
@@ -388,6 +382,7 @@
                     </RelativeLayout>
 
                     <TextView
+                        android:id="@+id/changePassword"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
