@@ -1,12 +1,16 @@
 package com.soultabcaregiver.talk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.soultabcaregiver.Base.BaseFragment;
@@ -15,13 +19,17 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.companion.CompanionMainActivity;
+import com.soultabcaregiver.companion.fragment.ProfileFragment;
 import com.soultabcaregiver.sendbird_chat.CallListFragment;
 import com.soultabcaregiver.sendbird_chat.ChatFragment;
+import com.soultabcaregiver.sendbird_chat.ChatHelper;
+import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +40,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
@@ -55,6 +64,9 @@ public class TalkFragment extends BaseFragment {
 	
 	private ViewPager viewPager;
 	
+	private RelativeLayout companionDetailLayout;
+	
+	@SuppressLint ("SetTextI18n")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -63,6 +75,55 @@ public class TalkFragment extends BaseFragment {
 		mContext = getActivity();
 		instance = TalkFragment.this;
 		mainActivity = MainActivity.instance;
+		
+		companionDetailLayout = view.findViewById(R.id.companionDetailsLayout);
+		
+		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
+			companionDetailLayout.setVisibility(View.VISIBLE);
+			
+			TextView goodMorningText = view.findViewById(R.id.good_morning_txt);
+			TextView companionNameText = view.findViewById(R.id.user_name_txt);
+			CircleImageView profilePic = view.findViewById(R.id.profilePic);
+			
+			view.findViewById(R.id.needAsistance).setOnClickListener(v -> {
+				ArrayList<String> ids = new ArrayList<>();
+				ids.add("Soultab Support");
+				
+				ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+					Log.e("channel", "" + groupChannel.getUrl());
+					Utility.loadFragment(getActivity(),
+							ConversationFragment.newInstance(groupChannel.getUrl()), true,
+							ConversationFragment.class.getSimpleName());
+				});
+				
+			});
+			
+			Calendar calendar = Calendar.getInstance();
+			int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+			calendar.set(Calendar.DAY_OF_MONTH, mDay);
+			int timeOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+			if (timeOfDay < 12) {
+				goodMorningText.setText(getResources().getString(R.string.good_morning));
+			} else if (timeOfDay < 16) {
+				goodMorningText.setText(getResources().getString(R.string.good_afternoon));
+			} else if (timeOfDay < 21) {
+				goodMorningText.setText(getResources().getString(R.string.good_evening));
+			} else {
+				goodMorningText.setText(getResources().getString(R.string.good_evening));
+			}
+			
+			profilePic.setOnClickListener(
+					v -> Utility.loadFragment(requireActivity(), new ProfileFragment(), true,
+							ProfileFragment.class.getSimpleName()));
+			
+			Glide.with(this).load(
+					Utility.getSharedPreferences(requireContext(), APIS.profile_image)).
+					placeholder(R.drawable.user_img).into(profilePic);
+			
+			companionNameText.setText(Utility.getSharedPreferences(requireContext(),
+					APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext,
+					APIS.Caregiver_lastname));
+		}
 		tabs = view.findViewById(R.id.tabs);
 		viewPager = view.findViewById(R.id.viewpager);
 		viewPager.setOffscreenPageLimit(1);
@@ -73,8 +134,7 @@ public class TalkFragment extends BaseFragment {
 		
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
-			public void onPageScrolled(int position, float positionOffset,
-			                           int positionOffsetPixels) {
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 				
 			}
 			
@@ -90,8 +150,7 @@ public class TalkFragment extends BaseFragment {
 						}
 					} else {
 						if (getActivity() instanceof CompanionMainActivity) {
-							CompanionMainActivity companionMainActivity =
-									(CompanionMainActivity) getActivity();
+							CompanionMainActivity companionMainActivity = (CompanionMainActivity) getActivity();
 							companionMainActivity.Alert_countAPI();
 						}
 					}

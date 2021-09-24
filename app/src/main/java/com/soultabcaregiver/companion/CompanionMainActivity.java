@@ -1,6 +1,5 @@
 package com.soultabcaregiver.companion;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,15 +8,11 @@ import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -29,7 +24,6 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
-import com.soultabcaregiver.companion.fragment.ProfileFragment;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
@@ -38,12 +32,10 @@ import com.soultabcaregiver.utils.Utility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
@@ -62,8 +54,6 @@ public class CompanionMainActivity extends BaseActivity {
 	private BroadcastReceiver receiver;
 	
 	private BroadcastReceiver mReceiver;
-	
-	private RelativeLayout companionDetailLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +81,6 @@ public class CompanionMainActivity extends BaseActivity {
 						
 					}).addOnFailureListener(e -> e.printStackTrace());
 		}
-		
-		setupUI();
 		
 		if (getIntent().hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
 			checkForCurrentScreen(getIntent().getStringExtra(EXTRA_GROUP_CHANNEL_URL));
@@ -154,49 +142,6 @@ public class CompanionMainActivity extends BaseActivity {
 	
 	public static CompanionMainActivity getInstance() {
 		return instance;
-	}
-	
-	public void hideCompanionDetailLayout() {
-		companionDetailLayout.setVisibility(View.GONE);
-	}
-	
-	public void showCompanionDetailLayout() {
-		companionDetailLayout.setVisibility(View.VISIBLE);
-	}
-	
-	@SuppressLint ("SetTextI18n")
-	private void setupUI() {
-		
-		companionDetailLayout = findViewById(R.id.companionDetailsLayout);
-		
-		TextView goodMorningText = findViewById(R.id.good_morning_txt);
-		TextView companionNameText = findViewById(R.id.user_name_txt);
-		CircleImageView profilePic = findViewById(R.id.profilePic);
-		
-		profilePic.setOnClickListener(
-				v -> Utility.loadFragment(CompanionMainActivity.this, new ProfileFragment(), true,
-						ProfileFragment.class.getSimpleName()));
-		
-		Glide.with(this).load(Utility.getSharedPreferences(this, APIS.profile_image)).
-				placeholder(R.drawable.user_img).into(profilePic);
-		
-		companionNameText.setText(Utility.getSharedPreferences(this,
-				APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext,
-				APIS.Caregiver_lastname));
-		
-		Calendar calendar = Calendar.getInstance();
-		int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-		calendar.set(Calendar.DAY_OF_MONTH, mDay);
-		int timeOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-		if (timeOfDay < 12) {
-			goodMorningText.setText(getResources().getString(R.string.good_morning));
-		} else if (timeOfDay < 16) {
-			goodMorningText.setText(getResources().getString(R.string.good_afternoon));
-		} else if (timeOfDay < 21) {
-			goodMorningText.setText(getResources().getString(R.string.good_evening));
-		} else {
-			goodMorningText.setText(getResources().getString(R.string.good_evening));
-		}
 	}
 	
 	private void registerReceiver() {

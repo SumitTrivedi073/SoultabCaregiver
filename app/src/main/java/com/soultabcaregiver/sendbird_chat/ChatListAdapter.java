@@ -18,11 +18,13 @@ import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_chat.utils.DateUtils;
 import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ImageUtils;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
 import com.soultabcaregiver.sendbird_chat.utils.TypingIndicator;
+import com.soultabcaregiver.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -105,7 +107,7 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 		notifyDataSetChanged();
 	}
 	
-	public void load() {
+	public void load(boolean loadOnlyUserChat) {
 		try {
 			File appDir = new File(mContext.getCacheDir(), SendBird.getApplicationId());
 			appDir.mkdirs();
@@ -118,11 +120,30 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 			
 			// Reset channel list, then add cached data.
 			mChannelList.clear();
-			for (int i = 0; i < dataArray.length; i++) {
-				mChannelList.add((GroupChannel) BaseChannel.buildFromSerializedData(
-						Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
-			}
 			
+			if (loadOnlyUserChat) {
+				String userId = Utility.getSharedPreferences(mContext, APIS.user_id);
+				ArrayList<String> ids = new ArrayList<>();
+				ids.add(userId);
+				ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+					for (String s : dataArray) {
+						GroupChannel groupChannel1 =
+								(GroupChannel) BaseChannel.buildFromSerializedData(
+										Base64.decode(s, Base64.DEFAULT | Base64.NO_WRAP));
+						if (groupChannel.getUrl().equals(groupChannel1.getUrl())) {
+							mChannelList.add(groupChannel);
+							break;
+						}
+						
+					}
+				});
+			} else {
+				for (String s : dataArray) {
+					GroupChannel groupChannel = (GroupChannel) BaseChannel.buildFromSerializedData(
+							Base64.decode(s, Base64.DEFAULT | Base64.NO_WRAP));
+					mChannelList.add(groupChannel);
+				}
+			}
 			notifyDataSetChanged();
 		} catch (Exception e) {
 			// Nothing to load.
