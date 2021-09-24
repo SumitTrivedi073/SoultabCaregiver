@@ -405,11 +405,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                                         shopping_btn.setVisibility(View.GONE);
                                     } else {
                                         video_call.setVisibility(View.VISIBLE);
-                                        shopping_btn.setVisibility(View.VISIBLE);
+                                        shopping_btn.setVisibility(View.GONE);
                                     }
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
-                                    shopping_btn.setVisibility(View.VISIBLE);
+                                    shopping_btn.setVisibility(View.GONE);
                                 }
                                 Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
                                         false, null);
@@ -628,7 +628,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                                     shopping_btn.setVisibility(View.GONE);
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
-                                    shopping_btn.setVisibility(View.VISIBLE);
+                                    shopping_btn.setVisibility(View.GONE);
                                 }
                             }
 
