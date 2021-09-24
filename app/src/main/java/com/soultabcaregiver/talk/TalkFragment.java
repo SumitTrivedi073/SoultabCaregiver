@@ -23,6 +23,7 @@ import com.soultabcaregiver.companion.fragment.ProfileFragment;
 import com.soultabcaregiver.sendbird_chat.CallListFragment;
 import com.soultabcaregiver.sendbird_chat.ChatFragment;
 import com.soultabcaregiver.sendbird_chat.ChatHelper;
+import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,6 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -52,6 +52,12 @@ public class TalkFragment extends BaseFragment {
 	
 	TabLayout tabs;
 	
+	TabLayout itemView;
+	
+	View badge;
+	
+	TextView tv_badge;
+	
 	Context mContext;
 	
 	MainActivity mainActivity;
@@ -60,10 +66,7 @@ public class TalkFragment extends BaseFragment {
 	
 	private RelativeLayout companionDetailLayout;
 	
-	TextView contactAssistanceBtn;
-	
-	
-	
+	@SuppressLint ("SetTextI18n")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -72,18 +75,66 @@ public class TalkFragment extends BaseFragment {
 		mContext = getActivity();
 		instance = TalkFragment.this;
 		mainActivity = MainActivity.instance;
+		
+		companionDetailLayout = view.findViewById(R.id.companionDetailsLayout);
+		
+		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
+			companionDetailLayout.setVisibility(View.VISIBLE);
+			
+			TextView goodMorningText = view.findViewById(R.id.good_morning_txt);
+			TextView companionNameText = view.findViewById(R.id.user_name_txt);
+			CircleImageView profilePic = view.findViewById(R.id.profilePic);
+			
+			view.findViewById(R.id.needAsistance).setOnClickListener(v -> {
+				ArrayList<String> ids = new ArrayList<>();
+				ids.add("Soultab Support");
+				
+				ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+					Log.e("channel", "" + groupChannel.getUrl());
+					Utility.loadFragment(getActivity(),
+							ConversationFragment.newInstance(groupChannel.getUrl()), true,
+							ConversationFragment.class.getSimpleName());
+				});
+				
+			});
+			
+			Calendar calendar = Calendar.getInstance();
+			int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+			calendar.set(Calendar.DAY_OF_MONTH, mDay);
+			int timeOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+			if (timeOfDay < 12) {
+				goodMorningText.setText(getResources().getString(R.string.good_morning));
+			} else if (timeOfDay < 16) {
+				goodMorningText.setText(getResources().getString(R.string.good_afternoon));
+			} else if (timeOfDay < 21) {
+				goodMorningText.setText(getResources().getString(R.string.good_evening));
+			} else {
+				goodMorningText.setText(getResources().getString(R.string.good_evening));
+			}
+			
+			profilePic.setOnClickListener(
+					v -> Utility.loadFragment(requireActivity(), new ProfileFragment(), true,
+							ProfileFragment.class.getSimpleName()));
+			
+			Glide.with(this).load(
+					Utility.getSharedPreferences(requireContext(), APIS.profile_image)).
+					placeholder(R.drawable.user_img).into(profilePic);
+			
+			companionNameText.setText(Utility.getSharedPreferences(requireContext(),
+					APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext,
+					APIS.Caregiver_lastname));
+		}
 		tabs = view.findViewById(R.id.tabs);
 		viewPager = view.findViewById(R.id.viewpager);
 		viewPager.setOffscreenPageLimit(1);
 		tabs.setupWithViewPager(viewPager);
 		setupViewPager(viewPager);
-		setupUI(view);
+		
 		setBadge();
 		
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
-			public void onPageScrolled(int position, float positionOffset,
-			                           int positionOffsetPixels) {
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 				
 			}
 			
@@ -99,8 +150,7 @@ public class TalkFragment extends BaseFragment {
 						}
 					} else {
 						if (getActivity() instanceof CompanionMainActivity) {
-							CompanionMainActivity companionMainActivity =
-									(CompanionMainActivity) getActivity();
+							CompanionMainActivity companionMainActivity = (CompanionMainActivity) getActivity();
 							companionMainActivity.Alert_countAPI();
 						}
 					}
@@ -118,70 +168,33 @@ public class TalkFragment extends BaseFragment {
 		return view;
 	}
 	
+	@Override
+	public void onViewCreated(@NonNull @NotNull View view,
+	                          @Nullable @org.jetbrains.annotations.Nullable
+			                          Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		if (getArguments() != null && getArguments().getString(EXTRA_GROUP_CHANNEL_URL) != null) {
+			viewPager.setCurrentItem(0);
+			navigateToConversationFragment(getArguments().getString(EXTRA_GROUP_CHANNEL_URL));
+		}
+	}
+	
+	public static TalkFragment newInstance(String channelUrl) {
+		Bundle args = new Bundle();
+		TalkFragment fragment = new TalkFragment();
+		if (channelUrl != null) {
+			args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		}
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
 	private void setupViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
 		adapter.addFragment(new ChatFragment(), getString(R.string.chat));
 		adapter.addFragment(new AlertFragment(), getString(R.string.alert));
 		adapter.addFragment(new CallListFragment(), getString(R.string.calls));
 		viewPager.setAdapter(adapter);
-		
-		
-	}
-	
-	@SuppressLint ("SetTextI18n")
-	private void setupUI(View view) {
-		
-		companionDetailLayout = view.findViewById(R.id.companionDetailsLayout);
-		
-		TextView goodMorningText = view.findViewById(R.id.good_morning_txt);
-		TextView companionNameText = view.findViewById(R.id.user_name_txt);
-		CircleImageView profilePic = view.findViewById(R.id.profilePic);
-		contactAssistanceBtn = view.findViewById(R.id.contactAssistanceBtn);
-		
-		profilePic.setOnClickListener(
-				v -> Utility.loadFragment(((AppCompatActivity)mContext), new ProfileFragment(), true,
-						ProfileFragment.class.getSimpleName()));
-		
-		contactAssistanceBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ArrayList<String> ids = new ArrayList<>();
-				ids.add("Soultab Support");
-				
-				ChatHelper.createGroupChannel(ids, true, groupChannel -> {
-					Log.e("channel", "" + groupChannel.getUrl());
-					
-					navigateToConversationFragment(groupChannel.getUrl());
-				});
-			}
-		});
-		
-		Glide.with(this).load(Utility.getSharedPreferences(mContext, APIS.profile_image)).
-				placeholder(R.drawable.user_img).into(profilePic);
-		
-		companionNameText.setText(Utility.getSharedPreferences(mContext,
-				APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext,
-				APIS.Caregiver_lastname));
-		
-		Calendar calendar = Calendar.getInstance();
-		int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-		calendar.set(Calendar.DAY_OF_MONTH, mDay);
-		int timeOfDay = calendar.get(Calendar.HOUR_OF_DAY);
-		if (timeOfDay < 12) {
-			goodMorningText.setText(getResources().getString(R.string.good_morning));
-		} else if (timeOfDay < 16) {
-			goodMorningText.setText(getResources().getString(R.string.good_afternoon));
-		} else if (timeOfDay < 21) {
-			goodMorningText.setText(getResources().getString(R.string.good_evening));
-		} else {
-			goodMorningText.setText(getResources().getString(R.string.good_evening));
-		}
-		
-		if (Utility.getSharedPreferences(mContext,APIS.is_companion).equals("1")){
-			companionDetailLayout.setVisibility(View.VISIBLE);
-		}else {
-			companionDetailLayout.setVisibility(View.GONE);
-		}
 		
 		
 	}
@@ -209,32 +222,11 @@ public class TalkFragment extends BaseFragment {
 		
 	}
 	
-	@Override
-	public void onViewCreated(@NonNull @NotNull View view,
-	                          @Nullable @org.jetbrains.annotations.Nullable
-			                          Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		if (getArguments() != null && getArguments().getString(EXTRA_GROUP_CHANNEL_URL) != null) {
-			viewPager.setCurrentItem(0);
-			navigateToConversationFragment(getArguments().getString(EXTRA_GROUP_CHANNEL_URL));
-		}
-	}
-	
 	public void navigateToConversationFragment(String url) {
 		TalkHolderFragment talkHolderFragment = (TalkHolderFragment) getParentFragment();
 		if (talkHolderFragment != null) {
 			talkHolderFragment.navigateToConversationFragment(url);
 		}
-	}
-	
-	public static TalkFragment newInstance(String channelUrl) {
-		Bundle args = new Bundle();
-		TalkFragment fragment = new TalkFragment();
-		if (channelUrl != null) {
-			args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-		}
-		fragment.setArguments(args);
-		return fragment;
 	}
 	
 	public void navigateToCreateGroupFragment(boolean isForGroupChat) {

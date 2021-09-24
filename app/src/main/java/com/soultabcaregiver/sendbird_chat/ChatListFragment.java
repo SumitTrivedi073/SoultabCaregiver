@@ -24,6 +24,8 @@ import com.soultabcaregiver.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -73,7 +75,11 @@ public class ChatListFragment extends BaseFragment {
 			                          Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mChannelListAdapter = new ChatListAdapter(getActivity());
-		mChannelListAdapter.load();
+		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
+			mChannelListAdapter.load(false);
+		} else {
+			mChannelListAdapter.load(true);
+		}
 		setUpRecyclerView();
 		setUpChannelListAdapter();
 		getMyChatChannels();
@@ -193,7 +199,10 @@ public class ChatListFragment extends BaseFragment {
 		mChannelListQuery = GroupChannel.createMyGroupChannelListQuery();
 		mChannelListQuery.setIncludeEmpty(true);
 		mChannelListQuery.setMemberStateFilter(GroupChannelListQuery.MemberStateFilter.ALL);
-		
+		String userId = Utility.getSharedPreferences(mContext, APIS.user_id);
+		ArrayList<String> ids = new ArrayList<>();
+		ids.add(userId);
+		mChannelListQuery.setUserIdsIncludeFilter(ids, GroupChannelListQuery.QueryType.AND);
 		mChannelListQuery.next((list, e) -> {
 			if (e != null) {
 				// Error!

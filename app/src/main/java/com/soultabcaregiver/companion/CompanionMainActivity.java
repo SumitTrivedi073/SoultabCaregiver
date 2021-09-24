@@ -1,6 +1,5 @@
 package com.soultabcaregiver.companion;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,15 +8,11 @@ import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -29,7 +24,6 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
-import com.soultabcaregiver.companion.fragment.ProfileFragment;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
@@ -38,12 +32,10 @@ import com.soultabcaregiver.utils.Utility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
@@ -62,8 +54,6 @@ public class CompanionMainActivity extends BaseActivity {
 	private BroadcastReceiver receiver;
 	
 	private BroadcastReceiver mReceiver;
-	
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +81,6 @@ public class CompanionMainActivity extends BaseActivity {
 						
 					}).addOnFailureListener(e -> e.printStackTrace());
 		}
-		
 		
 		if (getIntent().hasExtra(EXTRA_GROUP_CHANNEL_URL)) {
 			checkForCurrentScreen(getIntent().getStringExtra(EXTRA_GROUP_CHANNEL_URL));
@@ -230,6 +219,8 @@ public class CompanionMainActivity extends BaseActivity {
 						
 						Utility.setSharedPreference(mContext, APIS.BadgeCount,
 								String.valueOf(alertCountModel.getResponse().getUnreadCount()));
+						updateBadgeCount();
+						
 						
 					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
 						logout_app(alertCountModel.getMessage());
@@ -259,6 +250,11 @@ public class CompanionMainActivity extends BaseActivity {
 				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 		
 		
+	}
+	
+	public void updateBadgeCount() {
+		int alertCount = Integer.parseInt(Utility.getSharedPreferences(mContext, APIS.BadgeCount));
+		int unreadMessageCount = SendBird.getSubscribedTotalUnreadMessageCount();
 	}
 	
 }
