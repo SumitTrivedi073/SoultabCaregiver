@@ -192,8 +192,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 				//	params.put("Authorization", "Basic YWRtaW46TW9iaXYxMjNAIw==");
 				//Production
 				params.put("Authorization", ShoppingAuthorizationKey);
-				Log.e("AuthorizationKey",ShoppingAuthorizationKey);
-
+			
 
 				return params;
 			}
