@@ -398,8 +398,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         switch (item.getItemId()) {
 
                             case R.id.navigation_dashboard:
+                                Log.e("dashbooard_hide_Show",Utility.getSharedPreferences(mContext,
+                                        APIS.dashbooard_hide_Show));
                                 if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show) != null
-                                        && Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals("")) {
+                                        && !Utility.getSharedPreferences(mContext,
+                                        APIS.dashbooard_hide_Show).equals("")) {
                                     if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
                                         video_call.setVisibility(View.GONE);
                                         shopping_btn.setVisibility(View.GONE);

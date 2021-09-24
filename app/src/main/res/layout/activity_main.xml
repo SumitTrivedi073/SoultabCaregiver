@@ -76,6 +76,7 @@
         app:fabSize="auto"
         app:pressedTranslationZ="@dimen/_5sdp"
         app:srcCompat="@drawable/ic_baseline_videocam_24"
-        app:tint="@android:color/white" />
+        app:tint="@android:color/white"
+        android:visibility="gone"/>
 
 </RelativeLayout>
