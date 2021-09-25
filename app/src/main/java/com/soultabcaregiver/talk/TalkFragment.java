@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.soultabcaregiver.Base.BaseFragment;
+import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
@@ -52,19 +53,11 @@ public class TalkFragment extends BaseFragment {
 	
 	TabLayout tabs;
 	
-	TabLayout itemView;
-	
-	View badge;
-	
-	TextView tv_badge;
-	
 	Context mContext;
 	
 	MainActivity mainActivity;
 	
 	private ViewPager viewPager;
-	
-	private RelativeLayout companionDetailLayout;
 	
 	@SuppressLint ("SetTextI18n")
 	@Override
@@ -76,7 +69,19 @@ public class TalkFragment extends BaseFragment {
 		instance = TalkFragment.this;
 		mainActivity = MainActivity.instance;
 		
-		companionDetailLayout = view.findViewById(R.id.companionDetailsLayout);
+		RelativeLayout companionDetailLayout = view.findViewById(R.id.companionDetailsLayout);
+		view.findViewById(R.id.logout).setOnClickListener(v -> {
+			final DiloagBoxCommon diloagBoxCommon =
+					Alertmessage(mContext, getResources().getString(R.string.logout),
+							getResources().getString(R.string.are_you_sure_you_want_to_logout),
+							getResources().getString(R.string.no_text),
+							getResources().getString(R.string.yes_text));
+			diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
+				diloagBoxCommon.getDialog().dismiss();
+				logout_app("Logout Successfully");
+			});
+			
+		});
 		
 		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
 			companionDetailLayout.setVisibility(View.VISIBLE);
@@ -126,7 +131,11 @@ public class TalkFragment extends BaseFragment {
 		}
 		tabs = view.findViewById(R.id.tabs);
 		viewPager = view.findViewById(R.id.viewpager);
-		viewPager.setOffscreenPageLimit(1);
+		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
+			viewPager.setOffscreenPageLimit(1);
+		} else {
+			viewPager.setOffscreenPageLimit(2);
+		}
 		tabs.setupWithViewPager(viewPager);
 		setupViewPager(viewPager);
 		
@@ -134,7 +143,8 @@ public class TalkFragment extends BaseFragment {
 		
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
-			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+			public void onPageScrolled(int position, float positionOffset,
+			                           int positionOffsetPixels) {
 				
 			}
 			
@@ -150,7 +160,8 @@ public class TalkFragment extends BaseFragment {
 						}
 					} else {
 						if (getActivity() instanceof CompanionMainActivity) {
-							CompanionMainActivity companionMainActivity = (CompanionMainActivity) getActivity();
+							CompanionMainActivity companionMainActivity =
+									(CompanionMainActivity) getActivity();
 							companionMainActivity.Alert_countAPI();
 						}
 					}

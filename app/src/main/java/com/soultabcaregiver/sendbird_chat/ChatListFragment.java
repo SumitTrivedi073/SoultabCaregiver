@@ -7,7 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.GroupChannel;
@@ -18,13 +21,22 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.companion.CompanionMainActivity;
+import com.soultabcaregiver.companion.OnDemandVisitStatus;
+import com.soultabcaregiver.companion.UserListForCompanionModel;
+import com.soultabcaregiver.companion.UserListForCompanionResponse;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
 import com.soultabcaregiver.sendbird_chat.utils.SpaceItemDecoration;
+import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -82,7 +94,13 @@ public class ChatListFragment extends BaseFragment {
 		}
 		setUpRecyclerView();
 		setUpChannelListAdapter();
-		getMyChatChannels();
+		
+		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
+			getUsersForCompanion();
+		} else {
+			getMyChatChannels();
+		}
+		
 	}
 	
 	@Override
@@ -161,6 +179,68 @@ public class ChatListFragment extends BaseFragment {
 		return view;
 	}
 	
+	public void getSendBirdData(final int index, List<UserListForCompanionModel> list) {
+		ArrayList<String> ids = new ArrayList<>();
+		ids.add(Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+		ids.add(list.get(index).getUserId());
+		if (list.get(index).getUserSendbirdUser().equals("1")) {
+			ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+				Log.e("channel", "" + groupChannel.getUrl());
+				mChannelListAdapter.addGroupChannel(groupChannel);
+				if (list.size() > (index + 1)) {
+					getSendBirdData((index + 1), list);
+				} else {
+					hideProgressDialog();
+				}
+			});
+		}
+	}
+	
+	private void getUsersForCompanion() {
+		JSONObject mainObject = new JSONObject();
+		try {
+			mainObject.put("companion_id",
+					Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+			mainObject.put("status",
+					OnDemandVisitStatus.IN_PROGRESS.toString() + "," + OnDemandVisitStatus.COMPLETED.toString() + "," + OnDemandVisitStatus.PENDING.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		showProgressDialog(mContext, getResources().getString(R.string.Loading));
+		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+				APIS.BASEURL + APIS.getUsersListForCompanion, mainObject, response -> {
+			Log.e("ChatListFragment", response.toString());
+			try {
+				UserListForCompanionResponse userListForCompanionResponse =
+						new Gson().fromJson(response.toString(),
+								UserListForCompanionResponse.class);
+				if (userListForCompanionResponse.getStatusCode() == 200) {
+					getMyChatChannels();
+					getSendBirdData(0, userListForCompanionResponse.getResponse());
+				} else {
+					getMyChatChannels();
+					hideProgressDialog();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}, error -> hideProgressDialog()) {
+			@Override
+			public Map<String, String> getHeaders() {
+				Map<String, String> params = new HashMap<>();
+				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				params.put(APIS.HEADERKEY2,
+						Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+				
+				return params;
+			}
+			
+		};
+		// Adding request to request queue
+		AppController.getInstance().addToRequestQueue(jsonObjReq);
+	}
+	
 	private void addCreateGroupFragment(boolean isForGroupChat) {
 		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
 		if (chatFragment != null) {
@@ -195,14 +275,12 @@ public class ChatListFragment extends BaseFragment {
 		});
 	}
 	
+	//userIds only for Companion Application
 	private void getMyChatChannels() {
 		mChannelListQuery = GroupChannel.createMyGroupChannelListQuery();
-		mChannelListQuery.setIncludeEmpty(true);
+		mChannelListQuery.setIncludeEmpty(
+				Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0"));
 		mChannelListQuery.setMemberStateFilter(GroupChannelListQuery.MemberStateFilter.ALL);
-		String userId = Utility.getSharedPreferences(mContext, APIS.user_id);
-		ArrayList<String> ids = new ArrayList<>();
-		ids.add(userId);
-		mChannelListQuery.setUserIdsIncludeFilter(ids, GroupChannelListQuery.QueryType.AND);
 		mChannelListQuery.next((list, e) -> {
 			if (e != null) {
 				// Error!
@@ -238,7 +316,7 @@ public class ChatListFragment extends BaseFragment {
 	}
 	
 	private void refresh() {
-		getMyChatChannels();
+		//getMyChatChannels();
 	}
 	
 	
