@@ -97,7 +97,7 @@ public class TalkFragment extends BaseFragment {
 				ChatHelper.createGroupChannel(ids, true, groupChannel -> {
 					Log.e("channel", "" + groupChannel.getUrl());
 					Utility.loadFragment(getActivity(),
-							ConversationFragment.newInstance(groupChannel.getUrl()), true,
+							ConversationFragment.newInstance(groupChannel.getUrl(), true), true,
 							ConversationFragment.class.getSimpleName());
 				});
 				

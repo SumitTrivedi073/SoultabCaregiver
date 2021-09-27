@@ -88,9 +88,9 @@ public class ChatListFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		mChannelListAdapter = new ChatListAdapter(getActivity());
 		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
-			mChannelListAdapter.load(false);
+			mChannelListAdapter.load();
 		} else {
-			mChannelListAdapter.load(true);
+			mChannelListAdapter.load();
 		}
 		setUpRecyclerView();
 		setUpChannelListAdapter();
@@ -159,17 +159,6 @@ public class ChatListFragment extends BaseFragment {
 		super.onPause();
 	}
 	
-	private void refresh() {
-		//getMyChatChannels();
-	}
-	
-	private void enterGroupChannel(String channelUrl) {
-		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
-		if (chatFragment != null) {
-			chatFragment.navigateToConversationFragment(channelUrl);
-		}
-	}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -188,6 +177,17 @@ public class ChatListFragment extends BaseFragment {
 		}
 		
 		return view;
+	}
+	
+	private void refresh() {
+		//getMyChatChannels();
+	}
+	
+	private void enterGroupChannel(String channelUrl) {
+		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
+		if (chatFragment != null) {
+			chatFragment.navigateToConversationFragment(channelUrl);
+		}
 	}
 	
 	private void addCreateGroupFragment(boolean isForGroupChat) {
@@ -212,6 +212,12 @@ public class ChatListFragment extends BaseFragment {
 						hideProgressDialog();
 					}
 				});
+			} else {
+				if (list.size() > (index + 1)) {
+					getSendBirdData((index + 1), list);
+				} else {
+					hideProgressDialog();
+				}
 			}
 		} else {
 			hideProgressDialog();

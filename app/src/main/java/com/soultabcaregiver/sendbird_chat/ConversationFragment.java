@@ -128,11 +128,15 @@ public class ConversationFragment extends BaseFragment {
 	
 	public static final String EXTRA_GROUP_CHANNEL_URL = "GROUP_CHANNEL_URL";
 	
+	public static final String EXTRA_GROUP_IS_SENDBIRD_SUPPORT = "GROUP_IS_SENDBIRD_SUPPORT";
+	
 	public static final String EXTRA_CALLEE_ID = "EXTRA_CALLEE_ID";
 	
 	private GroupChannel mChannel;
 	
 	private String mChannelUrl;
+	
+	private Boolean isSupport;
 	
 	private String mCalleeId;
 	
@@ -218,6 +222,10 @@ public class ConversationFragment extends BaseFragment {
 		
 		// Get channel URL from GroupChannelListFragment.
 		mChannelUrl = getArguments().getString(EXTRA_GROUP_CHANNEL_URL);
+		isSupport = getArguments().getBoolean(EXTRA_GROUP_IS_SENDBIRD_SUPPORT, false);
+		if (isSupport) {
+			videoCallBtn.setImageResource(R.drawable.icon_call_accept);
+		}
 		
 		mCalleeId = getArguments().getString(EXTRA_CALLEE_ID);
 		mChatAdapter = new ChatWindowAdapter(requireContext());
@@ -358,10 +366,12 @@ public class ConversationFragment extends BaseFragment {
 		return view;
 	}
 	
-	public static ConversationFragment newInstance(String channelUrl) {
+	//only audio call if sendbird support
+	public static ConversationFragment newInstance(String channelUrl, boolean isSoultabSupport) {
 		Bundle args = new Bundle();
 		ConversationFragment fragment = new ConversationFragment();
 		args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+		args.putBoolean(EXTRA_GROUP_IS_SENDBIRD_SUPPORT, isSoultabSupport);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -846,7 +856,7 @@ public class ConversationFragment extends BaseFragment {
 			}
 		} else {
 			SendbirdCallService.dial(requireContext(), TextUtils.getGroupOtherMemberId(mChannel),
-					TextUtils.getGroupChannelTitle(mChannel), true, false, mChannelUrl);
+					TextUtils.getGroupChannelTitle(mChannel), !isSupport, false, mChannelUrl);
 		}
 		
 	}
