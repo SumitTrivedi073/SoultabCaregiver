@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.sendbird_chat.NewMessageActivity;
@@ -71,6 +72,45 @@ public abstract class BaseActivity extends AppCompatActivity {
 		registerReceiver();
 	}
 	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		unregisterReceiver();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// if there is a fragment and the back stack of this fragment is not empty,
+		// then emulate 'onBackPressed' behaviour, because in default, it is not working
+		FragmentManager fm = getSupportFragmentManager();
+		for (Fragment frag : fm.getFragments()) {
+			if (frag.isVisible()) {
+				FragmentManager childFm = frag.getChildFragmentManager();
+				if (childFm.getBackStackEntryCount() > 0) {
+					childFm.popBackStack();
+					return;
+				}
+			}
+		}
+		super.onBackPressed();
+	}
+	
+	public static void getPopupIntent(Context context, String channelName, String channelAvatar,
+	                                  boolean isGroup, String channelUrl, String lastMessage) {
+		Intent intent = new Intent(context, NewMessageActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+		intent.putExtra(NewMessageActivity.EXTRA_SENDER_NAME, channelName);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_AVATAR, channelAvatar);
+		intent.putExtra(NewMessageActivity.EXTRA_IS_GROUP, isGroup);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_URL, channelUrl);
+		intent.putExtra(NewMessageActivity.EXTRA_LAST_MSG, lastMessage);
+		context.startActivity(intent);
+	}
+	
+	public static BaseActivity getInstance() {
+		return instance;
+	}
+	
 	private void initBroadCastReceiver() {
 		mReceiver = new BroadcastReceiver() {
 			@Override
@@ -120,50 +160,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 		registerReceiver(mReceiver, intentFilter);
 	}
 	
-	public static void getPopupIntent(Context context, String channelName, String channelAvatar,
-	                                  boolean isGroup, String channelUrl, String lastMessage) {
-		Intent intent = new Intent(context, NewMessageActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-		intent.putExtra(NewMessageActivity.EXTRA_SENDER_NAME, channelName);
-		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_AVATAR, channelAvatar);
-		intent.putExtra(NewMessageActivity.EXTRA_IS_GROUP, isGroup);
-		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_URL, channelUrl);
-		intent.putExtra(NewMessageActivity.EXTRA_LAST_MSG, lastMessage);
-		context.startActivity(intent);
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-		unregisterReceiver();
-	}
-	
 	private void unregisterReceiver() {
 		if (mReceiver != null) {
 			unregisterReceiver(mReceiver);
 			mReceiver = null;
 		}
-	}
-	
-	@Override
-	public void onBackPressed() {
-		// if there is a fragment and the back stack of this fragment is not empty,
-		// then emulate 'onBackPressed' behaviour, because in default, it is not working
-		FragmentManager fm = getSupportFragmentManager();
-		for (Fragment frag : fm.getFragments()) {
-			if (frag.isVisible()) {
-				FragmentManager childFm = frag.getChildFragmentManager();
-				if (childFm.getBackStackEntryCount() > 0) {
-					childFm.popBackStack();
-					return;
-				}
-			}
-		}
-		super.onBackPressed();
-	}
-	
-	public static BaseActivity getInstance() {
-		return instance;
 	}
 	
 	public DiloagBoxCommon Alertmessage(final Context context, String titleString,
@@ -248,17 +249,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 		
 		title_txt.setText(message);
 		
-		OK_txt.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				
-				mainActivity.stopButtonClicked();
-				Utility.clearSharedPreference(getApplicationContext());
-				
-				alertDialog.dismiss();
-				
-			}
+		OK_txt.setOnClickListener(v -> {
+			stopButtonClicked();
+			Utility.clearSharedPreference(getApplicationContext());
+			alertDialog.dismiss();
 		});
 		
+	}
+	
+	public void stopButtonClicked() {
+		Intent intent = new Intent(this, LoginActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(intent);
+		finish();
 	}
 }

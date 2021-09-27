@@ -56,7 +56,6 @@ import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
-import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.main_screen.model.PermissionModel;
 import com.soultabcaregiver.activity.shopping.ShoppingCategoryActivity;
@@ -74,8 +73,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -548,15 +545,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         SendbirdCallService.dial(this, Utility.getSharedPreferences(this, APIS.user_id),
                 Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
     }
-
-    //to kill the current session of SinchService
-    public void stopButtonClicked() {
-        Intent intent = new Intent(mContext, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-        finish();
-    }
-
+    
     private static class BottomNavigationViewHelper {
 
         @SuppressLint("RestrictedApi")

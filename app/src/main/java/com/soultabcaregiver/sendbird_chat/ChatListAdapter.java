@@ -78,8 +78,19 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 		notifyItemInserted(mChannelList.size() - 1);
 	}
 	
+	public void addGroupChannel(GroupChannel item) {
+		if (!mChannelList.contains(item)) {
+			mChannelList.add(item);
+			notifyDataSetChanged();
+		}
+	}
+	
 	public void setChannels(List<GroupChannel> list) {
-		mChannelList = list;
+		for (GroupChannel groupChannel : list) {
+			if (!this.mChannelList.contains(groupChannel)) {
+				mChannelList.add(groupChannel);
+			}
+		}
 		notifyDataSetChanged();
 	}
 	

@@ -92,13 +92,13 @@ public class APIS {
 
     ///////Need to develop for caregiver
     public static final String UPDATEREMINDERAPI = "Users/updatereminder";
-
+    
     public static final String ADDREMINDERAPI = "Users/reminder_add";
-
+    
     public static final String DoctorSendFaxAPI = "Users_milan/sendFax";
-
+    
     public static final String GroupChatProfileImage = "Users/groupChatImage";
-
+    
     //tabs hide show API
     public static final String caregiver_permissionsAPI = "Caregiver/caregiver_permissions";
     
@@ -110,11 +110,11 @@ public class APIS {
     
 
     //User Detail
-
+    
     public static final String is_companion = "is_companion";
-
+    
     public static final String user_id = "user_id";
-
+    
     public static final String caregiver_id = "caregiver_id";
 
     public static final String EncodeUser_id = "EncodeUser_id";
