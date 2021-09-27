@@ -406,7 +406,7 @@ public class CustomFireBaseMessaging extends SendBirdPushHandler {
 
             if (!TextUtils.isEmpty(Utility.getSharedPreferences(context, APIS.user_id))) {
 
-                if (Utility.getSharedPreferences(context, APIS.user_id).equals("0")) {
+                if (Utility.getSharedPreferences(context, APIS.is_companion).equals("0")) {
                     mainActivity = MainActivity.instance;
                     if (mainActivity != null) {
 

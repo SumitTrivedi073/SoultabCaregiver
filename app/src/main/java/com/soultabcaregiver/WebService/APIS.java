@@ -107,6 +107,7 @@ public class APIS {
     
     public static final String UpdateCompanionProfile = "Webservices/updateProfile";
     
+    public static final String getUsersListForCompanion = "Users/userListForCompanionOfOrder";
     
 
     //User Detail

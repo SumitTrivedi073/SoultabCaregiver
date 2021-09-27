@@ -211,16 +211,15 @@ public class CompanionMainActivity extends BaseActivity {
 					
 					if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
 						
+						Utility.setSharedPreference(mContext, APIS.BadgeCount,
+								String.valueOf(alertCountModel.getResponse().getUnreadCount()));
+						
+						
 						alertFragment = AlertFragment.instance;
 						if (alertFragment != null) {
 							alertFragment.GetAlertList(mContext);
 							
 						}
-						
-						Utility.setSharedPreference(mContext, APIS.BadgeCount,
-								String.valueOf(alertCountModel.getResponse().getUnreadCount()));
-						updateBadgeCount();
-						
 						
 					} else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
 						logout_app(alertCountModel.getMessage());
@@ -252,9 +251,12 @@ public class CompanionMainActivity extends BaseActivity {
 		
 	}
 	
-	public void updateBadgeCount() {
-		int alertCount = Integer.parseInt(Utility.getSharedPreferences(mContext, APIS.BadgeCount));
-		int unreadMessageCount = SendBird.getSubscribedTotalUnreadMessageCount();
+	public void updateBadge() {
+		alertFragment = AlertFragment.instance;
+		if (alertFragment != null) {
+			alertFragment.AlertCountUpdate();
+			
+		}
 	}
 	
 }

@@ -125,6 +125,8 @@ public class TalkFragment extends BaseFragment {
 					Utility.getSharedPreferences(requireContext(), APIS.profile_image)).
 					placeholder(R.drawable.user_img).into(profilePic);
 			
+			Log.e("profilePic",Utility.getSharedPreferences(requireContext(), APIS.profile_image));
+			
 			companionNameText.setText(Utility.getSharedPreferences(requireContext(),
 					APIS.Caregiver_name) + " " + Utility.getSharedPreferences(mContext,
 					APIS.Caregiver_lastname));
@@ -162,7 +164,7 @@ public class TalkFragment extends BaseFragment {
 						if (getActivity() instanceof CompanionMainActivity) {
 							CompanionMainActivity companionMainActivity =
 									(CompanionMainActivity) getActivity();
-							companionMainActivity.Alert_countAPI();
+							companionMainActivity.updateBadge();
 						}
 					}
 					

@@ -82,7 +82,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 	
 	EditText Firstname, Lastname, MobileNumber;
 	
-	TextView Email, CountryCode, UserName, Password, ChangePassword, SaveChange;
+	TextView Email, CountryCode, UserName, Password, ChangePassword, SaveChange,companion_name;
 	
 	LinearLayout CountryLL;
 	
@@ -564,6 +564,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 		view_pwd1 = view.findViewById(R.id.view_pwd1);
 		ChangePassword = view.findViewById(R.id.changePassword);
 		SaveChange = view.findViewById(R.id.btn_SubmitProfile);
+		companion_name = view.findViewById(R.id.companion_name);
 	}
 	
 	private void listner() {
@@ -629,6 +630,8 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 										updateProfileModel.getResponse().getUserData().getProfileImage());
 								
 								
+								companion_name.setText(updateProfileModel.getResponse().getUserData().getName()
+										+" "+updateProfileModel.getResponse().getUserData().getLastname());
 								Firstname.setText(
 										updateProfileModel.getResponse().getUserData().getName());
 								Lastname.setText(

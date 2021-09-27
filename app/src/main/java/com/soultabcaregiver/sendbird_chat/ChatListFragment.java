@@ -159,6 +159,17 @@ public class ChatListFragment extends BaseFragment {
 		super.onPause();
 	}
 	
+	private void refresh() {
+		//getMyChatChannels();
+	}
+	
+	private void enterGroupChannel(String channelUrl) {
+		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
+		if (chatFragment != null) {
+			chatFragment.navigateToConversationFragment(channelUrl);
+		}
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
@@ -179,20 +190,31 @@ public class ChatListFragment extends BaseFragment {
 		return view;
 	}
 	
+	private void addCreateGroupFragment(boolean isForGroupChat) {
+		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
+		if (chatFragment != null) {
+			chatFragment.navigateToCreateGroupFragment(isForGroupChat);
+		}
+	}
+	
 	public void getSendBirdData(final int index, List<UserListForCompanionModel> list) {
 		ArrayList<String> ids = new ArrayList<>();
 		ids.add(Utility.getSharedPreferences(mContext, APIS.caregiver_id));
-		ids.add(list.get(index).getUserId());
-		if (list.get(index).getUserSendbirdUser().equals("1")) {
-			ChatHelper.createGroupChannel(ids, true, groupChannel -> {
-				Log.e("channel", "" + groupChannel.getUrl());
-				mChannelListAdapter.addGroupChannel(groupChannel);
-				if (list.size() > (index + 1)) {
-					getSendBirdData((index + 1), list);
-				} else {
-					hideProgressDialog();
-				}
-			});
+		if (list.size() > 0) {
+			ids.add(list.get(index).getUserId());
+			if (list.get(index).getUserSendbirdUser().equals("1")) {
+				ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+					Log.e("channel", "" + groupChannel.getUrl());
+					mChannelListAdapter.addGroupChannel(groupChannel);
+					if (list.size() > (index + 1)) {
+						getSendBirdData((index + 1), list);
+					} else {
+						hideProgressDialog();
+					}
+				});
+			}
+		} else {
+			hideProgressDialog();
 		}
 	}
 	
@@ -239,13 +261,6 @@ public class ChatListFragment extends BaseFragment {
 		};
 		// Adding request to request queue
 		AppController.getInstance().addToRequestQueue(jsonObjReq);
-	}
-	
-	private void addCreateGroupFragment(boolean isForGroupChat) {
-		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
-		if (chatFragment != null) {
-			chatFragment.navigateToCreateGroupFragment(isForGroupChat);
-		}
 	}
 	
 	// Sets up recycler view
@@ -306,17 +321,6 @@ public class ChatListFragment extends BaseFragment {
 				mChannelListAdapter.addLast(channel);
 			}
 		});
-	}
-	
-	private void enterGroupChannel(String channelUrl) {
-		ChatFragment chatFragment = ((ChatFragment) getParentFragment());
-		if (chatFragment != null) {
-			chatFragment.navigateToConversationFragment(channelUrl);
-		}
-	}
-	
-	private void refresh() {
-		//getMyChatChannels();
 	}
 	
 	
