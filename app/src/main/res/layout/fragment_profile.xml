@@ -329,12 +329,26 @@
 
 
                     </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/changePassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:fontFamily="@font/muli_semibold"
+                        android:gravity="center"
+                        android:text="@string/change_password"
+                        android:textColor="@color/muzli_color"
+                        android:textSize="@dimen/_14sdp"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="@dimen/_10sdp"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -381,18 +395,7 @@
 
                     </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/changePassword"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/muli_semibold"
-                        android:gravity="center"
-                        android:text="@string/change_password"
-                        android:textColor="@color/muzli_color"
-                        android:textSize="@dimen/_14sdp"
-                        android:layout_gravity="end"
-                        android:layout_marginEnd="@dimen/_10sdp"/>
+
 
                 </LinearLayout>
 

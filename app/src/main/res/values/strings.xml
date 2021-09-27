@@ -345,6 +345,12 @@
     <string name="change_password">Change Password?</string>
     <string name="need_assistance">Need Assistance?</string>
     <string name="enter_password">Please Enter your Password</string>
+    <string name="profile_update_successfully">Profile updated successfully</string>
+    <string name="old_password">Old Password</string>
+    <string name="enter_old_password">Enter Old Password</string>
+    <string name="old_not_equal_to_new">New password can not be same as the old password</string>
+    <string name="passsword_update_successfully">Your password is update successfully</string>
+
     <!--Added by Sumit-->
 
 </resources>

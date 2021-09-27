@@ -101,10 +101,13 @@ public class APIS {
 
     //tabs hide show API
     public static final String caregiver_permissionsAPI = "Caregiver/caregiver_permissions";
-
     
     //Companion APP API
     public static final String GetCompanionDetail = "Users/getUser";
+    
+    public static final String UpdateCompanionProfile = "Webservices/updateProfile";
+    
+    
 
     //User Detail
 

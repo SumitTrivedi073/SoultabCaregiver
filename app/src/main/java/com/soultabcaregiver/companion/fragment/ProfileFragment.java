@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -37,8 +39,11 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.Model.UpdateProfileModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.activity.login_module.ChangePasswordActivity;
+import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
+import com.soultabcaregiver.utils.VolleyMultipartRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,7 +55,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -78,7 +82,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 	
 	EditText Firstname, Lastname, MobileNumber;
 	
-	TextView Email, CountryCode, UserName, Password,ChangePassword, SaveChange;
+	TextView Email, CountryCode, UserName, Password, ChangePassword, SaveChange;
 	
 	LinearLayout CountryLL;
 	
@@ -88,16 +92,16 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 	
 	Uri ImageUri;
 	
+	CheckBox view_pwd1;
+	
 	private com.mukesh.countrypicker.CountryPicker CountryPicker;
 	
 	private String FileData = "", ButtonClick = "";
 	
-	CheckBox view_pwd1;
-	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.countryLL:
+			case R.id.CountryLL:
 				
 				showPicker();
 				break;
@@ -124,12 +128,12 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 				}
 				
 				break;
-				
+			
 			case R.id.back_btn:
 				
 				requireActivity().onBackPressed();
 				
-			break;
+				break;
 			
 			case R.id.btn_SubmitProfile:
 				if (TextUtils.isEmpty(Firstname.getText().toString().trim())) {
@@ -138,17 +142,31 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 					Utility.ShowToast(mContext, getResources().getString(R.string.hint_usr2));
 					
 				} else if (CountryCode.getText().toString().isEmpty()) {
-					Utility.ShowToast(mContext, getResources().getString(R.string.select_country_code));
+					Utility.ShowToast(mContext,
+							getResources().getString(R.string.select_country_code));
 					
 				} else if (MobileNumber.getText().toString().isEmpty()) {
-					Utility.ShowToast(mContext, getResources().getString(R.string.enter_phone_number));
+					Utility.ShowToast(mContext,
+							getResources().getString(R.string.enter_phone_number));
 					
 				} else if (!Utility.isValidMobile(MobileNumber.getText().toString())) {
 					Utility.ShowToast(mContext, getResources().getString(R.string.valid_phone1));
 					
 				} else {
-				
+					if (Utility.isNetworkConnected(mContext)) {
+						UpdateProfile();
+						
+					} else {
+						Utility.ShowToast(mContext,
+								mContext.getResources().getString(R.string.net_connection));
+					}
 				}
+				break;
+				
+			case R.id.changePassword:
+				Intent i = new Intent(mContext, ChangePasswordActivity.class);
+				startActivity(i);
+				
 				break;
 		}
 	}
@@ -248,6 +266,103 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 				CheakPermissions();
 			}
 		});
+	}
+	
+	private void UpdateProfile() {
+		showProgressDialog(mContext, getResources().getString(R.string.Loading));
+		final VolleyMultipartRequest multipartRequest =
+				new VolleyMultipartRequest(Request.Method.POST,
+						APIS.BASEURL + APIS.UpdateCompanionProfile,
+						new Response.Listener<NetworkResponse>()
+								////Place user for service
+						{
+							@Override
+							public void onResponse(NetworkResponse response) {
+								hideProgressDialog();
+								try {
+									String resultResponse = new String(response.data);
+									Log.e("response_profile_update", resultResponse);
+									
+									UpdateProfileModel profileModel =
+											new Gson().fromJson(resultResponse,
+													UpdateProfileModel.class);
+									
+									if (profileModel.getStatus().equalsIgnoreCase("true")) {
+										
+										Utility.ShowToast(mContext, getResources().getString(
+												R.string.profile_update_successfully));
+										
+										Utility.setSharedPreference(mContext, APIS.Caregiver_name,
+												Firstname.getText().toString().trim());
+										Utility.setSharedPreference(mContext,
+												APIS.Caregiver_lastname,
+												Lastname.getText().toString().trim());
+										Utility.setSharedPreference(mContext, APIS.Caregiver_email,
+												Email.getText().toString().trim());
+										Utility.setSharedPreference(mContext, APIS.Caregiver_mobile,
+												MobileNumber.getText().toString().trim());
+										Utility.setSharedPreference(mContext,
+												APIS.Caregiver_countrycode,
+												CountryCode.getText().toString().trim());
+										Utility.setSharedPreference(mContext, APIS.profile_image,
+												profileModel.getResponse().getUserData().getProfileImage());
+										
+										requireActivity().onBackPressed();
+										
+										} else {
+										
+										Utility.ShowToast(mContext, profileModel.getMessage());
+									}
+									
+								} catch (Exception e) {
+									e.printStackTrace();
+									
+								}
+							}
+							
+						}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						error.getMessage();
+						Log.e(TAG, "onErrorResponse: >>" + error.toString());
+						hideProgressDialog();
+					}
+				}) {
+					@Override
+					protected Map<String, String> getParams() {
+						Map<String, String> params = new HashMap<>();
+						params.put("user_id",
+								Utility.getSharedPreferences(mContext, APIS.caregiver_id));
+						params.put("name", Firstname.getText().toString().trim());
+						params.put("lastname", Lastname.getText().toString());
+						params.put("mobile_no", MobileNumber.getText().toString().trim());
+						params.put("countrycode", CountryCode.getText().toString());
+						params.put("is_40plus_user", "");
+						params.put("40plus_userId", "");
+						
+						
+						System.out.println(params);
+						return params;
+					}
+					
+					@Override
+					protected Map<String, DataPart> getByteData() {
+						Map<String, DataPart> params = new HashMap<>();
+						long imagename = System.currentTimeMillis();
+						
+						params.put("profile_image", new DataPart(imagename + ".jpg",
+								Utility.getFileDataFromDraw(mContext,
+										CompanionImg.getDrawable()), "image/jpeg"));
+						
+						return params;
+					}
+				};
+		multipartRequest.setShouldCache(false);
+		multipartRequest.setTag(TAG);
+		multipartRequest.setRetryPolicy(
+				new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+						DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		AppController.getInstance().addToRequestQueue(multipartRequest);
 	}
 	
 	private void galleryIntent() {
@@ -456,6 +571,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 		SaveChange.setOnClickListener(this);
 		CountryLL.setOnClickListener(this);
 		BackBtn.setOnClickListener(this);
+		ChangePassword.setOnClickListener(this);
 		
 		view_pwd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			
@@ -475,11 +591,6 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 		});
 	}
 	
-	@Override
-	public void onSelectCountry(Country country) {
-		CountryCode.setText(country.getDialCode());
-	}
-	
 	private void getUser() {
 		JSONObject mainObject = new JSONObject();
 		try {
@@ -487,35 +598,55 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		showProgressDialog(mContext,getResources().getString(R.string.Loading));
-		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-				APIS.BASEURL + APIS.GetCompanionDetail, mainObject,
-				new Response.Listener<JSONObject>() {
+		showProgressDialog(mContext, getResources().getString(R.string.Loading));
+		JsonObjectRequest jsonObjReq =
+				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.GetCompanionDetail,
+						mainObject, new Response.Listener<JSONObject>() {
 					@Override
 					public void onResponse(JSONObject response) {
 						Log.d(TAG, "response=" + response.toString());
 						hideProgressDialog();
 						try {
-							UpdateProfileModel
-									updateProfileModel = new Gson().fromJson(response.toString(), UpdateProfileModel.class);
+							UpdateProfileModel updateProfileModel =
+									new Gson().fromJson(response.toString(),
+											UpdateProfileModel.class);
 							
 							if (updateProfileModel.getStatusCode() == 200) {
 								
-								Firstname.setText(updateProfileModel.getResponse().getUserData().getName());
-								Lastname.setText(updateProfileModel.getResponse().getUserData().getLastname());
-								Email.setText(updateProfileModel.getResponse().getUserData().getEmail());
-								UserName.setText(updateProfileModel.getResponse().getUserData().getUsername());
-								MobileNumber.setText(updateProfileModel.getResponse().getUserData().getPhone());
-								CountryCode.setText(updateProfileModel.getResponse().getUserData().getCountrycode());
+								Utility.setSharedPreference(mContext, APIS.Caregiver_name,
+										updateProfileModel.getResponse().getUserData().getName());
+								Utility.setSharedPreference(mContext,
+										APIS.Caregiver_lastname,
+										updateProfileModel.getResponse().getUserData().getLastname());
+								Utility.setSharedPreference(mContext, APIS.Caregiver_email,
+										updateProfileModel.getResponse().getUserData().getEmail());
+								Utility.setSharedPreference(mContext, APIS.Caregiver_mobile,
+										updateProfileModel.getResponse().getUserData().getPhone());
+								Utility.setSharedPreference(mContext,
+										APIS.Caregiver_countrycode,
+										updateProfileModel.getResponse().getUserData().getCountrycode());
+								Utility.setSharedPreference(mContext, APIS.profile_image,
+										updateProfileModel.getResponse().getUserData().getProfileImage());
 								
 								
+								Firstname.setText(
+										updateProfileModel.getResponse().getUserData().getName());
+								Lastname.setText(
+										updateProfileModel.getResponse().getUserData().getLastname());
+								Email.setText(
+										updateProfileModel.getResponse().getUserData().getEmail());
+								UserName.setText(
+										updateProfileModel.getResponse().getUserData().getUsername());
+								MobileNumber.setText(
+										updateProfileModel.getResponse().getUserData().getPhone());
+								CountryCode.setText(
+										updateProfileModel.getResponse().getUserData().getCountrycode());
 								
-								Glide.with(mContext).load(APIS.CaregiverImageURL+updateProfileModel.getResponse().getUserData().getProfileImage())
-										.placeholder(R.drawable.user_img).into(CompanionImg);
+								Glide.with(mContext).load(updateProfileModel.getResponse().getUserData().getProfileImage()).placeholder(
+										R.drawable.user_img).into(CompanionImg);
 								
 							} else {
 								String msg = response.getString("message");
-								
 								Utility.ShowToast(mContext, msg);
 							}
 						} catch (JSONException e) {
@@ -523,27 +654,31 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 						}
 					}
 				}, new Response.ErrorListener() {
-			
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				VolleyLog.d(TAG, "Error: " + error.getMessage());
-				hideProgressDialog();
-			}
-		}) {
-			@Override
-			public Map<String, String> getHeaders() {
-				Map<String, String> params = new HashMap<>();
-				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-				params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
-				
-				return params;
-			}
-			
-		};
+					
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						VolleyLog.d(TAG, "Error: " + error.getMessage());
+						hideProgressDialog();
+					}
+				}) {
+					@Override
+					public Map<String, String> getHeaders() {
+						Map<String, String> params = new HashMap<>();
+						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+						params.put(APIS.HEADERKEY2,
+								Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+						
+						return params;
+					}
+					
+				};
 		// Adding request to request queue
 		AppController.getInstance().addToRequestQueue(jsonObjReq);
 	}
-
-
+	
+	@Override
+	public void onSelectCountry(Country country) {
+		CountryCode.setText(country.getDialCode());
+	}
 }
