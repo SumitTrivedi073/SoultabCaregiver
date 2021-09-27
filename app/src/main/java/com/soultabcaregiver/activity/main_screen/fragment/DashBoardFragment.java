@@ -34,6 +34,8 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
+import com.soultabcaregiver.sendbird_chat.ChatHelper;
+import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -76,7 +78,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     CheckBox weekly_chart, three_month_chart, six_month_chart, twelve_month_chart;
 
     TextView today_txt, lastweek_txt, lastmonth_txt, good_morning_txt, user_name_txt,
-            compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt;
+            compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt,NeedAssistance;
 
     MainActivity mainActivity;
 
@@ -124,6 +126,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         twelve_month_chart = view.findViewById(R.id.twelve_month_chart);
         dashboard_show_relative = view.findViewById(R.id.dashboard_show_relative);
         dashboard_hide_relative = view.findViewById(R.id.dashboard_hide_relative);
+        NeedAssistance = view.findViewById(R.id.needAsistance);
 
         calendar = Calendar.getInstance();
 
@@ -174,6 +177,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         lastweek_txt.setOnClickListener(this);
         lastmonth_txt.setOnClickListener(this);
         logout.setOnClickListener(this);
+        NeedAssistance.setOnClickListener(this);
 
         weekly_chart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -574,6 +578,18 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         logout_app("Logout Successfully");
                     }
 
+                });
+                break;
+                
+            case R.id.needAsistance:
+                ArrayList<String> ids = new ArrayList<>();
+                ids.add("Soultab Support");
+    
+                ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+                    Log.e("channel", "" + groupChannel.getUrl());
+                    Utility.loadFragment(getActivity(),
+                            ConversationFragment.newInstance(groupChannel.getUrl()), true,
+                            ConversationFragment.class.getSimpleName());
                 });
                 break;
         }
