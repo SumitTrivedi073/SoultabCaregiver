@@ -107,7 +107,10 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         today_txt.setTextColor(ContextCompat.getColor(mContext, R.color.white));
         lastweek_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
         lastmonth_txt.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
-        
+    
+        if (mainActivity!=null){
+            mainActivity.hidevideoshopping("1");
+        }
     }
     
     @Override
@@ -290,13 +293,17 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 break;
             
             case R.id.needAsistance:
+                
+                if (mainActivity!=null){
+                    mainActivity.hidevideoshopping("0");
+                }
                 ArrayList<String> ids = new ArrayList<>();
                 ids.add("Soultab Support");
                 
                 ChatHelper.createGroupChannel(ids, true, groupChannel -> {
                     Log.e("channel", "" + groupChannel.getUrl());
                     Utility.loadFragment(getActivity(),
-                            ConversationFragment.newInstance(groupChannel.getUrl(), false), true,
+                            ConversationFragment.newInstance(groupChannel.getUrl(), true), true,
                             ConversationFragment.class.getSimpleName());
                 });
                 break;

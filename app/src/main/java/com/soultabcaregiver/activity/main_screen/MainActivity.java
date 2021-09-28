@@ -333,6 +333,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     @Override
     protected void onResume() {
         super.onResume();
+       
         //   new ReminderCreateClass(MainActivity.this);
         appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
         checkUpdate();
@@ -395,17 +396,18 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             case R.id.navigation_dashboard:
                                 if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show) != null
-                                        && Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals("")) {
+                                        && !Utility.getSharedPreferences(mContext,
+                                        APIS.dashbooard_hide_Show).equals("")) {
                                     if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
                                         video_call.setVisibility(View.GONE);
                                         shopping_btn.setVisibility(View.GONE);
                                     } else {
                                         video_call.setVisibility(View.VISIBLE);
-                                        shopping_btn.setVisibility(View.VISIBLE);
+                                        shopping_btn.setVisibility(View.GONE);
                                     }
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
-                                    shopping_btn.setVisibility(View.VISIBLE);
+                                    shopping_btn.setVisibility(View.GONE);
                                 }
                                 Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
                                         false, null);
@@ -546,6 +548,15 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 Utility.getSharedPreferences(this, APIS.user_name), true, false, null);
     }
     
+    public void hidevideoshopping(String value) {
+        if (value.equals("0")) {
+            video_call.setVisibility(View.GONE);
+            shopping_btn.setVisibility(View.GONE);
+        }else {
+            video_call.setVisibility(View.VISIBLE);
+        }
+    }
+    
     private static class BottomNavigationViewHelper {
 
         @SuppressLint("RestrictedApi")
@@ -616,7 +627,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                                     shopping_btn.setVisibility(View.GONE);
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
-                                    shopping_btn.setVisibility(View.VISIBLE);
+                                    shopping_btn.setVisibility(View.GONE);
                                 }
                             }
 
