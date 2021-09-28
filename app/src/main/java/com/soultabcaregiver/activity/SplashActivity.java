@@ -169,6 +169,12 @@ public class SplashActivity extends BaseActivity {
 						if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
 							
 							Intent intent = new Intent(mContext, MainActivity.class);
+							if (getIntent().hasExtra(
+									ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
+								intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
+										getIntent().getExtras().getString(
+												ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
+							}
 							startActivity(intent);
 							finish();
 						} else {
