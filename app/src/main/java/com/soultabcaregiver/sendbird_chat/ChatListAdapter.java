@@ -76,19 +76,19 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 		notifyItemInserted(mChannelList.size() - 1);
 	}
 	
-	public boolean checkIfSoultabSupportChannel(GroupChannel item) {
-		for (Member member : item.getMembers()) {
-			if (member.getNickname().contains("Soultab Support")) {
-				return true;
-			}
-		}
-		return false;
-	}
+	//	public boolean checkIfSoultabSupportChannel(GroupChannel item) {
+	//		for (Member member : item.getMembers()) {
+	//			if (member.getNickname().contains("Soultab Support")) {
+	//				return true;
+	//			}
+	//		}
+	//		return false;
+	//	}
 	
 	public void addGroupChannel(GroupChannel item) {
-		if (checkIfSoultabSupportChannel(item)) {
-			return;
-		}
+		//		if (checkIfSoultabSupportChannel(item)) {
+		//			return;
+		//		}
 		if (!mChannelList.contains(item)) {
 			mChannelList.add(item);
 			notifyDataSetChanged();
@@ -98,9 +98,10 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 	public void setChannels(List<GroupChannel> list) {
 		for (GroupChannel groupChannel : list) {
 			if (!this.mChannelList.contains(groupChannel)) {
-				if (!checkIfSoultabSupportChannel(groupChannel)) {
-					mChannelList.add(groupChannel);
-				}
+				//				if (!checkIfSoultabSupportChannel(groupChannel)) {
+				//
+				//				}
+				mChannelList.add(groupChannel);
 			}
 		}
 		notifyDataSetChanged();
@@ -146,7 +147,11 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 			for (String s : dataArray) {
 				GroupChannel groupChannel = (GroupChannel) BaseChannel.buildFromSerializedData(
 						Base64.decode(s, Base64.DEFAULT | Base64.NO_WRAP));
-				if (!checkIfSoultabSupportChannel(groupChannel)) {
+				//				if (!checkIfSoultabSupportChannel(groupChannel)) {
+				//
+				//				}
+				//only not empty channel
+				if (groupChannel.getLastMessage() != null) {
 					mChannelList.add(groupChannel);
 				}
 				

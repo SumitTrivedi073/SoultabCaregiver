@@ -18,6 +18,7 @@ import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.companion.CompanionMainActivity;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.sendbird_chat.NewMessageActivity;
 import com.soultabcaregiver.talk.TalkFragment;
@@ -115,7 +116,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		mReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				MainActivity.instance.updateBadgeCount();
 				String name = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_NAME);
 				String avatar = intent.getStringExtra(BroadcastUtils.INTENT_EXTRA_CHANNEL_AVATAR);
 				String lastMessage =
@@ -126,7 +126,29 @@ public abstract class BaseActivity extends AppCompatActivity {
 						intent.getBooleanExtra(BroadcastUtils.INTENT_EXTRA_IS_GROUP, false);
 				
 				if (BaseActivity.this instanceof MainActivity) {
+					MainActivity.instance.updateBadgeCount();
 					MainActivity mainActivity = (MainActivity) BaseActivity.this;
+					Fragment f1 = mainActivity.getSupportFragmentManager().findFragmentById(
+							R.id.fragment_container);
+					if (f1 instanceof TalkHolderFragment) {
+						TalkHolderFragment talkHolderFragment = (TalkHolderFragment) f1;
+						Fragment f2 =
+								talkHolderFragment.getChildFragmentManager().findFragmentById(
+								R.id.container);
+						if (f2 instanceof TalkFragment) {
+							TalkFragment talkFragment = (TalkFragment) f2;
+							if (talkFragment.getCurrentPageIndex() != 0) {
+								getPopupIntent(BaseActivity.this, name, avatar, isGroup,
+										channelUrl,
+										lastMessage);
+							}
+						}
+					} else {
+						getPopupIntent(BaseActivity.this, name, avatar, isGroup, channelUrl,
+								lastMessage);
+					}
+				} else if (BaseActivity.this instanceof CompanionMainActivity) {
+					CompanionMainActivity mainActivity = (CompanionMainActivity) BaseActivity.this;
 					Fragment f1 = mainActivity.getSupportFragmentManager().findFragmentById(
 							R.id.fragment_container);
 					if (f1 instanceof TalkHolderFragment) {
