@@ -138,17 +138,14 @@ public class BaseFragment extends Fragment {
 		
 		title_txt.setText(message);
 		
-		OK_txt.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				SendBirdAuthentication.logout(isSuccess -> {
-					MainActivity.getInstance().stopButtonClicked();
-					Utility.clearSharedPreference(getActivity());
-					alertDialog.dismiss();
-				});
-				
+		OK_txt.setOnClickListener(v -> SendBirdAuthentication.logout(isSuccess -> {
+			BaseActivity baseActivity = (BaseActivity) getActivity();
+			if (baseActivity != null) {
+				baseActivity.stopButtonClicked();
+				Utility.clearSharedPreference(getActivity());
+				alertDialog.dismiss();
 			}
-		});
+		}));
 		
 	}
 }

@@ -85,6 +85,8 @@ public class LoginModel {
 		
 		@SerializedName ("username") @Expose private String caregiver_username;
 
+		@SerializedName ("is_companion") @Expose private String is_companion;
+
 		@SerializedName("permission")
 		@Expose
 		private Permission permission;
@@ -237,6 +239,15 @@ public class LoginModel {
 		
 		public void setIsSendBirdUser(String isSendBirdUser) {
 			this.isSendBirdUser = isSendBirdUser;
+		}
+
+
+		public String getIs_companion() {
+			return is_companion;
+		}
+
+		public void setIs_companion(String is_companion) {
+			this.is_companion = is_companion;
 		}
 
 		public Permission getPermission() {

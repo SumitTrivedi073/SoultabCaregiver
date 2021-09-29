@@ -76,8 +76,34 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 		notifyItemInserted(mChannelList.size() - 1);
 	}
 	
+	//	public boolean checkIfSoultabSupportChannel(GroupChannel item) {
+	//		for (Member member : item.getMembers()) {
+	//			if (member.getNickname().contains("Soultab Support")) {
+	//				return true;
+	//			}
+	//		}
+	//		return false;
+	//	}
+	
+	public void addGroupChannel(GroupChannel item) {
+		//		if (checkIfSoultabSupportChannel(item)) {
+		//			return;
+		//		}
+		if (!mChannelList.contains(item)) {
+			mChannelList.add(item);
+			notifyDataSetChanged();
+		}
+	}
+	
 	public void setChannels(List<GroupChannel> list) {
-		mChannelList = list;
+		for (GroupChannel groupChannel : list) {
+			if (!this.mChannelList.contains(groupChannel)) {
+				//				if (!checkIfSoultabSupportChannel(groupChannel)) {
+				//
+				//				}
+				mChannelList.add(groupChannel);
+			}
+		}
 		notifyDataSetChanged();
 	}
 	
@@ -118,11 +144,18 @@ class ChatListAdapter extends RecyclerView.Adapter<ChatListViewHolder> {
 			
 			// Reset channel list, then add cached data.
 			mChannelList.clear();
-			for (int i = 0; i < dataArray.length; i++) {
-				mChannelList.add((GroupChannel) BaseChannel.buildFromSerializedData(
-						Base64.decode(dataArray[i], Base64.DEFAULT | Base64.NO_WRAP)));
+			for (String s : dataArray) {
+				GroupChannel groupChannel = (GroupChannel) BaseChannel.buildFromSerializedData(
+						Base64.decode(s, Base64.DEFAULT | Base64.NO_WRAP));
+				//				if (!checkIfSoultabSupportChannel(groupChannel)) {
+				//
+				//				}
+				//only not empty channel
+				if (groupChannel.getLastMessage() != null) {
+					mChannelList.add(groupChannel);
+				}
+				
 			}
-			
 			notifyDataSetChanged();
 		} catch (Exception e) {
 			// Nothing to load.

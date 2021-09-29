@@ -17,7 +17,9 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.login_module.LoginActivity;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
+import com.soultabcaregiver.companion.CompanionMainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
+import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.Utility;
 
 import androidx.annotation.Nullable;
@@ -155,8 +157,6 @@ public class SplashActivity extends BaseActivity {
 			@Override
 			public void run() {
 				
-				Utility.clearSpecificSharedPreference(mContext, Utility.SinchServiceConnected);
-				
 				if (TextUtils.isEmpty(User_id)) {
 					Intent intent = new Intent(mContext, LoginActivity.class);
 					startActivity(intent);
@@ -166,9 +166,29 @@ public class SplashActivity extends BaseActivity {
 						if (userId == null) {
 							Utility.ShowToast(mContext, "Sendbird Auth Failed");
 						}
-						Intent intent = new Intent(mContext, MainActivity.class);
-						startActivity(intent);
-						finish();
+						if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
+							
+							Intent intent = new Intent(mContext, MainActivity.class);
+							if (getIntent().hasExtra(
+									ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
+								intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
+										getIntent().getExtras().getString(
+												ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
+							}
+							startActivity(intent);
+							finish();
+						} else {
+							Intent intent = new Intent(mContext, CompanionMainActivity.class);
+							if (getIntent().hasExtra(
+									ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
+								intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
+										getIntent().getExtras().getString(
+												ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
+							}
+							startActivity(intent);
+							finish();
+						}
+						
 					});
 					
 				}
