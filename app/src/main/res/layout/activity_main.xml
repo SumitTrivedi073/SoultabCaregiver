@@ -59,7 +59,7 @@
         app:pressedTranslationZ="@dimen/_5sdp"
         app:srcCompat="@drawable/ic_baseline_shopping_cart_24"
         app:tint="@android:color/white"
-        />
+        android:visibility="gone"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/video_call"
@@ -71,11 +71,12 @@
         android:layout_marginEnd="@dimen/_16sdp"
         android:layout_marginRight="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        app:srcCompat="@drawable/ic_baseline_videocam_24"
         app:backgroundTint="@color/orange_color"
         app:elevation="@dimen/_5sdp"
         app:fabSize="auto"
         app:pressedTranslationZ="@dimen/_5sdp"
-        app:tint="@android:color/white" />
+        app:srcCompat="@drawable/ic_baseline_videocam_24"
+        app:tint="@android:color/white"
+        android:visibility="gone"/>
 
 </RelativeLayout>
