@@ -25,6 +25,7 @@ import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
+import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -50,6 +51,8 @@ public class CompanionMainActivity extends BaseActivity {
 	boolean isLocationEnabled;
 	
 	AlertFragment alertFragment;
+	
+	TalkFragment talkFragment;
 	
 	private BroadcastReceiver receiver;
 	
@@ -218,6 +221,12 @@ public class CompanionMainActivity extends BaseActivity {
 						alertFragment = AlertFragment.instance;
 						if (alertFragment != null) {
 							alertFragment.GetAlertList(mContext);
+							
+						}
+						
+						talkFragment = TalkFragment.instance;
+						if (talkFragment != null) {
+							talkFragment.setBadge();
 							
 						}
 						

@@ -732,17 +732,23 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                             new Gson().fromJson(response.toString(), AlertCountModel.class);
 
                     if (String.valueOf(alertCountModel.getStatusCode()).equals("200")) {
-
+    
+                        Utility.setSharedPreference(mContext, APIS.BadgeCount,
+                                String.valueOf(alertCountModel.getResponse().getUnreadCount()));
+                        updateBadgeCount();
+    
+    
                         alertFragment = AlertFragment.instance;
                         if (alertFragment != null) {
                             alertFragment.GetAlertList(mContext);
 
                         }
-
-                        Utility.setSharedPreference(mContext, APIS.BadgeCount,
-                                String.valueOf(alertCountModel.getResponse().getUnreadCount()));
-                        updateBadgeCount();
-
+                        talkFragment = TalkFragment.instance;
+                        if (talkFragment != null) {
+                            talkFragment.setBadge();
+        
+                        }
+                       
 
                     } else if (String.valueOf(alertCountModel.getStatusCode()).equals("403")) {
                         logout_app(alertCountModel.getMessage());

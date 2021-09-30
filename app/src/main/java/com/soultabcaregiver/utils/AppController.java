@@ -24,6 +24,7 @@ import com.vanniktech.emoji.google.GoogleEmojiProvider;
 
 import java.util.UUID;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
@@ -54,6 +55,8 @@ public class AppController extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 		mInstance = this;
 		PrefUtils.init(this);
 		EmojiManager.install(new GoogleEmojiProvider());
