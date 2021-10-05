@@ -70,10 +70,16 @@ public class ChangePasswordActivity extends BaseActivity {
 		OldPassLinear = findViewById(R.id.old_pass_linear);
 		create_new_passwordtxt = findViewById(R.id.create_new_passwordtxt);
 		
-		if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
-			OldPassLinear.setVisibility(View.VISIBLE);
-			create_new_passwordtxt.setVisibility(View.GONE);
-			isCompanion = true;
+		if (Utility.getSharedPreferences(mContext, APIS.is_companion) != null) {
+			if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
+				OldPassLinear.setVisibility(View.VISIBLE);
+				create_new_passwordtxt.setVisibility(View.GONE);
+				isCompanion = true;
+			} else {
+				OldPassLinear.setVisibility(View.GONE);
+				create_new_passwordtxt.setVisibility(View.VISIBLE);
+				isCompanion = false;
+			}
 		} else {
 			OldPassLinear.setVisibility(View.GONE);
 			create_new_passwordtxt.setVisibility(View.VISIBLE);

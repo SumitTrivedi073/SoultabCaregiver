@@ -38,7 +38,6 @@ public class AppController extends MultiDexApplication {
 	
 	public static final String VERSION = "1.4.0";
 	
-	
 	public static final String TAG = AppController.class.getSimpleName();
 	
 	private RequestQueue mRequestQueue;
@@ -55,7 +54,6 @@ public class AppController extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
 		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 		mInstance = this;
 		PrefUtils.init(this);
@@ -64,56 +62,62 @@ public class AppController extends MultiDexApplication {
 		initSendBirdCall(SENDBIRD_APP_ID);
 		PushUtils.registerPushHandler(new CustomFireBaseMessaging());
 	}
-
-
+	
+	public static Context getContext() {
+		return mContext;
+	}
+	
+	public static synchronized AppController getInstance() {
+		return mInstance;
+	}
+	
 	public boolean initSendBirdCall(String appId) {
 		Log.i(TAG, "[BaseApplication] initSendBirdCall(appId: " + appId + ")");
 		Context context = getApplicationContext();
-
+		
 		if (TextUtils.isEmpty(appId)) {
 			appId = SENDBIRD_APP_ID;
 		}
-
+		
 		if (SendBirdCall.init(context, appId)) {
 			SendBirdCall.removeAllListeners();
 			SendBirdCall.addListener(UUID.randomUUID().toString(), new SendBirdCallListener() {
 				@Override
 				public void onRinging(DirectCall call) {
 					int ongoingCallCount = SendBirdCall.getOngoingCallCount();
-					Log.i(TAG, "[BaseApplication] onRinging() => callId: " + call.getCallId() + ", getOngoingCallCount(): " + ongoingCallCount);
-
+					Log.i(TAG,
+							"[BaseApplication] onRinging() => callId: " + call.getCallId() + ", " + "getOngoingCallCount(): " + ongoingCallCount);
+					
 					if (ongoingCallCount >= 2) {
 						call.end();
 						return;
 					}
-
+					
 					call.setListener(new DirectCallListener() {
 						@Override
 						public void onConnected(DirectCall call) {
 						}
-
+						
 						@Override
 						public void onEnded(DirectCall call) {
 							int ongoingCallCount = SendBirdCall.getOngoingCallCount();
-							Log.i(TAG, "[BaseApplication] onEnded() => callId: " + call.getCallId() + ", getOngoingCallCount(): " + ongoingCallCount);
-
-
+							Log.i(TAG,
+									"[BaseApplication] onEnded() => callId: " + call.getCallId() + ", getOngoingCallCount(): " + ongoingCallCount);
+							
 							BroadcastUtils.sendCallLogBroadcast(context, call.getCallLog());
-
+							
 							if (ongoingCallCount == 0) {
 								SendbirdCallService.stopService(context);
 							}
 						}
 					});
-
+					
 					SendbirdCallService.onRinging(context, call);
 				}
 			});
-
-			SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.DIALING,
-					R.raw.dialing);
-			SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RINGING,
-					R.raw.ringing);
+			
+			SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.DIALING, R.raw.dialing);
+			SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RINGING, R.raw.ringing);
 			SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTING,
 					R.raw.reconnecting);
 			SendBirdCall.Options.addDirectCallSound(SendBirdCall.SoundType.RECONNECTED,
@@ -121,13 +125,6 @@ public class AppController extends MultiDexApplication {
 			return true;
 		}
 		return false;
-	}
-	public static Context getContext() {
-		return mContext;
-	}
-	
-	public static synchronized AppController getInstance() {
-		return mInstance;
 	}
 	
 	public <T> void addToRequestQueue(Request<T> req, String tag) {
