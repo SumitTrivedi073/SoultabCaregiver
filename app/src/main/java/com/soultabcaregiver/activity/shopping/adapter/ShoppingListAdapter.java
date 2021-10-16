@@ -31,6 +31,7 @@ import com.mukesh.countrypicker.Country;
 import com.mukesh.countrypicker.listeners.OnCountryPickerListener;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.docter.SocialActivity;
 import com.soultabcaregiver.activity.shopping.model.ShoppingCategoryModel;
 import com.soultabcaregiver.utils.AppController;
@@ -421,6 +422,21 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 			public void onErrorResponse(VolleyError error) {
 				VolleyLog.d(TAG, "Error: " + error.getMessage());
 				hideProgressDialog();
+				if (error.networkResponse!=null) {
+					if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+						ApiTokenAuthentication.refrehToken(mcontext, updatedToken -> {
+							if (updatedToken == null) {
+							} else {
+								UpdateUserProfile(webUrl);
+								
+							}
+						});
+					}else {
+						Utility.ShowToast(
+								mcontext,
+								mcontext.getResources().getString(R.string.something_went_wrong));
+					}
+				}
 			}
 		}) {
 			@Override
@@ -428,6 +444,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 				Map<String, String> params = new HashMap<String, String>();
 				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
 				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				params.put(APIS.APITokenKEY,
+						Utility.getSharedPreferences(mcontext, APIS.APITokenValue));
+				
 				return params;
 			}
 			

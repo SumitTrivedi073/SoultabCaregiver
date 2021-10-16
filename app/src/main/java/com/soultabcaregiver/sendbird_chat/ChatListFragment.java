@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -19,6 +21,7 @@ import com.sendbird.android.SendBird;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.companion.CompanionMainActivity;
 import com.soultabcaregiver.companion.OnDemandVisitStatus;
@@ -44,6 +47,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ChatListFragment extends BaseFragment {
+	
+	private final String TAG = getClass().getSimpleName();
 	
 	private static final String CONNECTION_HANDLER_ID = "CONNECTION_HANDLER_GROUP_CHANNEL_LIST";
 	
@@ -252,7 +257,29 @@ public class ChatListFragment extends BaseFragment {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}, error -> hideProgressDialog()) {
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				error.getMessage();
+				Log.e(TAG, "onErrorResponse: >>" + error.toString());
+				hideProgressDialog();
+				if (error.networkResponse!=null) {
+					if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+						ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+							if (updatedToken == null) {
+							} else {
+								getUsersForCompanion();
+								
+							}
+						});
+					}else {
+						Utility.ShowToast(
+								mContext,
+								mContext.getResources().getString(R.string.something_went_wrong));
+					}
+				}
+			}
+		}) {
 			@Override
 			public Map<String, String> getHeaders() {
 				Map<String, String> params = new HashMap<>();
@@ -260,6 +287,8 @@ public class ChatListFragment extends BaseFragment {
 				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
 				params.put(APIS.HEADERKEY2,
 						Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+				params.put(APIS.APITokenKEY,
+						Utility.getSharedPreferences(mContext, APIS.APITokenValue));
 				
 				return params;
 			}
@@ -315,6 +344,7 @@ public class ChatListFragment extends BaseFragment {
 	/**
 	 * Loads the next channels from the current query instance.
 	 */
+	
 	private void loadNextChannelList() {
 		mChannelListQuery.next((list, e) -> {
 			if (e != null) {

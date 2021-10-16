@@ -22,6 +22,7 @@ import com.sendbird.calls.DirectCallLog;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
@@ -239,6 +240,22 @@ public class CompanionMainActivity extends BaseActivity {
 				}, error -> {
 					VolleyLog.d(TAG, "Error: " + error.getMessage());
 					hideProgressDialog();
+					
+					if (error.networkResponse!=null) {
+						if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+							ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+								if (updatedToken == null) {
+								} else {
+									Alert_countAPI();
+									
+								}
+							});
+						}else {
+							Utility.ShowToast(
+									mContext,
+									mContext.getResources().getString(R.string.something_went_wrong));
+						}
+					}
 				}) {
 					@Override
 					public Map<String, String> getHeaders() {
@@ -247,6 +264,8 @@ public class CompanionMainActivity extends BaseActivity {
 						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
 						params.put(APIS.HEADERKEY2,
 								Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+						params.put(APIS.APITokenKEY,
+								Utility.getSharedPreferences(mContext, APIS.APITokenValue));
 						
 						return params;
 					}

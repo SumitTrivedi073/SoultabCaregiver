@@ -31,6 +31,7 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
@@ -430,16 +431,32 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         Log.e("error", error.toString());
                         
                         hideProgressDialog();
+                        if (error.networkResponse!=null) {
+                            if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                                ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                                    if (updatedToken == null) {
+                                    } else {
+                                        ChartAPI(chart_value_data);
+                    
+                                    }
+                                });
+                            }else {
+                                Utility.ShowToast(
+                                        mContext,
+                                        getResources().getString(R.string.something_went_wrong));
+                            }
+                        }
                     }
                 }) {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-                        // params.put("auth", "OTg4");
                         params.put(APIS.HEADERKEY2,
                                 Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
-                        
+                        params.put(APIS.APITokenKEY,
+                                Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+    
                         Log.e("dahsbord_param", String.valueOf(params));
                         return params;
                     }

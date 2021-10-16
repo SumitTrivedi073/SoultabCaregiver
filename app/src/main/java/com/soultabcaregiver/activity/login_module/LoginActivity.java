@@ -33,13 +33,13 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.Model.LoginModel;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.companion.CompanionMainActivity;
 import com.soultabcaregiver.sendbird_calls.SendBirdAuthentication;
@@ -53,9 +53,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.soultabcaregiver.utils.Utility.ShowToast;
-
 import androidx.annotation.NonNull;
+
+import static com.soultabcaregiver.utils.Utility.ShowToast;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 	
@@ -91,50 +91,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 	}
 	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
-			if (resultCode == RESULT_CANCELED) {
-				Utility.ShowToast(mContext, "Please update and enjoy the app");
-			} else if (resultCode == RESULT_OK) {
-				Utility.ShowToast(mContext, "App update success");
-			} else {
-				checkUpdate();
-			}
-			//In app Update link
-			//https://www.section.io/engineering-education/android-application-in-app-update-using
-			// -android-studio/
-		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
-		checkUpdate();
-	}
-	
-	@Override
-	public void onClick(View v) {
-		
-		switch (v.getId()) {
-			
-			case R.id.tv_rem_pass:
-				tbRemPass.setChecked(!tbRemPass.isChecked());
-				break;
-			case R.id.tv_forgot_pass:
-				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-				break;
-			
-			case R.id.tv_login:
-				Login();
-				break;
-			
-		}
-		
-	}
-	
 	private void init() {
 		tvLogin = findViewById(R.id.tv_login);
 		tvForgot = findViewById(R.id.tv_forgot_pass);
@@ -157,25 +113,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		
 		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
 		if (resultCode == ConnectionResult.SUCCESS) {
-
-			FirebaseMessaging.getInstance().getToken()
-					.addOnCompleteListener(new OnCompleteListener<String>() {
+			
+			FirebaseMessaging.getInstance().getToken().addOnCompleteListener(
+					new OnCompleteListener<String>() {
 						@Override
-						public void onComplete(@NonNull com.google.android.gms.tasks.Task<String> task) {
+						public void onComplete(
+								@NonNull com.google.android.gms.tasks.Task<String> task) {
 							if (!task.isSuccessful()) {
-								Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+								Log.w(TAG, "Fetching FCM registration token failed",
+										task.getException());
 								return;
 							}
-
+							
 							// Get new FCM registration token
 							FirebaseToken = task.getResult();
 							Log.e("newToken", FirebaseToken);
 							PrefUtils.setPushToken(FirebaseToken);
 							SendBirdAuthentication.registerPushToken(FirebaseToken, e -> {
-
+							
 							});
 						}
-
+						
 					});
 		}
 	}
@@ -203,6 +161,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		});
 	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
+			if (resultCode == RESULT_CANCELED) {
+				Utility.ShowToast(mContext, "Please update and enjoy the app");
+			} else if (resultCode == RESULT_OK) {
+				Utility.ShowToast(mContext, "App update success");
+			} else {
+				checkUpdate();
+			}
+			//In app Update link
+			//https://www.section.io/engineering-education/android-application-in-app-update-using
+			// -android-studio/
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
+		checkUpdate();
+	}
+	
 	private void checkUpdate() {
 		
 		Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
@@ -224,6 +206,26 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		} catch (IntentSender.SendIntentException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void onClick(View v) {
+		
+		switch (v.getId()) {
+			
+			case R.id.tv_rem_pass:
+				tbRemPass.setChecked(!tbRemPass.isChecked());
+				break;
+			case R.id.tv_forgot_pass:
+				startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+				break;
+			
+			case R.id.tv_login:
+				Login();
+				break;
+			
+		}
+		
 	}
 	
 	private void Login() {
@@ -268,8 +270,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
-
-								Log.e("response",response.toString());
+								
+								Log.e("response", response.toString());
 								LoginModel loginModel =
 										new Gson().fromJson(response.toString(), LoginModel.class);
 								
@@ -293,7 +295,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getCaregiver_id().getBytes(),
 											Base64.NO_WRAP);
 									
-
 									Utility.setSharedPreference(mContext, APIS.EncodeUser_id,
 											encodeValue);
 									
@@ -301,10 +302,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getId());
 									Utility.setSharedPreference(mContext, APIS.caregiver_id,
 											loginModel.getResponse().getCaregiver_id());
-
+									
 									Utility.setSharedPreference(mContext, APIS.is_companion,
 											loginModel.getResponse().getIs_companion());
-
+									
 									Utility.setSharedPreference(mContext, APIS.Caregiver_name,
 											loginModel.getResponse().getName());
 									Utility.setSharedPreference(mContext, APIS.Caregiver_lastname,
@@ -331,25 +332,27 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 											loginModel.getResponse().getCountrycode());
 									Utility.setSharedPreference(mContext, APIS.Caregiver_username,
 											loginModel.getResponse().getCaregiver_username());
-
-
-									Utility.setSharedPreference(mContext, APIS.dashbooard_hide_Show,
+									
+									Utility.setSharedPreference(mContext,
+											APIS.dashbooard_hide_Show,
 											loginModel.getResponse().getPermission().getDashboardNew());
-
-
+									
 									Utility.setSharedPreference(mContext, APIS.doctor_hide_show,
 											loginModel.getResponse().getPermission().getAppointmentList());
-
-
-									Utility.setSharedPreference(mContext, APIS.dailyroutine_hideshow,
+									
+									Utility.setSharedPreference(mContext,
+											APIS.dailyroutine_hideshow,
 											loginModel.getResponse().getPermission().getDailyroutine());
-
-
-
+									
 									Utility.setSharedPreference(mContext, APIS.calender_hideshow,
 											loginModel.getResponse().getPermission().getShowActivities());
-
-
+									
+									Utility.setSharedPreference(mContext, APIS.APITokenValue,
+											loginModel.getResponse().getJwt_token());
+									
+									Utility.setSharedPreference(mContext, APIS.RefressTokenValue,
+											loginModel.getResponse().getRefresh_token());
+									
 									if (loginModel.getResponse().getIsSendBirdUser().equals("0")) {
 										updateSendBirdFlag();
 									} else {
@@ -397,12 +400,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		}, error -> {
 			VolleyLog.d(TAG, "Error: " + error.getMessage());
 			hideProgressDialog();
+			if (error.networkResponse!=null) {
+				if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+					ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+						if (updatedToken == null) {
+						} else {
+							updateSendBirdFlag();
+							
+						}
+					});
+				}else {
+					Utility.ShowToast(
+							mContext,
+							getString(R.string.something_went_wrong));
+				}
+			}
 		}) {
 			@Override
 			public Map<String, String> getHeaders() {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
 				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				params.put(APIS.APITokenKEY,
+						Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+				
 				return params;
 			}
 			
@@ -420,12 +441,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				Utility.getSharedPreferences(mContext, APIS.profile_image), isSuccess -> {
 					hideProgressDialog();
 					if (isSuccess) {
-
+						
 						if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
 							Intent intent = new Intent(mContext, MainActivity.class);
 							startActivity(intent);
 							finishAffinity();
-						}else {
+						} else {
 							Intent intent = new Intent(mContext, CompanionMainActivity.class);
 							startActivity(intent);
 							finishAffinity();

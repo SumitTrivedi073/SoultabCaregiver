@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.alert.model.CareGiverListModel;
 import com.soultabcaregiver.sendbird_chat.model.GroupChatImageModel;
 import com.soultabcaregiver.utils.AppController;
@@ -306,12 +307,29 @@ public class CreateGroupFragment extends BaseFragment {
 						error.getMessage();
 						Log.e(TAG, "onErrorResponse: >>" + error.toString());
 						hideProgressDialog();
+						if (error.networkResponse!=null) {
+							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+								ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+									if (updatedToken == null) {
+									} else {
+										UploadGroupImage();
+										
+									}
+								});
+							}else {
+								Utility.ShowToast(
+										mContext,
+										mContext.getResources().getString(R.string.something_went_wrong));
+							}
+						}
 					}
 				}) {
 					@Override
 					public Map<String, String> getHeaders() {
 						Map<String, String> params = new HashMap<>();
 						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						params.put(APIS.APITokenKEY,
+								Utility.getSharedPreferences(mContext, APIS.APITokenValue));
 						
 						return params;
 					}
@@ -566,6 +584,21 @@ public class CreateGroupFragment extends BaseFragment {
 			
 		}, error -> {
 			progressDialog.setVisibility(View.GONE);
+			if (error.networkResponse!=null) {
+				if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+					ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+						if (updatedToken == null) {
+						} else {
+							getCaregiverList();
+							
+						}
+					});
+				}else {
+					Utility.ShowToast(
+							mContext,
+							getResources().getString(R.string.something_went_wrong));
+				}
+			}
 		}) {
 			@Override
 			public Map<String, String> getHeaders() {
@@ -574,6 +607,9 @@ public class CreateGroupFragment extends BaseFragment {
 				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
 				params.put(APIS.HEADERKEY2,
 						Utility.getSharedPreferences(getContext(), APIS.EncodeUser_id));
+				params.put(APIS.APITokenKEY,
+						Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+				
 				return params;
 			}
 			
