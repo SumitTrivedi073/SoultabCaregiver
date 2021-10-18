@@ -400,7 +400,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         three_month_chart.setChecked(false);
                         six_month_chart.setChecked(false);
                         chart_value_data = "12month";
-                        ChartAPI("12month");
+                        ChartAPI(chart_value_data);
                     }
                 } else {
                     Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));

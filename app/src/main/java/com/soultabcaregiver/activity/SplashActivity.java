@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.RelativeLayout;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
@@ -37,6 +41,7 @@ public class SplashActivity extends BaseActivity {
 	String User_id;
 	
 	private long back_pressed;
+	RelativeLayout mlayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class SplashActivity extends BaseActivity {
 		setContentView(R.layout.activity_splash);
 		mContext = this;
 		
+		mlayout = findViewById(R.id.mlayout);
 		User_id = Utility.getSharedPreferences(mContext, APIS.user_id);
 		
 	}
@@ -143,40 +149,56 @@ public class SplashActivity extends BaseActivity {
 					startActivity(intent);
 					finish();
 				} else {
-					SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
-						if (userId == null) {
-							Utility.ShowToast(mContext, "Sendbird Auth Failed");
-						}
-						if (!TextUtils.isEmpty(
-								Utility.getSharedPreferences(mContext, APIS.is_companion))) {
-							
-							if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals(
-									"0")) {
-								
-								Intent intent = new Intent(mContext, MainActivity.class);
-								if (getIntent().hasExtra(
-										ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
-									intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
-											getIntent().getExtras().getString(
-													ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
-								}
-								startActivity(intent);
-								finish();
-							} else {
-								Intent intent = new Intent(mContext, CompanionMainActivity.class);
-								if (getIntent().hasExtra(
-										ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
-									intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
-											getIntent().getExtras().getString(
-													ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
-								}
-								startActivity(intent);
-								finish();
+					if (Utility.isNetworkConnected(mContext)) {
+						SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
+							if (userId == null) {
+								Utility.ShowToast(mContext, "Sendbird Auth Failed");
 							}
-						}
-						
-					});
-					
+							if (!TextUtils.isEmpty(Utility.getSharedPreferences(mContext, APIS.is_companion))) {
+								
+								if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
+									
+									Intent intent = new Intent(mContext, MainActivity.class);
+									if (getIntent().hasExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
+										intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
+												getIntent().getExtras().getString(
+														ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
+									}
+									startActivity(intent);
+									finish();
+								} else {
+									Intent intent = new Intent(mContext, CompanionMainActivity.class);
+									if (getIntent().hasExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
+										intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
+												getIntent().getExtras().getString(
+														ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
+									}
+									startActivity(intent);
+									finish();
+								}
+							}
+							
+						});
+					}else {
+						Snackbar.make(mlayout, R.string.net_connection,
+								Snackbar.LENGTH_INDEFINITE).setAction(R.string.OK,
+								new View.OnClickListener() {
+									@Override
+									public void onClick(View view) {
+										// Request the permission
+										if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+											Intent panelIntent = new
+													Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY);
+											startActivityForResult(panelIntent, 0);
+										} else {
+											// for previous android version
+											WifiManager wifiManager = (WifiManager)
+													getApplicationContext().getSystemService(WIFI_SERVICE);
+											wifiManager.setWifiEnabled(true);
+										}
+									}
+								}).show();
+					}
 				}
 			}
 			
