@@ -51,6 +51,7 @@ import com.sendbird.calls.DirectCallLog;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
@@ -624,11 +625,18 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                             if (dashBoardFragment != null) {
 
                                 dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
-
-
-                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
-                                    video_call.setVisibility(View.GONE);
-                                    shopping_btn.setVisibility(View.GONE);
+    
+    
+                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show) != null
+                                        && !Utility.getSharedPreferences(mContext,
+                                        APIS.dashbooard_hide_Show).equals("")) {
+                                    if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
+                                        video_call.setVisibility(View.GONE);
+                                        shopping_btn.setVisibility(View.GONE);
+                                    } else {
+                                        video_call.setVisibility(View.VISIBLE);
+                                        shopping_btn.setVisibility(View.GONE);
+                                    }
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
                                     shopping_btn.setVisibility(View.GONE);
@@ -691,6 +699,21 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 }, error -> {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
                     hideProgressDialog();
+                    if (error.networkResponse!=null) {
+                        if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                            ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                                if (updatedToken == null) {
+                                } else {
+                                    PermissionTabAPI();
+                    
+                                }
+                            });
+                        }else {
+                            Utility.ShowToast(
+                                    mContext,
+                                    mContext.getResources().getString(R.string.something_went_wrong));
+                        }
+                    }
                 }) {
                     @Override
                     public Map<String, String> getHeaders() {
@@ -699,7 +722,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                         params.put(APIS.HEADERKEY2,
                                 Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
-
+                        params.put(APIS.APITokenKEY,
+                                Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+    
                         return params;
                     }
 
@@ -761,6 +786,21 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 }, error -> {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
                     hideProgressDialog();
+                    if (error.networkResponse!=null) {
+                        if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                            ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                                if (updatedToken == null) {
+                                } else {
+                                    Alert_countAPI();
+                    
+                                }
+                            });
+                        }else {
+                            Utility.ShowToast(
+                                    mContext,
+                                    mContext.getResources().getString(R.string.something_went_wrong));
+                        }
+                    }
                 }) {
                     @Override
                     public Map<String, String> getHeaders() {
@@ -769,7 +809,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                         params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                         params.put(APIS.HEADERKEY2,
                                 Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
-
+                        params.put(APIS.APITokenKEY,
+                                Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+    
                         return params;
                     }
 

@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorCategoryModel;
 import com.soultabcaregiver.activity.docter.DoctorModel.DoctorListModel;
 import com.soultabcaregiver.activity.docter.adapter.DoctorListAdapter;
@@ -230,6 +231,21 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 }, error -> {
             VolleyLog.d(TAG, "Error: " + error.getMessage());
             hideProgressDialog();
+            if (error.networkResponse!=null) {
+                if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                    ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                        if (updatedToken == null) {
+                        } else {
+                            GetDocList();
+                    
+                        }
+                    });
+                }else {
+                    Utility.ShowToast(
+                            mContext,
+                            getResources().getString(R.string.something_went_wrong));
+                }
+            }
         }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -237,6 +253,9 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                 params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.APITokenKEY,
+                        Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+    
                 return params;
             }
         };
@@ -295,6 +314,21 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 }, error -> {
             VolleyLog.d(TAG, "Error: " + error.getMessage());
             hideProgressDialog();
+            if (error.networkResponse!=null) {
+                if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                    ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                        if (updatedToken == null) {
+                        } else {
+                            GetDocList2();
+                    
+                        }
+                    });
+                }else {
+                    Utility.ShowToast(
+                            mContext,
+                            getResources().getString(R.string.something_went_wrong));
+                }
+            }
         }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -302,6 +336,9 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                 params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.APITokenKEY,
+                        Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+    
                 return params;
             }
         };
@@ -396,6 +433,22 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 hideProgressDialog();
+                if (error.networkResponse!=null) {
+                    if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                        ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                            if (updatedToken == null) {
+                            } else {
+                                AddFavoritDoctor(doctor_id,favorite);
+                    
+                            }
+                        });
+                    }else {
+                        Utility.ShowToast(
+                                mContext,
+                                getResources().getString(R.string.something_went_wrong));
+                    }
+                }
+                
             }
         }) {
             @Override
@@ -404,6 +457,9 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                 params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext,APIS.EncodeUser_id));
+                params.put(APIS.APITokenKEY,
+                        Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+    
                 return params;
             }
 

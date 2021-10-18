@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
@@ -228,12 +229,29 @@ public class ChangePasswordActivity extends BaseActivity {
 						Log.e("error", error.toString());
 						
 						hideProgressDialog();
+						if (error.networkResponse!=null) {
+							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+								ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+									if (updatedToken == null) {
+									} else {
+										ChangePassword();
+										
+									}
+								});
+							}else {
+								Utility.ShowToast(
+										mContext,
+										getString(R.string.something_went_wrong));
+							}
+						}
 					}
 				}) {
 					@Override
 					public Map<String, String> getHeaders() throws AuthFailureError {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						params.put(APIS.APITokenKEY,
+								Utility.getSharedPreferences(mContext, APIS.APITokenValue));
 						
 						return params;
 					}

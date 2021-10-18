@@ -131,6 +131,58 @@ public class SplashActivity extends BaseActivity {
 		}
 	}
 	
+	private void changeScreen() {
+		
+		new Handler().postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				if (TextUtils.isEmpty(User_id)) {
+					Intent intent = new Intent(mContext, LoginActivity.class);
+					startActivity(intent);
+					finish();
+				} else {
+					SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
+						if (userId == null) {
+							Utility.ShowToast(mContext, "Sendbird Auth Failed");
+						}
+						if (!TextUtils.isEmpty(
+								Utility.getSharedPreferences(mContext, APIS.is_companion))) {
+							
+							if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals(
+									"0")) {
+								
+								Intent intent = new Intent(mContext, MainActivity.class);
+								if (getIntent().hasExtra(
+										ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
+									intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
+											getIntent().getExtras().getString(
+													ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
+								}
+								startActivity(intent);
+								finish();
+							} else {
+								Intent intent = new Intent(mContext, CompanionMainActivity.class);
+								if (getIntent().hasExtra(
+										ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
+									intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
+											getIntent().getExtras().getString(
+													ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
+								}
+								startActivity(intent);
+								finish();
+							}
+						}
+						
+					});
+					
+				}
+			}
+			
+		}, 3000);
+	}
+	
 	@RequiresApi (api = Build.VERSION_CODES.M)
 	private void requestPermission() {
 		
@@ -148,52 +200,5 @@ public class SplashActivity extends BaseActivity {
 					Uri.parse("package:" + getPackageName()));
 			startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
 		}
-	}
-	
-	private void changeScreen() {
-		
-		new Handler().postDelayed(new Runnable() {
-			
-			@Override
-			public void run() {
-				
-				if (TextUtils.isEmpty(User_id)) {
-					Intent intent = new Intent(mContext, LoginActivity.class);
-					startActivity(intent);
-					finish();
-				} else {
-					SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
-						if (userId == null) {
-							Utility.ShowToast(mContext, "Sendbird Auth Failed");
-						}
-						if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
-							
-							Intent intent = new Intent(mContext, MainActivity.class);
-							if (getIntent().hasExtra(
-									ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
-								intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
-										getIntent().getExtras().getString(
-												ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
-							}
-							startActivity(intent);
-							finish();
-						} else {
-							Intent intent = new Intent(mContext, CompanionMainActivity.class);
-							if (getIntent().hasExtra(
-									ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
-								intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
-										getIntent().getExtras().getString(
-												ConversationFragment.EXTRA_GROUP_CHANNEL_URL));
-							}
-							startActivity(intent);
-							finish();
-						}
-						
-					});
-					
-				}
-			}
-			
-		}, 3000);
 	}
 }

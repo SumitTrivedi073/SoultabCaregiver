@@ -293,6 +293,9 @@ public class DoctorAppointedListAdptr extends
                 params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
                 params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
                 params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+                params.put(APIS.APITokenKEY,
+                        Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+    
                 return params;
             }
 

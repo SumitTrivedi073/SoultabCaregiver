@@ -86,6 +86,10 @@ public class LoginModel {
 		@SerializedName ("username") @Expose private String caregiver_username;
 
 		@SerializedName ("is_companion") @Expose private String is_companion;
+		
+		@SerializedName ("jwt_token") @Expose private String jwt_token;
+		
+		@SerializedName ("refresh_token") @Expose private String refresh_token;
 
 		@SerializedName("permission")
 		@Expose
@@ -257,7 +261,23 @@ public class LoginModel {
 		public void setPermission(Permission permission) {
 			this.permission = permission;
 		}
-
+		
+		public String getJwt_token() {
+			return jwt_token;
+		}
+		
+		public void setJwt_token(String jwt_token) {
+			this.jwt_token = jwt_token;
+		}
+		
+		public String getRefresh_token() {
+			return refresh_token;
+		}
+		
+		public void setRefresh_token(String refresh_token) {
+			this.refresh_token = refresh_token;
+		}
+		
 		public class Permission {
 
 			@SerializedName("social_dashboard")
