@@ -73,6 +73,11 @@
             android:autoRemoveFromRecents="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".search.SearchActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.login_module.ForgotPasswordActivity"
             android:screenOrientation="portrait" />

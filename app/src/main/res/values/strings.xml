@@ -302,6 +302,24 @@
     <string name="start_call">Start Call</string>
     <string name="please_select_members_for_call">Please select members for Call</string>
     <string name="maximum_five_members_allowed">For video call maximum five members are allowed</string>
+
+
+    <!--Search-->
+    <string name="search_your_favourite_person">Search your favourite Person!</string>
+    <string name="search_users">Search Users</string>
+    <string name="accept">Accept</string>
+    <string name="pending_requests">Pending Requests</string>
+    <string name="reject">Decline</string>
+    <string name="remove">Remove</string>
+    <string name="view_detail">View Detail</string>
+    <string name="invite_member">Invite Member</string>
+    <string name="connection_requested">Requested</string>
+    <string name="search_hint">Search</string>
+    <string name="Profile">Profile</string>
+    <string name="message">Message</string>
+    <!--Search-->
+
+
     <!--  Added By AJay  -->
 
     <!--Added by Sumit-->

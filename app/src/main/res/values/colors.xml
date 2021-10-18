@@ -46,5 +46,7 @@
     <color name="video_call_background">#161616</color>
     <!--  chat colors  -->
 
+    <color name="cancel_button_text_color">#2E2E2E</color>
+    <color name="chat_grey">#F3F3F3</color>
 
 </resources>
