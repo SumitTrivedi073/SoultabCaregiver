@@ -625,11 +625,18 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                             if (dashBoardFragment != null) {
 
                                 dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
-
-
-                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
-                                    video_call.setVisibility(View.GONE);
-                                    shopping_btn.setVisibility(View.GONE);
+    
+    
+                                if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show) != null
+                                        && !Utility.getSharedPreferences(mContext,
+                                        APIS.dashbooard_hide_Show).equals("")) {
+                                    if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
+                                        video_call.setVisibility(View.GONE);
+                                        shopping_btn.setVisibility(View.GONE);
+                                    } else {
+                                        video_call.setVisibility(View.VISIBLE);
+                                        shopping_btn.setVisibility(View.GONE);
+                                    }
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
                                     shopping_btn.setVisibility(View.GONE);
