@@ -161,10 +161,12 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 bottomNavigationMenuView, false);
         tv_badge = badge.findViewById(R.id.notification_badge);
 
-        registerReceiver();
-        PermissionTabAPI();
-
-        listner();
+        if (Utility.isNetworkConnected(mContext)) {
+            registerReceiver();
+            PermissionTabAPI();
+    
+            listner();
+        }
 
         int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         if (resultCode == ConnectionResult.SUCCESS) {
