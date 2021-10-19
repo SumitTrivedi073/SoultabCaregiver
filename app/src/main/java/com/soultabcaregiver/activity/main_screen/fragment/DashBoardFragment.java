@@ -2,6 +2,7 @@ package com.soultabcaregiver.activity.main_screen.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
+import com.soultabcaregiver.search.PendingRequestsActivity;
 import com.soultabcaregiver.search.SearchActivity;
 import com.soultabcaregiver.sendbird_chat.ChatHelper;
 import com.soultabcaregiver.sendbird_chat.ConversationFragment;
@@ -325,13 +327,11 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
 		logout.setOnClickListener(this);
 		NeedAssistance.setOnClickListener(this);
 		
-		pendingRequests.setOnClickListener(v -> {
+		pendingRequests.setOnClickListener(
+				v -> startActivity(new Intent(getContext(), PendingRequestsActivity.class)));
 		
-		});
+		searchUsers.setOnClickListener(v -> startActivity(SearchActivity.intentFor(getContext())));
 		
-		searchUsers.setOnClickListener(v -> {
-			startActivity(SearchActivity.intentFor(getContext()));
-		});
 		weekly_chart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

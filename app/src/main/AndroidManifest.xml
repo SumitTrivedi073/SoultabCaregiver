@@ -151,6 +151,8 @@
             android:launchMode="singleTask"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
+        <activity android:name=".search.UserProfileActivity" />
+        <activity android:name=".search.PendingRequestsActivity" />
 
         <service
             android:name=".twillovoicecall.IncomingCallNotificationService"

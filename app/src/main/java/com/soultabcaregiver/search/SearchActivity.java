@@ -95,6 +95,8 @@ public class SearchActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search);
 		
+		findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
+		
 		usersRecyclerView = findViewById(R.id.usersRecyclerView);
 		searchTextBox = findViewById(R.id.searchTextBox);
 		searchButton = findViewById(R.id.searchButton);
@@ -125,6 +127,7 @@ public class SearchActivity extends BaseActivity {
 		});
 		
 		searchButton.setOnClickListener(v -> {
+			Utility.hideKeyboard(SearchActivity.this);
 			searchTextBox.dismissDropDown();
 			usersRecyclerView.setVisibility(View.VISIBLE);
 			searchUsersAdapter.setUsersList(usersList);

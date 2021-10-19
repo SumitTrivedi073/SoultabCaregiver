@@ -35,6 +35,8 @@ public class PendingRequestsFragment extends Fragment {
 	
 	RelativeLayout progressLayout;
 	
+	RelativeLayout noPendingRequests;
+	
 	RecyclerView recycler;
 	
 	SearchUsersAdapter searchUsersAdapter;
@@ -93,9 +95,13 @@ public class PendingRequestsFragment extends Fragment {
 									newUsersList.add(userSearchResultModel);
 								}
 								searchUsersAdapter.setUsersList(newUsersList);
+							} else {
+								noPendingRequests.setVisibility(View.VISIBLE);
+								recycler.setVisibility(View.GONE);
 							}
 						} else {
-						
+							noPendingRequests.setVisibility(View.VISIBLE);
+							recycler.setVisibility(View.GONE);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -119,7 +125,11 @@ public class PendingRequestsFragment extends Fragment {
 	}
 	
 	private void setupUI(View view) {
+		
+		view.findViewById(R.id.backButton).setOnClickListener(v -> getActivity().onBackPressed());
+		
 		progressLayout = view.findViewById(R.id.progressLayout);
+		noPendingRequests = view.findViewById(R.id.noPendingRequests);
 		recycler = view.findViewById(R.id.pendingRequestsRecycler);
 		recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
 		searchUsersAdapter =

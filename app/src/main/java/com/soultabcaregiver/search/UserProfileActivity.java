@@ -43,6 +43,8 @@ public class UserProfileActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_users_profile);
 		
+		findViewById(R.id.backButton).setOnClickListener(v -> onBackPressed());
+		
 		profilePic = findViewById(R.id.profilePic);
 		userNameText = findViewById(R.id.userNameText);
 		acceptBtn = findViewById(R.id.acceptBtn);
