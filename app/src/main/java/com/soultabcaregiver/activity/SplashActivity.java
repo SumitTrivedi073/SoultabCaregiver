@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -149,6 +150,7 @@ public class SplashActivity extends BaseActivity {
 					startActivity(intent);
 					finish();
 				} else {
+					
 					if (Utility.isNetworkConnected(mContext)) {
 						SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
 							if (userId == null) {
