@@ -1,6 +1,7 @@
 package com.soultabcaregiver.search;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,12 +16,15 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.search.models.UserSearchResultResponse;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
+import com.soultabcaregiver.sendbird_chat.ChatHelper;
+import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,10 +62,17 @@ public class UserProfileActivity extends BaseActivity {
 		
 		userModel = getIntent().getParcelableExtra("userModel");
 		
-		callBtn.setOnClickListener(v -> voiceCall(userModel.getId(), userModel.getName()));
-		videoCallBtn.setOnClickListener(v -> videoCall(userModel.getId(), userModel.getName()));
+		callBtn.setOnClickListener(v -> voiceCall(userModel.getId(), userModel.getName(),
+				userModel.getIsSendbirdUser()));
+		
+		videoCallBtn.setOnClickListener(v -> videoCall(userModel.getId(), userModel.getName(),
+				userModel.getIsSendbirdUser()));
+		
+		messageBtn.setOnClickListener(v -> OpenChatScreen(userModel.getId(), userModel.getName(),
+				userModel.getIsSendbirdUser()));
 		
 		String connectedStatus = userModel.getConnected();
+		
 		acceptBtn.setOnClickListener(v -> {
 			if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
 					SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
@@ -88,33 +99,58 @@ public class UserProfileActivity extends BaseActivity {
 		
 	}
 	
-	private void setupData() {
-		userNameText.setText(userModel.getName());
+	public void voiceCall(String calleeID, String name, String isSendbirdUser) {
+		if (Utility.isNetworkConnected(this)) {
+			if (isSendbirdUser.equals("1")) {
+				
+				if (!TextUtils.isEmpty(calleeID)) {
+					SendbirdCallService.dial(this, calleeID, name, false, false, null);
+				}
+			} else {
+				Utility.ShowToast(this, getString(R.string.person_not_registerd));
+				
+			}
+		} else {
+			Utility.ShowToast(this, getResources().getString(R.string.net_connection));
+		}
 		
-		RequestOptions options =
-				new RequestOptions().centerCrop().dontAnimate().fitCenter().placeholder(
-						R.drawable.user_img).error(R.drawable.user_img);
+	}
+	
+	public void videoCall(String calleeID, String name, String isSendbirdUser) {
 		
-		Glide.with(this).load(userModel.getProfileImage()).apply(options).into(profilePic);
+		if (Utility.isNetworkConnected(this)) {
+			if (isSendbirdUser.equals("1")) {
+				if (!TextUtils.isEmpty(calleeID)) {
+					SendbirdCallService.dial(this, calleeID, name, true, false, null);
+				}
+			} else {
+				Utility.ShowToast(this, getString(R.string.person_not_registerd));
+			}
+		} else {
+			Utility.ShowToast(this, getResources().getString(R.string.net_connection));
+		}
 		
-		interactLayout.setVisibility(View.GONE);
-		rejectBtn.setVisibility(View.GONE);
-		String connectedStatus = userModel.getConnected();
-		
-		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
-			acceptBtn.setText(getString(R.string.invite_member));
-			rejectBtn.setVisibility(View.GONE);
-		} else if (connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Connected.toString())) {
-			acceptBtn.setText(getString(R.string.remove));
-			interactLayout.setVisibility(View.VISIBLE);
-		} else if (connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Pending.toString())) {
-			acceptBtn.setText(getString(R.string.connection_requested));
-		} else if (connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Requested.toString())) {
-			rejectBtn.setVisibility(View.VISIBLE);
+	}
+	
+	private void OpenChatScreen(String id, String name, String isSendbirdUser) {
+		if (Utility.isNetworkConnected(this)) {
+			ArrayList<String> ids = new ArrayList<>();
+			ids.add(Utility.getSharedPreferences(this, APIS.caregiver_id));
+			ids.add(id);
+			ChatHelper.createGroupChannel(ids, true, groupChannel -> {
+				Log.e("channel", "" + groupChannel.getUrl());
+				if (isSendbirdUser.equals("1")) {
+					Utility.loadFragment(this,
+							ConversationFragment.newInstance(groupChannel.getUrl(), false), true,
+							ConversationFragment.class.getSimpleName());
+					
+					
+				} else {
+					Utility.ShowToast(this, getString(R.string.person_not_registerd));
+				}
+			});
+		} else {
+			Utility.ShowToast(this, getResources().getString(R.string.net_connection));
 		}
 	}
 	
@@ -133,6 +169,45 @@ public class UserProfileActivity extends BaseActivity {
 						if (response.optInt("status_code") == 200) {
 							userModel.setConnected(
 									SearchUsersAdapter.UsersConnectedStatus.Pending.toString());
+							setupData();
+						}
+						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+				}, Throwable :: printStackTrace) {
+					@Override
+					public Map<String, String> getHeaders() {
+						Map<String, String> params = new HashMap<>();
+						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+						params.put(APIS.APITokenKEY,
+								Utility.getSharedPreferences(UserProfileActivity.this,
+										APIS.APITokenValue));
+						return params;
+					}
+					
+				};
+		// Adding request to request queue
+		AppController.getInstance().addToRequestQueue(jsonObjectRequest);
+	}
+	
+	private void removeFriendAPI(int connectionId) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("connection_id", connectionId);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		JsonObjectRequest jsonObjectRequest =
+				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.removeFriendRequest,
+						jsonObject, response -> {
+					Log.e("API response", response.toString());
+					try {
+						if (response.optInt("status_code") == 200) {
+							userModel.setConnected(
+									SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString());
 							setupData();
 						}
 						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
@@ -235,62 +310,33 @@ public class UserProfileActivity extends BaseActivity {
 		AppController.getInstance().addToRequestQueue(jsonObjectRequest);
 	}
 	
-	private void removeFriendAPI(int connectionId) {
-		JSONObject jsonObject = new JSONObject();
-		try {
-			jsonObject.put("connection_id", connectionId);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		JsonObjectRequest jsonObjectRequest =
-				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.removeFriendRequest,
-						jsonObject, response -> {
-					Log.e("API response", response.toString());
-					try {
-						if (response.optInt("status_code") == 200) {
-							userModel.setConnected(
-									SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString());
-							setupData();
-						}
-						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					
-				}, Throwable :: printStackTrace) {
-					@Override
-					public Map<String, String> getHeaders() {
-						Map<String, String> params = new HashMap<>();
-						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-						params.put(APIS.APITokenKEY,
-								Utility.getSharedPreferences(UserProfileActivity.this,
-										APIS.APITokenValue));
-						return params;
-					}
-					
-				};
-		// Adding request to request queue
-		AppController.getInstance().addToRequestQueue(jsonObjectRequest);
-	}
-	
-	public void getChannelAnd() {
-	
-	}
-	
-	public void voiceCall(String calleeID, String name) {
-		if (Utility.isNetworkConnected(this)) {
-			SendbirdCallService.dial(this, calleeID, name, false, false, null);
-		} else {
-			Utility.ShowToast(this, getResources().getString(R.string.net_connection));
-		}
-	}
-	
-	public void videoCall(String calleeID, String name) {
-		if (Utility.isNetworkConnected(this)) {
-			SendbirdCallService.dial(this, calleeID, name, true, false, null);
-		} else {
-			Utility.ShowToast(this, getResources().getString(R.string.net_connection));
+	private void setupData() {
+		userNameText.setText(userModel.getName());
+		
+		RequestOptions options =
+				new RequestOptions().centerCrop().dontAnimate().fitCenter().placeholder(
+						R.drawable.user_img).error(R.drawable.user_img);
+		
+		Glide.with(this).load(userModel.getProfileImage()).apply(options).into(profilePic);
+		
+		interactLayout.setVisibility(View.GONE);
+		rejectBtn.setVisibility(View.GONE);
+		String connectedStatus = userModel.getConnected();
+		
+		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
+			acceptBtn.setText(getString(R.string.invite_member));
+			rejectBtn.setVisibility(View.GONE);
+		} else if (connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Connected.toString())) {
+			acceptBtn.setText(getString(R.string.remove));
+			interactLayout.setVisibility(View.VISIBLE);
+		} else if (connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Pending.toString())) {
+			acceptBtn.setText(getString(R.string.connection_requested));
+		} else if (connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Requested.toString())) {
+			rejectBtn.setVisibility(View.VISIBLE);
 		}
 	}
 	
