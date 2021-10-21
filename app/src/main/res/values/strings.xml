@@ -11,7 +11,7 @@
     <string name="forgot_pass">Forgot Password ?</string>
     <string name="valid_email">Please enter your email</string>
     <string name="valid_pass">Please enter your password</string>
-    <string name="password_not_valid">Login id/password is wrong…</string>
+    <string name="password_not_valid">Please enter correct Email ID and Password</string>
     <string name="password_notvalid">Must contain minimum 8 character</string>
     <string name="Loading">Loading…</string>
 

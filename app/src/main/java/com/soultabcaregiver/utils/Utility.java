@@ -472,6 +472,7 @@ public class Utility {
 			if (info != null) {
 				for (NetworkInfo networkInfo : info)
 					if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
+						
 						return true;
 					}
 			}
