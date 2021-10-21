@@ -166,7 +166,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == IMMEDIATE_APP_UPDATE_REQ_CODE) {
 			if (resultCode == RESULT_CANCELED) {
-				Utility.ShowToast(mContext, "Please update and enjoy the app");
+				Utility.ShowToast(mContext, "Application update is required");
 			} else if (resultCode == RESULT_OK) {
 				Utility.ShowToast(mContext, "App update success");
 			} else {
