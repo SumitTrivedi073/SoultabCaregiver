@@ -87,6 +87,9 @@ public class APIS {
     
     public static final String CaregiverListAPI = "Caregiver/getCaregiverDetailsforCaregiver";
     
+    public static final String CaregiverListAPIWithConnection =
+            "Caregiver" + "/getCaregiverDetailsforCaregiverwithUserandConnection";
+    
     public static final String CaregiverListAPIForCreateGroup =
             "Caregiver/getCaregiverDetailsforCaregiverwithUser";
     
