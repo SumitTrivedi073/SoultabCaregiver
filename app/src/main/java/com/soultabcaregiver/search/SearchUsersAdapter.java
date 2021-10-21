@@ -173,6 +173,10 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 				connectedLayout.setVisibility(View.VISIBLE);
 			}
 			
+			userName.setOnClickListener(v -> userClickHandler.viewUserDetails(model, position));
+			userPicImageView.setOnClickListener(
+					v -> userClickHandler.viewUserDetails(model, position));
+			
 			acceptBtn.setOnClickListener(
 					v -> userClickHandler.acceptClickListener(model, position));
 			rejectBtn.setOnClickListener(

@@ -61,42 +61,7 @@ public class UserProfileActivity extends BaseActivity {
 		callBtn.setOnClickListener(v -> voiceCall(userModel.getId(), userModel.getName()));
 		videoCallBtn.setOnClickListener(v -> videoCall(userModel.getId(), userModel.getName()));
 		
-		if (userModel != null) {
-			setupData();
-		}
-		
-	}
-	
-	private void setupData() {
-		userNameText.setText(userModel.getName());
-		
-		RequestOptions options =
-				new RequestOptions().centerCrop().dontAnimate().fitCenter().placeholder(
-						R.drawable.user_img).error(R.drawable.user_img);
-		
-		Glide.with(this).load(APIS.CaregiverImageURL + userModel.getProfileImage()).apply(
-				options).into(profilePic);
-		
-		interactLayout.setVisibility(View.GONE);
-		rejectBtn.setVisibility(View.GONE);
 		String connectedStatus = userModel.getConnected();
-		
-		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
-			acceptBtn.setText(getString(R.string.invite_member));
-			rejectBtn.setVisibility(View.GONE);
-		} else if (connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Connected.toString())) {
-			acceptBtn.setText(getString(R.string.remove));
-			interactLayout.setVisibility(View.VISIBLE);
-		} else if (connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Pending.toString())) {
-			acceptBtn.setText(getString(R.string.connection_requested));
-		} else if (connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Requested.toString())) {
-			rejectBtn.setVisibility(View.VISIBLE);
-		}
-		
 		acceptBtn.setOnClickListener(v -> {
 			if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
 					SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
@@ -117,6 +82,40 @@ public class UserProfileActivity extends BaseActivity {
 			}
 		});
 		
+		if (userModel != null) {
+			setupData();
+		}
+		
+	}
+	
+	private void setupData() {
+		userNameText.setText(userModel.getName());
+		
+		RequestOptions options =
+				new RequestOptions().centerCrop().dontAnimate().fitCenter().placeholder(
+						R.drawable.user_img).error(R.drawable.user_img);
+		
+		Glide.with(this).load(userModel.getProfileImage()).apply(options).into(profilePic);
+		
+		interactLayout.setVisibility(View.GONE);
+		rejectBtn.setVisibility(View.GONE);
+		String connectedStatus = userModel.getConnected();
+		
+		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
+			acceptBtn.setText(getString(R.string.invite_member));
+			rejectBtn.setVisibility(View.GONE);
+		} else if (connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Connected.toString())) {
+			acceptBtn.setText(getString(R.string.remove));
+			interactLayout.setVisibility(View.VISIBLE);
+		} else if (connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Pending.toString())) {
+			acceptBtn.setText(getString(R.string.connection_requested));
+		} else if (connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Requested.toString())) {
+			rejectBtn.setVisibility(View.VISIBLE);
+		}
 	}
 	
 	private void inviteMemberAPI(int connectionId) {
@@ -132,7 +131,9 @@ public class UserProfileActivity extends BaseActivity {
 					Log.e("API response", response.toString());
 					try {
 						if (response.optInt("status_code") == 200) {
-						
+							userModel.setConnected(
+									SearchUsersAdapter.UsersConnectedStatus.Pending.toString());
+							setupData();
 						}
 						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
 					} catch (Exception e) {
@@ -169,7 +170,9 @@ public class UserProfileActivity extends BaseActivity {
 					Log.e("API response", response.toString());
 					try {
 						if (response.optInt("status_code") == 200) {
-						
+							userModel.setConnected(
+									SearchUsersAdapter.UsersConnectedStatus.Connected.toString());
+							setupData();
 						}
 						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
 					} catch (Exception e) {
@@ -206,7 +209,9 @@ public class UserProfileActivity extends BaseActivity {
 					Log.e("API response", response.toString());
 					try {
 						if (response.optInt("status_code") == 200) {
-						
+							userModel.setConnected(
+									SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString());
+							setupData();
 						}
 						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
 					} catch (Exception e) {
@@ -243,7 +248,9 @@ public class UserProfileActivity extends BaseActivity {
 					Log.e("API response", response.toString());
 					try {
 						if (response.optInt("status_code") == 200) {
-						
+							userModel.setConnected(
+									SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString());
+							setupData();
 						}
 						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
 					} catch (Exception e) {
