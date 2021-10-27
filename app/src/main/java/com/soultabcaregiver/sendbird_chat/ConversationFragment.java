@@ -336,20 +336,6 @@ public class ConversationFragment extends BaseFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.video_call) {
-			//			SendbirdCallService.dial(requireContext(), mCalleeId, null, true, true,
-			//			mChannelUrl);
-			//			//			RoomParams params = new RoomParams(RoomType
-			//			.SMALL_ROOM_FOR_VIDEO);
-			//			//			SendBirdCall.createRoom(params, (room, e) -> {
-			//			//				if (room == null || e != null) {
-			//			//					return;
-			//			//				}
-			//			//				room.enter(new EnterParams().setAudioEnabled(true)
-			//			.setVideoEnabled
-			//			//				(true), e1 -> {
-			//			//
-			//			//				});
-			//			//			});
 			return true;
 		} else if (itemId == android.R.id.home) {
 			requireActivity().onBackPressed();
