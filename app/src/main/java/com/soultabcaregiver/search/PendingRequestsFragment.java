@@ -269,7 +269,7 @@ public class PendingRequestsFragment extends Fragment {
 								recycler.setVisibility(View.GONE);
 							}
 						}
-						Utility.ShowToast(getActivity(), response.optString("message"));
+						Utility.ShowToast(getActivity(), "Unfriend Successfully");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

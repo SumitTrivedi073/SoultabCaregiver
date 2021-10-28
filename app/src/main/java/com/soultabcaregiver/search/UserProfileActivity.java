@@ -212,7 +212,7 @@ public class UserProfileActivity extends BaseActivity {
 									SearchUsersAdapter.UsersConnectedStatus.Decline.toString());
 							setupData();
 						}
-						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
+						Utility.ShowToast(UserProfileActivity.this, "Unfriend Successfully");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
