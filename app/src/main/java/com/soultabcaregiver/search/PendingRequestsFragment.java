@@ -153,7 +153,7 @@ public class PendingRequestsFragment extends Fragment {
 					public void removeClickListener(
 							UserSearchResultResponse.UserSearchResultModel userModel,
 							int position) {
-						
+						removeFriendAPI(Integer.parseInt(userModel.getId()),position);
 					}
 					
 					@Override
@@ -241,6 +241,48 @@ public class PendingRequestsFragment extends Fragment {
 						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
 						params.put(APIS.APITokenKEY,
 								Utility.getSharedPreferences(getContext(), APIS.APITokenValue));
+						return params;
+					}
+					
+				};
+		// Adding request to request queue
+		AppController.getInstance().addToRequestQueue(jsonObjectRequest);
+	}
+	
+	private void removeFriendAPI(int connectionId, int position) {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("connection_id", connectionId);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		JsonObjectRequest jsonObjectRequest =
+				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.removeFriendRequest,
+						jsonObject, response -> {
+					Log.e("API response", response.toString());
+					try {
+						if (response.optInt("status_code") == 200) {
+							searchUsersAdapter.removeUserFromList(position);
+							Log.e("getItemCount", String.valueOf(searchUsersAdapter.getItemCount()));
+							if (!(searchUsersAdapter.getItemCount() >0)){
+								noPendingRequests.setVisibility(View.VISIBLE);
+								recycler.setVisibility(View.GONE);
+							}
+						}
+						Utility.ShowToast(getActivity(), response.optString("message"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+				}, Throwable :: printStackTrace) {
+					@Override
+					public Map<String, String> getHeaders() {
+						Map<String, String> params = new HashMap<>();
+						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+						params.put(APIS.APITokenKEY,
+								Utility.getSharedPreferences(getActivity(),
+										APIS.APITokenValue));
 						return params;
 					}
 					

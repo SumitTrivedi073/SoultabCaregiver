@@ -59,6 +59,14 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 		notifyItemChanged(position);
 	}
 	
+	public void removeUserFromList(int userPosition) {
+		usersList.remove(userPosition);
+		notifyItemRemoved(userPosition);
+		notifyItemRangeChanged(userPosition,usersList.size());
+		notifyDataSetChanged();
+	}
+	
+	
 	public enum UsersConnectedStatus {
 		Pending {
 			@NotNull

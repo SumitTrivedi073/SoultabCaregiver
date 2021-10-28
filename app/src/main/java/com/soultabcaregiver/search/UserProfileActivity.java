@@ -42,6 +42,8 @@ public class UserProfileActivity extends BaseActivity {
 	
 	ImageView messageBtn, callBtn, videoCallBtn;
 	
+	String connectedStatus;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,7 +73,7 @@ public class UserProfileActivity extends BaseActivity {
 		messageBtn.setOnClickListener(v -> OpenChatScreen(userModel.getId(), userModel.getName(),
 				userModel.getIsSendbirdUser()));
 		
-		String connectedStatus = userModel.getConnected();
+		 connectedStatus = userModel.getConnected();
 		
 		acceptBtn.setOnClickListener(v -> {
 			if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
@@ -207,7 +209,7 @@ public class UserProfileActivity extends BaseActivity {
 					try {
 						if (response.optInt("status_code") == 200) {
 							userModel.setConnected(
-									SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString());
+									SearchUsersAdapter.UsersConnectedStatus.Decline.toString());
 							setupData();
 						}
 						Utility.ShowToast(UserProfileActivity.this, response.optString("message"));
@@ -321,7 +323,7 @@ public class UserProfileActivity extends BaseActivity {
 		
 		interactLayout.setVisibility(View.GONE);
 		rejectBtn.setVisibility(View.GONE);
-		String connectedStatus = userModel.getConnected();
+		 connectedStatus = userModel.getConnected();
 		
 		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
 				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
