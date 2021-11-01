@@ -155,6 +155,7 @@ public class TalkFragment extends BaseFragment {
 				if (position == 1) {
 					
 					setBadge2();
+					
 					if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
 						if (mainActivity != null) {
 							mainActivity.updatebadge();
