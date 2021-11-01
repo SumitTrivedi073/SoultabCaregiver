@@ -232,7 +232,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
             VolleyLog.d(TAG, "Error: " + error.getMessage());
             hideProgressDialog();
             if (error.networkResponse!=null) {
-                if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
                     ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
                         if (updatedToken == null) {
                         } else {
@@ -315,7 +315,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
             VolleyLog.d(TAG, "Error: " + error.getMessage());
             hideProgressDialog();
             if (error.networkResponse!=null) {
-                if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
                     ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
                         if (updatedToken == null) {
                         } else {
@@ -434,7 +434,7 @@ public class DoctorListFragment extends BaseFragment implements DoctorListAdapte
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 hideProgressDialog();
                 if (error.networkResponse!=null) {
-                    if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                    if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
                         ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
                             if (updatedToken == null) {
                             } else {

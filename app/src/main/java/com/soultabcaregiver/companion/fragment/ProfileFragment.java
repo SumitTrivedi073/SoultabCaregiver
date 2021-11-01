@@ -328,7 +328,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 						Log.e(TAG, "onErrorResponse: >>" + error.toString());
 						hideProgressDialog();
 						if (error.networkResponse!=null) {
-							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
 								ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
 									if (updatedToken == null) {
 									} else {
@@ -690,7 +690,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 						VolleyLog.d(TAG, "Error: " + error.getMessage());
 						hideProgressDialog();
 						if (error.networkResponse!=null) {
-							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
 								ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
 									if (updatedToken == null) {
 									} else {

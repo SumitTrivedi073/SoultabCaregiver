@@ -163,12 +163,24 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
             editor.commit();
             tv_snooze_txt.setText(getResources().getString(R.string.five_minute) + " , " + shp.getString("Snooze_times", "") + getResources().getString(R.string.times));
             snooze_on.setChecked(true);
-
-
-            tvWhenDate.setText(Utility.EEE_dd_MMM_yyyy.format(myCalendar.getTime()));
+    
+            try {
+        
+                SimpleDateFormat sdf=new SimpleDateFormat("E MMM dd hh:mm:ss Z yyyy");
+                Date currentdate;
+                currentdate=sdf.parse(getIntent().getStringExtra("SelectedDate"));
+        
+                tvWhenDate.setText(String.valueOf(Utility.EEE_dd_MMM_yyyy.format(currentdate)));
+                sWhenDate = parseDateToddMMyyyy2(tvWhenDate.getText().toString());
+                Log.e("SelectedDate2", String.valueOf(currentdate));
+        
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e("error===>",e.toString());
+            }
+            
             tvWhenTime.setText(Utility.hh_mm_aa.format(myCalendar.getTime()));
-
-            sWhenDate = Utility.yyyy_MM_dd.format(myCalendar.getTime());
+            
         } else {
             SharedPreferences.Editor editor = shp.edit();
             tv_text.setText(getResources().getString(R.string.update_personal_reminder));
@@ -459,7 +471,7 @@ public class AddReminderActivity extends BaseActivity implements View.OnClickLis
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 hideProgressDialog();
                 if (error.networkResponse!=null) {
-                    if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                    if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
                         ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
                             if (updatedToken == null) {
                             } else {
