@@ -58,6 +58,7 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.search.UserProfileActivity;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
@@ -813,11 +814,20 @@ public class ConversationFragment extends BaseFragment {
 		titleTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Log.e("ID",TextUtils.getGroupOtherMemberId(mChannel));
+				
 				if (mChannel.getMemberCount() > 2) {
 					Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
 					intent.putExtra(EXTRA_GROUP_CHANNEL_URL, mChannelUrl);
 					startActivity(intent);
+				}else {
+					if (!TextUtils.getGroupOtherMemberId(mChannel).equals("Soultab Support")) {
+						Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+						intent.putExtra("ID", TextUtils.getGroupOtherMemberId(mChannel));
+						startActivity(intent);
+					}
 				}
+				
 			}
 		});
 		

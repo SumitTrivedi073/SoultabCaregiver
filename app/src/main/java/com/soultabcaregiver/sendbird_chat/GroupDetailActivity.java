@@ -1,6 +1,7 @@
 package com.soultabcaregiver.sendbird_chat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import com.sendbird.android.SendBirdException;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.search.UserProfileActivity;
 import com.soultabcaregiver.sendbird_chat.adapter.GroupMemberListAdapter;
 import com.soultabcaregiver.sendbird_chat.model.GroupMemberModel;
 import com.soultabcaregiver.sendbird_chat.utils.TextUtils;
@@ -23,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.soultabcaregiver.sendbird_chat.ConversationFragment.EXTRA_GROUP_CHANNEL_URL;
 
-public class GroupDetailActivity extends BaseActivity {
+public class GroupDetailActivity extends BaseActivity{
 	
 	Context mContext;
 	
@@ -151,7 +153,7 @@ public class GroupDetailActivity extends BaseActivity {
 		group_user_list.setAdapter(groupMemberListAdapter);
 		
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		finish();

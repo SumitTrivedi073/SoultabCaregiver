@@ -58,7 +58,37 @@ public class UserSearchResultResponse {
 		
 		@SerializedName ("id") private String id;
 		
-		protected UserSearchResultModel(Parcel in) {
+		boolean isCompanion;
+		
+		public UserSearchResultModel() {
+		
+		}
+		
+		public boolean isCompanion() {
+			return isCompanion;
+		}
+		
+		public void setCompanion(boolean companion) {
+			isCompanion = companion;
+		}
+		
+		public void setIsSendbirdUser(String isSendbirdUser) {
+			this.isSendbirdUser = isSendbirdUser;
+		}
+		
+		public void setProfileImage(String profileImage) {
+			this.profileImage = profileImage;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public void setId(String id) {
+			this.id = id;
+		}
+		
+		public UserSearchResultModel(Parcel in) {
 			isSendbirdUser = in.readString();
 			connected = in.readString();
 			profileImage = in.readString();

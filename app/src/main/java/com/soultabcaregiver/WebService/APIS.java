@@ -132,6 +132,8 @@ public class APIS {
     
     public static final String getUsersListForCompanion = "Users/userListForCompanionOfOrder";
     
+    public static final String UserDetailById = "Caregiver/getUserDetailById";
+    
     public static final String refreshToken = "Users/refreshToken";
     
     //User Detail

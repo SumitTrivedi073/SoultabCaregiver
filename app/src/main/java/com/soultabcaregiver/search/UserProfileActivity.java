@@ -7,17 +7,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.search.models.UserSearchResultResponse;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_chat.ChatHelper;
 import com.soultabcaregiver.sendbird_chat.ConversationFragment;
+import com.soultabcaregiver.sendbird_chat.model.UserDetailModel;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.Utility;
 
@@ -42,7 +50,7 @@ public class UserProfileActivity extends BaseActivity {
 	
 	ImageView messageBtn, callBtn, videoCallBtn;
 	
-	String connectedStatus;
+	String connectedStatus, ID;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +70,15 @@ public class UserProfileActivity extends BaseActivity {
 		callBtn = findViewById(R.id.call_caregiver);
 		videoCallBtn = findViewById(R.id.VideoCall_caregiver);
 		
-		userModel = getIntent().getParcelableExtra("userModel");
+		if (getIntent().getExtras() != null) {
+			if (!TextUtils.isEmpty(getIntent().getParcelableExtra("userModel"))) {
+				userModel = getIntent().getParcelableExtra("userModel");
+			} else {
+				ID = getIntent().getStringExtra("ID");
+				GettingUserData();
+				Log.e("ID", ID);
+			}
+		}
 		
 		callBtn.setOnClickListener(v -> voiceCall(userModel.getId(), userModel.getName(),
 				userModel.getIsSendbirdUser()));
@@ -73,8 +89,9 @@ public class UserProfileActivity extends BaseActivity {
 		messageBtn.setOnClickListener(v -> OpenChatScreen(userModel.getId(), userModel.getName(),
 				userModel.getIsSendbirdUser()));
 		
-		 connectedStatus = userModel.getConnected();
-		
+		if (userModel != null) {
+			connectedStatus = userModel.getConnected();
+		}
 		acceptBtn.setOnClickListener(v -> {
 			if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
 					SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
@@ -98,6 +115,103 @@ public class UserProfileActivity extends BaseActivity {
 		if (userModel != null) {
 			setupData();
 		}
+		
+	}
+	
+	private void GettingUserData() {
+		showProgressDialog(getResources().getString(R.string.Loading));
+		
+		StringRequest stringRequest =
+				new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.UserDetailById,
+						new Response.Listener<String>() {
+							@Override
+							public void onResponse(String response) {
+								hideProgressDialog();
+								Log.e("response", response);
+								UserDetailModel userDetailModel =
+										new Gson().fromJson(response, UserDetailModel.class);
+								if (String.valueOf(userDetailModel.getStatusCode()).equals("200")) {
+									
+									UserDetailModel.Response model =
+											(UserDetailModel.Response) userDetailModel.getResponse().get(
+													0);
+									UserSearchResultResponse.UserSearchResultModel
+											userSearchResultModel = model.copyToUserDetailModel();
+									
+								/*	for (int i=0; i<userDetailModel.getResponse().size();i++){
+										
+										UserSearchResultResponse.UserSearchResultModel = n
+									}*/
+									
+									userModel = userSearchResultModel;
+									connectedStatus = userModel.getConnected();
+									if (userModel != null) {
+										setupData();
+									}
+									
+								} else if (String.valueOf(userDetailModel.getStatusCode()).equals(
+										"403")) {
+									logout_app(userDetailModel.getMessage());
+								} else {
+									
+									Utility.ShowToast(UserProfileActivity.this,
+											userDetailModel.getMessage());
+								}
+								
+								
+							}
+						}, new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						Log.e("error", error.toString());
+						
+						hideProgressDialog();
+						if (error.networkResponse != null) {
+							if (String.valueOf(error.networkResponse.statusCode).equals(
+									APIS.APITokenErrorCode)) {
+								ApiTokenAuthentication.refrehToken(UserProfileActivity.this,
+										updatedToken -> {
+											if (updatedToken == null) {
+											} else {
+												GettingUserData();
+												
+											}
+										});
+							} else {
+								Utility.ShowToast(UserProfileActivity.this,
+										getResources().getString(R.string.something_went_wrong));
+							}
+						}
+					}
+				}) {
+					@Override
+					public Map<String, String> getHeaders() throws AuthFailureError {
+						Map<String, String> params = new HashMap<String, String>();
+						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+						params.put(APIS.HEADERKEY2,
+								Utility.getSharedPreferences(UserProfileActivity.this,
+										APIS.EncodeUser_id));
+						params.put(APIS.APITokenKEY,
+								Utility.getSharedPreferences(UserProfileActivity.this,
+										APIS.APITokenValue));
+						
+						Log.e("dahsbord_param", String.valueOf(params));
+						return params;
+					}
+					
+					@Override
+					protected Map<String, String> getParams() {
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("id", ID);
+						
+						return params;
+					}
+					
+				};
+		AppController.getInstance().addToRequestQueue(stringRequest);
+		stringRequest.setShouldCache(false);
+		stringRequest.setRetryPolicy(
+				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 		
 	}
 	
@@ -323,7 +437,7 @@ public class UserProfileActivity extends BaseActivity {
 		
 		interactLayout.setVisibility(View.GONE);
 		rejectBtn.setVisibility(View.GONE);
-		 connectedStatus = userModel.getConnected();
+		connectedStatus = userModel.getConnected();
 		
 		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
 				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
