@@ -41,6 +41,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +67,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
     List<ReminderBean> arRemin;
     boolean isFirstTimeShowLoader = true;
     RelativeLayout show_cal_Relative, hide_cal_Relative;
+    
+    Date SelectedDate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +94,12 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         TODate2 = Utility.MM_dd_yyyy.format(calendar.getTime());
         FromDate = Utility.yyyy_MM_dd.format(calendar.getTime());
         TODate = Utility.yyyy_MM_dd.format(calendar.getTime());
-
+    
+        try {
+            SelectedDate = Utility.yyyy_MM_dd.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         init();
         Listener();
 
@@ -298,8 +306,28 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
 
             case R.id.reminder_btn:
                 if (Utility.getSharedPreferences(mContext, APIS.calender_hideshow).equals(APIS.Edit)) {
-                    Intent intent = new Intent(mContext, AddReminderActivity.class);
-                    startActivity(intent);
+    
+                    Calendar calendar1 = Calendar.getInstance();
+                    int mYear = calendar.get(Calendar.YEAR);
+                    int mMonth = calendar.get(Calendar.MONTH);
+                    int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    calendar1.set(Calendar.DAY_OF_MONTH, mDay);
+    
+                    Log.e("SelectedDate", String.valueOf(SelectedDate));
+                  try {
+                        Date currentdate =
+                                Utility.yyyy_MM_dd.parse(Utility.yyyy_MM_dd.format(calendar1.getTime()));
+                        if (currentdate != null && (currentdate.equals(
+                                SelectedDate) || SelectedDate.after(currentdate))) {
+                            Intent intent = new Intent(mContext, AddReminderActivity.class);
+                            intent.putExtra("SelectedDate",String.valueOf(SelectedDate));
+                            startActivity(intent);
+                           
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    
                 } else {
                     Utility.ShowToast(mContext, mContext.getResources().getString(R.string.only_view_permission));
                 }
@@ -355,7 +383,15 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                 calendar1 = new GregorianCalendar(year, month, dayOfMonth);
                 FromDate2 = Utility.MM_dd_yyyy.format(calendar1.getTime());
                 FromDate = Utility.yyyy_MM_dd.format(calendar1.getTime());
-
+    
+                try {
+                    SelectedDate =
+                            Utility.yyyy_MM_dd.parse(Utility.yyyy_MM_dd.format(calendar1.getTime()));
+                    Log.e("SelectedDate1", String.valueOf(SelectedDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                
                 if (Daily_select) {
 
                     TODate = Utility.yyyy_MM_dd.format(calendar1.getTime());
