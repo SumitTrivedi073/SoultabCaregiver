@@ -96,6 +96,12 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 			@NotNull
 			@Override
 			public String toString() {
+				return "notconnected";
+			}
+		},Empty {
+			@NotNull
+			@Override
+			public String toString() {
 				return "";
 			}
 		}

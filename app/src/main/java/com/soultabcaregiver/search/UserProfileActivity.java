@@ -94,7 +94,9 @@ public class UserProfileActivity extends BaseActivity {
 		}
 		acceptBtn.setOnClickListener(v -> {
 			if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
-					SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
+					SearchUsersAdapter.UsersConnectedStatus.Decline.toString())
+					||connectedStatus.toLowerCase().equals(
+					SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString())) {
 				inviteMemberAPI(Integer.parseInt(userModel.getId()));
 			} else if (connectedStatus.toLowerCase().equals(
 					SearchUsersAdapter.UsersConnectedStatus.Connected.toString())) {
@@ -440,7 +442,9 @@ public class UserProfileActivity extends BaseActivity {
 		connectedStatus = userModel.getConnected();
 		
 		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
-				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
+				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())
+				||connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString())) {
 			acceptBtn.setText(getString(R.string.invite_member));
 			rejectBtn.setVisibility(View.GONE);
 		} else if (connectedStatus.toLowerCase().equals(
