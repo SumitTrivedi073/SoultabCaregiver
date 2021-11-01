@@ -167,8 +167,7 @@ public class UserProfileActivity extends BaseActivity {
 						
 						hideProgressDialog();
 						if (error.networkResponse != null) {
-							if (String.valueOf(error.networkResponse.statusCode).equals(
-									APIS.APITokenErrorCode)) {
+							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
 								ApiTokenAuthentication.refrehToken(UserProfileActivity.this,
 										updatedToken -> {
 											if (updatedToken == null) {

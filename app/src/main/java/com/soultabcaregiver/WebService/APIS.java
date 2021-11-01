@@ -119,6 +119,16 @@ public class APIS {
 	
 	public static final String getUsersListForCompanion = "Users/userListForCompanionOfOrder";
 	
+	public static final String acceptFriendRequest = "Users/friend_request_accept";
+	
+	public static final String removeFriendRequest = "Users/remove_friend";
+	
+	public static final String sendFriendRequest = "Users/friend_request_send";
+	
+	public static final String rejectFriendRequest = "Users/friend_request_delete";
+	
+	public static final String UserDetailById = "Caregiver/getUserDetailById";
+	
 	public static final String refreshToken = "Users/refreshToken";
 	//User Detail
 	
