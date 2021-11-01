@@ -216,7 +216,7 @@ public class DoctorAppointmentFragment extends BaseFragment implements DoctorApp
                 hideProgressDialog();
     
                 if (error.networkResponse!=null) {
-                    if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)) {
+                    if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
                         ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
                             if (updatedToken == null) {
                             } else {
