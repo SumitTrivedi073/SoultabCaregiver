@@ -71,7 +71,7 @@ public class UserProfileActivity extends BaseActivity {
 		videoCallBtn = findViewById(R.id.VideoCall_caregiver);
 		
 		if (getIntent().getExtras() != null) {
-			if (!TextUtils.isEmpty(getIntent().getParcelableExtra("userModel"))) {
+			if (getIntent().getParcelableExtra("userModel")!=null) {
 				userModel = getIntent().getParcelableExtra("userModel");
 			} else {
 				ID = getIntent().getStringExtra("ID");
@@ -167,7 +167,8 @@ public class UserProfileActivity extends BaseActivity {
 						
 						hideProgressDialog();
 						if (error.networkResponse != null) {
-							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
+							if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(
+									APIS.APITokenErrorCode2)) {
 								ApiTokenAuthentication.refrehToken(UserProfileActivity.this,
 										updatedToken -> {
 											if (updatedToken == null) {
