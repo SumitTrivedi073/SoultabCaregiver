@@ -166,6 +166,13 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <service
+            android:name=".utils.InternetBrodcastService"
+            android:enabled="true"
+            android:exported="true"
+            />
+
     </application>
 
 </manifest>

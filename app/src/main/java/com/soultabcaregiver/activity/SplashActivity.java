@@ -151,7 +151,6 @@ public class SplashActivity extends BaseActivity {
 					finish();
 				} else {
 					
-					if (Utility.isNetworkConnected(mContext)) {
 						SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
 							if (userId == null) {
 								Utility.ShowToast(mContext, "Sendbird Auth Failed");
@@ -181,26 +180,7 @@ public class SplashActivity extends BaseActivity {
 							}
 							
 						});
-					}else {
-						Snackbar.make(mlayout, R.string.net_connection,
-								Snackbar.LENGTH_INDEFINITE).setAction(R.string.OK,
-								new View.OnClickListener() {
-									@Override
-									public void onClick(View view) {
-										// Request the permission
-										if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-											Intent panelIntent = new
-													Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY);
-											startActivityForResult(panelIntent, 0);
-										} else {
-											// for previous android version
-											WifiManager wifiManager = (WifiManager)
-													getApplicationContext().getSystemService(WIFI_SERVICE);
-											wifiManager.setWifiEnabled(true);
-										}
-									}
-								}).show();
-					}
+					
 				}
 			}
 			
