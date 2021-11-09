@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
@@ -24,6 +28,7 @@ import com.soultabcaregiver.sendbird_chat.NewMessageActivity;
 import com.soultabcaregiver.talk.TalkFragment;
 import com.soultabcaregiver.talk.TalkHolderFragment;
 import com.soultabcaregiver.utils.CustomProgressDialog;
+import com.soultabcaregiver.utils.InternetBrodcastService;
 import com.soultabcaregiver.utils.Utility;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,21 +37,103 @@ import androidx.fragment.app.FragmentManager;
 
 public abstract class BaseActivity extends AppCompatActivity {
 	
+	public static final String BroadcastStringforAction = "ChectInternet";
+	
 	public static BaseActivity instance;
 	
-	AlertDialog alertDialog;
+	AlertDialog alertDialog, alertDialog1;
 	
 	MainActivity mainActivity;
 	
+	IntentFilter mIntentFilter;
+	
 	private CustomProgressDialog progressDialog;
 	
-	private BroadcastReceiver mReceiver;
+	private BroadcastReceiver mReceiver, receiver;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mainActivity = MainActivity.instance;
 		instance = BaseActivity.this;
+		
+		mIntentFilter = new IntentFilter();
+		mIntentFilter.addAction(BroadcastStringforAction);
+		Intent ServiceIntent = new Intent(this, InternetBrodcastService.class);
+		startService(ServiceIntent);
+		
+		if (isOnline(getApplicationContext())) {
+			ifInternetConnected();
+		} else {
+			ifInternetNotConnected();
+		}
+	}
+	
+	public boolean isOnline(Context context) {
+		ConnectivityManager cm =
+				(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		
+		if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
+	public void ifInternetConnected() {
+		if (alertDialog1 != null) {
+			alertDialog1.dismiss();
+			alertDialog1 = null;
+		}
+	}
+	
+	public void ifInternetNotConnected() {
+		
+		if (alertDialog1 == null) {
+			LayoutInflater inflater =
+					(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(R.layout.internet_connectivity_popup, null);
+			final AlertDialog.Builder builder =
+					new AlertDialog.Builder(BaseActivity.this, R.style.FullScreenDialogStyle);
+			
+			builder.setView(layout);
+			builder.setCancelable(true);
+			alertDialog1 = builder.create();
+			alertDialog1.setCanceledOnTouchOutside(true);
+			int width = ViewGroup.LayoutParams.MATCH_PARENT;
+			int height = ViewGroup.LayoutParams.MATCH_PARENT;
+			alertDialog1.getWindow().setLayout(width, height);
+			alertDialog1.getWindow().setBackgroundDrawableResource(android.R.color.white);
+			alertDialog1.show();
+			
+			TextView setting = layout.findViewById(R.id.setting);
+			
+			setting.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					
+					startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);
+					
+					alertDialog.dismiss();
+				}
+			});
+			
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(receiver);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(receiver, mIntentFilter);
 	}
 	
 	public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -71,6 +158,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 		super.onStart();
 		initBroadCastReceiver();
 		registerReceiver();
+		registerReceiver(receiver, mIntentFilter);
+	}
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		registerReceiver(receiver, mIntentFilter);
 	}
 	
 	@Override
@@ -79,37 +172,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 		unregisterReceiver();
 	}
 	
-	@Override
-	public void onBackPressed() {
-		// if there is a fragment and the back stack of this fragment is not empty,
-		// then emulate 'onBackPressed' behaviour, because in default, it is not working
-		FragmentManager fm = getSupportFragmentManager();
-		for (Fragment frag : fm.getFragments()) {
-			if (frag.isVisible()) {
-				FragmentManager childFm = frag.getChildFragmentManager();
-				if (childFm.getBackStackEntryCount() > 0) {
-					childFm.popBackStack();
-					return;
-				}
-			}
+	private void unregisterReceiver() {
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
 		}
-		super.onBackPressed();
-	}
-	
-	public static void getPopupIntent(Context context, String channelName, String channelAvatar,
-	                                  boolean isGroup, String channelUrl, String lastMessage) {
-		Intent intent = new Intent(context, NewMessageActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-		intent.putExtra(NewMessageActivity.EXTRA_SENDER_NAME, channelName);
-		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_AVATAR, channelAvatar);
-		intent.putExtra(NewMessageActivity.EXTRA_IS_GROUP, isGroup);
-		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_URL, channelUrl);
-		intent.putExtra(NewMessageActivity.EXTRA_LAST_MSG, lastMessage);
-		context.startActivity(intent);
-	}
-	
-	public static BaseActivity getInstance() {
-		return instance;
 	}
 	
 	private void initBroadCastReceiver() {
@@ -174,6 +241,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 				}
 			}
 		};
+		
+		receiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				
+				if (intent.getAction().equals(BroadcastStringforAction)) {
+					
+					if (intent.getStringExtra("online_status").equals("true")) {
+						ifInternetConnected();
+					} else {
+						ifInternetNotConnected();
+					}
+					
+				}
+				
+			}
+		};
 	}
 	
 	private void registerReceiver() {
@@ -182,11 +266,37 @@ public abstract class BaseActivity extends AppCompatActivity {
 		registerReceiver(mReceiver, intentFilter);
 	}
 	
-	private void unregisterReceiver() {
-		if (mReceiver != null) {
-			unregisterReceiver(mReceiver);
-			mReceiver = null;
+	public static void getPopupIntent(Context context, String channelName, String channelAvatar,
+	                                  boolean isGroup, String channelUrl, String lastMessage) {
+		Intent intent = new Intent(context, NewMessageActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+		intent.putExtra(NewMessageActivity.EXTRA_SENDER_NAME, channelName);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_AVATAR, channelAvatar);
+		intent.putExtra(NewMessageActivity.EXTRA_IS_GROUP, isGroup);
+		intent.putExtra(NewMessageActivity.EXTRA_CHANNEL_URL, channelUrl);
+		intent.putExtra(NewMessageActivity.EXTRA_LAST_MSG, lastMessage);
+		context.startActivity(intent);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// if there is a fragment and the back stack of this fragment is not empty,
+		// then emulate 'onBackPressed' behaviour, because in default, it is not working
+		FragmentManager fm = getSupportFragmentManager();
+		for (Fragment frag : fm.getFragments()) {
+			if (frag.isVisible()) {
+				FragmentManager childFm = frag.getChildFragmentManager();
+				if (childFm.getBackStackEntryCount() > 0) {
+					childFm.popBackStack();
+					return;
+				}
+			}
 		}
+		super.onBackPressed();
+	}
+	
+	public static BaseActivity getInstance() {
+		return instance;
 	}
 	
 	public DiloagBoxCommon Alertmessage(final Context context, String titleString,
@@ -285,4 +395,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 		startActivity(intent);
 		finish();
 	}
+	
+	
 }
