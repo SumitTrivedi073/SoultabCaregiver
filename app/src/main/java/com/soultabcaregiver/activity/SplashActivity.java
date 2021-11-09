@@ -153,7 +153,7 @@ public class SplashActivity extends BaseActivity {
 					
 						SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
 							if (userId == null) {
-								Utility.ShowToast(mContext, "Sendbird Auth Failed");
+								//Utility.ShowToast(mContext, "Sendbird Auth Failed");
 							}
 							if (!TextUtils.isEmpty(Utility.getSharedPreferences(mContext, APIS.is_companion))) {
 								
