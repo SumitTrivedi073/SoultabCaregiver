@@ -323,6 +323,10 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                             intent.putExtra("SelectedDate",String.valueOf(SelectedDate));
                             startActivity(intent);
                            
+                        }else {
+                            Intent intent = new Intent(mContext, AddReminderActivity.class);
+                            intent.putExtra("SelectedDate",String.valueOf(currentdate));
+                            startActivity(intent);
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
