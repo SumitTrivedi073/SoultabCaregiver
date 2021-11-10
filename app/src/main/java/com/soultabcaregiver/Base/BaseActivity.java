@@ -37,16 +37,16 @@ import androidx.fragment.app.FragmentManager;
 
 public abstract class BaseActivity extends AppCompatActivity {
 	
-	public static final String BroadcastStringforAction = "ChectInternet";
 	
+	public static final String BroadcastStringforAction = "ChectInternet";
+	IntentFilter mIntentFilter;
 	public static BaseActivity instance;
 	
 	AlertDialog alertDialog, alertDialog1;
 	
 	MainActivity mainActivity;
 	
-	IntentFilter mIntentFilter;
-	
+
 	private CustomProgressDialog progressDialog;
 	
 	private BroadcastReceiver mReceiver, receiver;
@@ -57,84 +57,24 @@ public abstract class BaseActivity extends AppCompatActivity {
 		mainActivity = MainActivity.instance;
 		instance = BaseActivity.this;
 		
-		mIntentFilter = new IntentFilter();
+		
+		/*Code for quick response of isOnline Start*/
+		mIntentFilter =  new IntentFilter();
 		mIntentFilter.addAction(BroadcastStringforAction);
-		Intent ServiceIntent = new Intent(this, InternetBrodcastService.class);
+		Intent ServiceIntent = new Intent(this,InternetBrodcastService.class);
 		startService(ServiceIntent);
 		
-		if (isOnline(getApplicationContext())) {
+		if (isOnline(getApplicationContext())){
 			ifInternetConnected();
-		} else {
+		}else {
 			ifInternetNotConnected();
 		}
-	}
-	
-	public boolean isOnline(Context context) {
-		ConnectivityManager cm =
-				(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		
-		if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-			return true;
-		} else {
-			return false;
-		}
 		
 	}
 	
-	public void ifInternetConnected() {
-		if (alertDialog1 != null) {
-			alertDialog1.dismiss();
-			alertDialog1 = null;
-		}
-	}
 	
-	public void ifInternetNotConnected() {
-		
-		if (alertDialog1 == null) {
-			LayoutInflater inflater =
-					(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View layout = inflater.inflate(R.layout.internet_connectivity_popup, null);
-			final AlertDialog.Builder builder =
-					new AlertDialog.Builder(BaseActivity.this, R.style.FullScreenDialogStyle);
-			
-			builder.setView(layout);
-			builder.setCancelable(true);
-			alertDialog1 = builder.create();
-			alertDialog1.setCanceledOnTouchOutside(true);
-			int width = ViewGroup.LayoutParams.MATCH_PARENT;
-			int height = ViewGroup.LayoutParams.MATCH_PARENT;
-			alertDialog1.getWindow().setLayout(width, height);
-			alertDialog1.getWindow().setBackgroundDrawableResource(android.R.color.white);
-			alertDialog1.show();
-			
-			TextView setting = layout.findViewById(R.id.setting);
-			
-			setting.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					
-					startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);
-					
-					alertDialog.dismiss();
-				}
-			});
-			
-		}
-	}
 	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(receiver);
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		registerReceiver(receiver, mIntentFilter);
-	}
+
 	
 	public void onRequestPermissionsResult(int requestCode, String[] permissions,
 	                                       int[] grantResults) {
@@ -158,13 +98,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 		super.onStart();
 		initBroadCastReceiver();
 		registerReceiver();
-		registerReceiver(receiver, mIntentFilter);
+		
 	}
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		registerReceiver(receiver, mIntentFilter);
-	}
+	
 	
 	@Override
 	protected void onStop() {
@@ -246,11 +182,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				
-				if (intent.getAction().equals(BroadcastStringforAction)) {
+				if (intent.getAction().equals(BroadcastStringforAction)){
 					
-					if (intent.getStringExtra("online_status").equals("true")) {
+					if (intent.getStringExtra("online_status").equals("true")){
 						ifInternetConnected();
-					} else {
+					}else {
 						ifInternetNotConnected();
 					}
 					
@@ -258,6 +194,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 				
 			}
 		};
+		
+		
 	}
 	
 	private void registerReceiver() {
@@ -396,5 +334,84 @@ public abstract class BaseActivity extends AppCompatActivity {
 		finish();
 	}
 	
+	public boolean isOnline (Context context){
+		ConnectivityManager
+				cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		
+		if (activeNetwork!=null && activeNetwork.isConnectedOrConnecting()) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
 	
+	
+	
+	public void ifInternetConnected(){
+		//mainBinding.ConnectionStatus.setText("Connected");
+		if (alertDialog1 != null) {
+			alertDialog1.dismiss();
+			alertDialog1 = null;
+		}
+	}
+	
+	public void ifInternetNotConnected(){
+		//mainBinding.ConnectionStatus.setText("Please Check Internet");
+		if (alertDialog1 == null) {
+			LayoutInflater inflater =
+					(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(R.layout.internet_connectivity_popup, null);
+			final AlertDialog.Builder builder =
+					new AlertDialog.Builder(BaseActivity.this, R.style.FullScreenDialogStyle);
+			
+			builder.setView(layout);
+			builder.setCancelable(true);
+			alertDialog1 = builder.create();
+			alertDialog1.setCanceledOnTouchOutside(true);
+			int width = ViewGroup.LayoutParams.MATCH_PARENT;
+			int height = ViewGroup.LayoutParams.MATCH_PARENT;
+			alertDialog1.getWindow().setLayout(width, height);
+			alertDialog1.getWindow().setBackgroundDrawableResource(android.R.color.white);
+			alertDialog1.show();
+			
+			TextView setting = layout.findViewById(R.id.setting);
+			
+			setting.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					
+					startActivityForResult(new Intent(Settings.ACTION_SETTINGS)
+							, 0);
+					
+					
+					alertDialog1.dismiss();
+				}
+			});
+			
+		}
+	}
+	
+	/*Code for quick response of isOnline End*/
+	
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		registerReceiver(receiver,mIntentFilter);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(receiver,mIntentFilter);
+		
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(receiver);
+	}
 }

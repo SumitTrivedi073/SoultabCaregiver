@@ -10,9 +10,13 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import static com.soultabcaregiver.Base.BaseActivity.BroadcastStringforAction;
 
+
 public class InternetBrodcastService extends Service {
+	
 	
 	@Override
 	public void onCreate() {
@@ -20,7 +24,7 @@ public class InternetBrodcastService extends Service {
 		Log.d("inside","onCreate");
 	}
 	
-
+	@Nullable
 	@Override
 	public IBinder onBind(Intent intent) {
 		throw new UnsupportedOperationException("Not Yet Implement");
@@ -49,13 +53,12 @@ public class InternetBrodcastService extends Service {
 	private Runnable runnable = new Runnable() {
 		@Override
 		public void run() {
-		
+			
 			handler.postDelayed(runnable,1*1000 - SystemClock.elapsedRealtime()%1000);
 			Intent BroadCastIntent = new Intent();
 			BroadCastIntent.setAction(BroadcastStringforAction);
 			BroadCastIntent.putExtra("online_status",""+isOnline(InternetBrodcastService.this));
 			sendBroadcast(BroadCastIntent);
-			
 			
 		}
 	};

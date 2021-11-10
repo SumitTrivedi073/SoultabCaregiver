@@ -73,7 +73,8 @@
             android:name=".activity.main_screen.MainActivity"
             android:autoRemoveFromRecents="true"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:exported="true"/>
         <activity
             android:name=".activity.login_module.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
