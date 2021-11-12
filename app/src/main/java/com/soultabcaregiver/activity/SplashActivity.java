@@ -144,21 +144,18 @@ public class SplashActivity extends BaseActivity {
 			
 			@Override
 			public void run() {
-				
-				if (TextUtils.isEmpty(User_id)) {
-					Intent intent = new Intent(mContext, LoginActivity.class);
-					startActivity(intent);
-					finish();
-				} else {
-					
+				if (Utility.isNetworkConnected(mContext)) {
+					if (TextUtils.isEmpty(User_id)) {
+						Intent intent = new Intent(mContext, LoginActivity.class);
+						startActivity(intent);
+						finish();
+					} else {
 						SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
 							if (userId == null) {
 								//Utility.ShowToast(mContext, "Sendbird Auth Failed");
 							}
 							if (!TextUtils.isEmpty(Utility.getSharedPreferences(mContext, APIS.is_companion))) {
-								
 								if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
-									
 									Intent intent = new Intent(mContext, MainActivity.class);
 									if (getIntent().hasExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
 										intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
@@ -178,12 +175,10 @@ public class SplashActivity extends BaseActivity {
 									finish();
 								}
 							}
-							
 						});
-					
+					}
 				}
 			}
-			
 		}, 3000);
 	}
 	
