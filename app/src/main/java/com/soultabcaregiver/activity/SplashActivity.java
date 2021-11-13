@@ -29,9 +29,10 @@ import com.soultabcaregiver.utils.Utility;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AppCompatActivity {
 	
 	private static final int REQUEST_CODE_PERMISSION = 2;
 	
