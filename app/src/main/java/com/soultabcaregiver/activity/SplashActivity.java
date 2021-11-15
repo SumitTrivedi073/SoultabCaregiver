@@ -144,22 +144,18 @@ public class SplashActivity extends BaseActivity {
 			
 			@Override
 			public void run() {
-				
-				if (TextUtils.isEmpty(User_id)) {
-					Intent intent = new Intent(mContext, LoginActivity.class);
-					startActivity(intent);
-					finish();
-				} else {
-					
-					if (Utility.isNetworkConnected(mContext)) {
+				if (Utility.isNetworkConnected(mContext)) {
+					if (TextUtils.isEmpty(User_id)) {
+						Intent intent = new Intent(mContext, LoginActivity.class);
+						startActivity(intent);
+						finish();
+					} else {
 						SendBirdAuthentication.autoAuthenticate(mContext, userId -> {
 							if (userId == null) {
-								Utility.ShowToast(mContext, "Sendbird Auth Failed");
+								//Utility.ShowToast(mContext, "Sendbird Auth Failed");
 							}
 							if (!TextUtils.isEmpty(Utility.getSharedPreferences(mContext, APIS.is_companion))) {
-								
 								if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("0")) {
-									
 									Intent intent = new Intent(mContext, MainActivity.class);
 									if (getIntent().hasExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL)) {
 										intent.putExtra(ConversationFragment.EXTRA_GROUP_CHANNEL_URL,
@@ -179,31 +175,10 @@ public class SplashActivity extends BaseActivity {
 									finish();
 								}
 							}
-							
 						});
-					}else {
-						Snackbar.make(mlayout, R.string.net_connection,
-								Snackbar.LENGTH_INDEFINITE).setAction(R.string.OK,
-								new View.OnClickListener() {
-									@Override
-									public void onClick(View view) {
-										// Request the permission
-										if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-											Intent panelIntent = new
-													Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY);
-											startActivityForResult(panelIntent, 0);
-										} else {
-											// for previous android version
-											WifiManager wifiManager = (WifiManager)
-													getApplicationContext().getSystemService(WIFI_SERVICE);
-											wifiManager.setWifiEnabled(true);
-										}
-									}
-								}).show();
 					}
 				}
 			}
-			
 		}, 3000);
 	}
 	
