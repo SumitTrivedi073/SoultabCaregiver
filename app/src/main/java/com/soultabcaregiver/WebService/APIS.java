@@ -2,8 +2,8 @@ package com.soultabcaregiver.WebService;
 
 import com.soultabcaregiver.BuildConfig;
 
+
 public class APIS {
-	
 	//Live Server Base URL
 	
 	public static final String BASEURL = BuildConfig.baseUrl;
@@ -181,7 +181,22 @@ public class APIS {
 	
 	public static final String Send_alarmData = "Send_alarmData";
 	
+	public static final String TODO_TASK_STATUS_COUNTS = "Caregiver/getTaskStatusCount";
+	
+	public static final String TODO_TASK_LIST = "Caregiver/getTaskList";
+	
+	public static final String CREATE_TODO_TASK_LIST = "Caregiver/createTodoTask";
+	
+	public static final String GET_TODO_COMMENT_LIST = "Caregiver/getCommentList";
+	
+	public static final String GET_TODO_ACTIVITY_LIST = "Caregiver/getActivityList";
+	
+	public static final String ADD_NEW_TASK_COMMENT = "Caregiver/createTaskComment";
+	
+	public static final String DELETE_TASK_COMMENT = "Caregiver/deleteComment";
+	
 	public static String notifyGroupCallApi = "Users/notifyGroupUser";
 	
+	public static final String INTENT_FILTER_REFRESH_TASK_LIST = "refresh_task_list";
 	
 }

@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F9F9"
+    tools:context=".activity.todotask.fragemets.TodoTaskDetailFragment">
+
+    <RelativeLayout
+        android:id="@+id/llHeader"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentStart="true"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_back_filled" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:fontFamily="@font/muli_extrabold"
+            android:text="To-Do Task"
+            android:textColor="#0A2B3C"
+            android:textSize="@dimen/_14sdp" />
+
+        <ImageView
+            android:id="@+id/ivNotifications"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/ic_notifications"
+            app:tint="#034D75" />
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/cvUpdateTask"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llHeader">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvTaskTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:text="Title"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/etTaskTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:background="@drawable/bg_todo_task_details"
+                android:fontFamily="@font/muli_bold"
+                android:hint="Enter task title"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/tvTaskTitle" />
+
+            <TextView
+                android:id="@+id/tvTaskDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:text="Description"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/etTaskTitle" />
+
+            <EditText
+                android:id="@+id/etTaskDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:background="@drawable/bg_todo_task_details"
+                android:fontFamily="@font/muli_bold"
+                android:hint="Enter task description"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/tvTaskDescription" />
+
+            <TextView
+                android:id="@+id/tvTaskDates"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:text="Task start and end date"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/etTaskDescription" />
+
+            <LinearLayout
+                android:id="@+id/llStartDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_todo_task_details"
+                app:layout_constraintEnd_toStartOf="@+id/llEndDate"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/tvTaskDates">
+
+                <TextView
+                    android:id="@+id/tvStartDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/muli_bold"
+                    android:hint="Start date"
+                    android:longClickable="false"
+                    android:paddingStart="@dimen/_4sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:id="@+id/ivStartDateCalender"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:alpha="0.5"
+                    android:src="@drawable/ic_calendar_todo_task"
+                    app:tint="#000000" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llEndDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_todo_task_details"
+                app:layout_constraintBottom_toBottomOf="@+id/llStartDate"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+                app:layout_constraintStart_toEndOf="@+id/llStartDate"
+                app:layout_constraintTop_toTopOf="@+id/llStartDate">
+
+                <TextView
+                    android:id="@+id/tvEndDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/muli_bold"
+                    android:hint="End date"
+                    android:longClickable="false"
+                    android:paddingStart="@dimen/_4sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textSize="@dimen/_12ssp" />
+
+                <ImageView
+                    android:id="@+id/ivEndDateCalender"
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:alpha="0.5"
+                    android:src="@drawable/ic_calendar_todo_task"
+                    app:tint="#000000" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvStatusOfTask"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:fontFamily="@font/muli_bold"
+                android:text="Status Of Task"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/llStartDate" />
+
+            <TextView
+                android:id="@+id/etStatusOfTask"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_todo_task_details"
+                android:drawableRight="@drawable/ic_drop_down"
+                android:fontFamily="@font/muli_bold"
+                android:hint="Enter task Description"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/tvStatusOfTask" />
+
+            <Spinner
+                android:id="@+id/spinnerTaskStatus"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:backgroundTint="@color/transparent"
+                android:gravity="center"
+                android:spinnerMode="dropdown"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/etStatusOfTask" />
+
+            <TextView
+                android:id="@+id/tvTaskAssigned"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:text="Assigned To"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/etStatusOfTask" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvAssignedCaregiver"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:nestedScrollingEnabled="true"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/tvTaskAssigned" />
+
+            <TextView
+                android:id="@+id/tvNoCaregiverAssigned"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/muli_bold"
+                android:text="No participant added"
+                android:textColor="#A6A6A6"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/rcvAssignedCaregiver"
+                app:layout_constraintEnd_toEndOf="@+id/rcvAssignedCaregiver"
+                app:layout_constraintStart_toStartOf="@id/rcvAssignedCaregiver"
+                app:layout_constraintTop_toTopOf="@+id/rcvAssignedCaregiver" />
+
+            <TextView
+                android:id="@+id/tvAttachments"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:text="Add Attachments"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/rcvAssignedCaregiver" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvAttachments"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:nestedScrollingEnabled="true"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/tvAttachments" />
+
+            <TextView
+                android:id="@+id/tvNoAttachmentsAdded"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/muli_bold"
+                android:text="No attachment added"
+                android:textColor="#A6A6A6"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintBottom_toBottomOf="@+id/rcvAttachments"
+                app:layout_constraintEnd_toEndOf="@+id/rcvAttachments"
+                app:layout_constraintStart_toStartOf="@id/rcvAttachments"
+                app:layout_constraintTop_toTopOf="@+id/rcvAttachments" />
+
+            <TextView
+                android:id="@+id/tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:fontFamily="@font/muli_extrabold"
+                android:text="Comments"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/rcvAttachments" />
+
+            <TextView
+                android:id="@+id/tvViewLogs"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat_semibold"
+                android:text="View Logs"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintBottom_toBottomOf="@id/tvComments"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintTop_toTopOf="@id/tvComments" />
+
+            <TextView
+                android:id="@+id/tvViewComments"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/montserrat_semibold"
+                android:text="View Comments"
+                android:textColor="@color/todo_task_text_color"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/tvComments"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintTop_toTopOf="@id/tvComments" />
+
+            <LinearLayout
+                android:id="@+id/llAddComment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/bg_todo_task_details"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/tvComments">
+
+                <EditText
+                    android:id="@+id/etAddComment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:hint="Add Comment"
+                    android:paddingStart="@dimen/_6ssp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textColorHint="#A3A2A2"
+                    android:textSize="@dimen/_12ssp" />
+
+                <TextView
+                    android:id="@+id/tvAddComments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:alpha="0.5"
+                    android:enabled="false"
+                    android:fontFamily="@font/muli_bold"
+                    android:gravity="center"
+                    android:padding="@dimen/_8sdp"
+                    android:text="Add"
+                    android:textColor="@color/themecolor" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llEditComment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="@drawable/bg_todo_task_details"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="@+id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@+id/llAddComment">
+
+                <EditText
+                    android:id="@+id/etEditComment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:hint="Edit Comment"
+                    android:paddingStart="@dimen/_6ssp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textColorHint="#A3A2A2"
+                    android:textSize="@dimen/_12ssp" />
+
+                <TextView
+                    android:id="@+id/tvEditComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:alpha="0.5"
+                    android:enabled="false"
+                    android:fontFamily="@font/muli_bold"
+                    android:gravity="center"
+                    android:padding="@dimen/_8sdp"
+                    android:text="Edit"
+                    android:textColor="@color/themecolor" />
+
+                <TextView
+                    android:id="@+id/tvCancelEditComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/muli_bold"
+                    android:gravity="center"
+                    android:padding="@dimen/_8sdp"
+                    android:text="Cancel"
+                    android:textColor="@color/themecolor" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llComments"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintDimensionRatio="W,1:1"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@id/llEditComment">
+
+                <TextView
+                    android:id="@+id/tvCommentsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/muli_semibold"
+                    android:text="5 Comments"
+                    android:textColor="#A3A2A2"
+                    android:textSize="@dimen/_12ssp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:nestedScrollingEnabled="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/llNoComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/ivNoComments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_no_comments"
+                        app:layout_constraintBottom_toTopOf="@id/tvNoComments"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/tvNoComments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ivNoComments"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:fontFamily="@font/muli_semibold"
+                        android:gravity="center"
+                        android:text="No Comments Available"
+                        android:textColor="#A3A2A2"
+                        android:textSize="@dimen/_12ssp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/ivNoComments"
+                        app:layout_constraintStart_toStartOf="@id/ivNoComments"
+                        app:layout_constraintTop_toBottomOf="@+id/ivNoComments" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llActivities"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:nestedScrollingEnabled="true"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintDimensionRatio="W,1:1"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintStart_toStartOf="@id/guideline_start"
+                app:layout_constraintTop_toBottomOf="@id/llAddComment">
+
+                <TextView
+                    android:id="@+id/tvActivities"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/muli_semibold"
+                    android:text="All Activities"
+                    android:textColor="#A3A2A2"
+                    android:textSize="@dimen/_12ssp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvActivities"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:nestedScrollingEnabled="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/llNoActivities"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/ivNoActivities"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_no_comments"
+                        app:layout_constraintBottom_toTopOf="@id/tvNoComments"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/tvNoActivities"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ivNoActivities"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:fontFamily="@font/muli_semibold"
+                        android:gravity="center"
+                        android:text="No Activities"
+                        android:textColor="#A3A2A2"
+                        android:textSize="@dimen/_12ssp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/ivNoComments"
+                        app:layout_constraintStart_toStartOf="@id/ivNoComments"
+                        app:layout_constraintTop_toBottomOf="@+id/ivNoComments" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.05" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.95" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvUpdateTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/orange_color"
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tvCreateNewTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/muli_semibold"
+            android:gravity="center"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="Save Changes"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
