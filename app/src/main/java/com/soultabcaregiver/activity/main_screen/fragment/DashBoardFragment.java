@@ -659,8 +659,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineChart.invalidate();
                 
             } else {
-                lineChart.setNoDataText("");
-                // lineChart.setNoDataText(getResources().getString(R.string.Chart_Message));
+               
+                lineChart.setNoDataText(getString(R.string.chart_message));
                 
             }
             
