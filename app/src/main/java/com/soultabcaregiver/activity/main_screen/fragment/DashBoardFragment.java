@@ -380,6 +380,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         
     }
+    
     private void listner() {
         today_txt.setOnClickListener(this);
         lastweek_txt.setOnClickListener(this);
@@ -526,7 +527,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         params.put(APIS.APITokenKEY,
                                 Utility.getSharedPreferences(mContext, APIS.APITokenValue));
     
-                        Log.e("dahsbord_param", String.valueOf(params));
+                       
                         return params;
                     }
                     
@@ -535,9 +536,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("user_id", Utility.getSharedPreferences(mContext, APIS.user_id));
                         params.put("range", chart_value_data);
-                /*params.put("user_id", "878");
-                params.put("range", "week");*/
-                        
+    
+                        Log.e("dahsbord_param", String.valueOf(params));
                         return params;
                     }
                     
@@ -660,7 +660,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 
             } else {
                
-                lineChart.setNoDataText(getString(R.string.chart_message));
+                lineChart.setNoDataText(mContext.getResources().getString(R.string.chart_message));
                 
             }
             
