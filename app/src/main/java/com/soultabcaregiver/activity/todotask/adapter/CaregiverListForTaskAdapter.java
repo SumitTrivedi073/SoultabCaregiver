@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.todotask.model.TaskCaregiversModel;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.ArrayList;
 
@@ -77,7 +78,6 @@ public class CaregiverListForTaskAdapter extends RecyclerView.Adapter<CaregiverL
 			tvName = itemView.findViewById(R.id.tvName);
 			ivCaregiverImage = itemView.findViewById(R.id.ivCaregiverImage);
 			clMain = itemView.findViewById(R.id.clMain);
-			
 			if (isFromAddCaregiver) {
 				ivCaregiverImage.setVisibility(View.VISIBLE);
 			}
@@ -85,18 +85,19 @@ public class CaregiverListForTaskAdapter extends RecyclerView.Adapter<CaregiverL
 		
 		public void bind(int position) {
 			TaskCaregiversModel caregiversModel = caregivers.get(position);
+			if (caregiversModel.getId().equals(
+					Utility.getSharedPreferences(itemView.getContext(), APIS.caregiver_id))) {
+				hide();
+			}
 			tvName.setText(caregiversModel.getName());
-			
 			Glide.with(context).load(
 					APIS.CaregiverImageURL + caregiversModel.getProfileImage()).placeholder(
 					R.drawable.user_img).into(ivCaregiverImage);
-			
 			if (selectedCaregivers.contains(position)) {
 				cbNames.setChecked(true);
 			} else {
 				cbNames.setChecked(false);
 			}
-			
 			clMain.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -113,11 +114,15 @@ public class CaregiverListForTaskAdapter extends RecyclerView.Adapter<CaregiverL
 						selectedCaregivers.add(position);
 						cbNames.setChecked(true);
 					}
-					
 					//					caregivers.set(position, caregiversModel);
 				}
 			});
-			
 		}
+		
+		private void hide() {
+			itemView.getLayoutParams().height = 0;
+		}
+		
 	}
+	
 }

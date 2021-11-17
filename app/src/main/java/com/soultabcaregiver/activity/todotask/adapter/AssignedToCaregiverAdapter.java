@@ -1,6 +1,7 @@
 package com.soultabcaregiver.activity.todotask.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.todotask.model.TaskCaregiversModel;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.ArrayList;
 
@@ -97,7 +99,12 @@ public class AssignedToCaregiverAdapter extends RecyclerView.Adapter<AssignedToC
 			} else {
 				ivAdd.setVisibility(View.GONE);
 				llMain.setVisibility(View.VISIBLE);
+				if (caregiver.getId().equals(
+						Utility.getSharedPreferences(itemView.getContext(), APIS.caregiver_id))) {
+					ivCancel.setVisibility(View.GONE);
+				}
 			}
+			Log.e("TAG", "bind: " + APIS.CaregiverImageURL + caregiver.getProfileImage());
 			Glide.with(context).load(
 					APIS.CaregiverImageURL + caregiver.getProfileImage()).placeholder(
 					R.drawable.user_img).into(ivCaregiver);

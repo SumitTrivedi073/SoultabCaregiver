@@ -1,6 +1,7 @@
 package com.soultabcaregiver.activity.todotask.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.todotask.model.TaskAttachmentsModel;
 
@@ -30,7 +34,6 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 		this.context = context;
 		this.listeners = listeners;
 		attachments.add(0, new TaskAttachmentsModel());
-		
 	}
 	
 	public AttachmentsAdapter(Context context) {
@@ -61,11 +64,11 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 		notifyDataSetChanged();
 	}
 	
-	
 	public interface OnAttachmentItemClickListeners {
 		
 		void onAddAttachmentClick();
-		void removeAttachment(int size);
+		void removeAttachment(int size, TaskAttachmentsModel attachment);
+		
 	}
 	
 	@NonNull
@@ -77,7 +80,6 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 	
 	@Override
 	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-		
 		holder.bind(position);
 	}
 	
@@ -96,11 +98,9 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 		
 		public ViewHolder(@NonNull View itemView) {
 			super(itemView);
-			
 			ivAdd = itemView.findViewById(R.id.ivAdd);
 			ivAdd.setImageDrawable(
 					ContextCompat.getDrawable(context, R.drawable.ic_add_attachment));
-			
 			llMain = itemView.findViewById(R.id.llMain);
 			ivCaregiver = itemView.findViewById(R.id.ivCaregiver);
 			ivCancel = itemView.findViewById(R.id.ivCancel);
@@ -108,17 +108,23 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 		}
 		
 		public void bind(int position) {
-			
 			TaskAttachmentsModel attachment = attachments.get(position);
+			String url = "";
+			if (attachment.getIsFromGallery() == 0) {
+				url = BuildConfig.taskImageUrl + attachment.getFilePath();
+			} else {
+				url = attachment.getFilePath();
+			}
+			Log.e("TAG", "bind: " + url);
+			Glide.with(itemView.getContext()).load(url).skipMemoryCache(false).diskCacheStrategy(
+					DiskCacheStrategy.NONE).into(ivCaregiver);
 			tvName.setText(attachment.getFileName());
-			
 			ivAdd.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					listeners.onAddAttachmentClick();
 				}
 			});
-			
 			if (position == 0) {
 				llMain.setVisibility(View.GONE);
 				ivAdd.setVisibility(View.VISIBLE);
@@ -126,17 +132,17 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 				llMain.setVisibility(View.VISIBLE);
 				ivAdd.setVisibility(View.GONE);
 			}
-			
 			ivCancel.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					attachments.remove(position);
 					notifyItemRemoved(position);
 					notifyItemRangeChanged(position, attachments.size());
-					listeners.removeAttachment(attachments.size());
+					listeners.removeAttachment(attachments.size(), attachment);
 				}
 			});
-			
 		}
+		
 	}
+	
 }

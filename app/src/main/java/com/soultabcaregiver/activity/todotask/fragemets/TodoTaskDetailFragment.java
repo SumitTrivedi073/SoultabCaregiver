@@ -19,11 +19,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
-import android.telecom.TelecomManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -135,6 +135,8 @@ public class TodoTaskDetailFragment extends Fragment {
 	
 	private List<String> taskStatus;
 	
+	private List<String> deletedAttachments = new ArrayList<>();
+	
 	private ArrayList<Integer> selectedCaregivers = new ArrayList<>();
 	
 	private ArrayList<TaskCaregiversModel> tempCaregiverName = new ArrayList<>();
@@ -179,7 +181,11 @@ public class TodoTaskDetailFragment extends Fragment {
 				}
 				
 				@Override
-				public void removeAttachment(int attachmentsSize) {
+				public void removeAttachment(int attachmentsSize,
+				                             TaskAttachmentsModel attachment) {
+					if (attachment.getIsFromGallery() == 0) {
+						deletedAttachments.add(attachment.getFileName());
+					}
 					if (attachmentsSize == 1) {
 						tvNoAttachmentsAdded.setVisibility(View.VISIBLE);
 					}
@@ -326,6 +332,9 @@ public class TodoTaskDetailFragment extends Fragment {
 		ivBack.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				//				getActivity().getSupportFragmentManager().popBackStack
+				//				(TodoTaskDetailFragment.class.getSimpleName(),
+				//						FragmentManager.POP_BACK_STACK_INCLUSIVE);
 				requireActivity().onBackPressed();
 			}
 		});
@@ -489,7 +498,7 @@ public class TodoTaskDetailFragment extends Fragment {
 										Intent intent =
 												new Intent(APIS.INTENT_FILTER_REFRESH_TASK_LIST);
 										getActivity().sendBroadcast(intent);
-										//										finish();
+										requireActivity().onBackPressed();
 									} else {
 										Utility.ShowToast(getActivity(), taskModel.getMessage());
 									}
@@ -545,6 +554,7 @@ public class TodoTaskDetailFragment extends Fragment {
 									getFormattedDate(tvEndDate.getText().toString().trim(),
 											DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
 							params.put("assign_to", getAssignedCaregiversId());
+							params.put("del_attachments", getDeleteAttachment());
 							params.put("task_id", taskData.getId());
 							params.put("task_status", etStatusOfTask.getText().toString());
 							return params;
@@ -682,6 +692,22 @@ public class TodoTaskDetailFragment extends Fragment {
 									tempCaregiverName.add(caregiver);
 								}
 							}
+							// TODO: 11/16/2021 add default caregiver for filter task by caregiver
+							//  name..
+							TaskCaregiversModel model = new TaskCaregiversModel();
+							model.setId(
+									Utility.getSharedPreferences(getActivity(),
+											APIS.caregiver_id));
+							model.setLastname(Utility.getSharedPreferences(getActivity(),
+									APIS.Caregiver_lastname));
+							model.setName("Me");
+							String profileUrl =
+									Utility.getSharedPreferences(getActivity(),
+											APIS.profile_image);
+							model.setProfileImage(
+									profileUrl.substring(profileUrl.lastIndexOf("/") + 1,
+											profileUrl.length()));
+							tempCaregiverName.add(0, model);
 							setupSelectedCaregivers();
 						}
 					}
@@ -989,10 +1015,15 @@ public class TodoTaskDetailFragment extends Fragment {
 		return selectedCaregiverId.toString().replace("[", "").replace("]", "");
 	}
 	
+	private String getDeleteAttachment() {
+		return deletedAttachments.toString().replace("[", "").replace("]", "").replace(" ", "");
+	}
+	
 	private void setupSelectedCaregivers() {
 		List<String> caregiversId =
 				Arrays.asList(taskData.getAssignTo().replace(" ", "").split(","));
 		selectedCaregivers = new ArrayList<>();
+		Log.e(TAG, "setupSelectedCaregivers: " + tempCaregiverName.size());
 		for (int i = 0; i < tempCaregiverName.size(); i++) {
 			TaskCaregiversModel model = tempCaregiverName.get(i);
 			if (caregiversId.contains(model.getId())) {
@@ -1045,7 +1076,7 @@ public class TodoTaskDetailFragment extends Fragment {
 					Arrays.asList(taskData.getAttachments().replace(" ", "").split(","));
 			for (int i = 0; i < attachments.size(); i++) {
 				TaskAttachmentsModel attachment = new TaskAttachmentsModel();
-				attachment.setFilePath("");
+				attachment.setFilePath(attachments.get(i));
 				attachment.setFileName(attachments.get(i));
 				attachment.setFileExtension("");
 				attachment.setMimeType("");
@@ -1186,6 +1217,7 @@ public class TodoTaskDetailFragment extends Fragment {
 					attachment.setFileName(new File(path).getName());
 					attachment.setFilePath(path);
 					attachment.setMimeType("image/jpeg");
+					attachment.setIsFromGallery(1);
 					attachmentsAdapter.add(attachment);
 					setAttachmentAddedOrNot();
 				} catch (Exception e) {
@@ -1200,6 +1232,7 @@ public class TodoTaskDetailFragment extends Fragment {
 					attachment.setFileName(new File(path).getName());
 					attachment.setFilePath(path);
 					attachment.setMimeType("image/jpeg");
+					attachment.setIsFromGallery(1);
 					attachmentsAdapter.add(attachment);
 					setAttachmentAddedOrNot();
 				} catch (Exception e) {
@@ -1249,26 +1282,28 @@ public class TodoTaskDetailFragment extends Fragment {
 	}
 	
 	public static byte[] readBytesFromFile(String aFilePath) {
-		FileInputStream fio = null;
-		byte[] bytesArray = null;
-		try {
-			File file = new File(aFilePath);
-			bytesArray = new byte[(int) file.length()];
-			//read file into bytes[]
-			fio = new FileInputStream(file);
-			fio.read(bytesArray);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (fio != null) {
-				try {
-					fio.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		FileInputStream input = null;
+		File file = new File(aFilePath);
+		if (file.exists())
+			try {
+				input = new FileInputStream(file);
+				int len = (int) file.length();
+				byte[] data = new byte[len];
+				int count, total = 0;
+				while ((count = input.read(data, total, len - total)) > 0)
+					total += count;
+				return data;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} finally {
+				if (input != null)
+					try {
+						input.close();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 			}
-		}
-		return bytesArray;
+		return null;
 	}
 	
 }

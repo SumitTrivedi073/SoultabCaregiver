@@ -1,6 +1,11 @@
 package com.soultabcaregiver.activity.todotask.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +28,8 @@ public class TaskActivitiesAdapter extends RecyclerView.Adapter<TaskActivitiesAd
 	
 	private ArrayList<TaskActivitiesModel.Response> taskActivities;
 	
+	private TaskActivitiesModel.Response previousActivityModel = null;
+	
 	public TaskActivitiesAdapter(ArrayList<TaskActivitiesModel.Response> taskActivities) {
 		this.taskActivities = taskActivities;
 	}
@@ -39,7 +46,6 @@ public class TaskActivitiesAdapter extends RecyclerView.Adapter<TaskActivitiesAd
 		this.taskActivities = new ArrayList<>();
 		this.taskActivities.addAll(list);
 		notifyDataSetChanged();
-		
 	}
 	
 	@Override
@@ -67,14 +73,43 @@ public class TaskActivitiesAdapter extends RecyclerView.Adapter<TaskActivitiesAd
 		}
 		
 		public void bind(int position) {
-			
 			TaskActivitiesModel.Response activity = taskActivities.get(position);
-			
-			tvUserName.setText(activity.getCreatedByName());
-			tvComment.setText(activity.getTitle());
+			tvUserName.setText(getLastUpdateName(activity));
+			tvComment.setText(getCommentForActivity(previousActivityModel, activity));
 			tvDays.setText(TimeAgoUtils.covertTimeToText(activity.getCreatedAt()));
-			
+			previousActivityModel = activity;
 			llOptions.setVisibility(View.GONE);
 		}
+		
+		private String getCommentForActivity(TaskActivitiesModel.Response previousActivityModel,
+		                                     TaskActivitiesModel.Response activity) {
+			if (previousActivityModel != null) {
+				if (!previousActivityModel.getTitle().equals(activity.getTitle())) {
+					return "Has made an update in title " + activity.getTitle();
+				} else if (!previousActivityModel.getDescription().equals(
+						activity.getDescription())) {
+					return "Has made an update in description " + activity.getDescription();
+				} else {
+					return "Move this card to " + activity.getTaskStatus();
+				}
+			} else {
+				return "Move this card to " + activity.getTaskStatus();
+			}
+		}
+		
+		private String getLastUpdateName(TaskActivitiesModel.Response activity) {
+			return activity.getUpdatedByName() != null ? activity.getUpdatedByName() :
+					activity.getCreatedByName();
+		}
+		
+		public SpannableString getSpanString(String s) {
+			SpannableString ss1 = new SpannableString(s);
+			ss1.setSpan(new ForegroundColorSpan(Color.BLUE), 0, s.length(),
+					Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			ss1.setSpan(new RelativeSizeSpan(1.0f), s.indexOf(" "), s.length(), 0);
+			return ss1;
+		}
+		
 	}
+	
 }

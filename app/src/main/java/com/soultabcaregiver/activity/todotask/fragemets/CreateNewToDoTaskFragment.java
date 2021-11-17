@@ -47,7 +47,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.beloo.widget.chipslayoutmanager.SpacingItemDecoration;
 import com.beloo.widget.chipslayoutmanager.gravity.IChildGravityResolver;
-import com.google.android.gms.common.api.Api;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.soultabcaregiver.R;
@@ -141,7 +140,8 @@ public class CreateNewToDoTaskFragment extends Fragment {
 				}
 				
 				@Override
-				public void removeAttachment(int attachmentsSize) {
+				public void removeAttachment(int attachmentsSize,
+				                             TaskAttachmentsModel attachment) {
 					if (attachmentsSize == 1) {
 						tvNoAttachmentsAdded.setVisibility(View.VISIBLE);
 					}
@@ -272,7 +272,7 @@ public class CreateNewToDoTaskFragment extends Fragment {
 										Intent intent =
 												new Intent(APIS.INTENT_FILTER_REFRESH_TASK_LIST);
 										getActivity().sendBroadcast(intent);
-										getActivity().getFragmentManager().popBackStack();
+										requireActivity().onBackPressed();
 									} else {
 										Utility.ShowToast(getActivity(), taskModel.getMessage());
 									}

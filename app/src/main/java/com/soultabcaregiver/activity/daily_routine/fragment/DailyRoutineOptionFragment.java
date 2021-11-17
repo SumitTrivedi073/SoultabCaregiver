@@ -41,12 +41,12 @@ public class DailyRoutineOptionFragment extends BaseFragment {
 				public void onRoutineItemClick(int position, DailyRoutineOptions options) {
 					switch (options.getId()) {
 						case OPTION_DAILY_ROUTINE:
-							Utility.loadFragment(getActivity(), new DailyRoutineFragment(), false,
-									null);
+							Utility.loadFragment(getActivity(), new DailyRoutineFragment(), true,
+									DailyRoutineFragment.class.getSimpleName());
 							break;
 						case OPTION_TODO:
 							Utility.loadFragment(getActivity(), new TodoTaskListFragment(),
-									true, ConversationFragment.class.getSimpleName());
+									true, TodoTaskListFragment.class.getSimpleName());
 							break;
 					}
 				}
@@ -80,7 +80,7 @@ public class DailyRoutineOptionFragment extends BaseFragment {
 	
 	private void setOptionsData() {
 		routineOptions = new ArrayList<>();
-		routineOptions.add(new DailyRoutineOptions(OPTION_DAILY_ROUTINE, "Daily Routine",
+		routineOptions.add(new DailyRoutineOptions(OPTION_DAILY_ROUTINE, "Routine Task",
 				R.drawable.ic_routine_task));
 		routineOptions.add(
 				new DailyRoutineOptions(OPTION_TODO, "To-Do Task", R.drawable.ic_to_do_task));

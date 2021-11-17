@@ -109,8 +109,8 @@ public class TodoTaskListFragment extends BaseFragment {
 			new TodoTaskListAdapter.OnTodoTaskClickListeners() {
 				@Override
 				public void onTodoTaskClick(int position, TaskListModel.TaskData data) {
-					Utility.loadFragment(getActivity(), new TodoTaskDetailFragment(data), true,
-							ConversationFragment.class.getSimpleName());
+					Utility.addFragment(getActivity(), new TodoTaskDetailFragment(data), true,
+							TodoTaskDetailFragment.class.getSimpleName());
 				}
 			};
 	
@@ -180,8 +180,8 @@ public class TodoTaskListFragment extends BaseFragment {
 		cvCreateTask.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utility.loadFragment(getActivity(), new CreateNewToDoTaskFragment(), true,
-						ConversationFragment.class.getSimpleName());
+				Utility.addFragment(getActivity(), new CreateNewToDoTaskFragment(), true,
+						CreateNewToDoTaskFragment.class.getSimpleName());
 			}
 		});
 		tvTaskByName.setOnClickListener(new View.OnClickListener() {
@@ -225,6 +225,15 @@ public class TodoTaskListFragment extends BaseFragment {
 							}
 						}
 					}
+					// TODO: 11/16/2021 add default caregiver for filter task by caregiver name..
+					TaskCaregiversModel model = new TaskCaregiversModel();
+					model.setId(Utility.getSharedPreferences(getActivity(), APIS.caregiver_id));
+					model.setLastname(
+							Utility.getSharedPreferences(getActivity(), APIS.Caregiver_lastname));
+					model.setName("Me");
+					model.setProfileImage(
+							Utility.getSharedPreferences(getActivity(), APIS.profile_image));
+					tempCaregiverName.add(0, model);
 				}, error -> {
 					VolleyLog.d("TAG", "Error: " + error.getMessage());
 					hideProgressDialog();
@@ -269,6 +278,8 @@ public class TodoTaskListFragment extends BaseFragment {
 						new Response.Listener<String>() {
 							@Override
 							public void onResponse(String response) {
+								Log.e(TodoTaskListFragment.class.getSimpleName(),
+										"onResponse: " + "taskCount" + response);
 								TaskCountModel taskCountModel =
 										new Gson().fromJson(response, TaskCountModel.class);
 								if (taskCountModel.getStatusCode() == 200) {
