@@ -169,7 +169,7 @@ public class TodoTaskListAdapter extends RecyclerView.Adapter<TodoTaskListAdapte
 		
 		@Override
 		public int getItemCount() {
-			if (caregiversImage.length < 3) {
+			if (caregiversImage.length <= 3) {
 				return caregiversImage.length;
 			}
 			return 3;
@@ -188,16 +188,22 @@ public class TodoTaskListAdapter extends RecyclerView.Adapter<TodoTaskListAdapte
 			}
 			
 			public void bind(int position) {
-				String imageName = caregiversImage[0];
+				String imageName = caregiversImage[position];
 				Glide.with(itemView.getContext()).load(
 						APIS.CaregiverImageURL + imageName).placeholder(R.drawable.user_img).into(
 						ivProfile);
-				if (position < 2) {
+				tvProfileCount.setText(String.valueOf(caregiversImage.length - position) + "+");
+				if (caregiversImage.length <= 3) {
 					ivProfile.setVisibility(View.VISIBLE);
 					tvProfileCount.setVisibility(View.GONE);
 				} else {
-					ivProfile.setVisibility(View.GONE);
-					tvProfileCount.setVisibility(View.VISIBLE);
+					if (position < 2) {
+						ivProfile.setVisibility(View.VISIBLE);
+						tvProfileCount.setVisibility(View.GONE);
+					} else {
+						ivProfile.setVisibility(View.GONE);
+						tvProfileCount.setVisibility(View.VISIBLE);
+					}
 				}
 			}
 		}
