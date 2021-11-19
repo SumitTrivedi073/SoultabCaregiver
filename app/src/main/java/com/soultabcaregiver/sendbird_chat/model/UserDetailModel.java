@@ -875,6 +875,7 @@ public class UserDetailModel {
 			response.setProfileImage(getProfileImage());
 			response.setIsSendbirdUser(getIsSendbirdUser());
 			response.setConnected(getIsConnected());
+			response.setUserRoll(getUserRole());
 			if (getIsCompanion().equals("1")){
 				response.setCompanion(true);
 			}else {

@@ -59,11 +59,21 @@ public class UserSearchResultResponse {
 		@SerializedName ("id") private String id;
 		
 		boolean isCompanion;
+		String userRoll;
+		
+	
 		
 		public UserSearchResultModel() {
 		
 		}
 		
+		public String getUserRoll() {
+			return userRoll;
+		}
+		
+		public void setUserRoll(String userRoll) {
+			this.userRoll = userRoll;
+		}
 		public boolean isCompanion() {
 			return isCompanion;
 		}

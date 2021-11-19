@@ -83,6 +83,7 @@ public class SearchActivity extends BaseActivity {
 				public void viewUserDetails(
 						UserSearchResultResponse.UserSearchResultModel userModel, int position) {
 					redirectToUserProfileActivity(userModel);
+				
 				}
 			};
 	

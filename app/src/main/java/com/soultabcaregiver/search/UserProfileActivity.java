@@ -449,8 +449,17 @@ public class UserProfileActivity extends BaseActivity {
 			rejectBtn.setVisibility(View.GONE);
 		} else if (connectedStatus.toLowerCase().equals(
 				SearchUsersAdapter.UsersConnectedStatus.Connected.toString())) {
-			acceptBtn.setText(getString(R.string.remove));
-			interactLayout.setVisibility(View.VISIBLE);
+			
+			if (userModel.getId().equals(Utility.getSharedPreferences(getApplicationContext(),
+					APIS.user_id))){
+				
+				acceptBtn.setVisibility(View.GONE);
+				interactLayout.setVisibility(View.VISIBLE);
+			}else {
+				acceptBtn.setText(getString(R.string.remove));
+				interactLayout.setVisibility(View.VISIBLE);
+			}
+			
 		} else if (connectedStatus.toLowerCase().equals(
 				SearchUsersAdapter.UsersConnectedStatus.Pending.toString())) {
 			acceptBtn.setText(getString(R.string.connection_requested));
