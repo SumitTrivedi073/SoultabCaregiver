@@ -3,10 +3,14 @@ package com.soultabcaregiver.activity.todotask.fragemets;
 import static android.app.Activity.RESULT_CANCELED;
 import static com.soultabcaregiver.utils.photoFileUtils.getPath;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -17,12 +21,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,6 +56,7 @@ import com.beloo.widget.chipslayoutmanager.SpacingItemDecoration;
 import com.beloo.widget.chipslayoutmanager.gravity.IChildGravityResolver;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
+import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.WebService.ApiTokenAuthentication;
@@ -59,6 +67,8 @@ import com.soultabcaregiver.activity.todotask.adapter.CaregiverListForTaskAdapte
 import com.soultabcaregiver.activity.todotask.model.CreateTaskModel;
 import com.soultabcaregiver.activity.todotask.model.TaskAttachmentsModel;
 import com.soultabcaregiver.activity.todotask.model.TaskCaregiversModel;
+import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
+import com.soultabcaregiver.sendbird_chat.utils.PhotoViewerActivity;
 import com.soultabcaregiver.utils.AppController;
 import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.Utility;
@@ -76,6 +86,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -88,7 +99,7 @@ public class CreateNewToDoTaskFragment extends Fragment {
 	private static final String DATE_FORMAT_FOR_DISPLAY = "MM/dd/yyyy", DATE_FORMAT_FOR_API =
 			"yyyy-MM-dd";
 	
-	public static final int REQUEST_IMAGE_CAPTURE = 101, PICK_FROM_FILE = 6;
+	public static final int REQUEST_IMAGE_CAPTURE = 101, PICK_FROM_FILE = 6, PICK_DOCUMENTS = 8;
 	
 	private ImageView ivBack;
 	
@@ -146,7 +157,37 @@ public class CreateNewToDoTaskFragment extends Fragment {
 						tvNoAttachmentsAdded.setVisibility(View.VISIBLE);
 					}
 				}
+				
+				@Override
+				public void onPreviewClick(TaskAttachmentsModel attachment) {
+					if (attachment.getFileExtension().contains(
+							"jpg") || attachment.getFileExtension().contains(
+							"jpeg") || attachment.getFileExtension().contains(
+							"png") || attachment.getFileExtension().contains("gif")) {
+						Intent i = new Intent(getActivity(), PhotoViewerActivity.class);
+						String url;
+						if (attachment.getIsFromGallery() == 0) {
+							url = BuildConfig.taskImageUrl + attachment.getFilePath();
+						} else {
+							url = attachment.getFilePath();
+						}
+						i.putExtra("url", url);
+						i.putExtra("type", attachment.getMimeType());
+						startActivity(i);
+					}
+				}
 			};
+	
+//	private void showDownloadConfirmDialog(String name, String url) {
+//		if (permissionStorage(0)) {
+//			new AlertDialog.Builder(getActivity()).setMessage("Download file?").setPositiveButton(
+//					R.string.download, (dialog, which) -> {
+//						if (which == DialogInterface.BUTTON_POSITIVE) {
+//							FileUtils.downloadFile(getActivity(), url, name);
+//						}
+//					}).setNegativeButton(R.string.cancel_text, null).show();
+//		}
+//	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -255,102 +296,110 @@ public class CreateNewToDoTaskFragment extends Fragment {
 			Utility.ShowToast(getActivity(),
 					getResources().getString(R.string.todo_task_add_caregiver));
 		} else {
-			showProgressDialog(getResources().getString(R.string.Loading));
-			final VolleyMultipartRequest multipartRequest =
-					new VolleyMultipartRequest(Request.Method.POST,
-							APIS.BASEURL + APIS.CREATE_TODO_TASK_LIST,
-							new Response.Listener<NetworkResponse>()////Place user for
-							{
-								@Override
-								public void onResponse(NetworkResponse response) {
-									hideProgressDialog();
-									String resultResponse = new String(response.data);
-									Log.e(TAG, "onResponse: " + resultResponse);
-									CreateTaskModel taskModel = new Gson().fromJson(resultResponse,
-											CreateTaskModel.class);
-									if (taskModel.getStatusCode() == 200) {
-										Intent intent =
-												new Intent(APIS.INTENT_FILTER_REFRESH_TASK_LIST);
-										getActivity().sendBroadcast(intent);
-										requireActivity().onBackPressed();
-									} else {
-										Utility.ShowToast(getActivity(), taskModel.getMessage());
+			if (getLongFromDate(tvStartDate.getText().toString().trim(),
+					DATE_FORMAT_FOR_DISPLAY) <= getLongFromDate(
+					tvEndDate.getText().toString().trim(), DATE_FORMAT_FOR_DISPLAY)) {
+				showProgressDialog(getResources().getString(R.string.Loading));
+				final VolleyMultipartRequest multipartRequest =
+						new VolleyMultipartRequest(Request.Method.POST,
+								APIS.BASEURL + APIS.CREATE_TODO_TASK_LIST,
+								new Response.Listener<NetworkResponse>()////Place user for
+								{
+									@Override
+									public void onResponse(NetworkResponse response) {
+										hideProgressDialog();
+										String resultResponse = new String(response.data);
+										Log.e(TAG, "onResponse: " + resultResponse);
+										CreateTaskModel taskModel =
+												new Gson().fromJson(resultResponse,
+														CreateTaskModel.class);
+										if (taskModel.getStatusCode() == 200) {
+											Intent intent = new Intent(
+													APIS.INTENT_FILTER_REFRESH_TASK_LIST);
+											getActivity().sendBroadcast(intent);
+											requireActivity().onBackPressed();
+										} else {
+											Utility.ShowToast(getActivity(),
+													taskModel.getMessage());
+										}
 									}
+								}, new Response.ErrorListener() {
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								VolleyLog.d("TAG", "Error: " + error.getMessage());
+								hideProgressDialog();
+								if (error.networkResponse != null) {
+									if (String.valueOf(error.networkResponse.statusCode).equals(
+											APIS.APITokenErrorCode) || String.valueOf(
+											error.networkResponse.statusCode).equals(
+											APIS.APITokenErrorCode2)) {
+										ApiTokenAuthentication.refrehToken(getActivity(),
+												updatedToken -> {
+													if (updatedToken == null) {
+													} else {
+														Log.e("UpdatedToken2", updatedToken);
+														createTask();
+													}
+												});
+									}
+								} else {
+									Utility.ShowToast(getActivity(), getResources().getString(
+											R.string.something_went_wrong));
 								}
-							}, new Response.ErrorListener() {
-						@Override
-						public void onErrorResponse(VolleyError error) {
-							VolleyLog.d("TAG", "Error: " + error.getMessage());
-							hideProgressDialog();
-							if (error.networkResponse != null) {
-								if (String.valueOf(error.networkResponse.statusCode).equals(
-										APIS.APITokenErrorCode) || String.valueOf(
-										error.networkResponse.statusCode).equals(
-										APIS.APITokenErrorCode2)) {
-									ApiTokenAuthentication.refrehToken(getActivity(),
-											updatedToken -> {
-												if (updatedToken == null) {
-												} else {
-													Log.e("UpdatedToken2", updatedToken);
-													createTask();
-												}
-											});
+								error.getMessage();
+								Log.e("TAG", "onErrorResponse: >>" + error.toString());
+								hideProgressDialog();
+							}
+						}) {
+							@Override
+							public Map<String, String> getHeaders() {
+								Map<String, String> params = new HashMap<>();
+								params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+								params.put(APIS.APITokenKEY,
+										Utility.getSharedPreferences(getActivity(),
+												APIS.APITokenValue));
+								return params;
+							}
+							
+							@Override
+							protected Map<String, String> getParams() {
+								Map<String, String> params = new HashMap<String, String>();
+								params.put("title", etTaskTitle.getText().toString().trim());
+								params.put("description",
+										etTaskDescription.getText().toString().trim());
+								params.put("start_date",
+										getFormattedDate(tvStartDate.getText().toString().trim(),
+												DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
+								params.put("end_date",
+										getFormattedDate(tvStartDate.getText().toString().trim(),
+												DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
+								params.put("assign_to", getAssignedCaregiversId());
+								return params;
+							}
+							
+							@Override
+							protected Map<String, DataPart> getByteData() {
+								Map<String, DataPart> params = new HashMap<>();
+								taskAttachmentsList = attachmentsAdapter.getAttachments();
+								for (int i = 0; i < taskAttachmentsList.size(); i++) {
+									TaskAttachmentsModel model = taskAttachmentsList.get(i);
+									byte[] image = readBytesFromFile(model.getFilePath());
+									params.put("attachments[" + i + "]",
+											new DataPart(model.getFileName(), image,
+													model.getMimeType()));
 								}
-							} else {
-								Utility.ShowToast(getActivity(),
-										getResources().getString(R.string.something_went_wrong));
+								return params;
 							}
-							error.getMessage();
-							Log.e("TAG", "onErrorResponse: >>" + error.toString());
-							hideProgressDialog();
-						}
-					}) {
-						@Override
-						public Map<String, String> getHeaders() {
-							Map<String, String> params = new HashMap<>();
-							params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-							params.put(APIS.APITokenKEY,
-									Utility.getSharedPreferences(getActivity(),
-									APIS.APITokenValue));
-							return params;
-						}
-						
-						@Override
-						protected Map<String, String> getParams() {
-							Map<String, String> params = new HashMap<String, String>();
-							params.put("title", etTaskTitle.getText().toString().trim());
-							params.put("description",
-									etTaskDescription.getText().toString().trim());
-							params.put("start_date",
-									getFormattedDate(tvStartDate.getText().toString().trim(),
-											DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
-							params.put("end_date",
-									getFormattedDate(tvStartDate.getText().toString().trim(),
-											DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
-							params.put("assign_to", getAssignedCaregiversId());
-							return params;
-						}
-						
-						@Override
-						protected Map<String, DataPart> getByteData() {
-							Map<String, DataPart> params = new HashMap<>();
-							taskAttachmentsList = attachmentsAdapter.getAttachments();
-							for (int i = 0; i < taskAttachmentsList.size(); i++) {
-								TaskAttachmentsModel model = taskAttachmentsList.get(i);
-								byte[] image = readBytesFromFile(model.getFilePath());
-								params.put("attachments[" + i + "]",
-										new DataPart(model.getFileName(), image,
-												model.getMimeType()));
-							}
-							return params;
-						}
-					};
-			multipartRequest.setShouldCache(false);
-			multipartRequest.setTag(TAG);
-			multipartRequest.setRetryPolicy(
-					new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-							DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-			AppController.getInstance().addToRequestQueue(multipartRequest);
+						};
+				multipartRequest.setShouldCache(false);
+				multipartRequest.setTag(TAG);
+				multipartRequest.setRetryPolicy(
+						new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+								DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+				AppController.getInstance().addToRequestQueue(multipartRequest);
+			} else {
+				Utility.ShowToast(getActivity(), "Start date cannot be greater then end date");
+			}
 		}
 	}
 	
@@ -529,20 +578,28 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		Typeface typeface = ResourcesCompat.getFont(getActivity(), R.font.muli_bold);
 		tvDialogHeader.setTypeface(typeface);
 		tvDialogHeader.setText("Add Attachment");
-		LinearLayout gallery = bottomSheetDialog.findViewById(R.id.ivGallery);
-		LinearLayout camera = bottomSheetDialog.findViewById(R.id.ivCamera);
-		gallery.setOnClickListener(new View.OnClickListener() {
+		LinearLayout llGallery = bottomSheetDialog.findViewById(R.id.llGallery);
+		LinearLayout llCamera = bottomSheetDialog.findViewById(R.id.llCamera);
+		LinearLayout llDocuments = bottomSheetDialog.findViewById(R.id.llDocuments);
+		llGallery.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				bottomSheetDialog.dismiss();
 				galleryIntent();
 			}
 		});
-		camera.setOnClickListener(new View.OnClickListener() {
+		llCamera.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				bottomSheetDialog.dismiss();
 				cameraIntent();
+			}
+		});
+		llDocuments.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				bottomSheetDialog.dismiss();
+				documentIntent();
 			}
 		});
 		bottomSheetDialog.show();
@@ -553,6 +610,14 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		intent.setType("image/*");
 		intent.setAction(Intent.ACTION_GET_CONTENT);//
 		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_FROM_FILE);
+	}
+	
+	private void documentIntent() {
+		Intent intent = new Intent();
+		intent.setType("application/pdf");
+		intent.setType("application/msword");
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_DOCUMENTS);
 	}
 	
 	private void cameraIntent() {
@@ -573,15 +638,47 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		Log.e("TAG", "onActivityResult: " + requestCode);
 		taskAttachmentsList = new ArrayList<>();
 		switch (requestCode) {
+			case PICK_DOCUMENTS:
+				try {
+					Uri mImageCaptureUri = data.getData();
+					Hashtable<String, Object> info =
+							FileUtils.getFileInfo(getActivity(), mImageCaptureUri);
+					Log.e(TAG, "onActivityResult: " + info);
+					String mimeType = (String) info.get("mime");
+					String filName = (String) info.get("name");
+					String filePath = (String) info.get("path");
+					String extension =
+							filePath.substring(filePath.lastIndexOf("."), filePath.length());
+					TaskAttachmentsModel attachment = new TaskAttachmentsModel();
+					attachment.setFileExtension(extension);
+					attachment.setFileName(filName);
+					attachment.setFilePath(filePath);
+					attachment.setMimeType(mimeType);
+					attachment.setIsFromGallery(1);
+					attachmentsAdapter.add(attachment);
+					setAttachmentAddedOrNot();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
 			case PICK_FROM_FILE:
 				try {
 					Uri mImageCaptureUri = data.getData();
+					Hashtable<String, Object> info =
+							FileUtils.getFileInfo(getActivity(), mImageCaptureUri);
+					Log.e(TAG, "onActivityResult: " + info);
+					String mimeType = (String) info.get("mime");
+					String filName = (String) info.get("name");
+					String filePath = (String) info.get("path");
+					String extension =
+							filePath.substring(filePath.lastIndexOf("."), filePath.length());
 					String path = getPath(getActivity(), mImageCaptureUri); // From Gallery
 					TaskAttachmentsModel attachment = new TaskAttachmentsModel();
-					attachment.setFileExtension(".png");
-					attachment.setFileName(new File(path).getName());
+					attachment.setFileExtension(extension);
+					attachment.setFileName(filName);
 					attachment.setFilePath(path);
-					attachment.setMimeType("image/jpeg");
+					attachment.setMimeType(mimeType);
+					attachment.setIsFromGallery(1);
 					attachmentsAdapter.add(attachment);
 					setAttachmentAddedOrNot();
 				} catch (Exception e) {
@@ -591,11 +688,20 @@ public class CreateNewToDoTaskFragment extends Fragment {
 			case REQUEST_IMAGE_CAPTURE:
 				try {
 					String path = getPath(getActivity(), imageUri); // From Gallery
+					Hashtable<String, Object> info = FileUtils.getFileInfo(getActivity(),
+							imageUri);
+					Log.e(TAG, "onActivityResult: " + info);
+					String mimeType = (String) info.get("mime");
+					String filName = (String) info.get("name");
+					String filePath = (String) info.get("path");
+					String extension =
+							filePath.substring(filePath.lastIndexOf("."), filePath.length());
 					TaskAttachmentsModel attachment = new TaskAttachmentsModel();
-					attachment.setFileExtension(".png");
-					attachment.setFileName(new File(path).getName());
+					attachment.setFileExtension(extension);
+					attachment.setFileName(filName);
 					attachment.setFilePath(path);
-					attachment.setMimeType("image/jpeg");
+					attachment.setMimeType(mimeType);
+					attachment.setIsFromGallery(1);
 					attachmentsAdapter.add(attachment);
 					setAttachmentAddedOrNot();
 				} catch (Exception e) {
@@ -615,6 +721,17 @@ public class CreateNewToDoTaskFragment extends Fragment {
 			e.printStackTrace();
 		}
 		return formattedDateFormat.format(sourceDate);
+	}
+	
+	private long getLongFromDate(String date, String sourceFormat) {
+		SimpleDateFormat sourceDateFormat = new SimpleDateFormat(sourceFormat);
+		Date sourceDate = null;
+		try {
+			sourceDate = sourceDateFormat.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return sourceDate.getTime();
 	}
 	
 	public static byte[] readBytesFromFile(String aFilePath) {
@@ -668,5 +785,86 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		if (progressDialog != null)
 			progressDialog.dismiss();
 	}
+	
+//	private boolean permissionStorage(int code) {
+//		if (ContextCompat.checkSelfPermission(getActivity(),
+//				Manifest.permission.WRITE_EXTERNAL_STORAGE) == 0 || ContextCompat.checkSelfPermission(
+//				getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == 0) {
+//			return true;
+//		}
+//		ActivityCompat.requestPermissions(getActivity(),
+//				new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//						Manifest.permission.READ_EXTERNAL_STORAGE},
+//				code);
+//		return false;
+//	}
+//
+//	@Override
+//	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+//	                                       @NonNull int[] grantResults) {
+//		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//		if (permissions.length == 0) {
+//			return;
+//		}
+//		boolean allPermissionsGranted = true;
+//		if (grantResults.length > 0) {
+//			for (int grantResult : grantResults) {
+//				if (grantResult != PackageManager.PERMISSION_GRANTED) {
+//					allPermissionsGranted = false;
+//					break;
+//				}
+//			}
+//		}
+//		if (!allPermissionsGranted) {
+//			boolean somePermissionsForeverDenied = false;
+//			for (String permission : permissions) {
+//				if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+//						permission)) {
+//					switch (requestCode) {
+//						case 0:
+//							ActivityCompat.requestPermissions(getActivity(),
+//									new String[]{"android.permission.WRITE_EXTERNAL_STORAGE",
+//											"android.permission.READ_EXTERNAL_STORAGE"},
+//									0);
+//							break;
+//						case 1:
+//							ActivityCompat.requestPermissions(getActivity(),
+//									new String[]{Manifest.permission.CAMERA,
+//											Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//											Manifest.permission.READ_EXTERNAL_STORAGE},
+//									1);
+//							break;
+//					}
+//				} else {
+//					if (ActivityCompat.checkSelfPermission(getActivity(),
+//							permission) == PackageManager.PERMISSION_GRANTED) {
+//					} else {
+//						//set to never ask again
+//						Log.e("set to never ask again", permission);
+//						somePermissionsForeverDenied = true;
+//					}
+//				}
+//			}
+//			if (somePermissionsForeverDenied) {
+//				final androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder =
+//						new androidx.appcompat.app.AlertDialog.Builder(getActivity());
+//				alertDialogBuilder.setTitle("Permissions Required").setMessage(
+//						"please allow permission for storage.").setPositiveButton("Ok",
+//						(dialog, which) -> {
+//							Intent intent =
+//									new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//									Uri.fromParts("package", getActivity().getPackageName(),
+//											null));
+//							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//							startActivity(intent);
+//						}).setNegativeButton("Cancel", (dialog, which) -> {
+//				}).setCancelable(false).create().show();
+//			}
+//		} else {
+//			switch (requestCode) {
+//				//act according to the request code used while requesting the permission(s).
+//			}
+//		}
+//	}
 	
 }

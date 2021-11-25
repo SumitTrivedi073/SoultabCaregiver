@@ -68,6 +68,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 		
 		void onAddAttachmentClick();
 		void removeAttachment(int size, TaskAttachmentsModel attachment);
+		void onPreviewClick(TaskAttachmentsModel attachment);
 		
 	}
 	
@@ -90,7 +91,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 	
 	public class ViewHolder extends RecyclerView.ViewHolder {
 		
-		ImageView ivAdd, ivCaregiver, ivCancel;
+		ImageView ivAdd, ivCaregiver, ivCancel, ivOtherAttachment;
 		
 		TextView tvName;
 		
@@ -99,6 +100,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 		public ViewHolder(@NonNull View itemView) {
 			super(itemView);
 			ivAdd = itemView.findViewById(R.id.ivAdd);
+			ivOtherAttachment = itemView.findViewById(R.id.ivOtherAttachment);
 			ivAdd.setImageDrawable(
 					ContextCompat.getDrawable(context, R.drawable.ic_add_attachment));
 			llMain = itemView.findViewById(R.id.llMain);
@@ -110,15 +112,36 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 		public void bind(int position) {
 			TaskAttachmentsModel attachment = attachments.get(position);
 			String url = "";
-			if (attachment.getIsFromGallery() == 0) {
-				url = BuildConfig.taskImageUrl + attachment.getFilePath();
-			} else {
-				url = attachment.getFilePath();
+			if (attachment.getMimeType().contains("image")) {
+				ivOtherAttachment.setVisibility(View.GONE);
+				ivCaregiver.setVisibility(View.VISIBLE);
+				if (attachment.getIsFromGallery() == 0) {
+					url = BuildConfig.taskImageUrl + attachment.getFilePath();
+				} else {
+					url = attachment.getFilePath();
+				}
+				Log.e("TAG", "bind: " + url);
+				Glide.with(itemView.getContext()).load(url).skipMemoryCache(
+						false).diskCacheStrategy(DiskCacheStrategy.NONE).into(ivCaregiver);
+			} else if (attachment.getMimeType().contains("pdf")) {
+				ivOtherAttachment.setVisibility(View.VISIBLE);
+				ivCaregiver.setVisibility(View.GONE);
+				ivOtherAttachment.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(),
+						R.drawable.ic_pdf_attachment));
+			} else if (attachment.getMimeType().contains(
+					"msword") || attachment.getMimeType().contains("officedocument")) {
+				ivOtherAttachment.setVisibility(View.VISIBLE);
+				ivCaregiver.setVisibility(View.GONE);
+				ivOtherAttachment.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(),
+						R.drawable.ic_doc_attachment));
 			}
-			Log.e("TAG", "bind: " + url);
-			Glide.with(itemView.getContext()).load(url).skipMemoryCache(false).diskCacheStrategy(
-					DiskCacheStrategy.NONE).into(ivCaregiver);
 			tvName.setText(attachment.getFileName());
+			tvName.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					listeners.onPreviewClick(attachment);
+				}
+			});
 			ivAdd.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {

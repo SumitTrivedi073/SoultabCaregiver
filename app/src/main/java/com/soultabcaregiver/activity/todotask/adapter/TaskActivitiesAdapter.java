@@ -7,9 +7,11 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.todotask.model.TaskActivitiesModel;
 import com.soultabcaregiver.utils.TimeAgoUtils;
 
@@ -64,6 +68,8 @@ public class TaskActivitiesAdapter extends RecyclerView.Adapter<TaskActivitiesAd
 		
 		LinearLayout llOptions;
 		
+		ImageView ivUserImage;
+		
 		TextView tvUserName, tvComment, tvDays;
 		
 		public ViewHolder(@NonNull View itemView) {
@@ -72,11 +78,17 @@ public class TaskActivitiesAdapter extends RecyclerView.Adapter<TaskActivitiesAd
 			tvUserName = itemView.findViewById(R.id.tvUserName);
 			tvComment = itemView.findViewById(R.id.tvComment);
 			tvDays = itemView.findViewById(R.id.tvDays);
+			ivUserImage = itemView.findViewById(R.id.ivUserImage);
 		}
 		
 		public void bind(int position) {
 			TaskActivitiesModel.Response activity = taskActivities.get(position);
+			Glide.with(itemView.getContext()).load(
+					APIS.CaregiverImageURL + activity.getProfile_image()).placeholder(
+					R.drawable.user_img).into(ivUserImage);
 			tvUserName.setText(getLastUpdateName(activity));
+			Log.e("TAG", "bind: activity" + position + "=====>" + getCommentForActivity(
+					previousActivityModel, activity));
 			tvComment.setText(getCommentForActivity(previousActivityModel, activity));
 			tvDays.setText(TimeAgoUtils.covertTimeToText(
 					activity.getUpdatedAt() != null ? activity.getUpdatedAt() :
@@ -89,19 +101,50 @@ public class TaskActivitiesAdapter extends RecyclerView.Adapter<TaskActivitiesAd
 				TaskActivitiesModel.Response previousActivityModel,
 				TaskActivitiesModel.Response activity) {
 			if (previousActivityModel != null) {
+				CharSequence sequence = "";
 				if (!previousActivityModel.getTitle().equals(activity.getTitle())) {
-					return getSpannableString("Has made an update in title\n",
-							activity.getTitle());
-				} else if (!previousActivityModel.getDescription().equals(
-						activity.getDescription())) {
-					return getSpannableString("Has made an update in description\n",
-							activity.getDescription());
-				} else {
-					return "Move this card to " + activity.getTaskStatus();
+					sequence = TextUtils.concat(sequence, sequence.length() > 0 ? "\n" : "",
+							getSpannableString("Has made an update in title\n",
+									activity.getTitle()));
+					//					if (!previousActivityModel.getDescription().equals
+					//					(activity.getDescription())) {
+					//						sequence = TextUtils.concat(sequence,
+					//								getSpannableString("\nHas made an update in "
+					//								+ "description\n",
+					//										activity.getDescription()));
+					//					}
+					//					if (!previousActivityModel.getTaskStatus().equals(activity
+					//					.getTaskStatus())) {
+					//						sequence = TextUtils.concat(sequence,
+					//								getSpannableString("\nMove this " + "card to ",
+					//										activity.getTaskStatus()));
+					//					}
+					//					return sequence;
 				}
+				if (!previousActivityModel.getDescription().equals(activity.getDescription())) {
+					sequence = TextUtils.concat(sequence, sequence.length() > 0 ? "\n" : "",
+							getSpannableString("Has made an update in description\n",
+									activity.getDescription()));
+				}
+				if (!previousActivityModel.getTaskStatus().equals(activity.getTaskStatus())) {
+					sequence = TextUtils.concat(sequence, sequence.length() > 0 ? "\n" : "",
+							getSpannableString("Move this card to ", activity.getTaskStatus()));
+				}
+				if (previousActivityModel.getTitle().equals(
+						activity.getTitle()) && previousActivityModel.getDescription().equals(
+						activity.getDescription()) && previousActivityModel.getTaskStatus().equals(
+						activity.getTaskStatus())) {
+					hide();
+					return "";
+				}
+				return sequence;
 			} else {
-				return "Move this card to " + activity.getTaskStatus();
+				return "Create new task";
 			}
+		}
+		
+		private void hide() {
+			itemView.getLayoutParams().height = 0;
 		}
 		
 		private String getLastUpdateName(TaskActivitiesModel.Response activity) {

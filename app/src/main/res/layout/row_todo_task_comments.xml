@@ -28,7 +28,6 @@
         app:layout_constraintStart_toEndOf="@+id/ivUserImage"
         app:layout_constraintTop_toTopOf="@+id/ivUserImage" />
 
-
     <LinearLayout
         android:id="@+id/llCommentTime"
         android:layout_width="wrap_content"
@@ -57,7 +56,6 @@
             android:textSize="@dimen/_12ssp"
             app:layout_constraintStart_toStartOf="@+id/ivUserImage"
             app:layout_constraintTop_toBottomOf="@+id/ivUserImage" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -73,9 +71,9 @@
         <TextView
             android:id="@+id/tvComment"
             android:layout_width="match_parent"
-            android:paddingStart="@dimen/_4sdp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/muli_semibold_italic"
+            android:paddingStart="@dimen/_4sdp"
             android:text="Add Attachments"
             android:textColor="#272727"
             android:textSize="@dimen/_10ssp" />
@@ -87,19 +85,16 @@
             android:background="@drawable/grey_border"
             android:fontFamily="@font/montserrat_medium"
             android:hint="Add Comment"
-            android:visibility="gone"
             android:paddingStart="@dimen/_4sdp"
             android:paddingTop="@dimen/_4sdp"
             android:paddingBottom="@dimen/_4sdp"
             android:textColorHint="#A3A2A2"
             android:textSize="@dimen/_10ssp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/ivUserImage"
             app:layout_constraintTop_toBottomOf="@+id/ivUserImage" />
-
-
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/llOptions"
@@ -117,9 +112,9 @@
             android:fontFamily="@font/muli_semibold"
             android:paddingEnd="@dimen/_10sdp"
             android:text="Update"
-            android:visibility="gone"
             android:textColor="#272727"
             android:textSize="@dimen/_10ssp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/ivUserImage"
             app:layout_constraintTop_toBottomOf="@+id/ivUserImage" />
 
@@ -153,7 +148,5 @@
             android:textSize="@dimen/_10ssp"
             app:layout_constraintStart_toStartOf="@+id/ivUserImage"
             app:layout_constraintTop_toBottomOf="@+id/ivUserImage" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

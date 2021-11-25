@@ -328,7 +328,8 @@
     <string name="todo_task_start_date">Please enter task start date</string>
     <string name="todo_task_end_date">Please enter task end date</string>
     <string name="todo_task_add_caregiver">Please add caregiver</string>
-
+    <string name="task_details">Task Details</string>
+    <string name="new_task">New Task</string>
     <string-array name="todo_task_status">
         <item>To do</item>
         <item>Inprogress</item>

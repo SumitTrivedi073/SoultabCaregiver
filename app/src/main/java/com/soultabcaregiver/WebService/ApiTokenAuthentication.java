@@ -24,9 +24,7 @@ public class ApiTokenAuthentication {
     private final String TAG = getClass().getSimpleName();
 
     public static void refrehToken(Context context, AuthenticateHandler handler) {
-
-
-       
+        
         String userId = Utility.getSharedPreferences(context,APIS.caregiver_id);
 
         if (!TextUtils.isEmpty(userId)) {

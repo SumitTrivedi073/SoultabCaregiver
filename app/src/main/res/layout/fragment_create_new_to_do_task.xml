@@ -30,7 +30,7 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/_10sdp"
             android:fontFamily="@font/muli_extrabold"
-            android:text="To-Do Task"
+            android:text="@string/new_task"
             android:textColor="#0A2B3C"
             android:textSize="@dimen/_14sdp" />
 
@@ -41,6 +41,7 @@
             android:layout_alignParentEnd="true"
             android:padding="@dimen/_10sdp"
             android:src="@drawable/ic_notifications"
+            android:visibility="invisible"
             app:tint="#034D75" />
 
     </RelativeLayout>

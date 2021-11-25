@@ -30,7 +30,7 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="@dimen/_10sdp"
             android:fontFamily="@font/muli_extrabold"
-            android:text="To-Do Task"
+            android:text="@string/task_details"
             android:textColor="#0A2B3C"
             android:textSize="@dimen/_14sdp" />
 
@@ -40,6 +40,7 @@
             android:layout_height="@dimen/_40sdp"
             android:layout_alignParentEnd="true"
             android:padding="@dimen/_10sdp"
+            android:visibility="invisible"
             android:src="@drawable/ic_notifications"
             app:tint="#034D75" />
     </RelativeLayout>
@@ -526,17 +527,21 @@
                     android:textColor="#A3A2A2"
                     android:textSize="@dimen/_12ssp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rcvActivities"
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:fillViewport="true"
                     android:layout_weight="1"
-                    android:nestedScrollingEnabled="true"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rcvActivities"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                </androidx.core.widget.NestedScrollView>
 
                 <LinearLayout
                     android:id="@+id/llNoActivities"
@@ -611,9 +616,6 @@
             android:paddingBottom="@dimen/_10sdp"
             android:text="Save Changes"
             android:textColor="@color/white"
-            android:textSize="@dimen/_12ssp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="@dimen/_12ssp" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

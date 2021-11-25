@@ -2,19 +2,30 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clMain"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="@dimen/_8sdp"
-    android:id="@+id/clMain"
     android:paddingTop="@dimen/_4sdp"
     android:paddingEnd="@dimen/_8sdp"
     android:paddingBottom="@dimen/_4sdp">
+    <!--    <androidx.appcompat.widget.AppCompatCheckBox-->
+    <!--        android:id="@+id/cbNames"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        -->
+    <!--        android:clickable="false"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
 
     <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/cbNames"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
         android:clickable="false"
+        app:layout_constraintDimensionRatio="W,1:1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,17 +43,17 @@
 
     <TextView
         android:id="@+id/tvName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:layout_marginStart="@dimen/_4sdp"
         android:fontFamily="@font/muli_semibold"
-        android:gravity="center"
-        android:text="View Tasks by Names"
+        android:gravity="start"
+        android:text="View Tasks Names"
         android:textColor="@color/black"
         android:textSize="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivCaregiverImage"
         app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,21 +7,13 @@ import java.util.List;
 
 public class TaskCommentListModel {
 	
-	@SerializedName ("status_code")
+	@SerializedName ("status_code") private Integer statusCode;
 	
-	private Integer statusCode;
+	@SerializedName ("status") private String status;
 	
-	@SerializedName ("status")
+	@SerializedName ("message") private String message;
 	
-	private String status;
-	
-	@SerializedName ("message")
-	
-	private String message;
-	
-	@SerializedName ("response")
-	
-	private List<Response> response = null;
+	@SerializedName ("response") private List<Response> response = null;
 	
 	public Integer getStatusCode() {
 		return statusCode;
@@ -57,45 +49,35 @@ public class TaskCommentListModel {
 	
 	public static class Response {
 		
-		@SerializedName ("id")
+		@SerializedName ("id") private String id;
 		
-		private String id;
+		@SerializedName ("user_id") private String userId;
 		
-		@SerializedName ("user_id")
+		@SerializedName ("task_id") private String taskId;
 		
-		private String userId;
+		@SerializedName ("comment") private String comment;
 		
-		@SerializedName ("task_id")
+		@SerializedName ("created_at") private String createdAt;
 		
-		private String taskId;
+		@SerializedName ("created_by") private String createdBy;
 		
-		@SerializedName ("comment")
+		@SerializedName ("updated_at") private String updatedAt;
 		
-		private String comment;
+		@SerializedName ("updated_by") private String updatedBy;
 		
-		@SerializedName ("created_at")
+		@SerializedName ("updated_by_name") private String updated_by_name;
 		
-		private String createdAt;
+		@SerializedName ("created_by_name") private String created_by_name;
 		
-		@SerializedName ("created_by")
+		@SerializedName ("profile_image") private String profile_image;
 		
-		private String createdBy;
+		public String getProfile_image() {
+			return profile_image;
+		}
 		
-		@SerializedName ("updated_at")
-		
-		private String updatedAt;
-		
-		@SerializedName ("updated_by")
-		
-		private String updatedBy;
-		
-		@SerializedName ("updated_by_name")
-		
-		private String updated_by_name;
-		
-		@SerializedName ("created_by_name")
-		
-		private String created_by_name;
+		public void setProfile_image(String profile_image) {
+			this.profile_image = profile_image;
+		}
 		
 		public String getUpdated_by_name() {
 			return updated_by_name;
@@ -177,6 +159,6 @@ public class TaskCommentListModel {
 			this.updatedBy = updatedBy;
 		}
 		
-		
 	}
+	
 }

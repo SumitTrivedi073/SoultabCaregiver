@@ -66,8 +66,8 @@
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/cbTaskByName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
             android:clickable="false"
             android:longClickable="false"/>
 
@@ -78,6 +78,7 @@
             android:drawableRight="@drawable/ic_drop_down"
             android:fontFamily="@font/muli_semibold"
             android:gravity="center"
+            android:layout_marginStart="@dimen/_8sdp"
             android:text="View Tasks by Names"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp" />

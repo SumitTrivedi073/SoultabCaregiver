@@ -3,9 +3,13 @@ package com.soultabcaregiver.activity.todotask.model;
 public class TaskAttachmentsModel {
 	
 	private String filePath;
+	
 	private String fileName;
+	
 	private String fileExtension;
-	private String mimeType;
+	
+	private String mimeType = "";
+	
 	private int isFromGallery = 0;
 	
 	public int getIsFromGallery() {

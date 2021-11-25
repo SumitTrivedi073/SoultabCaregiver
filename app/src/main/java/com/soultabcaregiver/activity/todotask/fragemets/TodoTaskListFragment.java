@@ -117,6 +117,10 @@ public class TodoTaskListFragment extends BaseFragment {
 	private BroadcastReceiver refreshTaskListReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			selectedCaregivers = new ArrayList<>();
+			caregiversId = "";
+			filterStatus = "";
+			cbTaskByName.setChecked(false);
 			getTaskCounts();
 		}
 	};
@@ -429,6 +433,7 @@ public class TodoTaskListFragment extends BaseFragment {
 						if (caregiverIds != null) {
 							params.put("caregiver_ids", caregiverIds);
 						}
+						Log.e("TAG", "getParams: " + params );
 						return params;
 					}
 				};

@@ -5,12 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.todotask.model.TaskCommentListModel;
 import com.soultabcaregiver.utils.TimeAgoUtils;
 
@@ -87,6 +90,8 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 		
 		TextView tvUserName, tvComment, tvEditComment, tvDeleteComment, tvDays, tvSaveComment;
 		
+		ImageView ivUserImage;
+		
 		EditText etComment;
 		
 		public ViewHolder(@NonNull View itemView) {
@@ -98,10 +103,14 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 			tvEditComment = itemView.findViewById(R.id.tvEditComment);
 			tvDeleteComment = itemView.findViewById(R.id.tvDeleteComment);
 			tvDays = itemView.findViewById(R.id.tvDays);
+			ivUserImage = itemView.findViewById(R.id.ivUserImage);
 		}
 		
 		public void bind(int position) {
 			TaskCommentListModel.Response comment = taskComments.get(position);
+			Glide.with(itemView.getContext()).load(
+					APIS.CaregiverImageURL + comment.getProfile_image()).placeholder(
+					R.drawable.user_img).into(ivUserImage);
 			tvUserName.setText(comment.getCreated_by_name());
 			tvComment.setText(comment.getComment());
 			tvDays.setText(TimeAgoUtils.covertTimeToText(comment.getCreatedAt()));

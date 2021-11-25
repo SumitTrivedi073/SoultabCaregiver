@@ -38,6 +38,13 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/user_img" />
 
+        <ImageView
+            android:id="@+id/ivOtherAttachment"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/user_img" />
+
         <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
