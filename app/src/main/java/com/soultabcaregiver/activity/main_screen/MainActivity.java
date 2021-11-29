@@ -61,6 +61,7 @@ import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
+import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineOptionFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.main_screen.model.PermissionModel;
@@ -455,7 +456,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                                 video_call.setVisibility(View.GONE);
                                 shopping_btn.setVisibility(View.GONE);
-                                Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
+//                                Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
+//                                        false, null);
+ Utility.loadFragment(MainActivity.this, new DailyRoutineOptionFragment(),
                                         false, null);
 
                                 break;

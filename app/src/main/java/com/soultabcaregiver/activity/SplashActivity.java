@@ -104,7 +104,6 @@ public class SplashActivity extends AppCompatActivity {
 		if (!gps_enabled && !network_enabled) {
 			Utility.buildAlertMessageNoGps(mContext);
 		} else {
-			
 			checkPermissions();
 		}
 	}
@@ -125,8 +124,6 @@ public class SplashActivity extends AppCompatActivity {
 							, Manifest.permission.WRITE_EXTERNAL_STORAGE,
 							Manifest.permission.RECORD_AUDIO},
 					REQUEST_CODE_PERMISSION);
-			
-			
 		} else {
 			changeScreen();
 			//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings
