@@ -18,6 +18,7 @@ import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.sendbird_chat.utils.DateUtils;
 import com.soultabcaregiver.sendbird_chat.utils.FileUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ImageUtils;
@@ -361,14 +362,20 @@ class ChatListViewHolder extends RecyclerView.ViewHolder {
 		}
 		if (imageUrl.isEmpty()) {
 			if (channel.getMemberCount() <= 2) {
-				coverImage.setImageDrawable(
-						ContextCompat.getDrawable(context, R.drawable.icon_avatar));
+				coverImage.setImageResource(R.drawable.icon_avatar);
 			} else {
-				coverImage.setImageDrawable(
-						ContextCompat.getDrawable(context, R.drawable.icon_avatar_group));
+				coverImage.setImageResource(R.drawable.icon_avatar_group);
+			}
+			return;
+		}else if (imageUrl.equals(APIS.CaregiverImageURL)){
+			if (channel.getMemberCount() <= 2) {
+				coverImage.setImageResource(R.drawable.icon_avatar);
+			} else {
+				coverImage.setImageResource(R.drawable.icon_avatar_group);
 			}
 			return;
 		}
+		Log.e("imageUrl",imageUrl);
 		ImageUtils.displayRoundImageFromUrl(context, imageUrl, coverImage);
 	}
 	

@@ -73,6 +73,12 @@
             android:name=".activity.main_screen.MainActivity"
             android:autoRemoveFromRecents="true"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".search.SearchActivity"
+            android:screenOrientation="portrait" />
+
             android:screenOrientation="portrait"
             android:exported="true"/>
         <activity
@@ -148,6 +154,8 @@
             android:launchMode="singleTask"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
+        <activity android:name=".search.UserProfileActivity" />
+        <activity android:name=".search.PendingRequestsActivity" />
 
         <service
             android:name=".twillovoicecall.IncomingCallNotificationService"

@@ -58,6 +58,7 @@ import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.search.UserProfileActivity;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.PrefUtils;
 import com.soultabcaregiver.sendbird_chat.utils.ConnectionManager;
@@ -336,20 +337,6 @@ public class ConversationFragment extends BaseFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.video_call) {
-			//			SendbirdCallService.dial(requireContext(), mCalleeId, null, true, true,
-			//			mChannelUrl);
-			//			//			RoomParams params = new RoomParams(RoomType
-			//			.SMALL_ROOM_FOR_VIDEO);
-			//			//			SendBirdCall.createRoom(params, (room, e) -> {
-			//			//				if (room == null || e != null) {
-			//			//					return;
-			//			//				}
-			//			//				room.enter(new EnterParams().setAudioEnabled(true)
-			//			.setVideoEnabled
-			//			//				(true), e1 -> {
-			//			//
-			//			//				});
-			//			//			});
 			return true;
 		} else if (itemId == android.R.id.home) {
 			requireActivity().onBackPressed();
@@ -827,11 +814,20 @@ public class ConversationFragment extends BaseFragment {
 		titleTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Log.e("ID",TextUtils.getGroupOtherMemberId(mChannel));
+				
 				if (mChannel.getMemberCount() > 2) {
 					Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
 					intent.putExtra(EXTRA_GROUP_CHANNEL_URL, mChannelUrl);
 					startActivity(intent);
+				}else {
+					if (!TextUtils.getGroupOtherMemberId(mChannel).equals("Soultab Support")) {
+						Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+						intent.putExtra("ID", TextUtils.getGroupOtherMemberId(mChannel));
+						startActivity(intent);
+					}
 				}
+				
 			}
 		});
 		
