@@ -441,13 +441,27 @@ public class UserProfileActivity extends BaseActivity {
 		rejectBtn.setVisibility(View.GONE);
 		connectedStatus = userModel.getConnected();
 		
-		if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
+		/*if (connectedStatus == null || connectedStatus.isEmpty() || connectedStatus.toLowerCase().equals(
 				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())
 				||connectedStatus.toLowerCase().equals(
 				SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString())) {
 			acceptBtn.setText(getString(R.string.invite_member));
 			rejectBtn.setVisibility(View.GONE);
+		} */
+		if (connectedStatus == null || connectedStatus.isEmpty()||connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.NotConnected.toString())) {
+			acceptBtn.setText(getString(R.string.invite_member));
+			rejectBtn.setVisibility(View.GONE);
+			
 		} else if (connectedStatus.toLowerCase().equals(
+				SearchUsersAdapter.UsersConnectedStatus.Decline.toString())) {
+			acceptBtn.setText(getString(R.string.invite_member));
+			acceptBtn.setAlpha(0.5f);
+			acceptBtn.setEnabled(false);
+			acceptBtn.setClickable(false);
+			acceptBtn.setBackground(getResources().getDrawable(R.drawable.blue_disable_btn));
+			rejectBtn.setVisibility(View.GONE);
+		}else if (connectedStatus.toLowerCase().equals(
 				SearchUsersAdapter.UsersConnectedStatus.Connected.toString())) {
 			
 			if (userModel.getId().equals(Utility.getSharedPreferences(getApplicationContext(),

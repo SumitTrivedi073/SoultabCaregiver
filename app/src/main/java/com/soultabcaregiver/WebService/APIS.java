@@ -41,7 +41,7 @@ public class APIS {
     
     public static final String APITokenErrorCode = "401";
     
-    public static final String APITokenErrorCode2 = "401";
+    public static final String APITokenErrorCode2 = "402";
     
     public static final String LOGINAPI = "Caregiver/login";
     

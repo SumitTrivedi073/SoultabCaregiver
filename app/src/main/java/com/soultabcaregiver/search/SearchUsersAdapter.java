@@ -1,5 +1,6 @@
 package com.soultabcaregiver.search;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.search.models.UserSearchResultResponse;
+import com.soultabcaregiver.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +22,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.SearchUsersViewHolder> {
 	
@@ -62,10 +66,9 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 	public void removeUserFromList(int userPosition) {
 		usersList.remove(userPosition);
 		notifyItemRemoved(userPosition);
-		notifyItemRangeChanged(userPosition,usersList.size());
+		notifyItemRangeChanged(userPosition, usersList.size());
 		notifyDataSetChanged();
 	}
-	
 	
 	public enum UsersConnectedStatus {
 		Pending {
@@ -98,7 +101,7 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 			public String toString() {
 				return "notconnected";
 			}
-		},Empty {
+		}, Empty {
 			@NotNull
 			@Override
 			public String toString() {
@@ -111,15 +114,11 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 		
 		void acceptClickListener(UserSearchResultResponse.UserSearchResultModel userModel,
 		                         int position);
-		
 		void rejectClickListener(UserSearchResultResponse.UserSearchResultModel userModel,
 		                         int position);
-		
 		void removeClickListener(UserSearchResultResponse.UserSearchResultModel userModel,
 		                         int position);
-		
 		void inviteMember(UserSearchResultResponse.UserSearchResultModel userModel, int position);
-		
 		void viewUserDetails(UserSearchResultResponse.UserSearchResultModel userModel,
 		                     int position);
 		
@@ -138,44 +137,43 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 		public SearchUsersViewHolder(@NonNull @NotNull View itemView) {
 			super(itemView);
 			userPicImageView = itemView.findViewById(R.id.userPic);
-			
 			userName = itemView.findViewById(R.id.userName);
 			alreadyMemberText = itemView.findViewById(R.id.alreadyMember);
-			
 			acceptBtn = itemView.findViewById(R.id.acceptBtn);
 			rejectBtn = itemView.findViewById(R.id.rejectBtn);
 			removeButton = itemView.findViewById(R.id.removeButton);
 			viewDetailBtn = itemView.findViewById(R.id.viewDetailBtn);
 			inviteMember = itemView.findViewById(R.id.inviteMember);
 			connectionRequestedBtn = itemView.findViewById(R.id.connectionRequestedBtn);
-			
 			requestedLayout = itemView.findViewById(R.id.requestedLayout);
 			connectedLayout = itemView.findViewById(R.id.connectedLayout);
 			notConnectedLayout = itemView.findViewById(R.id.notConnectedLayout);
 			pendingLayout = itemView.findViewById(R.id.pendingLayout);
 		}
 		
+		@SuppressLint ("UseCompatLoadingForDrawables")
 		public void bind(UserSearchResultResponse.UserSearchResultModel model, int position) {
-			
 			userName.setText(model.getName());
-			
 			RequestOptions options =
 					new RequestOptions().centerCrop().dontAnimate().fitCenter().placeholder(
 							R.drawable.user_img).error(R.drawable.user_img);
-			
 			Glide.with(itemView.getContext()).load(model.getProfileImage()).apply(options).into(
 					userPicImageView);
-			
 			requestedLayout.setVisibility(View.GONE);
 			connectedLayout.setVisibility(View.GONE);
 			notConnectedLayout.setVisibility(View.GONE);
 			pendingLayout.setVisibility(View.GONE);
 			alreadyMemberText.setVisibility(View.GONE);
-			
-			if (model.getConnected() == null || model.getConnected().isEmpty() || model.getConnected().toLowerCase().equals(
-					UsersConnectedStatus.Decline.toString())) {
+			if (model.getConnected() == null || model.getConnected().isEmpty()) {
 				notConnectedLayout.setVisibility(View.VISIBLE);
 			} else if (model.getConnected().toLowerCase().equals(
+					UsersConnectedStatus.Decline.toString())) {
+				notConnectedLayout.setVisibility(View.VISIBLE);
+				inviteMember.setAlpha(0.5f);
+				inviteMember.setEnabled(false);
+				inviteMember.setClickable(false);
+				inviteMember.setBackground(itemView.getContext().getDrawable(R.drawable.blue_disable_btn));
+			}else if (model.getConnected().toLowerCase().equals(
 					UsersConnectedStatus.Pending.toString())) {
 				pendingLayout.setVisibility(View.VISIBLE);
 			} else if (model.getConnected().toLowerCase().equals(
@@ -185,12 +183,16 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 					UsersConnectedStatus.Connected.toString())) {
 				alreadyMemberText.setVisibility(View.VISIBLE);
 				connectedLayout.setVisibility(View.VISIBLE);
+				if (model.getId().equals(Utility.getSharedPreferences(itemView.getContext(),
+						APIS.user_id)) || model.isCompanion()) {
+					removeButton.setVisibility(View.GONE);
+				} else {
+					removeButton.setVisibility(View.VISIBLE);
+				}
 			}
-			
 			userName.setOnClickListener(v -> userClickHandler.viewUserDetails(model, position));
 			userPicImageView.setOnClickListener(
 					v -> userClickHandler.viewUserDetails(model, position));
-			
 			acceptBtn.setOnClickListener(
 					v -> userClickHandler.acceptClickListener(model, position));
 			rejectBtn.setOnClickListener(
@@ -200,7 +202,6 @@ public class SearchUsersAdapter extends RecyclerView.Adapter<SearchUsersAdapter.
 			inviteMember.setOnClickListener(v -> userClickHandler.inviteMember(model, position));
 			viewDetailBtn.setOnClickListener(
 					v -> userClickHandler.viewUserDetails(model, position));
-			
 		}
 		
 	}
