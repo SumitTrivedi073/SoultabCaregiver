@@ -48,5 +48,6 @@
 
     <color name="cancel_button_text_color">#2E2E2E</color>
     <color name="chat_grey">#F3F3F3</color>
+    <color name="todo_task_text_color">#0A2B3C</color>
 
 </resources>

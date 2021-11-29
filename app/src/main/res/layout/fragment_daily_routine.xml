@@ -7,24 +7,45 @@
     android:background="@color/light_white"
     tools:context=".activity.daily_routine.fragment.DailyRoutineFragment">
 
-
-    <TextView
-        android:id="@+id/user_name_txt"
+    <RelativeLayout
+        android:id="@+id/llHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:fontFamily="@font/muli_extrabold"
-        android:gravity="center"
-        android:text="@string/daily_routine"
-        android:textColor="@color/blackish"
-        android:textSize="@dimen/_16sdp" />
+        android:layout_height="@dimen/_40sdp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentStart="true"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_back_filled" />
+
+        <TextView
+            android:id="@+id/user_name_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/muli_extrabold"
+            android:gravity="center|center_vertical"
+            android:text="Routine Task"
+            android:textColor="@color/blackish"
+            android:textSize="@dimen/_16sdp" />
+
+
+    </RelativeLayout>
+
+
 
 
     <RelativeLayout
         android:id="@+id/hide_daily_routine_Relative"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/user_name_txt"
+        android:layout_below="@+id/llHeader"
         android:visibility="gone">
 
         <include layout="@layout/permission_hideview"/>
@@ -35,7 +56,7 @@
         android:id="@+id/show_daily_routine_Relative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/user_name_txt"
+        android:layout_below="@+id/llHeader"
         android:visibility="visible">
 
 
