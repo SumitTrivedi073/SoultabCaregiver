@@ -943,9 +943,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 
                     startActivityForResult(new Intent(Settings.ACTION_SETTINGS)
                             , 0);
-                
-                
-                    alertDialog1.dismiss();
+                    
                 }
             });
         
