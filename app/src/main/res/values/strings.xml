@@ -3,7 +3,6 @@
     <string name="google_maps_key">AIzaSyAOlMGm-WyTmatPRhh7CkqVSzGIziU4evU</string>
     <string name="net_connection">Please check your internet connection</string>
     <string name="powered_by_soultab">Powered by SoulTab</string>
-
     <!--Login Activity-->
     <string name="hint_pass">Enter your password</string>
     <string name="login">Login</string>
@@ -14,7 +13,6 @@
     <string name="password_not_valid">Please enter correct Email ID and Password</string>
     <string name="password_notvalid">Must contain minimum 8 character</string>
     <string name="Loading">Loading…</string>
-
     <!--Daily Routine-->
     <string name="daily_routine">Daily Routine</string>
     <string name="Meal">Meal</string>
@@ -30,8 +28,6 @@
     <string name="evening">Evening</string>
     <string name="dinner">Dinner</string>
     <string name="bedtime">Bedtime</string>
-
-
     <!--Doctor Appointment-->
     <string name="doctor_appointment">Doctor Appointments</string>
     <string name="delete_Appointment">Delete Appointment</string>
@@ -48,7 +44,6 @@
     <string name="select_country_code">Please select country code</string>
     <string name="select_country_code_for_mobile">Please select country code for Mobile</string>
     <string name="select_country_code_for_fax">Please select country code for Fax</string>
-
     <string name="mobile_unavailable">Mobile number not available</string>
     <string name="Fax_unavailable">Fax number not available</string>
     <string name="cancel_appointment">Cancel appointment</string>
@@ -82,21 +77,17 @@
     <string name="no_activity_scheduled">No activities scheduled at</string>
     <string name="select_future_time">Please Select Future Time</string>
     <string name="fax_Send_success">Fax was sent successfully</string>
-
-
     <!--Location Permission-->
     <string name="Location_permission">Location access required</string>
     <string name="Location_permission_txt">Please give Soultab Caregiver access to this  device\'s location to get your current location</string>
     <string name="cancel_text">Cancel</string>
     <string name="setting">Setting</string>
-
     <!--Main Activity-->
     <string name="logout">Logout</string>
     <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
     <string name="today">Today</string>
     <string name="lastweek">Last week</string>
     <string name="lastmonth">Last Month</string>
-
     <string name="name">Name</string>
     <string name="missed_event">Missed Event</string>
     <string name="dashboard">Dashboard</string>
@@ -114,15 +105,14 @@
     <string name="three_month">3 Month</string>
     <string name="six_month">6 Month</string>
     <string name="twelve_month">12 Month</string>
-
     <!--Act Calender-->
-
     <string name="daily">Daily</string>
     <string name="weekly">Weekly</string>
     <string name="monthly">Monthly</string>
     <string name="delete_Reminder">Delete Reminder</string>
     <string name="are_you_sure_you_want_to_delete_reminder">Are you sure you want to delete reminder?</string>
     <string name="OK">Ok</string>
+    <string name="cancel">Cancel</string>
     <string name="Alert_Send">Alert has been \nsent successfully</string>
     <string name="reminder_delete_successfully">Reminder deleted successfully</string>
     <string name="Every_Day">Every Day</string>
@@ -130,7 +120,6 @@
     <string name="Every_Week">Every Week</string>
     <string name="Every_Year">Every Year</string>
     <string name="delete">Delete</string>
-
     <!--add reminder-->
     <string name="update_personal_reminder">Update Personal Reminder</string>
     <string name="add_personal_reminder">Add Personal Reminder</string>
@@ -162,7 +151,6 @@
     <string name="Snooze">Snooze</string>
     <string name="Done">Done</string>
     <string name="no_reminder">No Reminder</string>
-
     <integer-array name="beforTime_value_reminder">
         <item>0</item>
         <item>5</item>
@@ -171,7 +159,6 @@
         <item>60</item>
         <item>240</item>
     </integer-array>
-
     <string-array name="beforTime_reminder">
         <item>No reminder</item>
         <item>5 min before</item>
@@ -180,14 +167,12 @@
         <item>1 hour before</item>
         <item>4 hours before</item>
     </string-array>
-
     <string-array name="repeat_reminder">
         <item>Once</item>
         <item>Every Day</item>
         <item>Every Week</item>
         <item>Every Year</item>
     </string-array>
-
     <string name="hello_blank_fragment">hello_blank_fragment</string>
     <!--Alert Fragment-->
     <string name="myalert">My Alert</string>
@@ -200,13 +185,11 @@
     <string name="book_taxi">Book a Taxi for me</string>
     <string name="book_doctor_appointment">Book my doctor appointment</string>
     <string name="send">Send</string>
-
     <!--Forgot Password-->
     <string name="Forgot_password">Forgot your Password?</string>
     <string name="enter_email_forgot">Enter your Email below to send you the instruction on how to reset your Password.</string>
     <string name="enter_registerd_email">Enter your Registered Email</string>
     <string name="proceed">Proceed</string>
-
     <!--OTP Verification-->
     <string name="verify_your_account">Verify your Account</string>
     <string name="account_verification_txt">A Verification Code has been sent to\n your registered Phone Number,\n Please Enter it below.</string>
@@ -215,8 +198,6 @@
     <string name="need_help">Need Help?</string>
     <string name="verify">Verify</string>
     <string name="otp_send_successfully">OTP send successfully \nto your registered\n mobile number.</string>
-
-
     <!--Change Password-->
     <string name="create_new_password">Create New Password</string>
     <string name="create_new_password2">Create a new password for\nlogin to your account.</string>
@@ -226,13 +207,9 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="enter_confirm_password">Enter Confirm Password</string>
     <string name="passowrd_not_match">Confirm password does not match with new password.</string>
-
-
     <!--Social Activity-->
     <string name="website">Website</string>
     <string name="Portal_unavailable">Portal link not available</string>
-
-
     <!--  Added By AJay  -->
     <!--  EndCall Strings  -->
     <string name="calls_end_result_no_answer">No answer</string>
@@ -254,24 +231,18 @@
     <string name="calls_video_calling">making video call&#8230;</string>
     <string name="calls_ending_voice_call">voice call ending&#8230;</string>
     <string name="calls_ending_video_call">video call ending&#8230;</string>
-
-
     <string name="calls_notification_accept">Accept</string>
     <string name="calls_notification_decline">Decline</string>
     <string name="calls_notification_end">End</string>
-
     <string name="calls_notification_voice_calling_content_from">Incoming Voice call from %s</string>
     <string name="calls_notification_voice_calling_content_to">Voice call to %s</string>
     <string name="calls_notification_video_calling_content_from">Incoming Video call from %s</string>
     <string name="calls_notification_video_calling_content_to">Video call to %s</string>
     <string name="download">Download</string>
     <string name="video_call">Video Call</string>
-
-
     <string name="talk">Talk</string>
     <string name="chat">Chat</string>
     <string name="calls">Calls</string>
-
     <string name="group_channel_list_file_message_text">%1$s has uploaded a file.</string>
     <string name="add_new_group">Add New Group</string>
     <string name="start_new_chat">Start New Chat</string>
@@ -303,12 +274,10 @@
     <string name="please_select_members_for_call">Please select members for Call</string>
     <string name="maximum_five_members_allowed">For video call maximum five members are allowed</string>
     <!--  Added By AJay  -->
-
     <!--Added by Sumit-->
     <string name="callee">client identity or phone number</string>
     <string name="select_device">Select Audio Device</string>
     <string name="audio_device">Audio Device</string>
-
     <string name="hint_usr">Enter your first name</string>
     <string name="hint_usr2">Enter your last name</string>
     <string name="enter_user_name">Enter user name</string>
@@ -351,7 +320,20 @@
     <string name="old_not_equal_to_new">New password can not be same as the old password</string>
     <string name="passsword_update_successfully">Your password is update successfully</string>
     <string name="something_went_wrong">Something Went Wrong!</string>
-
     <!--Added by Sumit-->
-
+    <!--Added by maulik-->
+    <string name="todo_create_new_task">New Task</string>
+    <string name="todo_task_title_alert">Please enter task title</string>
+    <string name="todo_task_description_alert">Please enter task description</string>
+    <string name="todo_task_start_date">Please enter task start date</string>
+    <string name="todo_task_end_date">Please enter task end date</string>
+    <string name="todo_task_add_caregiver">Please add caregiver</string>
+    <string name="task_details">Task Details</string>
+    <string name="new_task">New Task</string>
+    <string-array name="todo_task_status">
+        <item>To do</item>
+        <item>Inprogress</item>
+        <item>Done</item>
+    </string-array>
+    <!--Added by maulik-->
 </resources>

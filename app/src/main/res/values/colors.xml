@@ -46,5 +46,6 @@
     <color name="video_call_background">#161616</color>
     <!--  chat colors  -->
 
+    <color name="todo_task_text_color">#0A2B3C</color>
 
 </resources>
