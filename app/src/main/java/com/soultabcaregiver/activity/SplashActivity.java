@@ -142,7 +142,7 @@ public class SplashActivity extends AppCompatActivity {
 			
 			@Override
 			public void run() {
-				if (Utility.isNetworkConnected(mContext)) {
+				
 					if (TextUtils.isEmpty(User_id)) {
 						Intent intent = new Intent(mContext, LoginActivity.class);
 						startActivity(intent);
@@ -174,7 +174,7 @@ public class SplashActivity extends AppCompatActivity {
 								}
 							}
 						});
-					}
+					
 				}
 			}
 		}, 3000);
