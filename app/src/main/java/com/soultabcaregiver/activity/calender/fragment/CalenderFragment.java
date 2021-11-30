@@ -557,8 +557,13 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                         } else {
                             rvReminder.setAdapter(null);
                             tvNodata.setVisibility(View.VISIBLE);
-                            tvNodata.setText(mContext.getResources().getString(R.string.no_activity_scheduled) + " " + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
-
+                            if (Daily_select){
+                                tvNodata.setText(getResources().getString(R.string.no_activity_scheduled) + " \n" + FromDate2);
+                            }else if (Weekly_select){
+                                tvNodata.setText(R.string.scheduled_this_week);
+                            }else if (Monthly_select){
+                                tvNodata.setText(R.string.scheduled_this_month);
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
