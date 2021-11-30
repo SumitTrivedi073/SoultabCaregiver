@@ -51,7 +51,9 @@
         <activity
             android:name=".activity.docter.SocialActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.SplashActivity">
+        <activity android:name=".activity.SplashActivity"
+                  android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -152,14 +154,15 @@
             android:name=".sendbird_group_call.IncomingGroupCallActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true" />
+            android:showOnLockScreen="true"/>
         <activity android:name=".search.UserProfileActivity" />
         <activity android:name=".search.PendingRequestsActivity" />
 
         <service
             android:name=".twillovoicecall.IncomingCallNotificationService"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="ACTION_ACCEPT" />
                 <action android:name="ACTION_REJECT" />

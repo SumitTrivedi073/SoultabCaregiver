@@ -202,9 +202,6 @@ public class APIS {
     
     public static String notifyGroupCallApi = "Users/notifyGroupUser";
     
-    
-	
-	
 	public static final String TODO_TASK_STATUS_COUNTS = "Caregiver/getTaskStatusCount";
 	
 	public static final String TODO_TASK_LIST = "Caregiver/getTaskList";
@@ -218,7 +215,6 @@ public class APIS {
 	public static final String ADD_NEW_TASK_COMMENT = "Caregiver/createTaskComment";
 	
 	public static final String DELETE_TASK_COMMENT = "Caregiver/deleteComment";
-	
 	
 	public static final String INTENT_FILTER_REFRESH_TASK_LIST = "refresh_task_list";
 	

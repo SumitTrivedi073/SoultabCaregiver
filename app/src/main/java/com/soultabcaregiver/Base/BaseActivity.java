@@ -387,7 +387,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 							, 0);
 					
 					
-					alertDialog1.dismiss();
 				}
 			});
 			
