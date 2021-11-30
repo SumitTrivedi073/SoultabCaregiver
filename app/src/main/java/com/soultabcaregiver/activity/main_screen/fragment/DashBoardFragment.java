@@ -600,12 +600,15 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineChart.invalidate();
                 
             } else {
-                // lineChart.setNoDataText(getResources().getString(R.string.Chart_Message));
-                
+                if (weekly_chart.isChecked()){
+                    lineChart.setNoDataText(getString(R.string.no_data_week));
+                }else  if (three_month_chart.isChecked()){
+                    lineChart.setNoDataText(getString(R.string.no_data_month));
             }
             
             
-        } else {
+        }
+        }else {
             lineChart.setVisibility(View.GONE);
             
         }
