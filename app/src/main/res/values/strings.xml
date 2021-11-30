@@ -355,6 +355,8 @@
     <string name="new_task">New Task</string>
     <string name="no_data_week">No data for this week</string>
     <string name="no_data_month">No data for this month</string>
+    <string name="scheduled_this_month">No activities scheduled for this month</string>
+    <string name="scheduled_this_week">No activities scheduled for this week</string>
     <string-array name="todo_task_status">
         <item>To do</item>
         <item>Inprogress</item>
