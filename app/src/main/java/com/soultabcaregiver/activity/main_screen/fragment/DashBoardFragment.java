@@ -2,6 +2,7 @@ package com.soultabcaregiver.activity.main_screen.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,8 @@ import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
+import com.soultabcaregiver.search.PendingRequestsActivity;
+import com.soultabcaregiver.search.SearchActivity;
 import com.soultabcaregiver.sendbird_chat.ChatHelper;
 import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.AppController;
@@ -66,8 +69,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     
     RecyclerView bar_chart_list;
     
-    ProgressDialog progressDialog;
-    
     LinearLayout name_event_linear;
     
     CardView compliance_card;
@@ -79,7 +80,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     CheckBox weekly_chart, three_month_chart, six_month_chart, twelve_month_chart;
     
     TextView today_txt, lastweek_txt, lastmonth_txt, good_morning_txt, user_name_txt,
-            compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt, NeedAssistance;
+            compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt, NeedAssistance,
+		    searchUsers;
     
     MainActivity mainActivity;
     
@@ -89,7 +91,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     
     String chart_value_data = "week";
     
-    RelativeLayout dashboard_show_relative, dashboard_hide_relative;
+    RelativeLayout dashboard_show_relative, dashboard_hide_relative,pendingRequests;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,7 +146,9 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         dashboard_show_relative = view.findViewById(R.id.dashboard_show_relative);
         dashboard_hide_relative = view.findViewById(R.id.dashboard_hide_relative);
         NeedAssistance = view.findViewById(R.id.needAsistance);
-        
+	    pendingRequests = view.findViewById(R.id.pendingRequests);
+	    searchUsers = view.findViewById(R.id.searchUsers);
+	    
         calendar = Calendar.getInstance();
         
         int mYear = calendar.get(Calendar.YEAR);
@@ -317,8 +321,14 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         lastmonth_txt.setOnClickListener(this);
         logout.setOnClickListener(this);
         NeedAssistance.setOnClickListener(this);
-        
-        weekly_chart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+	
+	    pendingRequests.setOnClickListener(
+			    v -> startActivity(new Intent(getContext(), PendingRequestsActivity.class)));
+	
+	    searchUsers.setOnClickListener(v -> startActivity(SearchActivity.intentFor(getContext())));
+	
+	
+	    weekly_chart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
