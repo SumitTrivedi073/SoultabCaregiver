@@ -325,7 +325,7 @@ public class UserProfileActivity extends BaseActivity {
 					try {
 						if (response.optInt("status_code") == 200) {
 							userModel.setConnected(
-									SearchUsersAdapter.UsersConnectedStatus.Decline.toString());
+									SearchUsersAdapter.UsersConnectedStatus.Empty.toString());
 							setupData();
 						}
 						Utility.ShowToast(UserProfileActivity.this, "Unfriend Successfully");

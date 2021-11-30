@@ -128,10 +128,13 @@ public class SearchActivity extends BaseActivity {
 		});
 		
 		searchButton.setOnClickListener(v -> {
-			Utility.hideKeyboard(SearchActivity.this);
-			searchTextBox.dismissDropDown();
-			usersRecyclerView.setVisibility(View.VISIBLE);
-			searchUsersAdapter.setUsersList(usersList);
+		
+				Utility.hideKeyboard(SearchActivity.this);
+				searchTextBox.dismissDropDown();
+				usersRecyclerView.setVisibility(View.VISIBLE);
+			if (usersList!=null&&usersList.size()>0) {
+				searchUsersAdapter.setUsersList(usersList);
+			}
 		});
 		
 		searchTextBox.addTextChangedListener(new TextWatcher() {
