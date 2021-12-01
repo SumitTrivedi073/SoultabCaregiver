@@ -33,6 +33,7 @@ import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.WebService.ApiTokenAuthentication;
+import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
@@ -288,10 +289,10 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                                 getResources().getString(R.string.yes_text));
                 diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
                     //  ReminderCreateClass.getInstance().DeleteReminderlogout();
-                    
+    
                     if (mainActivity != null) {
                         diloagBoxCommon.getDialog().dismiss();
-                        logout_app("Logout Successfully");
+                        LogoutAPI();
                     }
                     
                 });
@@ -738,5 +739,73 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
             }
         }
+    }
+    
+    private void LogoutAPI() {
+        
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
+        
+        StringRequest stringRequest =
+                new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.LogoutAPI,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                hideProgressDialog();
+                                Log.e("response", response);
+                                CommonResponseModel commonResponseModel = new Gson().fromJson(response,
+                                        CommonResponseModel.class);
+                                if (String.valueOf(commonResponseModel.getStatusCode()).equals("200")) {
+                                    
+                                    logout_app(getString(R.string.logout_successfully));
+                                    
+                                } else if (String.valueOf(commonResponseModel.getStatusCode()).equals(
+                                        "403")) {
+                                    logout_app(chartModel.getMessage());
+                                }
+                                
+                                
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("error", error.toString());
+                        
+                        hideProgressDialog();
+                        if (error.networkResponse!=null) {
+                            if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
+                                ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                                    if (updatedToken == null) {
+                                    } else {
+                                        LogoutAPI();
+                                        
+                                    }
+                                });
+                            }else {
+                                Utility.ShowToast(
+                                        mContext,
+                                        getResources().getString(R.string.something_went_wrong));
+                            }
+                        }
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                        params.put(APIS.HEADERKEY2,
+                                Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+                        params.put(APIS.APITokenKEY,
+                                Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+                        
+                        Log.e("logout_param", String.valueOf(params));
+                        return params;
+                    }
+                    
+                };
+        AppController.getInstance().addToRequestQueue(stringRequest);
+        stringRequest.setShouldCache(false);
+        stringRequest.setRetryPolicy(
+                new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        
     }
 }
