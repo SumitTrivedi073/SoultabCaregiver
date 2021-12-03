@@ -173,7 +173,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         if (Utility.isNetworkConnected(mContext)) {
             registerReceiver();
-            PermissionTabAPI();
+          
     
             listner();
         }
@@ -362,6 +362,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         registerReceiver(receiver1,mIntentFilter);
         appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
         checkUpdate();
+        PermissionTabAPI();
     }
 
 

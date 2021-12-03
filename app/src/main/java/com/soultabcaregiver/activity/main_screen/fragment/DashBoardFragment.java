@@ -602,9 +602,9 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 
             } else {
                 if (weekly_chart.isChecked()){
-                    lineChart.setNoDataText(getString(R.string.no_data_week));
+                    lineChart.setNoDataText(mContext.getResources().getString(R.string.no_data_week));
                 }else  if (three_month_chart.isChecked()){
-                    lineChart.setNoDataText(getString(R.string.no_data_month));
+                    lineChart.setNoDataText(mContext.getResources().getString(R.string.no_data_month));
             }
             
             

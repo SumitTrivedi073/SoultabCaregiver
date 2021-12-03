@@ -549,7 +549,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                                 arRemin.add(reminderBean);
                             }
                             tvNodata.setVisibility(View.GONE);
-                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin, tvNodata, FromDate2);
+                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin
+                                    , tvNodata, FromDate2,Daily_select,Weekly_select,Monthly_select);
                             rvReminder.setAdapter(adapter);
 
                         } else if (String.valueOf(allEventModel.getStatusCode()).equals("403")) {
