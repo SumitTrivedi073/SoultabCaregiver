@@ -665,7 +665,7 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		intent.setAction(Intent.ACTION_GET_CONTENT);
 		intent.setType("*/*");
 		intent.putExtra(Intent.EXTRA_MIME_TYPES,
-				new String[]{"application/pdf", "application" + "/msword", "application/vnd" +
+				new String[]{"application/pdf", "application/msword", "application/vnd" +
 						".openxmlformats-officedocument.wordprocessingml.document"});
 		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_DOCUMENTS);
 	}
