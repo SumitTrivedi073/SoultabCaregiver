@@ -30,6 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -119,7 +121,8 @@ public class CreateNewToDoTaskFragment extends Fragment {
 	
 	private ArrayList<TaskCaregiversModel> tempCaregiverName = new ArrayList<>();
 	
-	private ArrayList<Integer> selectedCaregivers = new ArrayList<>();
+//	private ArrayList<Integer> selectedCaregivers = new ArrayList<>();
+	private ArrayList<String> selectedCaregivers = new ArrayList<>();
 	
 	private AssignedToCaregiverAdapter caregiverAdapter;
 	
@@ -135,8 +138,10 @@ public class CreateNewToDoTaskFragment extends Fragment {
 				}
 				
 				@Override
-				public void onRemoveCareGiverClick(int position, int caregiversCount) {
-					selectedCaregivers.remove(position - 1);
+				public void onRemoveCareGiverClick(String caregiverId, int caregiversCount) {
+//					selectedCaregivers.remove(position - 1);
+					selectedCaregivers.remove(caregiverId);
+					
 					if (caregiversCount == 1) {
 						tvNoCaregiverAssigned.setVisibility(View.VISIBLE);
 					}
@@ -177,17 +182,17 @@ public class CreateNewToDoTaskFragment extends Fragment {
 					}
 				}
 			};
-	
-//	private void showDownloadConfirmDialog(String name, String url) {
-//		if (permissionStorage(0)) {
-//			new AlertDialog.Builder(getActivity()).setMessage("Download file?").setPositiveButton(
-//					R.string.download, (dialog, which) -> {
-//						if (which == DialogInterface.BUTTON_POSITIVE) {
-//							FileUtils.downloadFile(getActivity(), url, name);
-//						}
-//					}).setNegativeButton(R.string.cancel_text, null).show();
-//		}
-//	}
+	//	private void showDownloadConfirmDialog(String name, String url) {
+	//		if (permissionStorage(0)) {
+	//			new AlertDialog.Builder(getActivity()).setMessage("Download file?")
+	//			.setPositiveButton(
+	//					R.string.download, (dialog, which) -> {
+	//						if (which == DialogInterface.BUTTON_POSITIVE) {
+	//							FileUtils.downloadFile(getActivity(), url, name);
+	//						}
+	//					}).setNegativeButton(R.string.cancel_text, null).show();
+	//		}
+	//	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -207,6 +212,28 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		listeners();
 	}
 	
+	// TODO: 12/3/2021 for restrict emoji enter in edit text
+	public static class EmojiFilter {
+		
+		public static InputFilter[] getFilter() {
+			InputFilter EMOJI_FILTER = new InputFilter() {
+				@Override
+				public CharSequence filter(CharSequence source, int start, int end, Spanned dest,
+				                           int dstart, int dend) {
+					for (int index = start; index < end; index++) {
+						int type = Character.getType(source.charAt(index));
+						if (type == Character.SURROGATE || type == Character.NON_SPACING_MARK || type == Character.OTHER_SYMBOL) {
+							return "";
+						}
+					}
+					return null;
+				}
+			};
+			return new InputFilter[]{EMOJI_FILTER};
+		}
+		
+	}
+	
 	private void init(View view) {
 		ivBack = view.findViewById(R.id.ivBack);
 		tvStartDate = view.findViewById(R.id.tvStartDate);
@@ -220,6 +247,8 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		llStartDate = view.findViewById(R.id.llStartDate);
 		llEndDate = view.findViewById(R.id.llEndDate);
 		clCreateTask = view.findViewById(R.id.clCreateTask);
+		etTaskTitle.setFilters(EmojiFilter.getFilter());
+		etTaskDescription.setFilters(EmojiFilter.getFilter());
 		ChipsLayoutManager chipsLayoutManager =
 				ChipsLayoutManager.newBuilder(getActivity()).setChildGravity(
 						Gravity.TOP).setScrollingEnabled(true).setGravityResolver(
@@ -541,22 +570,39 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		dialog.show();
 	}
 	
+//	private ArrayList<TaskCaregiversModel> getSelectedCaregivers(
+//			ArrayList<String> selectedCaregivers) {
+//		ArrayList<TaskCaregiversModel> caregivers = new ArrayList<>();
+//		for (int i = 0; i < selectedCaregivers.size(); i++) {
+//			caregivers.add(tempCaregiverName.get(selectedCaregivers.get(i)));
+//		}
+//		return caregivers;
+//	}
+	
 	private ArrayList<TaskCaregiversModel> getSelectedCaregivers(
-			ArrayList<Integer> selectedCaregivers) {
+			ArrayList<String> selectedCaregivers) {
 		ArrayList<TaskCaregiversModel> caregivers = new ArrayList<>();
 		for (int i = 0; i < selectedCaregivers.size(); i++) {
-			caregivers.add(tempCaregiverName.get(selectedCaregivers.get(i)));
+			for (TaskCaregiversModel model : tempCaregiverName) {
+				if (model.getId().equalsIgnoreCase(selectedCaregivers.get(i))) {
+					caregivers.add(model);
+				}
+			}
 		}
 		return caregivers;
 	}
 	
+//	private String getAssignedCaregiversId() {
+//		ArrayList<String> selectedCaregiverId = new ArrayList<>();
+//		for (int i = 0; i < selectedCaregivers.size(); i++) {
+//			TaskCaregiversModel caregiversModel = tempCaregiverName.get(selectedCaregivers.get(i));
+//			selectedCaregiverId.add(caregiversModel.getId());
+//		}
+//		return selectedCaregiverId.toString().replace("[", "").replace("]", "");
+//	}
+	
 	private String getAssignedCaregiversId() {
-		ArrayList<String> selectedCaregiverId = new ArrayList<>();
-		for (int i = 0; i < selectedCaregivers.size(); i++) {
-			TaskCaregiversModel caregiversModel = tempCaregiverName.get(selectedCaregivers.get(i));
-			selectedCaregiverId.add(caregiversModel.getId());
-		}
-		return selectedCaregiverId.toString().replace("[", "").replace("]", "");
+		return selectedCaregivers.toString().replace("[", "").replace("]", "");
 	}
 	
 	private void setCaregiverAssignedOrNot() {
@@ -607,16 +653,20 @@ public class CreateNewToDoTaskFragment extends Fragment {
 	
 	private void galleryIntent() {
 		Intent intent = new Intent();
-		intent.setType("image/*");
-		intent.setAction(Intent.ACTION_GET_CONTENT);//
+		intent.setType("*/*");
+		intent.putExtra(Intent.EXTRA_MIME_TYPES,
+				new String[]{"image/jpeg", "image/png", "image/gif"});
+		intent.setAction(Intent.ACTION_GET_CONTENT);
 		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_FROM_FILE);
 	}
 	
 	private void documentIntent() {
 		Intent intent = new Intent();
-		intent.setType("application/pdf");
-		intent.setType("application/msword");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
+		intent.setType("*/*");
+		intent.putExtra(Intent.EXTRA_MIME_TYPES,
+				new String[]{"application/pdf", "application" + "/msword", "application/vnd" +
+						".openxmlformats-officedocument.wordprocessingml.document"});
 		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_DOCUMENTS);
 	}
 	
@@ -785,86 +835,85 @@ public class CreateNewToDoTaskFragment extends Fragment {
 		if (progressDialog != null)
 			progressDialog.dismiss();
 	}
-	
-//	private boolean permissionStorage(int code) {
-//		if (ContextCompat.checkSelfPermission(getActivity(),
-//				Manifest.permission.WRITE_EXTERNAL_STORAGE) == 0 || ContextCompat.checkSelfPermission(
-//				getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == 0) {
-//			return true;
-//		}
-//		ActivityCompat.requestPermissions(getActivity(),
-//				new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//						Manifest.permission.READ_EXTERNAL_STORAGE},
-//				code);
-//		return false;
-//	}
-//
-//	@Override
-//	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//	                                       @NonNull int[] grantResults) {
-//		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//		if (permissions.length == 0) {
-//			return;
-//		}
-//		boolean allPermissionsGranted = true;
-//		if (grantResults.length > 0) {
-//			for (int grantResult : grantResults) {
-//				if (grantResult != PackageManager.PERMISSION_GRANTED) {
-//					allPermissionsGranted = false;
-//					break;
-//				}
-//			}
-//		}
-//		if (!allPermissionsGranted) {
-//			boolean somePermissionsForeverDenied = false;
-//			for (String permission : permissions) {
-//				if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-//						permission)) {
-//					switch (requestCode) {
-//						case 0:
-//							ActivityCompat.requestPermissions(getActivity(),
-//									new String[]{"android.permission.WRITE_EXTERNAL_STORAGE",
-//											"android.permission.READ_EXTERNAL_STORAGE"},
-//									0);
-//							break;
-//						case 1:
-//							ActivityCompat.requestPermissions(getActivity(),
-//									new String[]{Manifest.permission.CAMERA,
-//											Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//											Manifest.permission.READ_EXTERNAL_STORAGE},
-//									1);
-//							break;
-//					}
-//				} else {
-//					if (ActivityCompat.checkSelfPermission(getActivity(),
-//							permission) == PackageManager.PERMISSION_GRANTED) {
-//					} else {
-//						//set to never ask again
-//						Log.e("set to never ask again", permission);
-//						somePermissionsForeverDenied = true;
-//					}
-//				}
-//			}
-//			if (somePermissionsForeverDenied) {
-//				final androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder =
-//						new androidx.appcompat.app.AlertDialog.Builder(getActivity());
-//				alertDialogBuilder.setTitle("Permissions Required").setMessage(
-//						"please allow permission for storage.").setPositiveButton("Ok",
-//						(dialog, which) -> {
-//							Intent intent =
-//									new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//									Uri.fromParts("package", getActivity().getPackageName(),
-//											null));
-//							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//							startActivity(intent);
-//						}).setNegativeButton("Cancel", (dialog, which) -> {
-//				}).setCancelable(false).create().show();
-//			}
-//		} else {
-//			switch (requestCode) {
-//				//act according to the request code used while requesting the permission(s).
-//			}
-//		}
-//	}
-	
+	//	private boolean permissionStorage(int code) {
+	//		if (ContextCompat.checkSelfPermission(getActivity(),
+	//				Manifest.permission.WRITE_EXTERNAL_STORAGE) == 0 || ContextCompat
+	//				.checkSelfPermission(
+	//				getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == 0) {
+	//			return true;
+	//		}
+	//		ActivityCompat.requestPermissions(getActivity(),
+	//				new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+	//						Manifest.permission.READ_EXTERNAL_STORAGE},
+	//				code);
+	//		return false;
+	//	}
+	//
+	//	@Override
+	//	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+	//	                                       @NonNull int[] grantResults) {
+	//		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	//		if (permissions.length == 0) {
+	//			return;
+	//		}
+	//		boolean allPermissionsGranted = true;
+	//		if (grantResults.length > 0) {
+	//			for (int grantResult : grantResults) {
+	//				if (grantResult != PackageManager.PERMISSION_GRANTED) {
+	//					allPermissionsGranted = false;
+	//					break;
+	//				}
+	//			}
+	//		}
+	//		if (!allPermissionsGranted) {
+	//			boolean somePermissionsForeverDenied = false;
+	//			for (String permission : permissions) {
+	//				if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+	//						permission)) {
+	//					switch (requestCode) {
+	//						case 0:
+	//							ActivityCompat.requestPermissions(getActivity(),
+	//									new String[]{"android.permission.WRITE_EXTERNAL_STORAGE",
+	//											"android.permission.READ_EXTERNAL_STORAGE"},
+	//									0);
+	//							break;
+	//						case 1:
+	//							ActivityCompat.requestPermissions(getActivity(),
+	//									new String[]{Manifest.permission.CAMERA,
+	//											Manifest.permission.WRITE_EXTERNAL_STORAGE,
+	//											Manifest.permission.READ_EXTERNAL_STORAGE},
+	//									1);
+	//							break;
+	//					}
+	//				} else {
+	//					if (ActivityCompat.checkSelfPermission(getActivity(),
+	//							permission) == PackageManager.PERMISSION_GRANTED) {
+	//					} else {
+	//						//set to never ask again
+	//						Log.e("set to never ask again", permission);
+	//						somePermissionsForeverDenied = true;
+	//					}
+	//				}
+	//			}
+	//			if (somePermissionsForeverDenied) {
+	//				final androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder =
+	//						new androidx.appcompat.app.AlertDialog.Builder(getActivity());
+	//				alertDialogBuilder.setTitle("Permissions Required").setMessage(
+	//						"please allow permission for storage.").setPositiveButton("Ok",
+	//						(dialog, which) -> {
+	//							Intent intent =
+	//									new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+	//									Uri.fromParts("package", getActivity().getPackageName(),
+	//											null));
+	//							intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	//							startActivity(intent);
+	//						}).setNegativeButton("Cancel", (dialog, which) -> {
+	//				}).setCancelable(false).create().show();
+	//			}
+	//		} else {
+	//			switch (requestCode) {
+	//				//act according to the request code used while requesting the permission(s).
+	//			}
+	//		}
+	//	}
 }

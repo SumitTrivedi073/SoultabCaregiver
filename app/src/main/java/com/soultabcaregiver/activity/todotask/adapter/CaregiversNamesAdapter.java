@@ -12,6 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.activity.todotask.model.TaskCaregiversModel;
 
@@ -30,7 +33,7 @@ public class CaregiversNamesAdapter extends RecyclerView.Adapter<CaregiversNames
 	                              ArrayList<String> selectedCaregivers) {
 		this.context = context;
 		this.caregivers = caregivers;
-		this.selectedCaregivers = selectedCaregivers;
+		this.selectedCaregivers.addAll(selectedCaregivers);
 	}
 	
 	@NonNull
@@ -71,12 +74,20 @@ public class CaregiversNamesAdapter extends RecyclerView.Adapter<CaregiversNames
 			tvName = itemView.findViewById(R.id.tvName);
 			ivCaregiverImage = itemView.findViewById(R.id.ivCaregiverImage);
 			clMain = itemView.findViewById(R.id.clMain);
-			ivCaregiverImage.setVisibility(View.GONE);
 		}
 		
 		public void bind(int position) {
 			TaskCaregiversModel caregiversModel = caregivers.get(position);
-			tvName.setText(caregiversModel.getName());
+			String profileImage = "";
+			if (caregiversModel.getProfileImage().startsWith("http")) {
+				profileImage = caregiversModel.getProfileImage();
+			} else {
+				profileImage = BuildConfig.caregiverImageUrl + caregiversModel.getProfileImage();
+			}
+			Glide.with(itemView.getContext()).load(profileImage).skipMemoryCache(
+					false).diskCacheStrategy(DiskCacheStrategy.RESOURCE).placeholder(
+					R.drawable.user_img).into(ivCaregiverImage);
+			tvName.setText(caregiversModel.getName() + " " + caregiversModel.getLastname());
 			if (selectedCaregivers.contains(caregiversModel.getId())) {
 				cbNames.setChecked(true);
 			} else {

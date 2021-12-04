@@ -31,12 +31,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivCaregiver"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/user_img" />
 
         <ImageView
             android:id="@+id/ivOtherAttachment"

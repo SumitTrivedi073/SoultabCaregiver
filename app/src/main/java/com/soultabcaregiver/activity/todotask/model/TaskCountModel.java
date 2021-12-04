@@ -84,21 +84,10 @@ public class TaskCountModel {
 		
 		private String tagName;
 		
-		private String statusNameForFilter;
-		
-		public String getStatusNameForFilter() {
-			return statusNameForFilter;
-		}
-		
-		public void setStatusNameForFilter(String statusNameForFilter) {
-			this.statusNameForFilter = statusNameForFilter;
-		}
-		
 		private Integer count;
 		
-		public ToDoFilterModel(String tagName, String statusNameForFilter, Integer count) {
+		public ToDoFilterModel(String tagName, Integer count) {
 			this.tagName = tagName;
-			this.statusNameForFilter = statusNameForFilter;
 			this.count = count;
 		}
 		

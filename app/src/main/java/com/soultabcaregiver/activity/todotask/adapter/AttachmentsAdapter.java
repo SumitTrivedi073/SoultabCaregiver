@@ -91,7 +91,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 	
 	public class ViewHolder extends RecyclerView.ViewHolder {
 		
-		ImageView ivAdd, ivCaregiver, ivCancel, ivOtherAttachment;
+		ImageView ivAdd, ivCancel, ivOtherAttachment;
 		
 		TextView tvName;
 		
@@ -104,7 +104,7 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 			ivAdd.setImageDrawable(
 					ContextCompat.getDrawable(context, R.drawable.ic_add_attachment));
 			llMain = itemView.findViewById(R.id.llMain);
-			ivCaregiver = itemView.findViewById(R.id.ivCaregiver);
+			//			ivCaregiver = itemView.findViewById(R.id.ivCaregiver);
 			ivCancel = itemView.findViewById(R.id.ivCancel);
 			tvName = itemView.findViewById(R.id.tvName);
 		}
@@ -113,8 +113,6 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 			TaskAttachmentsModel attachment = attachments.get(position);
 			String url = "";
 			if (attachment.getMimeType().contains("image")) {
-				ivOtherAttachment.setVisibility(View.GONE);
-				ivCaregiver.setVisibility(View.VISIBLE);
 				if (attachment.getIsFromGallery() == 0) {
 					url = BuildConfig.taskImageUrl + attachment.getFilePath();
 				} else {
@@ -122,16 +120,12 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 				}
 				Log.e("TAG", "bind: " + url);
 				Glide.with(itemView.getContext()).load(url).skipMemoryCache(
-						false).diskCacheStrategy(DiskCacheStrategy.NONE).into(ivCaregiver);
+						false).diskCacheStrategy(DiskCacheStrategy.NONE).into(ivOtherAttachment);
 			} else if (attachment.getMimeType().contains("pdf")) {
-				ivOtherAttachment.setVisibility(View.VISIBLE);
-				ivCaregiver.setVisibility(View.GONE);
 				ivOtherAttachment.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(),
 						R.drawable.ic_pdf_attachment));
 			} else if (attachment.getMimeType().contains(
 					"msword") || attachment.getMimeType().contains("officedocument")) {
-				ivOtherAttachment.setVisibility(View.VISIBLE);
-				ivCaregiver.setVisibility(View.GONE);
 				ivOtherAttachment.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(),
 						R.drawable.ic_doc_attachment));
 			}

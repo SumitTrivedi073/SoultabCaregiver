@@ -51,7 +51,7 @@ public class AssignedToCaregiverAdapter extends RecyclerView.Adapter<AssignedToC
 	public interface OnCaregiverItemClickListener {
 		
 		void onAddCaregiverClick();
-		void onRemoveCareGiverClick(int position, int caregiversCount);
+		void onRemoveCareGiverClick(String caregiverId, int caregiversCount);
 		
 	}
 	
@@ -92,7 +92,7 @@ public class AssignedToCaregiverAdapter extends RecyclerView.Adapter<AssignedToC
 		
 		public void bind(int position) {
 			TaskCaregiversModel caregiver = caregiversName.get(position);
-			tvName.setText(caregiver.getName());
+			tvName.setText(caregiver.getName() + " " + caregiver.getLastname());
 			if (position == 0) {
 				llMain.setVisibility(View.GONE);
 				ivAdd.setVisibility(View.VISIBLE);
@@ -120,7 +120,7 @@ public class AssignedToCaregiverAdapter extends RecyclerView.Adapter<AssignedToC
 					caregiversName.remove(position);
 					notifyItemRemoved(position);
 					notifyItemRangeChanged(position, caregiversName.size());
-					listener.onRemoveCareGiverClick(position, caregiversName.size());
+					listener.onRemoveCareGiverClick(caregiver.getId(), caregiversName.size());
 				}
 			});
 		}

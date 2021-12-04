@@ -29,15 +29,15 @@ public class CaregiverListForTaskAdapter extends RecyclerView.Adapter<CaregiverL
 	
 	private ArrayList<TaskCaregiversModel> caregivers;
 	
-	private ArrayList<Integer> selectedCaregivers = new ArrayList<>();
+	private ArrayList<String> selectedCaregivers = new ArrayList<>();
 	
 	public CaregiverListForTaskAdapter(Context context, ArrayList<TaskCaregiversModel> caregivers,
-	                                   ArrayList<Integer> selectedCaregivers,
+	                                   ArrayList<String> selectedCaregivers,
 	                                   boolean isFromAddCaregiver) {
 		this.context = context;
 		this.isFromAddCaregiver = isFromAddCaregiver;
 		this.caregivers = caregivers;
-		this.selectedCaregivers = selectedCaregivers;
+		this.selectedCaregivers.addAll(selectedCaregivers);
 	}
 	
 	@NonNull
@@ -58,7 +58,7 @@ public class CaregiverListForTaskAdapter extends RecyclerView.Adapter<CaregiverL
 		return caregivers.size();
 	}
 	
-	public ArrayList<Integer> getSelectedCaregivers() {
+	public ArrayList<String> getSelectedCaregivers() {
 		return selectedCaregivers;
 	}
 	
@@ -89,11 +89,11 @@ public class CaregiverListForTaskAdapter extends RecyclerView.Adapter<CaregiverL
 					Utility.getSharedPreferences(itemView.getContext(), APIS.caregiver_id))) {
 				hide();
 			}
-			tvName.setText(caregiversModel.getName());
+			tvName.setText(caregiversModel.getName() + " " + caregiversModel.getLastname());
 			Glide.with(context).load(
 					APIS.CaregiverImageURL + caregiversModel.getProfileImage()).placeholder(
 					R.drawable.user_img).into(ivCaregiverImage);
-			if (selectedCaregivers.contains(position)) {
+			if (selectedCaregivers.contains(caregiversModel.getId())) {
 				cbNames.setChecked(true);
 			} else {
 				cbNames.setChecked(false);
@@ -107,11 +107,11 @@ public class CaregiverListForTaskAdapter extends RecyclerView.Adapter<CaregiverL
 					//						caregiversModel.setIsSelected(1);
 					//					}
 					//
-					if (selectedCaregivers.contains(position)) {
-						selectedCaregivers.remove(position);
+					if (selectedCaregivers.contains(caregiversModel.getId())) {
+						selectedCaregivers.remove(caregiversModel.getId());
 						cbNames.setChecked(false);
 					} else {
-						selectedCaregivers.add(position);
+						selectedCaregivers.add(caregiversModel.getId());
 						cbNames.setChecked(true);
 					}
 					//					caregivers.set(position, caregiversModel);

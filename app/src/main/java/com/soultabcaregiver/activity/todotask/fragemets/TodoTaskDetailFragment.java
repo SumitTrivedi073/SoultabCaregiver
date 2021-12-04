@@ -33,6 +33,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -122,6 +124,8 @@ public class TodoTaskDetailFragment extends Fragment {
 	
 	private int editCommentPosition = -1;
 	
+	private int taskPosition;
+	
 	private String editCommentId = "";
 	
 	private Uri imageUri;
@@ -151,7 +155,7 @@ public class TodoTaskDetailFragment extends Fragment {
 	
 	private List<String> deletedAttachments = new ArrayList<>();
 	
-	private ArrayList<Integer> selectedCaregivers = new ArrayList<>();
+	private ArrayList<String> selectedCaregivers = new ArrayList<>();
 	
 	private ArrayList<TaskCaregiversModel> tempCaregiverName = new ArrayList<>();
 	
@@ -179,8 +183,9 @@ public class TodoTaskDetailFragment extends Fragment {
 				}
 				
 				@Override
-				public void onRemoveCareGiverClick(int position, int caregiversCount) {
-					selectedCaregivers.remove(position - 1);
+				public void onRemoveCareGiverClick(String caregiverId, int caregiversCount) {
+					selectedCaregivers.remove(caregiverId);
+					//					selectedCaregivers.remove(position - 1);
 					if (caregiversCount == 1) {
 						tvNoCaregiverAssigned.setVisibility(View.VISIBLE);
 					}
@@ -265,8 +270,9 @@ public class TodoTaskDetailFragment extends Fragment {
 				}
 			};
 	
-	public TodoTaskDetailFragment(TaskListModel.TaskData data) {
+	public TodoTaskDetailFragment(TaskListModel.TaskData data, int position) {
 		this.taskData = data;
+		this.taskPosition = position;
 	}
 	
 	@Override
@@ -285,6 +291,28 @@ public class TodoTaskDetailFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 		init(view);
 		listeners();
+	}
+	
+	// TODO: 12/3/2021 for restrict emoji enter in edit text
+	public static class EmojiFilter {
+		
+		public static InputFilter[] getFilter() {
+			InputFilter EMOJI_FILTER = new InputFilter() {
+				@Override
+				public CharSequence filter(CharSequence source, int start, int end, Spanned dest,
+				                           int dstart, int dend) {
+					for (int index = start; index < end; index++) {
+						int type = Character.getType(source.charAt(index));
+						if (type == Character.SURROGATE || type == Character.NON_SPACING_MARK || type == Character.OTHER_SYMBOL) {
+							return "";
+						}
+					}
+					return null;
+				}
+			};
+			return new InputFilter[]{EMOJI_FILTER};
+		}
+		
 	}
 	
 	private void init(View view) {
@@ -319,6 +347,10 @@ public class TodoTaskDetailFragment extends Fragment {
 		llActivities = view.findViewById(R.id.llActivities);
 		llAddComment = view.findViewById(R.id.llAddComment);
 		llEditComment = view.findViewById(R.id.llEditComment);
+		etTaskTitle.setFilters(EmojiFilter.getFilter());
+		etTaskDescription.setFilters(EmojiFilter.getFilter());
+		etAddComment.setFilters(EmojiFilter.getFilter());
+		etEditComment.setFilters(EmojiFilter.getFilter());
 		ChipsLayoutManager chipsLayoutManager =
 				ChipsLayoutManager.newBuilder(getActivity()).setChildGravity(
 						Gravity.TOP).setScrollingEnabled(true).setGravityResolver(
@@ -399,13 +431,13 @@ public class TodoTaskDetailFragment extends Fragment {
 		llStartDate.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				openDatePickerDialog(true);
+				//				openDatePickerDialog(true);
 			}
 		});
 		llEndDate.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				openDatePickerDialog(false);
+				openDatePickerDialog(false, taskData.getStartDate());
 			}
 		});
 		tvAddComments.setOnClickListener(new View.OnClickListener() {
@@ -523,10 +555,10 @@ public class TodoTaskDetailFragment extends Fragment {
 		} else if (etTaskDescription.getText().toString().trim().isEmpty()) {
 			Utility.ShowToast(getActivity(),
 					getResources().getString(R.string.todo_task_description_alert));
-		} else if (tvStartDate.getText().toString().trim().isEmpty()) {
+		} /*else if (tvStartDate.getText().toString().trim().isEmpty()) {
 			Utility.ShowToast(getActivity(),
 					getResources().getString(R.string.todo_task_start_date));
-		} else if (tvEndDate.getText().toString().trim().isEmpty()) {
+		} */ else if (tvEndDate.getText().toString().trim().isEmpty()) {
 			Utility.ShowToast(getActivity(),
 					getResources().getString(R.string.todo_task_end_date));
 		} else if (caregiverAdapter.getCaregiversCount() == 1) {
@@ -599,9 +631,11 @@ public class TodoTaskDetailFragment extends Fragment {
 							params.put("title", etTaskTitle.getText().toString().trim());
 							params.put("description",
 									etTaskDescription.getText().toString().trim());
-							params.put("start_date",
-									getFormattedDate(tvStartDate.getText().toString().trim(),
-											DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
+							//							params.put("start_date",
+							//									getFormattedDate(tvStartDate
+							//									.getText().toString().trim(),
+							//											DATE_FORMAT_FOR_DISPLAY,
+							//											DATE_FORMAT_FOR_API));
 							params.put("end_date",
 									getFormattedDate(tvEndDate.getText().toString().trim(),
 											DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
@@ -609,6 +643,7 @@ public class TodoTaskDetailFragment extends Fragment {
 							params.put("del_attachments", getDeleteAttachment());
 							params.put("task_id", taskData.getId());
 							params.put("task_status", etStatusOfTask.getText().toString());
+							Log.e(TAG, "getParams: " + params);
 							return params;
 						}
 						
@@ -750,8 +785,7 @@ public class TodoTaskDetailFragment extends Fragment {
 							model.setId(
 									Utility.getSharedPreferences(getActivity(),
 											APIS.caregiver_id));
-							model.setLastname(Utility.getSharedPreferences(getActivity(),
-									APIS.Caregiver_lastname));
+							model.setLastname("");
 							model.setName("Me");
 							String profileUrl =
 									Utility.getSharedPreferences(getActivity(),
@@ -946,6 +980,10 @@ public class TodoTaskDetailFragment extends Fragment {
 										taskComments.add(comment);
 										taskCommentsAdapter.addComment(comment);
 										setUpCommentsData(taskComments.size());
+										Intent intent = new Intent("task_list_filter");
+										intent.putExtra("position", taskPosition);
+										intent.putExtra("comment_count", taskComments.size());
+										getActivity().sendBroadcast(intent);
 									}
 									etAddComment.setText("");
 								}
@@ -1008,6 +1046,10 @@ public class TodoTaskDetailFragment extends Fragment {
 									taskComments.remove(position);
 									taskCommentsAdapter.remove(position);
 									setUpCommentsData(taskComments.size());
+									Intent intent = new Intent("task_list_filter");
+									intent.putExtra("position", taskPosition);
+									intent.putExtra("comment_count", taskComments.size());
+									getActivity().sendBroadcast(intent);
 								} else {
 									hideProgressDialog();
 								}
@@ -1054,17 +1096,20 @@ public class TodoTaskDetailFragment extends Fragment {
 						return params;
 					}
 				};
-		RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
-		requestQueue.add(stringRequest);
+		AppController.getInstance().addToRequestQueue(stringRequest);
 	}
+	//	private String getAssignedCaregiversId() {
+	//		ArrayList<String> selectedCaregiverId = new ArrayList<>();
+	//		for (int i = 0; i < selectedCaregivers.size(); i++) {
+	//			TaskCaregiversModel caregiversModel = tempCaregiverName.get(selectedCaregivers.get
+	//			(i));
+	//			selectedCaregiverId.add(caregiversModel.getId());
+	//		}
+	//		return selectedCaregiverId.toString().replace("[", "").replace("]", "");
+	//	}
 	
 	private String getAssignedCaregiversId() {
-		ArrayList<String> selectedCaregiverId = new ArrayList<>();
-		for (int i = 0; i < selectedCaregivers.size(); i++) {
-			TaskCaregiversModel caregiversModel = tempCaregiverName.get(selectedCaregivers.get(i));
-			selectedCaregiverId.add(caregiversModel.getId());
-		}
-		return selectedCaregiverId.toString().replace("[", "").replace("]", "");
+		return selectedCaregivers.toString().replace("[", "").replace("]", "");
 	}
 	
 	private String getDeleteAttachment() {
@@ -1079,7 +1124,7 @@ public class TodoTaskDetailFragment extends Fragment {
 		for (int i = 0; i < tempCaregiverName.size(); i++) {
 			TaskCaregiversModel model = tempCaregiverName.get(i);
 			if (caregiversId.contains(model.getId())) {
-				selectedCaregivers.add(i);
+				selectedCaregivers.add(model.getId());
 			}
 		}
 		caregiverAdapter.update(getSelectedCaregivers(selectedCaregivers));
@@ -1147,16 +1192,16 @@ public class TodoTaskDetailFragment extends Fragment {
 	
 	private String getMimeTypeFromFileExtension(String fileExtension) {
 		String mimType = "";
-		if (fileExtension.contains("jpg") || fileExtension.contains(
-				"png") || fileExtension.contains("jpeg")) {
+		if (fileExtension.toLowerCase().contains("jpg") || fileExtension.toLowerCase().contains(
+				"png") || fileExtension.toLowerCase().contains("jpeg")) {
 			mimType = "image/jpeg";
-		} else if (fileExtension.contains(".gif")) {
+		} else if (fileExtension.toLowerCase().contains(".gif")) {
 			mimType = "image/gif";
-		} else if (fileExtension.contains("pdf")) {
+		} else if (fileExtension.toLowerCase().contains("pdf")) {
 			mimType = "application/pdf";
-		} else if (fileExtension.contains("doc")) {
+		} else if (fileExtension.toLowerCase().contains("doc")) {
 			mimType = "application/msword";
-		} else if (fileExtension.contains(".docx")) {
+		} else if (fileExtension.toLowerCase().contains(".docx")) {
 			mimType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 		}
 		return mimType;
@@ -1233,28 +1278,35 @@ public class TodoTaskDetailFragment extends Fragment {
 		bottomSheetDialog.show();
 	}
 	
-	private void openDatePickerDialog(boolean isStartDate) {
-		Calendar calendar = Calendar.getInstance();
-		DatePickerDialog datePickerDialog =
-				new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-					@Override
-					public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-						calendar.set(Calendar.YEAR, year);
-						calendar.set(Calendar.MONTH, month);
-						calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-						SimpleDateFormat sdf =
-								new SimpleDateFormat(DATE_FORMAT_FOR_DISPLAY, Locale.US);
-						String date = sdf.format(calendar.getTime());
-						if (isStartDate) {
-							updateStartDate(date);
-						} else {
-							updateEndDate(date);
+	private void openDatePickerDialog(boolean isStartDate, String minDate) {
+		try {
+			Calendar calendar = Calendar.getInstance();
+			DatePickerDialog datePickerDialog =
+					new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+						@Override
+						public void onDateSet(DatePicker view, int year, int month,
+						                      int dayOfMonth) {
+							calendar.set(Calendar.YEAR, year);
+							calendar.set(Calendar.MONTH, month);
+							calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+							SimpleDateFormat sdf =
+									new SimpleDateFormat(DATE_FORMAT_FOR_DISPLAY, Locale.US);
+							String date = sdf.format(calendar.getTime());
+							if (isStartDate) {
+								updateStartDate(date);
+							} else {
+								updateEndDate(date);
+							}
 						}
-					}
-				}, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-						calendar.get(Calendar.DAY_OF_MONTH));
-		datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
-		datePickerDialog.show();
+					}, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+							calendar.get(Calendar.DAY_OF_MONTH));
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date pasTime = dateFormat.parse(minDate);
+			datePickerDialog.getDatePicker().setMinDate(pasTime.getTime());
+			datePickerDialog.show();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void updateStartDate(String startDate) {
@@ -1267,15 +1319,20 @@ public class TodoTaskDetailFragment extends Fragment {
 	
 	private void galleryIntent() {
 		Intent intent = new Intent();
-		intent.setType("image/*");
-		intent.setAction(Intent.ACTION_GET_CONTENT);//
+		intent.setType("*/*");
+		intent.putExtra(Intent.EXTRA_MIME_TYPES,
+				new String[]{"image/jpeg", "image/png", "image/gif"});
+		intent.setAction(Intent.ACTION_GET_CONTENT);
 		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_FROM_FILE);
 	}
 	
 	private void documentIntent() {
 		Intent intent = new Intent();
-		intent.setType("*/*");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
+		intent.setType("*/*");
+		intent.putExtra(Intent.EXTRA_MIME_TYPES,
+				new String[]{"application/pdf", "application" + "/msword", "application/vnd" +
+						".openxmlformats-officedocument.wordprocessingml.document"});
 		startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_DOCUMENTS);
 	}
 	
@@ -1369,12 +1426,24 @@ public class TodoTaskDetailFragment extends Fragment {
 				break;
 		}
 	}
+	//	private ArrayList<TaskCaregiversModel> getSelectedCaregivers(
+	//			ArrayList<Integer> selectedCaregivers) {
+	//		ArrayList<TaskCaregiversModel> caregivers = new ArrayList<>();
+	//		for (int i = 0; i < selectedCaregivers.size(); i++) {
+	//			caregivers.add(tempCaregiverName.get(selectedCaregivers.get(i)));
+	//		}
+	//		return caregivers;
+	//	}
 	
 	private ArrayList<TaskCaregiversModel> getSelectedCaregivers(
-			ArrayList<Integer> selectedCaregivers) {
+			ArrayList<String> selectedCaregivers) {
 		ArrayList<TaskCaregiversModel> caregivers = new ArrayList<>();
 		for (int i = 0; i < selectedCaregivers.size(); i++) {
-			caregivers.add(tempCaregiverName.get(selectedCaregivers.get(i)));
+			for (TaskCaregiversModel model : tempCaregiverName) {
+				if (model.getId().equalsIgnoreCase(selectedCaregivers.get(i))) {
+					caregivers.add(model);
+				}
+			}
 		}
 		return caregivers;
 	}

@@ -148,8 +148,7 @@ public class TaskActivitiesAdapter extends RecyclerView.Adapter<TaskActivitiesAd
 		}
 		
 		private String getLastUpdateName(TaskActivitiesModel.Response activity) {
-			return activity.getUpdatedByName() != null ? activity.getUpdatedByName() :
-					activity.getCreatedByName();
+			return activity.getCreatedByName();
 		}
 		
 		public CharSequence getSpannableString(String startString, String endString) {
