@@ -563,7 +563,7 @@ public class CreateGroupFragment extends BaseFragment {
 		}
 		
 		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-				APIS.BASEURL + APIS.CaregiverListAPIForCreateGroup, mainObject, response -> {
+				APIS.BASEURL + APIS.CaregiverListAPIWithConnection, mainObject, response -> {
 			progressDialog.setVisibility(View.GONE);
 			CareGiverListModel careGiverProfileModel =
 					new Gson().fromJson(response.toString(), CareGiverListModel.class);

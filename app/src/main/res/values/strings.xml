@@ -273,6 +273,24 @@
     <string name="start_call">Start Call</string>
     <string name="please_select_members_for_call">Please select members for Call</string>
     <string name="maximum_five_members_allowed">For video call maximum five members are allowed</string>
+
+
+    <!--Search-->
+    <string name="search_your_favourite_person">Search your favourite Person!</string>
+    <string name="search_users">Search Users</string>
+    <string name="accept">Accept</string>
+    <string name="pending_requests">Pending Requests</string>
+    <string name="reject">Decline</string>
+    <string name="remove">Remove</string>
+    <string name="view_detail">View Detail</string>
+    <string name="invite_member">Invite Member</string>
+    <string name="connection_requested">Requested</string>
+    <string name="search_hint">Search</string>
+    <string name="Profile">Profile</string>
+    <string name="message">Message</string>
+    <!--Search-->
+
+
     <!--  Added By AJay  -->
     <!--Added by Sumit-->
     <string name="callee">client identity or phone number</string>
@@ -320,6 +338,11 @@
     <string name="old_not_equal_to_new">New password can not be same as the old password</string>
     <string name="passsword_update_successfully">Your password is update successfully</string>
     <string name="something_went_wrong">Something Went Wrong!</string>
+    <string name="logout_successfully">Logout Successfully</string>
+    <string name="chart_message">No data for this week</string>
+    <string name="no_pending_requests">No Pending Requests</string>
+    <string name="person_not_registerd">This person isn\'t  registerd</string>
+
     <!--Added by Sumit-->
     <!--Added by maulik-->
     <string name="todo_create_new_task">New Task</string>
@@ -330,6 +353,10 @@
     <string name="todo_task_add_caregiver">Please add caregiver</string>
     <string name="task_details">Task Details</string>
     <string name="new_task">New Task</string>
+    <string name="no_data_week">No data for this week</string>
+    <string name="no_data_month">No data for this month</string>
+    <string name="scheduled_this_month">No activities scheduled for this month</string>
+    <string name="scheduled_this_week">No activities scheduled for this week</string>
     <string-array name="todo_task_status">
         <item>To do</item>
         <item>Inprogress</item>

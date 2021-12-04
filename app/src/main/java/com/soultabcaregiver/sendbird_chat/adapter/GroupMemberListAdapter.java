@@ -1,6 +1,7 @@
 package com.soultabcaregiver.sendbird_chat.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +11,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.soultabcaregiver.R;
+import com.soultabcaregiver.search.UserProfileActivity;
+import com.soultabcaregiver.sendbird_chat.GroupDetailActivity;
 import com.soultabcaregiver.sendbird_chat.model.GroupMemberModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -26,6 +30,8 @@ public class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberList
     private final Context mcontext;
     
     private List<GroupMemberModel> groupmemberlist;
+    
+    
     
     public GroupMemberListAdapter(Context context_, List<GroupMemberModel> groupmemberlist_) {
         this.groupmemberlist = groupmemberlist_;
@@ -48,10 +54,22 @@ public class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberList
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         
+        GroupMemberModel groupMemberModel = groupmemberlist.get(position);
+        
         holder.group_member_name.setText(groupmemberlist.get(position).getNickname());
         Glide.with(mcontext).load(groupmemberlist.get(position).getImage()).
                 placeholder(R.drawable.user_img).into(holder.group_member_image);
         
+        
+        holder.User_detail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    
+                Intent intent = new Intent(mcontext, UserProfileActivity.class);
+                intent.putExtra("ID", groupMemberModel.getId());
+                mcontext.startActivity(intent);
+            }
+        });
     }
     
     @Override
@@ -115,13 +133,15 @@ public class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberList
         
         TextView group_member_name;
         
+        ConstraintLayout User_detail;
+        
         public ViewHolder(View rowView) {
             super(rowView);
             group_member_image = rowView.findViewById(R.id.group_member_image);
             group_member_name = rowView.findViewById(R.id.group_member_name);
+            User_detail = rowView.findViewById(R.id.User_detail);
         }
     }
-    
     
 }
 
