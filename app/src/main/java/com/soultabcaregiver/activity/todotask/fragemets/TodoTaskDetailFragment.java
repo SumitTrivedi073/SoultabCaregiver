@@ -35,6 +35,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -68,6 +69,7 @@ import com.beloo.widget.chipslayoutmanager.SpacingItemDecoration;
 import com.beloo.widget.chipslayoutmanager.gravity.IChildGravityResolver;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
+import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
@@ -113,7 +115,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class TodoTaskDetailFragment extends Fragment {
+public class TodoTaskDetailFragment extends BaseFragment {
 	
 	private final String TAG = getClass().getSimpleName();
 	
@@ -185,7 +187,6 @@ public class TodoTaskDetailFragment extends Fragment {
 				@Override
 				public void onRemoveCareGiverClick(String caregiverId, int caregiversCount) {
 					selectedCaregivers.remove(caregiverId);
-					//					selectedCaregivers.remove(position - 1);
 					if (caregiversCount == 1) {
 						tvNoCaregiverAssigned.setVisibility(View.VISIBLE);
 					}
@@ -545,7 +546,7 @@ public class TodoTaskDetailFragment extends Fragment {
 		//		etStatusOfTask.setText(taskData.getTaskStatus());
 		spinnerTaskStatus.setSelection(taskStatus.indexOf(taskData.getTaskStatus()));
 		setupSelectedAttachments();
-		Log.e(TAG, "setupTaskData: " + taskData.getAssignTo());
+		Log.e(TAG, "setupTaskData: " + taskData.getAttachments());
 	}
 	
 	private void editTask() {
@@ -565,7 +566,8 @@ public class TodoTaskDetailFragment extends Fragment {
 			Utility.ShowToast(getActivity(),
 					getResources().getString(R.string.todo_task_add_caregiver));
 		} else {
-			showProgressDialog(getResources().getString(R.string.Loading));
+			showProgressDialog(requireActivity(),
+					requireActivity().getResources().getString(R.string.Loading));
 			final VolleyMultipartRequest multipartRequest =
 					new VolleyMultipartRequest(Request.Method.POST,
 							APIS.BASEURL + APIS.CREATE_TODO_TASK_LIST,
@@ -631,12 +633,7 @@ public class TodoTaskDetailFragment extends Fragment {
 							params.put("title", etTaskTitle.getText().toString().trim());
 							params.put("description",
 									etTaskDescription.getText().toString().trim());
-							//							params.put("start_date",
-							//									getFormattedDate(tvStartDate
-							//									.getText().toString().trim(),
-							//											DATE_FORMAT_FOR_DISPLAY,
-							//											DATE_FORMAT_FOR_API));
-							params.put("end_date",
+								params.put("end_date",
 									getFormattedDate(tvEndDate.getText().toString().trim(),
 											DATE_FORMAT_FOR_DISPLAY, DATE_FORMAT_FOR_API));
 							params.put("assign_to", getAssignedCaregiversId());
@@ -675,7 +672,8 @@ public class TodoTaskDetailFragment extends Fragment {
 	}
 	
 	private void editComment(String editedComment, int editCommentPosition, String editCommentId) {
-		showProgressDialog(getResources().getString(R.string.Loading));
+		showProgressDialog(requireActivity(),
+				requireActivity().getResources().getString(R.string.Loading));
 		StringRequest stringRequest =
 				new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.ADD_NEW_TASK_COMMENT,
 						new Response.Listener<String>() {
@@ -747,7 +745,8 @@ public class TodoTaskDetailFragment extends Fragment {
 	}
 	
 	private void getAllCaregiversDetails() {
-		showProgressDialog(getResources().getString(R.string.Loading));
+		showProgressDialog(requireActivity(),
+				requireActivity().getResources().getString(R.string.Loading));
 		JSONObject mainObject = new JSONObject();
 		try {
 			mainObject.put("caregiverr_id",
@@ -963,7 +962,8 @@ public class TodoTaskDetailFragment extends Fragment {
 	}
 	
 	private void addNewComment(String taskComment, String taskId) {
-		showProgressDialog(getResources().getString(R.string.Loading));
+		showProgressDialog(requireActivity(),
+				requireActivity().getResources().getString(R.string.Loading));
 		StringRequest stringRequest =
 				new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.ADD_NEW_TASK_COMMENT,
 						new Response.Listener<String>() {
@@ -1033,7 +1033,8 @@ public class TodoTaskDetailFragment extends Fragment {
 	}
 	
 	private void deleteTaskComment(int position, String taskId, String commentId) {
-		showProgressDialog(getResources().getString(R.string.Loading));
+		showProgressDialog(requireActivity(),
+				requireActivity().getResources().getString(R.string.Loading));
 		StringRequest stringRequest =
 				new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.DELETE_TASK_COMMENT,
 						new Response.Listener<String>() {
@@ -1156,22 +1157,12 @@ public class TodoTaskDetailFragment extends Fragment {
 		}
 	}
 	
-	public void showProgressDialog(String message) {
-		if (progressDialog == null)
-			progressDialog = new CustomProgressDialog(getActivity(), message);
-		progressDialog.setCancelable(false);
-		progressDialog.show();
-	}
-	
-	public void hideProgressDialog() {
-		if (progressDialog != null)
-			progressDialog.dismiss();
-	}
+
 	
 	private void setupSelectedAttachments() {
-		Log.e(TAG, "setupSelectedAttachments: " + taskData.getAttachments());
+		
 		taskAttachmentsList = new ArrayList<>();
-		if (taskData.getAttachments() != null) {
+		if (taskData.getAttachments() != null&& !TextUtils.isEmpty(taskData.getAttachments())) {
 			List<String> attachments =
 					Arrays.asList(taskData.getAttachments().replace(" ", "").split(","));
 			for (int i = 0; i < attachments.size(); i++) {

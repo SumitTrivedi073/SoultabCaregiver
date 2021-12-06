@@ -156,6 +156,8 @@ public class AttachmentsAdapter extends RecyclerView.Adapter<AttachmentsAdapter.
 					notifyItemRemoved(position);
 					notifyItemRangeChanged(position, attachments.size());
 					listeners.removeAttachment(attachments.size(), attachment);
+					
+					
 				}
 			});
 		}
