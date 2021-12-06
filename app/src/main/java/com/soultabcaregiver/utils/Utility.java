@@ -813,18 +813,6 @@ public class Utility {
 		transaction.commit();
 	}
 	
-	public static void addFragment(FragmentActivity activty, Fragment fragment, boolean backstack,
-	                               String tagName) {
-		// load fragment0.....
-		FragmentTransaction transaction = activty.getSupportFragmentManager().beginTransaction();
-		if (backstack) {
-			transaction.add(R.id.fragment_container, fragment);
-			transaction.addToBackStack(tagName);
-		} else {
-			transaction.replace(R.id.fragment_container, fragment);
-		}
-		transaction.commit();
-	}
 	
 	public static void removeAllFragment(FragmentActivity activty, String tagName) {
 		FragmentManager fm = activty.getSupportFragmentManager();

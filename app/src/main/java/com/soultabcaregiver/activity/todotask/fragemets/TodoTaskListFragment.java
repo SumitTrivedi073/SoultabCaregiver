@@ -111,7 +111,7 @@ public class TodoTaskListFragment extends BaseFragment {
 			new TodoTaskListAdapter.OnTodoTaskClickListeners() {
 				@Override
 				public void onTodoTaskClick(int position, TaskListModel.TaskData data) {
-					Utility.addFragment(requireActivity(), new TodoTaskDetailFragment(data, position),
+					Utility.loadFragment(requireActivity(), new TodoTaskDetailFragment(data, position),
 							true, TodoTaskDetailFragment.class.getSimpleName());
 				}
 			};
@@ -188,14 +188,14 @@ public class TodoTaskListFragment extends BaseFragment {
 		ivNotifications.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utility.addFragment(requireActivity(), new NotificationsFragment(), true,
+				Utility.loadFragment(requireActivity(), new NotificationsFragment(), true,
 						NotificationsFragment.class.getSimpleName());
 			}
 		});
 		cvCreateTask.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utility.addFragment(requireActivity(), new CreateNewToDoTaskFragment(), true,
+				Utility.loadFragment(requireActivity(), new CreateNewToDoTaskFragment(), true,
 						CreateNewToDoTaskFragment.class.getSimpleName());
 			}
 		});
@@ -287,9 +287,17 @@ public class TodoTaskListFragment extends BaseFragment {
 	
 	@Override
 	public void onResume() {
-		super.onResume();
+		
+		filterStatus = "All";
 		cbTaskByName.setChecked(false);
 		getTaskCounts();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		
+		super.onPause();
 	}
 	
 	private void getTaskCounts() {

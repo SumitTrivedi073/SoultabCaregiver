@@ -343,9 +343,6 @@ public class CreateNewToDoTaskFragment extends Fragment {
 												new Gson().fromJson(resultResponse,
 														CreateTaskModel.class);
 										if (taskModel.getStatusCode() == 200) {
-											Intent intent = new Intent(
-													APIS.INTENT_FILTER_REFRESH_TASK_LIST);
-											getActivity().sendBroadcast(intent);
 											requireActivity().onBackPressed();
 										} else {
 											Utility.ShowToast(getActivity(),

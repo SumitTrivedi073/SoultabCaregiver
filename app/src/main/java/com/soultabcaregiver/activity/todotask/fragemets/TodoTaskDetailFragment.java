@@ -175,7 +175,7 @@ public class TodoTaskDetailFragment extends BaseFragment {
 	
 	private TaskActivitiesAdapter taskActivitiesAdapter;
 	
-	private CustomProgressDialog progressDialog;
+       boolean isDeleteattechment = false;
 	
 	private AssignedToCaregiverAdapter.OnCaregiverItemClickListener onCaregiverItemClickListener =
 			new AssignedToCaregiverAdapter.OnCaregiverItemClickListener() {
@@ -203,8 +203,11 @@ public class TodoTaskDetailFragment extends BaseFragment {
 				@Override
 				public void removeAttachment(int attachmentsSize,
 				                             TaskAttachmentsModel attachment) {
+				
 					if (attachment.getIsFromGallery() == 0) {
+						Log.e("getFileName",attachment.getFileName());
 						deletedAttachments.add(attachment.getFileName());
+						
 					}
 					if (attachmentsSize == 1) {
 						tvNoAttachmentsAdded.setVisibility(View.VISIBLE);
@@ -414,60 +417,33 @@ public class TodoTaskDetailFragment extends BaseFragment {
 	}
 	
 	private void listeners() {
-		ivBack.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				//				getActivity().getSupportFragmentManager().popBackStack
-				//				(TodoTaskDetailFragment.class.getSimpleName(),
-				//						FragmentManager.POP_BACK_STACK_INCLUSIVE);
-				requireActivity().onBackPressed();
+		ivBack.setOnClickListener(view -> requireActivity().onBackPressed());
+		
+		cvUpdateTask.setOnClickListener(view -> editTask());
+		
+		llStartDate.setOnClickListener(view -> {
+			//				openDatePickerDialog(true);
+		});
+		llEndDate.setOnClickListener(view -> openDatePickerDialog(false, taskData.getStartDate()));
+	
+		tvAddComments.setOnClickListener(v -> {
+			String newComment = etAddComment.getText().toString().trim();
+			Log.e(TAG, "onClick: " + newComment);
+			if (!newComment.isEmpty()) {
+				addNewComment(newComment, taskData.getId());
 			}
 		});
-		cvUpdateTask.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				editTask();
-			}
+		tvViewComments.setOnClickListener(v -> {
+			tvViewComments.setVisibility(View.GONE);
+			tvViewLogs.setVisibility(View.VISIBLE);
+			llComments.setVisibility(View.VISIBLE);
+			llActivities.setVisibility(View.GONE);
 		});
-		llStartDate.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				//				openDatePickerDialog(true);
-			}
-		});
-		llEndDate.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				openDatePickerDialog(false, taskData.getStartDate());
-			}
-		});
-		tvAddComments.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String newComment = etAddComment.getText().toString().trim();
-				Log.e(TAG, "onClick: " + newComment);
-				if (!newComment.isEmpty()) {
-					addNewComment(newComment, taskData.getId());
-				}
-			}
-		});
-		tvViewComments.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				tvViewComments.setVisibility(View.GONE);
-				tvViewLogs.setVisibility(View.VISIBLE);
-				llComments.setVisibility(View.VISIBLE);
-				llActivities.setVisibility(View.GONE);
-			}
-		});
-		tvViewLogs.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				tvViewComments.setVisibility(View.VISIBLE);
-				tvViewLogs.setVisibility(View.GONE);
-				llComments.setVisibility(View.GONE);
-				llActivities.setVisibility(View.VISIBLE);
-			}
+		tvViewLogs.setOnClickListener(v -> {
+			tvViewComments.setVisibility(View.VISIBLE);
+			tvViewLogs.setVisibility(View.GONE);
+			llComments.setVisibility(View.GONE);
+			llActivities.setVisibility(View.VISIBLE);
 		});
 		etAddComment.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -511,29 +487,18 @@ public class TodoTaskDetailFragment extends BaseFragment {
 				}
 			}
 		});
-		tvEditComment.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				String editedComment = etEditComment.getText().toString().trim();
-				if (!editedComment.isEmpty()) {
-					editComment(editedComment, editCommentPosition, editCommentId);
-				}
+		tvEditComment.setOnClickListener(v -> {
+			String editedComment = etEditComment.getText().toString().trim();
+			if (!editedComment.isEmpty()) {
+				editComment(editedComment, editCommentPosition, editCommentId);
 			}
 		});
-		tvCancelEditComment.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				editCommentId = "";
-				llAddComment.setVisibility(View.VISIBLE);
-				llEditComment.setVisibility(View.GONE);
-			}
+		tvCancelEditComment.setOnClickListener(v -> {
+			editCommentId = "";
+			llAddComment.setVisibility(View.VISIBLE);
+			llEditComment.setVisibility(View.GONE);
 		});
-		etStatusOfTask.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				spinnerTaskStatus.performClick();
-			}
-		});
+		etStatusOfTask.setOnClickListener(view -> spinnerTaskStatus.performClick());
 	}
 	
 	private void setupTaskData() {
@@ -581,9 +546,6 @@ public class TodoTaskDetailFragment extends BaseFragment {
 									CreateTaskModel taskModel = new Gson().fromJson(resultResponse,
 											CreateTaskModel.class);
 									if (taskModel.getStatusCode() == 200) {
-										Intent intent =
-												new Intent(APIS.INTENT_FILTER_REFRESH_TASK_LIST);
-										getActivity().sendBroadcast(intent);
 										requireActivity().onBackPressed();
 									} else {
 										Utility.ShowToast(getActivity(), taskModel.getMessage());
@@ -1100,22 +1062,20 @@ public class TodoTaskDetailFragment extends BaseFragment {
 				};
 		AppController.getInstance().addToRequestQueue(stringRequest);
 	}
-	//	private String getAssignedCaregiversId() {
-	//		ArrayList<String> selectedCaregiverId = new ArrayList<>();
-	//		for (int i = 0; i < selectedCaregivers.size(); i++) {
-	//			TaskCaregiversModel caregiversModel = tempCaregiverName.get(selectedCaregivers.get
-	//			(i));
-	//			selectedCaregiverId.add(caregiversModel.getId());
-	//		}
-	//		return selectedCaregiverId.toString().replace("[", "").replace("]", "");
-	//	}
+
 	
 	private String getAssignedCaregiversId() {
 		return selectedCaregivers.toString().replace("[", "").replace("]", "");
 	}
 	
 	private String getDeleteAttachment() {
+	/*	if (isDeleteattechment) {
+			return "";
+		}else {
+			return deletedAttachments.toString().replace("[", "").replace("]", "").replace(" ", "");
+		}*/
 		return deletedAttachments.toString().replace("[", "").replace("]", "").replace(" ", "");
+		
 	}
 	
 	private void setupSelectedCaregivers() {
@@ -1160,7 +1120,7 @@ public class TodoTaskDetailFragment extends BaseFragment {
 
 	
 	private void setupSelectedAttachments() {
-		
+		Log.e("Attachments",taskData.getAttachments());
 		taskAttachmentsList = new ArrayList<>();
 		if (taskData.getAttachments() != null&& !TextUtils.isEmpty(taskData.getAttachments())) {
 			List<String> attachments =
@@ -1418,14 +1378,7 @@ public class TodoTaskDetailFragment extends BaseFragment {
 				break;
 		}
 	}
-	//	private ArrayList<TaskCaregiversModel> getSelectedCaregivers(
-	//			ArrayList<Integer> selectedCaregivers) {
-	//		ArrayList<TaskCaregiversModel> caregivers = new ArrayList<>();
-	//		for (int i = 0; i < selectedCaregivers.size(); i++) {
-	//			caregivers.add(tempCaregiverName.get(selectedCaregivers.get(i)));
-	//		}
-	//		return caregivers;
-	//	}
+	
 	
 	private ArrayList<TaskCaregiversModel> getSelectedCaregivers(
 			ArrayList<String> selectedCaregivers) {
