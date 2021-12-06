@@ -226,7 +226,8 @@ public class DailyRoutineFragment extends BaseFragment {
 				Submit_btn.setVisibility(View.VISIBLE);
 				GetDailyRoutineData();
 			}
-		} else {
+		}
+		else {
 			show_daily_routine_Relative.setVisibility(View.VISIBLE);
 			hide_daily_routine_Relative.setVisibility(View.GONE);
 			Submit_btn.setVisibility(View.VISIBLE);

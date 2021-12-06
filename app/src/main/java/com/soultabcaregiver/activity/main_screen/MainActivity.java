@@ -457,9 +457,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                                 video_call.setVisibility(View.GONE);
                                 shopping_btn.setVisibility(View.GONE);
-//                                Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
-//                                        false, null);
- Utility.loadFragment(MainActivity.this, new DailyRoutineOptionFragment(),
+
+                                 Utility.loadFragment(MainActivity.this,
+                                    new DailyRoutineOptionFragment(),
                                         false, null);
 
                                 break;
