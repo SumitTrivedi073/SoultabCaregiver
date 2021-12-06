@@ -182,17 +182,7 @@ public class CreateNewToDoTaskFragment extends Fragment {
 					}
 				}
 			};
-	//	private void showDownloadConfirmDialog(String name, String url) {
-	//		if (permissionStorage(0)) {
-	//			new AlertDialog.Builder(getActivity()).setMessage("Download file?")
-	//			.setPositiveButton(
-	//					R.string.download, (dialog, which) -> {
-	//						if (which == DialogInterface.BUTTON_POSITIVE) {
-	//							FileUtils.downloadFile(getActivity(), url, name);
-	//						}
-	//					}).setNegativeButton(R.string.cancel_text, null).show();
-	//		}
-	//	}
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

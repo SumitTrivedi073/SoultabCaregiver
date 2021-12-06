@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.soultabcaregiver",
+  "variantName": "developementRelease",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "versionCode": 8,
+      "versionName": "1.5-dev",
+      "outputFile": "Soultab CaregiverDev12-06-2021.apk"
+    }
+  ]
+}

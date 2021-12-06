@@ -1120,7 +1120,6 @@ public class TodoTaskDetailFragment extends BaseFragment {
 
 	
 	private void setupSelectedAttachments() {
-		Log.e("Attachments",taskData.getAttachments());
 		taskAttachmentsList = new ArrayList<>();
 		if (taskData.getAttachments() != null&& !TextUtils.isEmpty(taskData.getAttachments())) {
 			List<String> attachments =
