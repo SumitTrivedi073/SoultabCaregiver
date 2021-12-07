@@ -288,8 +288,6 @@ public class TodoTaskListFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		
-		filterStatus = "All";
-		cbTaskByName.setChecked(false);
 		getTaskCounts();
 		super.onResume();
 	}
