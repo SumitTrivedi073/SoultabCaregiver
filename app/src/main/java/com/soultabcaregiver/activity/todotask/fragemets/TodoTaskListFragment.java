@@ -117,18 +117,6 @@ public class TodoTaskListFragment extends BaseFragment {
 			};
 	
 	
-	
-	private BroadcastReceiver filterList = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			int selectedPosition = intent.getIntExtra("position", -1);
-			int comment_count = intent.getIntExtra("comment_count", -1);
-			if (selectedPosition > -1) {
-				todoTaskListAdapter.updateCommentCount(selectedPosition, comment_count);
-			}
-		}
-	};
-	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -151,7 +139,6 @@ public class TodoTaskListFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		init(view);
 		listener();
-		requireActivity().registerReceiver(filterList, new IntentFilter("task_list_filter"));
 	}
 	
 	private void init(View view) {
@@ -287,7 +274,7 @@ public class TodoTaskListFragment extends BaseFragment {
 	
 	@Override
 	public void onResume() {
-		
+		filterStatus = "All";
 		getTaskCounts();
 		super.onResume();
 	}
