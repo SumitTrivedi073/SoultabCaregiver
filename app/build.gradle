@@ -29,7 +29,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 8
-        versionName "1.7.4"
+        versionName "1.5"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -94,7 +94,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            def appName = "Soultab CaregiverDev11-29-2021"
+            def appName = "Soultab CaregiverDev12-06-2021"
             outputFileName = appName + ".apk"
         }
     }

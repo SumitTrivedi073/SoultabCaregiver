@@ -47,6 +47,13 @@ public class TodoTaskListAdapter extends RecyclerView.Adapter<TodoTaskListAdapte
 		notifyDataSetChanged();
 	}
 	
+	public void updateCommentCount(int selectedPosition, int comment_count) {
+		if (taskList.size() > 0) {
+			taskList.get(selectedPosition).setCommentCount(comment_count);
+			notifyItemChanged(selectedPosition);
+		}
+	}
+	
 	public interface OnTodoTaskClickListeners {
 		
 		void onTodoTaskClick(int position, TaskListModel.TaskData data);
@@ -97,7 +104,7 @@ public class TodoTaskListAdapter extends RecyclerView.Adapter<TodoTaskListAdapte
 				caregiversImage = data.getProfile_image().split(",");
 			}
 			tvStatus.setText(taskStatus);
-			tvTaskName.setText(data.getDescription());
+			tvTaskName.setText(data.getTitle());
 			tvComments.setText(getFormattedCount(data.getCommentCount()));
 			tvDate.setText(getFormattedDate(data.getEndDate()));
 			if (taskStatus.equalsIgnoreCase("To do")) {
@@ -206,6 +213,9 @@ public class TodoTaskListAdapter extends RecyclerView.Adapter<TodoTaskListAdapte
 					}
 				}
 			}
+			
 		}
+		
 	}
+	
 }

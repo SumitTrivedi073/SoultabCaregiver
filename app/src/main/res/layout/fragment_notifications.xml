@@ -33,16 +33,31 @@
             android:text="Notifications"
             android:textColor="#0A2B3C"
             android:textSize="@dimen/_14sdp" />
-
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvNotifications"
         android:layout_width="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llHeader"
-        tools:listitem="@layout/row_todo_notification"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_height="0dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llHeader"
+        tools:listitem="@layout/row_todo_notification" />
+
+    <TextView
+        android:id="@+id/tvNoNotification"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/muli_semibold"
+        android:gravity="center"
+        android:text="No Notifications Found"
+        android:textColor="@color/themecolor"
+        android:textSize="@dimen/_14sdp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llHeader" />
 </androidx.constraintlayout.widget.ConstraintLayout>

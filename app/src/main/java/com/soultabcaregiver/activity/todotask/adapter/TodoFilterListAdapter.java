@@ -36,7 +36,6 @@ public class TodoFilterListAdapter extends RecyclerView.Adapter<TodoFilterListAd
 	}
 	
 	public void updateData(ArrayList<TaskCountModel.ToDoFilterModel> data) {
-		selectedPosition = 0;
 		todoTagsFilterList = new ArrayList<>();
 		todoTagsFilterList.addAll(data);
 		notifyDataSetChanged();

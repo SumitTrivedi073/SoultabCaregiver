@@ -36,7 +36,7 @@
         android:layout_height="@dimen/_25sdp"
         android:layout_marginStart="@dimen/_4sdp"
         android:src="@drawable/user_img"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/cbNames"
         app:layout_constraintTop_toTopOf="parent" />
