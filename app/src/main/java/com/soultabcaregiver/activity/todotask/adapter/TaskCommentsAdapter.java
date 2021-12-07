@@ -8,16 +8,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.activity.todotask.model.TaskCommentListModel;
 import com.soultabcaregiver.utils.TimeAgoUtils;
+import com.soultabcaregiver.utils.Utility;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapter.ViewHolder> {
@@ -32,6 +33,24 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 	                           OnCommentItemClickListeners listeners) {
 		this.taskComments = taskComments;
 		this.listeners = listeners;
+	}
+	
+	@NonNull
+	@Override
+	public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+		return new ViewHolder(
+				LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo_task_comments,
+						parent, false));
+	}
+	
+	@Override
+	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+		holder.bind(position);
+	}
+	
+	@Override
+	public int getItemCount() {
+		return taskComments.size();
 	}
 	
 	public void updateComments(ArrayList<TaskCommentListModel.Response> comments) {
@@ -68,24 +87,6 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 		
 	}
 	
-	@NonNull
-	@Override
-	public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-		return new ViewHolder(
-				LayoutInflater.from(parent.getContext()).inflate(R.layout.row_todo_task_comments,
-						parent, false));
-	}
-	
-	@Override
-	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-		holder.bind(position);
-	}
-	
-	@Override
-	public int getItemCount() {
-		return taskComments.size();
-	}
-	
 	public class ViewHolder extends RecyclerView.ViewHolder {
 		
 		TextView tvUserName, tvComment, tvEditComment, tvDeleteComment, tvDays, tvSaveComment;
@@ -117,13 +118,21 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 			tvEditComment.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					listeners.onEditClick(position, comment);
+					if (comment.getUserId().equals(
+							Utility.getSharedPreferences(itemView.getContext(),
+									APIS.caregiver_id))) {
+						listeners.onEditClick(position, comment);
+					}
 				}
 			});
 			tvDeleteComment.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					listeners.onDeleteClick(position, comment);
+					if (comment.getUserId().equals(
+							Utility.getSharedPreferences(itemView.getContext(),
+									APIS.caregiver_id))) {
+						listeners.onDeleteClick(position, comment);
+					}
 				}
 			});
 		}
