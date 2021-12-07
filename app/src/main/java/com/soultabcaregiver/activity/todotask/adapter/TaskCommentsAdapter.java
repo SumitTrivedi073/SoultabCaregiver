@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -95,6 +96,8 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 		
 		EditText etComment;
 		
+		LinearLayout llOptions;
+		
 		public ViewHolder(@NonNull View itemView) {
 			super(itemView);
 			etComment = itemView.findViewById(R.id.etComment);
@@ -105,10 +108,18 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 			tvDeleteComment = itemView.findViewById(R.id.tvDeleteComment);
 			tvDays = itemView.findViewById(R.id.tvDays);
 			ivUserImage = itemView.findViewById(R.id.ivUserImage);
+			llOptions = itemView.findViewById(R.id.llOptions);
 		}
 		
 		public void bind(int position) {
 			TaskCommentListModel.Response comment = taskComments.get(position);
+			if (!comment.getUserId().equals(
+					Utility.getSharedPreferences(itemView.getContext(),
+							APIS.caregiver_id))) {
+				llOptions.setVisibility(View.GONE);
+			}
+			
+			
 			Glide.with(itemView.getContext()).load(
 					APIS.CaregiverImageURL + comment.getProfile_image()).placeholder(
 					R.drawable.user_img).into(ivUserImage);
@@ -118,21 +129,17 @@ public class TaskCommentsAdapter extends RecyclerView.Adapter<TaskCommentsAdapte
 			tvEditComment.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (comment.getUserId().equals(
-							Utility.getSharedPreferences(itemView.getContext(),
-									APIS.caregiver_id))) {
+					
 						listeners.onEditClick(position, comment);
-					}
+					
 				}
 			});
 			tvDeleteComment.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (comment.getUserId().equals(
-							Utility.getSharedPreferences(itemView.getContext(),
-									APIS.caregiver_id))) {
+					
 						listeners.onDeleteClick(position, comment);
-					}
+					
 				}
 			});
 		}
