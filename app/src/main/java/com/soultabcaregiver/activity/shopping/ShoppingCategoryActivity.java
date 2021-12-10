@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseActivity;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
+import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.shopping.adapter.ShoppingListAdapter;
 import com.soultabcaregiver.activity.shopping.model.ShoppingCategoryModel;
 import com.soultabcaregiver.utils.AppController;
@@ -98,7 +99,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 				APIS.BASEURL + APIS.ShoppingProductCateogry_list, new Response.Listener<String>() {
 			@Override
 			public void onResponse(String response) {
-				
+				hideProgressDialog();
 				ShoppingCategoryModel articlesCategoryModel =
 						new Gson().fromJson(response, ShoppingCategoryModel.class);
 				if (String.valueOf(articlesCategoryModel.getStatusCode()).equals("200")) {
@@ -111,9 +112,9 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 						shoppingListAdapter = new ShoppingListAdapter(mContext, categoryDatumList);
 						shopping_category_list.setAdapter(shoppingListAdapter);
 						
-						is40plususer();
+						//is40plususer();
 					} else {
-						hideProgressDialog();
+						
 						NoDataFoundtxt.setText(getResources().getString(R.string.no_data_found));
 						tvNodata_relative.setVisibility(View.VISIBLE);
 						shopping_category_list.setVisibility(View.GONE);
@@ -121,7 +122,7 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 					}
 					
 				} else {
-					hideProgressDialog();
+					
 					NoDataFoundtxt.setText(getResources().getString(R.string.no_data_found));
 					tvNodata_relative.setVisibility(View.VISIBLE);
 					shopping_category_list.setVisibility(View.GONE);
@@ -135,6 +136,18 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 				NoDataFoundtxt.setText(getResources().getString(R.string.no_data_found));
 				tvNodata_relative.setVisibility(View.VISIBLE);
 				shopping_category_list.setVisibility(View.GONE);
+				if (error.networkResponse!=null) {
+					if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
+						ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+							if (updatedToken == null) {
+							} else {
+								GetShoppingCategories();
+							}
+						});
+					}} else {
+					Utility.ShowToast(mContext,
+							mContext.getResources().getString(R.string.something_went_wrong));
+				}
 			}
 		}) {
 			@Override
@@ -142,6 +155,8 @@ public class ShoppingCategoryActivity extends BaseActivity implements View.OnCli
 				Map<String, String> params = new HashMap<>();
 				params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
 				params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
+				params.put(APIS.APITokenKEY, Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+				
 				return params;
 			}
 		};
