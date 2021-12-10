@@ -1,13 +1,16 @@
 package com.soultabcaregiver.activity.docter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
@@ -61,68 +64,101 @@ public class SocialActivity extends AppCompatActivity {
             wv_webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             wv_webview.setWebViewClient(new WebViewClient());
             wv_webview.setWebChromeClient(new WebChromeClient());
-            wv_webview.getSettings().setDisplayZoomControls(true);
             wv_webview.getSettings().setDomStorageEnabled(true);
+    
+            wv_webview.getSettings().setSupportZoom(true);
+            wv_webview.getSettings().setBuiltInZoomControls(true);
+            wv_webview.getSettings().setDisplayZoomControls(false);
+            wv_webview.getSettings().setLoadWithOverviewMode(true);
+            wv_webview.getSettings().setUseWideViewPort(true);
+    
+            wv_webview.getSettings().setJavaScriptEnabled(true);
+            wv_webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+    
             wv_webview.loadUrl(urlString);
-            wv_webview.setWebViewClient(new MyWebViewClient());
-
-            TimerStart();
+            wv_webview.getSettings().setSupportMultipleWindows(true);
+            Log.e("urlString", urlString);
+            //FOR WEBPAGE SLOW UI
+    
+            wv_webview.setWebChromeClient(new WebChromeClient() {
+        
+                @SuppressLint ("SetJavaScriptEnabled")
+                @Override
+                public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture,
+                                              Message resultMsg) {
+            
+                    WebView newWebView = new WebView(mContext);
+            
+                    newWebView.getSettings().setSupportZoom(true);
+                    newWebView.getSettings().setBuiltInZoomControls(true);
+                    newWebView.getSettings().setDisplayZoomControls(false);
+                    newWebView.getSettings().setUseWideViewPort(true);
+                    newWebView.getSettings().setJavaScriptEnabled(true);
+                    newWebView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+            
+                    newWebView.getSettings().setPluginState(WebSettings.PluginState.ON);
+                    newWebView.getSettings().setSupportMultipleWindows(true);
+                    newWebView.getSettings().setDomStorageEnabled(true);
+            
+                    view.addView(newWebView);
+                    WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+                    transport.setWebView(newWebView);
+                    resultMsg.sendToTarget();
+            
+                    newWebView.setWebViewClient(new WebViewClient() {
+                        @Override
+                        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                            view.loadUrl(url);
+                            Log.e("url", url);
+                            return true;
+                        }
+                    });
+            
+                    hideProgressDialog();
+            
+                    return true;
+                }
+        
+        
+            });
+    
+            wv_webview.setWebChromeClient(new WebChromeClient() {
+                public void onProgressChanged(WebView view, int progress) {
+                    if (progress < 100) {
+                
+                    }
+                    if (progress == 100) {
+                        hideProgressDialog();
+                    }
+                }
+            });
         }else {
             Utility.ShowToast(mContext,getResources().getString(R.string.net_connection));
         }
     }
 
-    public class MyWebViewClient extends WebViewClient {
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            // TODO Auto-generated method stub
-            super.onPageStarted(view, url, favicon);
 
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            // TODO Auto-generated method stub
-            if (Utility.isNetworkConnected(mContext)) {
-
-                showProgressDialog(getResources().getString(R.string.Loading));
-                view.loadUrl(url);
-            }else {
-                Utility.ShowToast(mContext,getResources().getString(R.string.net_connection));
-            }
-            return true;
-
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
-            super.onPageFinished(view, url);
-
-            hideProgressDialog();
-
-        }
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        TimerStart();
     }
 
 
     private void TimerStart() {
-
-        handler =  new Handler();
-        myRunnable = new Runnable() {
+    
+        new Handler().postDelayed(new Runnable() {
+        
+            @Override
             public void run() {
-                if (progressDialog != null) progressDialog.dismiss();
-                Log.e("Completed","20 Second");
-
+                hideProgressDialog();
+                Log.e("Completed", "10 Second");
+            
+            
             }
-        };
-
-        handler.postDelayed(myRunnable, 20000);
+        
+        }, 10000);
     }
 
 
