@@ -61,6 +61,7 @@ import com.soultabcaregiver.activity.alert.fragment.AlertFragment;
 import com.soultabcaregiver.activity.alert.model.AlertCountModel;
 import com.soultabcaregiver.activity.calender.fragment.CalenderFragment;
 import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
+import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineOptionFragment;
 import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.main_screen.model.PermissionModel;
@@ -172,7 +173,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
         if (Utility.isNetworkConnected(mContext)) {
             registerReceiver();
-            PermissionTabAPI();
+          
     
             listner();
         }
@@ -361,6 +362,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         registerReceiver(receiver1,mIntentFilter);
         appUpdateManager = AppUpdateManagerFactory.create(getApplicationContext());
         checkUpdate();
+        PermissionTabAPI();
     }
 
 
@@ -431,11 +433,11 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                                         shopping_btn.setVisibility(View.GONE);
                                     } else {
                                         video_call.setVisibility(View.VISIBLE);
-                                        shopping_btn.setVisibility(View.GONE);
+                                        shopping_btn.setVisibility(View.VISIBLE);
                                     }
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
-                                    shopping_btn.setVisibility(View.GONE);
+                                    shopping_btn.setVisibility(View.VISIBLE);
                                 }
                                 Utility.loadFragment(MainActivity.this, new DashBoardFragment(),
                                         false, null);
@@ -455,7 +457,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                                 video_call.setVisibility(View.GONE);
                                 shopping_btn.setVisibility(View.GONE);
-                                Utility.loadFragment(MainActivity.this, new DailyRoutineFragment(),
+
+                                 Utility.loadFragment(MainActivity.this,
+                                    new DailyRoutineOptionFragment(),
                                         false, null);
 
                                 break;
@@ -582,6 +586,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
             shopping_btn.setVisibility(View.GONE);
         }else {
             video_call.setVisibility(View.VISIBLE);
+            shopping_btn.setVisibility(View.VISIBLE);
         }
     }
     
@@ -645,7 +650,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             dashBoardFragment = DashBoardFragment.instance;
 
-                            if (dashBoardFragment != null) {
+                            if (dashBoardFragment != null ) {
 
                                 dashBoardFragment.Dashboardhide_show(Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show));
     
@@ -653,16 +658,17 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                                 if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show) != null
                                         && !Utility.getSharedPreferences(mContext,
                                         APIS.dashbooard_hide_Show).equals("")) {
+                                    if (dashBoardFragment.isVisible()){
                                     if (Utility.getSharedPreferences(mContext, APIS.dashbooard_hide_Show).equals(APIS.Hide)) {
                                         video_call.setVisibility(View.GONE);
                                         shopping_btn.setVisibility(View.GONE);
                                     } else {
                                         video_call.setVisibility(View.VISIBLE);
-                                        shopping_btn.setVisibility(View.GONE);
-                                    }
+                                        shopping_btn.setVisibility(View.VISIBLE);
+                                    }}
                                 } else {
                                     video_call.setVisibility(View.VISIBLE);
-                                    shopping_btn.setVisibility(View.GONE);
+                                    shopping_btn.setVisibility(View.VISIBLE);
                                 }
                             }
 
@@ -673,7 +679,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             dailyRoutineFragment = DailyRoutineFragment.instance;
 
-                            if (dailyRoutineFragment != null) {
+                            if (dailyRoutineFragment != null ) {
 
                                 dailyRoutineFragment.dailyroutine_hideshow(Utility.getSharedPreferences(mContext, APIS.dailyroutine_hideshow));
                                 video_call.setVisibility(View.GONE);
@@ -704,7 +710,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             doctorFragment = DoctorFragment.instance;
 
-                            if (doctorFragment != null) {
+                            if (doctorFragment != null && doctorFragment.isVisible())  {
 
                                 doctorFragment.doctorhide_show(Utility.getSharedPreferences(mContext, APIS.doctor_hide_show));
                                 video_call.setVisibility(View.GONE);
@@ -940,9 +946,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                 
                     startActivityForResult(new Intent(Settings.ACTION_SETTINGS)
                             , 0);
-                
-                
-                    alertDialog1.dismiss();
+                    
                 }
             });
         

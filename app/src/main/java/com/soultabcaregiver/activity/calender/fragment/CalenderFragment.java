@@ -82,24 +82,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_calender, container, false);
-
-        calendar = Calendar.getInstance();
-        instance = CalenderFragment.this;
-        int mYear = calendar.get(Calendar.YEAR);
-        int mMonth = calendar.get(Calendar.MONTH);
-        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        calendar.set(Calendar.DAY_OF_MONTH, mDay);
-
-        FromDate2 = Utility.MM_dd_yyyy.format(calendar.getTime());
-        TODate2 = Utility.MM_dd_yyyy.format(calendar.getTime());
-        FromDate = Utility.yyyy_MM_dd.format(calendar.getTime());
-        TODate = Utility.yyyy_MM_dd.format(calendar.getTime());
     
-        try {
-            SelectedDate = Utility.yyyy_MM_dd.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        instance = CalenderFragment.this;
         init();
         Listener();
 
@@ -151,8 +135,7 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         show_cal_Relative = view.findViewById(R.id.show_cal_Relative);
         hide_cal_Relative = view.findViewById(R.id.hide_cal_Relative);
 
-        curret_date_txt.setText(Utility.MMM_dd_yyyy.format(calendar.getTime()) + " - "
-                + Utility.MMM_dd_yyyy.format(calendar.getTime()));
+       
     }
 
     @Override
@@ -169,6 +152,26 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
         weekly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
         Monthly.setTextColor(ContextCompat.getColor(mContext, R.color.blackish));
 
+        
+         calendar = Calendar.getInstance();
+       
+        int mYear = calendar.get(Calendar.YEAR);
+        int mMonth = calendar.get(Calendar.MONTH);
+        int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.set(Calendar.DAY_OF_MONTH, mDay);
+
+        FromDate2 = Utility.MM_dd_yyyy.format(calendar.getTime());
+        TODate2 = Utility.MM_dd_yyyy.format(calendar.getTime());
+        FromDate = Utility.yyyy_MM_dd.format(calendar.getTime());
+        TODate = Utility.yyyy_MM_dd.format(calendar.getTime());
+      
+        curret_date_txt.setText(Utility.MMM_dd_yyyy.format(calendar.getTime()) + " - "
+                + Utility.MMM_dd_yyyy.format(calendar.getTime()));
+        try {
+            SelectedDate = Utility.yyyy_MM_dd.parse(Utility.yyyy_MM_dd.format(calendar.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         calenderhide_show(Utility.getSharedPreferences(mContext, APIS.calender_hideshow));
 
     }
@@ -546,7 +549,8 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                                 arRemin.add(reminderBean);
                             }
                             tvNodata.setVisibility(View.GONE);
-                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin, tvNodata, FromDate2);
+                            CustomEventAdapter adapter = new CustomEventAdapter(mContext, arRemin
+                                    , tvNodata, FromDate2,Daily_select,Weekly_select,Monthly_select);
                             rvReminder.setAdapter(adapter);
 
                         } else if (String.valueOf(allEventModel.getStatusCode()).equals("403")) {
@@ -554,8 +558,13 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                         } else {
                             rvReminder.setAdapter(null);
                             tvNodata.setVisibility(View.VISIBLE);
-                            tvNodata.setText(mContext.getResources().getString(R.string.no_activity_scheduled) + " " + Utility.MMM_dd_yyyy.format(Utility.yyyy_MM_dd.parse(FromDate)));
-
+                            if (Daily_select){
+                                tvNodata.setText(getResources().getString(R.string.no_activity_scheduled) + " \n" + FromDate2);
+                            }else if (Weekly_select){
+                                tvNodata.setText(R.string.scheduled_this_week);
+                            }else if (Monthly_select){
+                                tvNodata.setText(R.string.scheduled_this_month);
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

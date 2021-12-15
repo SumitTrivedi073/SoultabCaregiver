@@ -29,9 +29,10 @@ import com.soultabcaregiver.utils.Utility;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AppCompatActivity {
 	
 	private static final int REQUEST_CODE_PERMISSION = 2;
 	
@@ -103,7 +104,6 @@ public class SplashActivity extends BaseActivity {
 		if (!gps_enabled && !network_enabled) {
 			Utility.buildAlertMessageNoGps(mContext);
 		} else {
-			
 			checkPermissions();
 		}
 	}
@@ -124,8 +124,6 @@ public class SplashActivity extends BaseActivity {
 							, Manifest.permission.WRITE_EXTERNAL_STORAGE,
 							Manifest.permission.RECORD_AUDIO},
 					REQUEST_CODE_PERMISSION);
-			
-			
 		} else {
 			changeScreen();
 			//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings
@@ -144,7 +142,7 @@ public class SplashActivity extends BaseActivity {
 			
 			@Override
 			public void run() {
-				if (Utility.isNetworkConnected(mContext)) {
+				
 					if (TextUtils.isEmpty(User_id)) {
 						Intent intent = new Intent(mContext, LoginActivity.class);
 						startActivity(intent);
@@ -176,7 +174,7 @@ public class SplashActivity extends BaseActivity {
 								}
 							}
 						});
-					}
+					
 				}
 			}
 		}, 3000);

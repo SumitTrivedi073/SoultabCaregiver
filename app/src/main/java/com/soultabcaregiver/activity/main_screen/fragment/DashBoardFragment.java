@@ -2,6 +2,7 @@ package com.soultabcaregiver.activity.main_screen.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,9 +33,12 @@ import com.soultabcaregiver.Model.DiloagBoxCommon;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.WebService.ApiTokenAuthentication;
+import com.soultabcaregiver.activity.calender.CalenderModel.CommonResponseModel;
 import com.soultabcaregiver.activity.main_screen.MainActivity;
 import com.soultabcaregiver.activity.main_screen.adapter.BarChartAdapter;
 import com.soultabcaregiver.activity.main_screen.model.ChartModel;
+import com.soultabcaregiver.search.PendingRequestsActivity;
+import com.soultabcaregiver.search.SearchActivity;
 import com.soultabcaregiver.sendbird_chat.ChatHelper;
 import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.AppController;
@@ -66,8 +70,6 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     
     RecyclerView bar_chart_list;
     
-    ProgressDialog progressDialog;
-    
     LinearLayout name_event_linear;
     
     CardView compliance_card;
@@ -79,7 +81,8 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     CheckBox weekly_chart, three_month_chart, six_month_chart, twelve_month_chart;
     
     TextView today_txt, lastweek_txt, lastmonth_txt, good_morning_txt, user_name_txt,
-            compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt, NeedAssistance;
+            compliance_count_txt, compliance_name_txt, no_data_txt, last_seen_txt, NeedAssistance,
+		    searchUsers;
     
     MainActivity mainActivity;
     
@@ -89,7 +92,7 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
     
     String chart_value_data = "week";
     
-    RelativeLayout dashboard_show_relative, dashboard_hide_relative;
+    RelativeLayout dashboard_show_relative, dashboard_hide_relative,pendingRequests;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,7 +147,9 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         dashboard_show_relative = view.findViewById(R.id.dashboard_show_relative);
         dashboard_hide_relative = view.findViewById(R.id.dashboard_hide_relative);
         NeedAssistance = view.findViewById(R.id.needAsistance);
-        
+	    pendingRequests = view.findViewById(R.id.pendingRequests);
+	    searchUsers = view.findViewById(R.id.searchUsers);
+	    
         calendar = Calendar.getInstance();
         
         int mYear = calendar.get(Calendar.YEAR);
@@ -284,10 +289,10 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                                 getResources().getString(R.string.yes_text));
                 diloagBoxCommon.getTextView().setOnClickListener(v1 -> {
                     //  ReminderCreateClass.getInstance().DeleteReminderlogout();
-                    
+    
                     if (mainActivity != null) {
                         diloagBoxCommon.getDialog().dismiss();
-                        logout_app("Logout Successfully");
+                        LogoutAPI();
                     }
                     
                 });
@@ -317,8 +322,14 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
         lastmonth_txt.setOnClickListener(this);
         logout.setOnClickListener(this);
         NeedAssistance.setOnClickListener(this);
-        
-        weekly_chart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+	
+	    pendingRequests.setOnClickListener(
+			    v -> startActivity(new Intent(getContext(), PendingRequestsActivity.class)));
+	
+	    searchUsers.setOnClickListener(v -> startActivity(SearchActivity.intentFor(getContext())));
+	
+	
+	    weekly_chart.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (Utility.isNetworkConnected(mContext)) {
@@ -590,12 +601,15 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 lineChart.invalidate();
                 
             } else {
-                // lineChart.setNoDataText(getResources().getString(R.string.Chart_Message));
-                
+                if (weekly_chart.isChecked()){
+                    lineChart.setNoDataText(mContext.getResources().getString(R.string.no_data_week));
+                }else  if (three_month_chart.isChecked()){
+                    lineChart.setNoDataText(mContext.getResources().getString(R.string.no_data_month));
             }
             
             
-        } else {
+        }
+        }else {
             lineChart.setVisibility(View.GONE);
             
         }
@@ -725,5 +739,73 @@ public class DashBoardFragment extends BaseFragment implements View.OnClickListe
                 Utility.ShowToast(mContext, getResources().getString(R.string.net_connection));
             }
         }
+    }
+    
+    private void LogoutAPI() {
+        
+        showProgressDialog(mContext, mContext.getResources().getString(R.string.Loading));
+        
+        StringRequest stringRequest =
+                new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.LogoutAPI,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                hideProgressDialog();
+                                Log.e("response", response);
+                                CommonResponseModel commonResponseModel = new Gson().fromJson(response,
+                                        CommonResponseModel.class);
+                                if (String.valueOf(commonResponseModel.getStatusCode()).equals("200")) {
+                                    
+                                    logout_app(getString(R.string.logout_successfully));
+                                    
+                                } else if (String.valueOf(commonResponseModel.getStatusCode()).equals(
+                                        "403")) {
+                                    logout_app(chartModel.getMessage());
+                                }
+                                
+                                
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("error", error.toString());
+                        
+                        hideProgressDialog();
+                        if (error.networkResponse!=null) {
+                            if (String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode)||String.valueOf(error.networkResponse.statusCode).equals(APIS.APITokenErrorCode2)) {
+                                ApiTokenAuthentication.refrehToken(mContext, updatedToken -> {
+                                    if (updatedToken == null) {
+                                    } else {
+                                        LogoutAPI();
+                                        
+                                    }
+                                });
+                            }else {
+                                Utility.ShowToast(
+                                        mContext,
+                                        getResources().getString(R.string.something_went_wrong));
+                            }
+                        }
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+                        params.put(APIS.HEADERKEY2,
+                                Utility.getSharedPreferences(mContext, APIS.EncodeUser_id));
+                        params.put(APIS.APITokenKEY,
+                                Utility.getSharedPreferences(mContext, APIS.APITokenValue));
+                        
+                        Log.e("logout_param", String.valueOf(params));
+                        return params;
+                    }
+                    
+                };
+        AppController.getInstance().addToRequestQueue(stringRequest);
+        stringRequest.setShouldCache(false);
+        stringRequest.setRetryPolicy(
+                new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        
     }
 }

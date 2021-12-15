@@ -71,6 +71,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+
 public class Utility {
 	
 	private static final String PREFERENCE = "Soultab Caregiver";
@@ -117,7 +118,6 @@ public class Utility {
 	
 	public final static SimpleDateFormat yyyy_mm_dd_hh_mm_ss =
 			new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-	
 	//public static final String FCM_TOKEN = "FirebaseToken";
 	
 	public static Context mContext;
@@ -247,10 +247,8 @@ public class Utility {
 		dbo.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(is, null, dbo);
 		is.close();
-		
 		int rotatedWidth, rotatedHeight;
 		int orientation = 0;// getOrientation(context, photoUri);
-		
 		if (orientation == 90 || orientation == 270) {
 			rotatedWidth = dbo.outHeight;
 			rotatedHeight = dbo.outWidth;
@@ -258,14 +256,12 @@ public class Utility {
 			rotatedWidth = dbo.outWidth;
 			rotatedHeight = dbo.outHeight;
 		}
-		
 		Bitmap srcBitmap;
 		is = context.getContentResolver().openInputStream(photoUri);
 		if (rotatedWidth > MAX_IMAGE_DIMENSION || rotatedHeight > MAX_IMAGE_DIMENSION) {
 			float widthRatio = ((float) rotatedWidth) / ((float) MAX_IMAGE_DIMENSION);
 			float heightRatio = ((float) rotatedHeight) / ((float) MAX_IMAGE_DIMENSION);
 			float maxRatio = Math.max(widthRatio, heightRatio);
-			
 			// Create the bitmap from file
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = (int) maxRatio;
@@ -282,11 +278,9 @@ public class Utility {
 		if (orientation > 0) {
 			Matrix matrix = new Matrix();
 			matrix.postRotate(orientation);
-			
 			srcBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
 					srcBitmap.getHeight(), matrix, true);
 		}
-		
 		String type = context.getContentResolver().getType(photoUri);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -309,7 +303,6 @@ public class Utility {
 		Display display = windowManager.getDefaultDisplay();
 		mMaxWidth = display.getWidth();
 		mMaxHeight = display.getHeight();
-		
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
@@ -331,7 +324,6 @@ public class Utility {
 				if (bitmap == null) {
 					return null;
 				}
-				
 				// resize to desired dimensions
 				int width = bitmap.getWidth();
 				int height = bitmap.getHeight();
@@ -344,7 +336,6 @@ public class Utility {
 					newWidth = mMaxWidth;
 					newHeight = (newWidth / width) * height;
 				}
-				
 				scaledBitmap = Bitmap.createScaledBitmap(bitmap, Math.round((float) newWidth),
 						Math.round((float) newHeight), true);
 				bitmap.recycle();
@@ -357,7 +348,6 @@ public class Utility {
 		} else {
 			bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 		}
-		
 		return rotateImage(bitmap, imageFile);
 	}
 	
@@ -367,14 +357,11 @@ public class Utility {
 		final int height = options.outHeight;
 		final int width = options.outWidth;
 		int inSampleSize = 1;
-		
 		if (height > reqHeight || width > reqWidth) {
-			
 			// Calculate ratios of height and width to requested height and
 			// width
 			final int heightRatio = Math.round((float) height / (float) reqHeight);
 			final int widthRatio = Math.round((float) width / (float) reqWidth);
-			
 			// Choose the smallest ratio as inSampleSize value, this will
 			// guarantee
 			// a final image with both dimensions larger than or equal to the
@@ -472,7 +459,6 @@ public class Utility {
 			if (info != null) {
 				for (NetworkInfo networkInfo : info)
 					if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
-						
 						return true;
 					}
 			}
@@ -486,7 +472,6 @@ public class Utility {
 	}
 	
 	public static Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
-		
 		int width = bm.getWidth();
 		int height = bm.getHeight();
 		float scaleWidth = ((float) newWidth) / width;
@@ -637,7 +622,6 @@ public class Utility {
 			parsed = df_input.parse(inputDate);
 			outputDate = df_output.format(parsed);
 		} catch (ParseException e) {
-		
 		}
 		return outputDate;
 	}
@@ -744,7 +728,6 @@ public class Utility {
 		final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$";
 		pattern = Pattern.compile(PASSWORD_PATTERN);
 		matcher = pattern.matcher(password);
-		
 		return matcher.matches();
 	}
 	
@@ -753,14 +736,12 @@ public class Utility {
 		Display display = wm.getDefaultDisplay();
 		DisplayMetrics metrics = new DisplayMetrics();
 		display.getMetrics(metrics);
-		
 		return metrics.widthPixels;
 	}
 	
 	public static boolean isLocationEnabled(Context context) {
 		int locationMode = 0;
 		String locationProviders;
-		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			try {
 				locationMode = Settings.Secure.getInt(context.getContentResolver(),
@@ -777,7 +758,6 @@ public class Utility {
 	}
 	
 	public static void buildAlertMessageNoGps(Context context) {
-		
 		new AlertDialog.Builder(context).setTitle(R.string.Location_permission)  // GPS not found
 				.setMessage(R.string.Location_permission_txt) // Want to enable?
 				.setPositiveButton(R.string.setting, new DialogInterface.OnClickListener() {
@@ -785,17 +765,13 @@ public class Utility {
 						context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 					}
 				}).setNegativeButton(R.string.cancel_text, null).show();
-		
 	}
 	
 	public static String getCalculatedDate(String FromDate, String dateFormat,
 	                                       int days) throws ParseException {
-		
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.US);
-		
 		c.setTime(sdf.parse(FromDate));
-		
 		c.add(Calendar.DATE, days);
 		return sdf.format(c.getTime());
 	}
@@ -805,9 +781,7 @@ public class Utility {
 				context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
 		SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
 		Gson gson = new Gson();
-		
 		String json = gson.toJson(arrayList);
-		
 		prefsEditor.putString("availableDate", json);
 		prefsEditor.apply();
 	}
@@ -831,25 +805,22 @@ public class Utility {
 	public static void loadFragment(FragmentActivity activty, Fragment fragment, boolean backstack,
 	                                String tagName) {
 		// load fragment0.....
-		
 		FragmentTransaction transaction = activty.getSupportFragmentManager().beginTransaction();
 		transaction.replace(R.id.fragment_container, fragment);
-		
 		if (backstack) {
 			transaction.addToBackStack(tagName);
 		}
 		transaction.commit();
 	}
 	
+	
 	public static void removeAllFragment(FragmentActivity activty, String tagName) {
 		FragmentManager fm = activty.getSupportFragmentManager();
-		
 		for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
            /* if (!fm.getBackStackEntryAt(i).getName().equalsIgnoreCase(tagName)) {
                 fm.popBackStack();
             }*/
 			fm.popBackStack();
-			
 		}
 	}
 	
@@ -866,7 +837,6 @@ public class Utility {
 		try {
 			File appDir = new File(mContext.getExternalCacheDir(), SendBird.getApplicationId());
 			appDir.mkdirs();
-			
 			File dataFile = new File(appDir, "Exceptions.text");
 			FileUtils.saveToFile(dataFile, divider);
 			if (exception.getLocalizedMessage() != null)
@@ -881,7 +851,6 @@ public class Utility {
 	public void removeFragments(FragmentActivity activty) {
 		activty.getSupportFragmentManager().popBackStack("F",
 				FragmentManager.POP_BACK_STACK_INCLUSIVE);
-		
 	}
 	
 }

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/_10sdp"
+    android:layout_marginEnd="@dimen/_10sdp"
+    android:elevation="@dimen/_4sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_6sdp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_8sdp">
+
+        <LinearLayout
+            android:id="@+id/infoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userPic"
+                android:layout_width="@dimen/_26sdp"
+                android:layout_height="@dimen/_26sdp"
+                android:layout_gravity="center_vertical"
+                tools:src="@drawable/user_img" />
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/_6sdp"
+                android:layout_weight="1"
+                android:fontFamily="@font/muli_semibold"
+                android:textSize="@dimen/_14sdp"
+                tools:text="User name a Long User Name here hello there" />
+
+            <TextView
+                android:id="@+id/alreadyMember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="@dimen/_6sdp"
+                android:fontFamily="@font/montserrat_semibold_italic"
+                android:textColor="@color/themecolor"
+                android:textSize="@dimen/_10ssp"
+                android:visibility="gone"
+                tools:text="Already Member" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/requestedLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_30sdp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/infoLayout">
+
+            <TextView
+                android:id="@+id/acceptBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/_6sdp"
+                android:layout_weight="1"
+                android:background="@drawable/blue_btn2"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/accept"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/rejectBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/_6sdp"
+                android:layout_weight="1"
+                android:background="@drawable/grey_btn"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/reject"
+                android:textColor="@color/cancel_button_text_color"
+                android:textSize="@dimen/_12ssp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/connectedLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_30sdp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/infoLayout">
+
+            <TextView
+                android:id="@+id/removeButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/_6sdp"
+                android:layout_weight="1"
+                android:background="@drawable/blue_btn2"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/remove"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/viewDetailBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/_6sdp"
+                android:layout_weight="1"
+                android:background="@drawable/grey_btn"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/view_detail"
+                android:textColor="@color/cancel_button_text_color"
+                android:textSize="@dimen/_12ssp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/notConnectedLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_30sdp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="1"
+            app:layout_constraintTop_toBottomOf="@id/infoLayout">
+
+            <TextView
+                android:id="@+id/inviteMember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/_6sdp"
+                android:layout_weight="0.5"
+                android:background="@drawable/blue_btn2"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/invite_member"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/pendingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_30sdp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="1"
+            app:layout_constraintTop_toBottomOf="@id/infoLayout">
+
+            <TextView
+                android:id="@+id/connectionRequestedBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/_6sdp"
+                android:layout_weight="0.5"
+                android:background="@drawable/blue_btn2"
+                android:fontFamily="@font/muli_semibold"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/connection_requested"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
