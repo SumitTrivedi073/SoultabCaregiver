@@ -582,9 +582,9 @@ public class CalenderFragment extends BaseFragment implements View.OnClickListen
                         }
                     });
                 }else {
-                    Utility.ShowToast(
-                            mContext,
-                            getResources().getString(R.string.something_went_wrong));
+                    if (getActivity()!=null) {
+                        Utility.ShowToast(mContext, getResources().getString(R.string.something_went_wrong));
+                    }
                 }
             }
         }) {
