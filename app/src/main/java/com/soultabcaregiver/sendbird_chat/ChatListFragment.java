@@ -207,7 +207,8 @@ public class ChatListFragment extends BaseFragment {
 		ids.add(Utility.getSharedPreferences(mContext, APIS.caregiver_id));
 		if (list.size() > 0) {
 			ids.add(list.get(index).getUserId());
-			if (list.get(index).getUserSendbirdUser().equals("1")) {
+			if (list.get(index).getUserSendbirdUser()!=null
+					&&!list.get(index).getUserSendbirdUser().isEmpty()&&list.get(index).getUserSendbirdUser().equals("1")) {
 				ChatHelper.createGroupChannel(ids, true, groupChannel -> {
 					Log.e("channel", "" + groupChannel.getUrl());
 					mChannelListAdapter.addGroupChannel(groupChannel);
