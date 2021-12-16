@@ -929,9 +929,9 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                     new AlertDialog.Builder(this, R.style.FullScreenDialogStyle);
         
             builder.setView(layout);
-            builder.setCancelable(true);
+            builder.setCancelable(false);
             alertDialog1 = builder.create();
-            alertDialog1.setCanceledOnTouchOutside(true);
+            alertDialog1.setCanceledOnTouchOutside(false);
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             alertDialog1.getWindow().setLayout(width, height);

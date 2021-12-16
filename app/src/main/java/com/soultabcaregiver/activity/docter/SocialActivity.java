@@ -31,7 +31,7 @@ public class SocialActivity extends AppCompatActivity {
     
     String urlString;
     
-    Handler handler;
+    
     
     Runnable myRunnable;
     
@@ -53,7 +53,7 @@ public class SocialActivity extends AppCompatActivity {
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handler.removeCallbacks(myRunnable);
+              
                 onBackPressed();
             }
         });
@@ -170,7 +170,6 @@ public class SocialActivity extends AppCompatActivity {
                     if (wv_webview.canGoBack()) {
                         wv_webview.goBack();
                     } else {
-                        handler.removeCallbacks(myRunnable);
                         finish();
                     }
                     return true;
@@ -184,14 +183,14 @@ public class SocialActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         if (progressDialog != null) progressDialog.dismiss();
-        handler.removeCallbacks(myRunnable);
+      
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (progressDialog != null) progressDialog.dismiss();
-        handler.removeCallbacks(myRunnable);
+       
 
     }
 
@@ -199,7 +198,7 @@ public class SocialActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         if (progressDialog != null) progressDialog.dismiss();
-        handler.removeCallbacks(myRunnable);
+       
     }
 
     public void showProgressDialog(String message) {

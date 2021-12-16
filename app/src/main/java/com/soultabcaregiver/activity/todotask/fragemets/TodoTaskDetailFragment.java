@@ -320,7 +320,7 @@ public class TodoTaskDetailFragment extends BaseFragment {
 	}
 	
 	private void init(View view) {
-		ivBack = view.findViewById(R.id.ivBack);
+		ivBack = view.findViewById(R.id.ivBackDetail);
 		cvUpdateTask = view.findViewById(R.id.cvUpdateTask);
 		spinnerTaskStatus = view.findViewById(R.id.spinnerTaskStatus);
 		tvStartDate = view.findViewById(R.id.tvStartDate);
