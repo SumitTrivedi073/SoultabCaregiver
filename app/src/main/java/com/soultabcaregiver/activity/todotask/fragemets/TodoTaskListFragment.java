@@ -228,14 +228,15 @@ public class TodoTaskListFragment extends BaseFragment {
 						}
 					}
 					// TODO: 11/16/2021 add default caregiver for filter task by caregiver name..
-					TaskCaregiversModel model = new TaskCaregiversModel();
-					model.setId(Utility.getSharedPreferences(requireActivity(), APIS.caregiver_id));
-					model.setLastname("");
-					model.setName("Me");
-					model.setProfileImage(
-							Utility.getSharedPreferences(requireActivity(), APIS.profile_image));
-					tempCaregiverName.add(0, model);
-				}, error -> {
+					if (getActivity()!=null) {
+						TaskCaregiversModel model = new TaskCaregiversModel();
+						model.setId(Utility.getSharedPreferences(requireActivity(), APIS.caregiver_id));
+						model.setLastname("");
+						model.setName("Me");
+						model.setProfileImage(Utility.getSharedPreferences(requireActivity(), APIS.profile_image));
+						tempCaregiverName.add(0, model);
+					}
+					}, error -> {
 					VolleyLog.d("TAG", "Error: " + error.getMessage());
 					hideProgressDialog();
 					if (error.networkResponse != null) {
@@ -249,8 +250,9 @@ public class TodoTaskListFragment extends BaseFragment {
 								}
 							});
 						} else {
-							Utility.ShowToast(requireActivity(),
-									getResources().getString(R.string.something_went_wrong));
+							if (getActivity()!=null) {
+								Utility.ShowToast(requireActivity(), getResources().getString(R.string.something_went_wrong));
+							}
 						}
 					}
 				}) {
@@ -274,8 +276,10 @@ public class TodoTaskListFragment extends BaseFragment {
 	
 	@Override
 	public void onResume() {
-		filterStatus = "All";
-		getTaskCounts();
+		if (getActivity()!=null) {
+			filterStatus = "All";
+			getTaskCounts();
+		}
 		super.onResume();
 	}
 	
@@ -327,21 +331,24 @@ public class TodoTaskListFragment extends BaseFragment {
 								});
 							}
 						} else {
-							Utility.ShowToast(requireActivity(),
-									getResources().getString(R.string.something_went_wrong));
+							if (getActivity()!=null) {
+								Utility.ShowToast(requireActivity(), getResources().getString(R.string.something_went_wrong));
+							}
 						}
 					}
 				}) {
 					@Override
 					public Map<String, String> getHeaders() throws AuthFailureError {
 						Map<String, String> params = new HashMap<String, String>();
-						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-						if (BuildConfig.DEBUG) {
-							Log.e("TAG", "API KEy: " + Utility.getSharedPreferences(requireActivity(),
-									APIS.APITokenValue));
+						if (getActivity()!=null) {
+							params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+							if (BuildConfig.DEBUG) {
+								Log.e("TAG", "API KEy: " + Utility.getSharedPreferences(
+										requireActivity(), APIS.APITokenValue));
+							}
+							params.put(APIS.APITokenKEY,
+									Utility.getSharedPreferences(requireActivity(), APIS.APITokenValue));
 						}
-						params.put(APIS.APITokenKEY,
-								Utility.getSharedPreferences(requireActivity(), APIS.APITokenValue));
 						return params;
 					}
 				};
@@ -411,17 +418,20 @@ public class TodoTaskListFragment extends BaseFragment {
 								});
 							}
 						} else {
-							Utility.ShowToast(requireActivity(),
-									getResources().getString(R.string.something_went_wrong));
+							if (getActivity()!=null) {
+								Utility.ShowToast(requireActivity(), getResources().getString(R.string.something_went_wrong));
+							}
 						}
 					}
 				}) {
 					@Override
 					public Map<String, String> getHeaders() throws AuthFailureError {
 						Map<String, String> params = new HashMap<String, String>();
-						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
-						params.put(APIS.APITokenKEY,
-								Utility.getSharedPreferences(requireActivity(), APIS.APITokenValue));
+						if (getActivity()!=null) {
+							params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
+							params.put(APIS.APITokenKEY,
+									Utility.getSharedPreferences(requireActivity(), APIS.APITokenValue));
+						}
 						return params;
 					}
 					
