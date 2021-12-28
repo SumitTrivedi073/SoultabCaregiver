@@ -66,6 +66,7 @@ import com.soultabcaregiver.activity.docter.fragment.DoctorFragment;
 import com.soultabcaregiver.activity.main_screen.fragment.DashBoardFragment;
 import com.soultabcaregiver.activity.main_screen.model.PermissionModel;
 import com.soultabcaregiver.activity.shopping.ShoppingCategoryActivity;
+import com.soultabcaregiver.activity.todotask.fragemets.TodoTaskListFragment;
 import com.soultabcaregiver.sendbird_calls.SendbirdCallService;
 import com.soultabcaregiver.sendbird_calls.utils.BroadcastUtils;
 import com.soultabcaregiver.talk.TalkFragment;
@@ -136,6 +137,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     DashBoardFragment dashBoardFragment;
     DoctorFragment doctorFragment;
     DailyRoutineFragment dailyRoutineFragment;
+    TodoTaskListFragment todoTaskListFragment;
     CalenderFragment calenderFragment;
     
     public static final String BroadcastStringforAction1 = "ChectInternet";
@@ -645,6 +647,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             Utility.setSharedPreference(mContext, APIS.dashbooard_hide_Show, permissionModel.getPermission().getDashboardNew());
                             Utility.setSharedPreference(mContext, APIS.dailyroutine_hideshow, permissionModel.getPermission().getDailyroutine());
+                            Utility.setSharedPreference(mContext, APIS.todo_hide_show, permissionModel.getPermission().getTodo());
                             Utility.setSharedPreference(mContext, APIS.calender_hideshow, permissionModel.getPermission().getShowActivities());
                             Utility.setSharedPreference(mContext, APIS.doctor_hide_show, permissionModel.getPermission().getAppointmentList());
 
@@ -687,6 +690,22 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
                             }
 
 
+                        }
+    
+                        if (permissionModel.getPermission().getTodo() != null
+                                && !permissionModel.getPermission().getTodo().equals("")) {
+    
+                            todoTaskListFragment = TodoTaskListFragment.instance;
+        
+                            if (todoTaskListFragment != null ) {
+    
+                                todoTaskListFragment.todotask_hideshow(Utility.getSharedPreferences(mContext,
+                                        APIS.todo_hide_show));
+                                video_call.setVisibility(View.GONE);
+                                shopping_btn.setVisibility(View.GONE);
+                            }
+        
+        
                         }
                         //show_activities for calender
                         if (permissionModel.getPermission().getShowActivities() != null

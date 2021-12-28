@@ -181,6 +181,8 @@ public class APIS {
     
     public static final String doctor_hide_show = "doctor_hide_show";
     
+    public static final String todo_hide_show = "todo_hide_show";
+    
     public static final String calender_hideshow = "calender_hideshow";
     
     public static final String dailyroutine_hideshow = "dailyroutine_hideshow";
