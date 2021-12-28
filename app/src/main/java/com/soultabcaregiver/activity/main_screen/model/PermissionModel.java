@@ -89,6 +89,9 @@ public class PermissionModel {
         @SerializedName("dailyroutine")
         @Expose
         private String dailyroutine;
+        @SerializedName("todo")
+        @Expose
+        private String todo;
         @SerializedName("dashboard_new")
         @Expose
         private String dashboardNew;
@@ -212,7 +215,16 @@ public class PermissionModel {
         public void setDailyroutine(String dailyroutine) {
             this.dailyroutine = dailyroutine;
         }
-
+    
+        public String getTodo() {
+            return todo;
+        }
+    
+        public void setTodo(String todo) {
+            this.todo = todo;
+        }
+    
+    
         public String getDashboardNew() {
             return dashboardNew;
         }

@@ -30,6 +30,7 @@ import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.WebService.ApiTokenAuthentication;
 import com.soultabcaregiver.activity.alert.model.CareGiverListModel;
+import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineFragment;
 import com.soultabcaregiver.activity.todotask.adapter.CaregiversNamesAdapter;
 import com.soultabcaregiver.activity.todotask.adapter.TodoFilterListAdapter;
 import com.soultabcaregiver.activity.todotask.adapter.TodoTaskListAdapter;
@@ -58,6 +59,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 public class TodoTaskListFragment extends BaseFragment {
+	
+	public static TodoTaskListFragment instance;
 	
 	RelativeLayout hideTodoRelative;
 	
@@ -131,6 +134,8 @@ public class TodoTaskListFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		
+		instance = TodoTaskListFragment.this;
 		init(view);
 		listener();
 		if (Utility.getSharedPreferences(getActivity(), APIS.todo_hide_show) != null) {
@@ -163,7 +168,7 @@ public class TodoTaskListFragment extends BaseFragment {
 		return inflater.inflate(R.layout.fragment_todo_task_list, container, false);
 	}
 	
-	private void todotask_hideshow(String todoTask) {
+	public void todotask_hideshow(String todoTask) {
 		if (todoTask != null) {
 			if (todoTask.equals(APIS.Hide)) {
 				showTodoLinear.setVisibility(View.GONE);
