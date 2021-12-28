@@ -645,6 +645,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
                             Utility.setSharedPreference(mContext, APIS.dashbooard_hide_Show, permissionModel.getPermission().getDashboardNew());
                             Utility.setSharedPreference(mContext, APIS.dailyroutine_hideshow, permissionModel.getPermission().getDailyroutine());
+                           // Utility.setSharedPreference(mContext, APIS.todo_hide_show,"2");
                             Utility.setSharedPreference(mContext, APIS.calender_hideshow, permissionModel.getPermission().getShowActivities());
                             Utility.setSharedPreference(mContext, APIS.doctor_hide_show, permissionModel.getPermission().getAppointmentList());
 

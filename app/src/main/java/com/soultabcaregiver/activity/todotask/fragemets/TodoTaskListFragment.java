@@ -1,23 +1,9 @@
 package com.soultabcaregiver.activity.todotask.fragemets;
 
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,36 +11,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.soultabcaregiver.Base.BaseFragment;
 import com.soultabcaregiver.BuildConfig;
 import com.soultabcaregiver.R;
 import com.soultabcaregiver.WebService.APIS;
 import com.soultabcaregiver.WebService.ApiTokenAuthentication;
-import com.soultabcaregiver.activity.alert.adapter.CareGiverListAdapter;
 import com.soultabcaregiver.activity.alert.model.CareGiverListModel;
-import com.soultabcaregiver.activity.daily_routine.fragment.DailyRoutineOptionFragment;
 import com.soultabcaregiver.activity.todotask.adapter.CaregiversNamesAdapter;
 import com.soultabcaregiver.activity.todotask.adapter.TodoFilterListAdapter;
 import com.soultabcaregiver.activity.todotask.adapter.TodoTaskListAdapter;
 import com.soultabcaregiver.activity.todotask.model.TaskCaregiversModel;
 import com.soultabcaregiver.activity.todotask.model.TaskCountModel;
 import com.soultabcaregiver.activity.todotask.model.TaskListModel;
-import com.soultabcaregiver.sendbird_chat.ConversationFragment;
 import com.soultabcaregiver.utils.AppController;
-import com.soultabcaregiver.utils.CustomProgressDialog;
 import com.soultabcaregiver.utils.HorizontalSpacingItemDecorationUtils;
 import com.soultabcaregiver.utils.Utility;
 
@@ -66,8 +48,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 public class TodoTaskListFragment extends BaseFragment {
+	
+	RelativeLayout hideTodoRelative;
+	
+	LinearLayout  showTodoLinear;
 	
 	private RecyclerView rcvTodoFilter, rcvTasks;
 	
@@ -93,8 +87,6 @@ public class TodoTaskListFragment extends BaseFragment {
 	
 	private String caregiversId = null, filterStatus = "All";
 	
-	private CustomProgressDialog progressDialog;
-	
 	private int todoCount, progressCount, doneCount, totalCount;
 	
 	private TodoFilterListAdapter.OnFilterItemClickListener onFilterItemClickListener =
@@ -103,7 +95,14 @@ public class TodoTaskListFragment extends BaseFragment {
 				public void onFilterItemClick(int position,
 				                              TaskCountModel.ToDoFilterModel filterModel) {
 					filterStatus = filterModel.getTagName();
-					getTaskLists(true, filterStatus, caregiversId);
+					if (Utility.getSharedPreferences(getActivity(),
+							APIS.todo_hide_show) != null && Utility.getSharedPreferences(
+							getActivity(), APIS.todo_hide_show).equals(APIS.Edit)) {
+						getTaskLists(true, filterStatus, caregiversId);
+					}else {
+						Utility.ShowToast(requireActivity(), getString(R.string.only_view_permission));
+						
+					}
 				}
 			};
 	
@@ -111,21 +110,51 @@ public class TodoTaskListFragment extends BaseFragment {
 			new TodoTaskListAdapter.OnTodoTaskClickListeners() {
 				@Override
 				public void onTodoTaskClick(int position, TaskListModel.TaskData data) {
-					Utility.loadFragment(requireActivity(), new TodoTaskDetailFragment(data, position),
-							true, TodoTaskDetailFragment.class.getSimpleName());
+					if (Utility.getSharedPreferences(getActivity(),
+							APIS.todo_hide_show) != null && Utility.getSharedPreferences(
+							getActivity(), APIS.todo_hide_show).equals(APIS.Edit)) {
+						Utility.loadFragment(requireActivity(),
+								new TodoTaskDetailFragment(data, position), true,
+								TodoTaskDetailFragment.class.getSimpleName());
+					}else {
+						Utility.ShowToast(requireActivity(), getString(R.string.only_view_permission));
+						
+					}
 				}
 			};
-	
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		init(view);
+		listener();
+		if (Utility.getSharedPreferences(getActivity(), APIS.todo_hide_show) != null) {
+			todotask_hideshow(Utility.getSharedPreferences(getActivity(), APIS.todo_hide_show));
+		}
+	}
+	
+	@Override
+	public void onResume() {
+		if (getActivity() != null) {
+			filterStatus = "All";
+			getTaskCounts();
+		}
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 	}
 	
 	@Override
@@ -134,11 +163,26 @@ public class TodoTaskListFragment extends BaseFragment {
 		return inflater.inflate(R.layout.fragment_todo_task_list, container, false);
 	}
 	
-	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		init(view);
-		listener();
+	private void todotask_hideshow(String todoTask) {
+		if (todoTask != null) {
+			if (todoTask.equals(APIS.Hide)) {
+				showTodoLinear.setVisibility(View.GONE);
+				hideTodoRelative.setVisibility(View.VISIBLE);
+			} else if (todoTask.equals(APIS.View)) {
+				showTodoLinear.setVisibility(View.VISIBLE);
+				hideTodoRelative.setVisibility(View.GONE);
+				setData();
+			} else if (todoTask.equals(APIS.Edit)) {
+				showTodoLinear.setVisibility(View.VISIBLE);
+				hideTodoRelative.setVisibility(View.GONE);
+			
+				setData();
+			}
+		} else {
+			showTodoLinear.setVisibility(View.VISIBLE);
+			hideTodoRelative.setVisibility(View.GONE);
+			setData();
+		}
 	}
 	
 	private void init(View view) {
@@ -150,6 +194,12 @@ public class TodoTaskListFragment extends BaseFragment {
 		rcvTasks = view.findViewById(R.id.rcvTasks);
 		cbTaskByName = view.findViewById(R.id.cbTaskByName);
 		tvTaskByName = view.findViewById(R.id.tvTaskByName);
+		hideTodoRelative = view.findViewById(R.id.hideTodoRelative);
+		showTodoLinear = view.findViewById(R.id.showTodoLinear);
+		setData();
+	}
+	
+	private void setData() {
 		initFiltersData();
 		rcvTodoFilter.setLayoutManager(
 				new LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false));
@@ -175,21 +225,42 @@ public class TodoTaskListFragment extends BaseFragment {
 		ivNotifications.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utility.loadFragment(requireActivity(), new NotificationsFragment(), true,
-						NotificationsFragment.class.getSimpleName());
+				if (Utility.getSharedPreferences(getActivity(),
+						APIS.todo_hide_show) != null && Utility.getSharedPreferences(getActivity(),
+						APIS.todo_hide_show).equals(APIS.Edit)) {
+					Utility.loadFragment(requireActivity(), new NotificationsFragment(), true,
+							NotificationsFragment.class.getSimpleName());
+				}else {
+					Utility.ShowToast(requireActivity(), getString(R.string.only_view_permission));
+					
+				}
 			}
 		});
 		cvCreateTask.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utility.loadFragment(requireActivity(), new CreateNewToDoTaskFragment(), true,
-						CreateNewToDoTaskFragment.class.getSimpleName());
+				if (Utility.getSharedPreferences(getActivity(),
+						APIS.todo_hide_show) != null && Utility.getSharedPreferences(getActivity(),
+						APIS.todo_hide_show).equals(APIS.Edit)) {
+					Utility.loadFragment(requireActivity(), new CreateNewToDoTaskFragment(), true,
+							CreateNewToDoTaskFragment.class.getSimpleName());
+				}else {
+					Utility.ShowToast(requireActivity(), getString(R.string.only_view_permission));
+					
+				}
 			}
 		});
 		tvTaskByName.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showCaregiverNamesDialog();
+				if (Utility.getSharedPreferences(getActivity(),
+						APIS.todo_hide_show) != null && Utility.getSharedPreferences(getActivity(),
+						APIS.todo_hide_show).equals(APIS.Edit)) {
+					showCaregiverNamesDialog();
+				}else {
+					Utility.ShowToast(requireActivity(), getString(R.string.only_view_permission));
+					
+				}
 			}
 		});
 	}
@@ -203,7 +274,8 @@ public class TodoTaskListFragment extends BaseFragment {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		showProgressDialog(requireActivity(),requireActivity().getResources().getString(R.string.Loading));
+		showProgressDialog(requireActivity(),
+				requireActivity().getResources().getString(R.string.Loading));
 		JsonObjectRequest jsonObjReq =
 				new JsonObjectRequest(Request.Method.POST, APIS.BASEURL + APIS.CaregiverListAPI,
 						mainObject, response -> {
@@ -228,15 +300,18 @@ public class TodoTaskListFragment extends BaseFragment {
 						}
 					}
 					// TODO: 11/16/2021 add default caregiver for filter task by caregiver name..
-					if (getActivity()!=null) {
+					if (getActivity() != null) {
 						TaskCaregiversModel model = new TaskCaregiversModel();
-						model.setId(Utility.getSharedPreferences(requireActivity(), APIS.caregiver_id));
+						model.setId(
+								Utility.getSharedPreferences(requireActivity(),
+										APIS.caregiver_id));
 						model.setLastname("");
 						model.setName("Me");
-						model.setProfileImage(Utility.getSharedPreferences(requireActivity(), APIS.profile_image));
+						model.setProfileImage(Utility.getSharedPreferences(requireActivity(),
+								APIS.profile_image));
 						tempCaregiverName.add(0, model);
 					}
-					}, error -> {
+				}, error -> {
 					VolleyLog.d("TAG", "Error: " + error.getMessage());
 					hideProgressDialog();
 					if (error.networkResponse != null) {
@@ -250,8 +325,9 @@ public class TodoTaskListFragment extends BaseFragment {
 								}
 							});
 						} else {
-							if (getActivity()!=null) {
-								Utility.ShowToast(requireActivity(), getResources().getString(R.string.something_went_wrong));
+							if (getActivity() != null) {
+								Utility.ShowToast(requireActivity(),
+										getResources().getString(R.string.something_went_wrong));
 							}
 						}
 					}
@@ -261,10 +337,11 @@ public class TodoTaskListFragment extends BaseFragment {
 						Map<String, String> params = new HashMap<>();
 						params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
 						params.put(APIS.HEADERKEY1, APIS.HEADERVALUE1);
-						params.put(APIS.HEADERKEY2,
-								Utility.getSharedPreferences(requireActivity(), APIS.EncodeUser_id));
+						params.put(APIS.HEADERKEY2, Utility.getSharedPreferences(requireActivity(),
+								APIS.EncodeUser_id));
 						params.put(APIS.APITokenKEY,
-								Utility.getSharedPreferences(requireActivity(), APIS.APITokenValue));
+								Utility.getSharedPreferences(requireActivity(),
+								APIS.APITokenValue));
 						return params;
 					}
 				};
@@ -274,23 +351,9 @@ public class TodoTaskListFragment extends BaseFragment {
 				new DefaultRetryPolicy(10000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 	}
 	
-	@Override
-	public void onResume() {
-		if (getActivity()!=null) {
-			filterStatus = "All";
-			getTaskCounts();
-		}
-		super.onResume();
-	}
-	
-	@Override
-	public void onPause() {
-		
-		super.onPause();
-	}
-	
 	private void getTaskCounts() {
-		showProgressDialog(requireActivity(),requireActivity().getResources().getString(R.string.Loading));
+		showProgressDialog(requireActivity(),
+				requireActivity().getResources().getString(R.string.Loading));
 		StringRequest stringRequest =
 				new StringRequest(Request.Method.POST, APIS.BASEURL + APIS.TODO_TASK_STATUS_COUNTS,
 						new Response.Listener<String>() {
@@ -322,17 +385,19 @@ public class TodoTaskListFragment extends BaseFragment {
 									APIS.APITokenErrorCode) || String.valueOf(
 									error.networkResponse.statusCode).equals(
 									APIS.APITokenErrorCode2)) {
-								ApiTokenAuthentication.refrehToken(requireActivity(), updatedToken -> {
-									if (updatedToken == null) {
-									} else {
-										Log.e("UpdatedToken2", updatedToken);
-										getTaskCounts();
-									}
-								});
+								ApiTokenAuthentication.refrehToken(requireActivity(),
+										updatedToken -> {
+											if (updatedToken == null) {
+											} else {
+												Log.e("UpdatedToken2", updatedToken);
+												getTaskCounts();
+											}
+										});
 							}
 						} else {
-							if (getActivity()!=null) {
-								Utility.ShowToast(requireActivity(), getResources().getString(R.string.something_went_wrong));
+							if (getActivity() != null) {
+								Utility.ShowToast(requireActivity(),
+										getResources().getString(R.string.something_went_wrong));
 							}
 						}
 					}
@@ -340,14 +405,15 @@ public class TodoTaskListFragment extends BaseFragment {
 					@Override
 					public Map<String, String> getHeaders() throws AuthFailureError {
 						Map<String, String> params = new HashMap<String, String>();
-						if (getActivity()!=null) {
+						if (getActivity() != null) {
 							params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
 							if (BuildConfig.DEBUG) {
 								Log.e("TAG", "API KEy: " + Utility.getSharedPreferences(
 										requireActivity(), APIS.APITokenValue));
 							}
 							params.put(APIS.APITokenKEY,
-									Utility.getSharedPreferences(requireActivity(), APIS.APITokenValue));
+									Utility.getSharedPreferences(requireActivity(),
+											APIS.APITokenValue));
 						}
 						return params;
 					}
@@ -408,18 +474,20 @@ public class TodoTaskListFragment extends BaseFragment {
 									APIS.APITokenErrorCode) || String.valueOf(
 									error.networkResponse.statusCode).equals(
 									APIS.APITokenErrorCode2)) {
-								ApiTokenAuthentication.refrehToken(requireActivity(), updatedToken -> {
-									if (updatedToken == null) {
-									} else {
-										Log.e("UpdatedToken2", updatedToken);
-										getTaskLists(isShowProgress, statusNameForFilter,
-												caregiverIds);
-									}
-								});
+								ApiTokenAuthentication.refrehToken(requireActivity(),
+										updatedToken -> {
+											if (updatedToken == null) {
+											} else {
+												Log.e("UpdatedToken2", updatedToken);
+												getTaskLists(isShowProgress, statusNameForFilter,
+														caregiverIds);
+											}
+										});
 							}
 						} else {
-							if (getActivity()!=null) {
-								Utility.ShowToast(requireActivity(), getResources().getString(R.string.something_went_wrong));
+							if (getActivity() != null) {
+								Utility.ShowToast(requireActivity(),
+										getResources().getString(R.string.something_went_wrong));
 							}
 						}
 					}
@@ -427,10 +495,11 @@ public class TodoTaskListFragment extends BaseFragment {
 					@Override
 					public Map<String, String> getHeaders() throws AuthFailureError {
 						Map<String, String> params = new HashMap<String, String>();
-						if (getActivity()!=null) {
+						if (getActivity() != null) {
 							params.put(APIS.HEADERKEY, APIS.HEADERVALUE);
 							params.put(APIS.APITokenKEY,
-									Utility.getSharedPreferences(requireActivity(), APIS.APITokenValue));
+									Utility.getSharedPreferences(requireActivity(),
+											APIS.APITokenValue));
 						}
 						return params;
 					}
@@ -504,7 +573,8 @@ public class TodoTaskListFragment extends BaseFragment {
 		tvHeader.setText("View Tasks By Names");
 		rcvNames.setLayoutManager(new LinearLayoutManager(requireActivity()));
 		CaregiversNamesAdapter caregiversNamesAdapter =
-				new CaregiversNamesAdapter(requireActivity(), tempCaregiverName, selectedCaregivers);
+				new CaregiversNamesAdapter(requireActivity(), tempCaregiverName,
+						selectedCaregivers);
 		rcvNames.setAdapter(caregiversNamesAdapter);
 		tvCancel.setOnClickListener(v -> dialog.dismiss());
 		tvSubmit.setOnClickListener(v -> {
@@ -530,7 +600,5 @@ public class TodoTaskListFragment extends BaseFragment {
 		todoTagsFilterList.add(new TaskCountModel.ToDoFilterModel("Inprogress", 0));
 		todoTagsFilterList.add(new TaskCountModel.ToDoFilterModel("Done", 0));
 	}
-	
-	
 	
 }
