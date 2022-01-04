@@ -47,7 +47,7 @@ public class ChangePasswordActivity extends BaseActivity {
 	
 	LinearLayout OldPassLinear;
 	
-	boolean isCompanion;
+	boolean isCompanion,isTemporaryPassword;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +70,8 @@ public class ChangePasswordActivity extends BaseActivity {
 		ViewOldPassword = findViewById(R.id.view_old_pwd);
 		OldPassLinear = findViewById(R.id.old_pass_linear);
 		create_new_passwordtxt = findViewById(R.id.create_new_passwordtxt);
+		
+		
 		
 		if (Utility.getSharedPreferences(mContext, APIS.is_companion) != null) {
 			if (Utility.getSharedPreferences(mContext, APIS.is_companion).equals("1")) {
@@ -268,6 +270,8 @@ public class ChangePasswordActivity extends BaseActivity {
 						params.put("password", et_new_pass.getText().toString().trim());
 						params.put("confirm_password",
 								et_confirm_password.getText().toString().trim());
+						params.put("is_temporary_password", "N");
+						
 						
 						Log.e("params", params.toString());
 						return params;
