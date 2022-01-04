@@ -277,6 +277,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 								
 								if (String.valueOf(loginModel.getStatusCode()).equals("200")) {
 									
+									if (loginModel.getResponse().getIsTemporaryPassword()!=null
+											&& !String.valueOf(loginModel.getResponse().getIsTemporaryPassword()).isEmpty()
+											&& String.valueOf(loginModel.getResponse().getIsTemporaryPassword()).equals("Y")){
+										Intent i = new Intent(LoginActivity.this,
+												ChangePasswordActivity.class);
+										i.putExtra("email", loginModel.getResponse().getEmail());
+										startActivity(i);
+									}else {
 									if (tbRemPass.isChecked()) {
 										Utility.setSharedPreference2(mContext,
 												APIS.Caregiver_email,
@@ -357,6 +365,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 										updateSendBirdFlag();
 									} else {
 										authenticateInSendBird();
+									}
 									}
 								} else {
 									hideProgressDialog();

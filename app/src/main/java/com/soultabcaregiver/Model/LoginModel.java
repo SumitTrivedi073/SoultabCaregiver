@@ -95,6 +95,11 @@ public class LoginModel {
 		@Expose
 		private Permission permission;
 		
+		
+		@SerializedName("is_temporary_password")
+		@Expose
+		private String isTemporaryPassword;
+		
 		public String getId() {
 			return id;
 		}
@@ -276,6 +281,14 @@ public class LoginModel {
 		
 		public void setRefresh_token(String refresh_token) {
 			this.refresh_token = refresh_token;
+		}
+		
+		public String getIsTemporaryPassword() {
+			return isTemporaryPassword;
+		}
+		
+		public void setIsTemporaryPassword(String isTemporaryPassword) {
+			this.isTemporaryPassword = isTemporaryPassword;
 		}
 		
 		public class Permission {
